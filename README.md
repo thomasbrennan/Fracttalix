@@ -95,7 +95,6 @@ What's New in V 2.6.3-
 		•  Stress-test and detrend support regime-shift exploration.
 
 		•  Docs/interpretation tips guide “look for jumps” + surrogate validation.
-→ Effectively addressed via practical, lightweight means—keeps tool focused while enabling the spirit of his suggestion.
 
 Bonus Improvements 
 
