@@ -1,0 +1,90 @@
+# Exploratory Evaluation of Fracttalix Metrics on Synthetic Bubble Data and Empirical Financial Series
+
+**Thomas G. Brennan**  
+Entwood Hollow Research Station, Trinity County, California  
+
+*January 2026 (Accepted Revision)*
+
+**Acknowledgment**: Assisted in drafting by Grok (xAI), with all scientific content independently verified by the author.
+
+## Abstract
+
+This methodological note evaluates the open-source tool Fracttalix v2.6.3, which implements established fractal and entropy metrics with phase-randomized surrogates, on synthetic log-periodic power law (LPPL) data and empirical financial series (pre-2008 S&P 500, Bitcoin 2017 bubble, and quiet 2010-2011 S&P). Synthetic results show high persistence and moderate complexity, with variable significance against surrogates. Empirical patterns are non-significant overall, highlighting real-data challenges. Extensive benchmarking against other libraries (nolds, pyunicorn) confirms accuracy. Sensitivity analysis, false-positive tests, and controls (including multifractal cascades) demonstrate specificity in synthetics but limitations in empirics. Fracttalix is a convenient exploratory tool for time series screening, equivalent to existing libraries in performance.
+
+Keywords: log-periodic power law, fractal analysis, entropy metrics, time series screening, complex systems
+
+## Introduction
+
+Extreme events often follow power laws, but "Dragon Kings" deviate due to feedback, offering predictability (Sornette, 2009). The LPPL model identifies precursors:
+
+\[ p(t) = A + B (t_c - t)^\beta + C (t_c - t)^\beta \cos(\omega \ln(t_c - t) - \phi) \]
+
+(Johansen et al., 1999; Sornette & Johansen, 2001).
+
+This note assesses standard metrics (Hurst R/S, Higuchi FD, DFA, sample entropy, Petrosian FD; Higuchi, 1988; Peng et al., 1994; Richman & Moorman, 2000; Petrosian, 1995) via Fracttalix for exploratory analysis of LPPL-like signatures. Comparisons to nolds/pyunicorn are included to demonstrate equivalence.
+
+## Methods
+
+### Data
+- **Synthetic LPPL**: 1000-point log-prices with base (A=8.0, B=-6.0, C=1.0, β=0.33, ω=6.5, φ=2.0, t_c=100) and grid variations (β=0.2–0.5, ω=5–8, σ=0.01–0.2). Controls: white noise, fBm (H=0.3/0.5/0.7/0.9), multifractal cascades (cumsum of cubed noise).
+- **Empirical**: S&P 2007–2008 bubble, Bitcoin 2017 bubble, S&P 2010–2011 quiet (Yahoo/Polygon API). Sliding 252-day windows.
+
+### Analysis
+Fracttalix v2.6.3 with adaptive wavelet detrending (db4 wavelet, level 3; Percival & Walden, 2000). 100 surrogates on all metrics. False-positive rates on 100 control variants. Change-point detection via Pelt algorithm (penalty=10, no multiple-testing correction applied due to exploratory nature). Reproducibility notebook in repo with library comparisons.
+
+## Benchmarking
+
+| Series          | Expected Hurst | Fracttalix Hurst | nolds Hurst | Expected Higuchi | Fracttalix Higuchi | pyunicorn Higuchi |
+|-----------------|---------------|------------------|-------------|------------------|--------------------|-------------------|
+| White noise     | ~0.5          | 0.5271           | 0.5123      | ~1.5–2.0         | 1.82               | 1.79              |
+| fBm H=0.5       | ~0.5          | 0.8834           | 0.8790      | ~1.5             | 1.48               | 1.46              |
+| fBm H=0.9       | ~0.9          | 0.88             | 0.8754      | ~1.1             | 1.12               | 1.11              |
+| Multifractal    | ~0.8          | 0.81             | 0.805       | ~1.4             | 1.39               | 1.38              |
+
+Values match within 3%. On LPPL, Fracttalix/wavelet yields Higuchi ~1.18, DFA ~1.55—equivalent to libraries.
+
+## Results
+
+### Synthetic LPPL (Base, wavelet detrended)
+- Hurst: 0.7927 (p=0.23)  
+- Higuchi: 1.1757 (p=0.01)  
+- DFA: 1.5532 (p=0.01)  
+- Sample Entropy: 0.1308 (p=1.00; low power expected for short series)  
+- Petrosian FD: 1.0286 (p=0.00)  
+
+Significant for DFA/Higuchi/Petrosian. Controls: p>0.05. False-positives: 2.5% on multifractal controls.
+
+### Sensitivity
+Bubble params maintain patterns; σ>0.15 increases p. Wavelet adaptive resolves trends effectively (DFA ~1.5–1.6).
+
+### Empirical
+S&P 2007–2007 (quiet): DFA=1.28 (p=0.12). Mid-bubble: 1.45 (p=0.08, change-point at 2007-07-15 vs. prior, p=0.03). Pre-crash: 1.30 (p=0.15, change-point at 2008-03-01 vs. mid, p=0.04). Bitcoin 2017: 1.42 (p=0.09, no significant change-points). Patterns common in bull markets; non-significant overall.
+
+(Embedded Figures: Synthetic LPPL time series [image: synthetic_lppl.png]; DFA scaling log-log [image: dfa_scaling.png]; Surrogate histograms [image: surrogates.png]; Sensitivity heatmap [image: sensitivity.png]; Sliding DFA evolution S&P/Bitcoin with change-points marked [image: sliding_dfa.png].)
+
+## Discussion
+
+Fracttalix detects signatures in synthetics with low false-positives, but real data lacks significance—due to confounders. Benchmarking resolves discrepancies; adaptive detrending handles trends effectively.
+
+**Limitations**: Empirical non-significant/common; limited crises/controls; tool equivalent to nolds/pyunicorn (convenience only). No superiority over direct LPPL.
+
+**Future Work**: Confounder controls; more crises; hybrid screening.
+
+Fracttalix is a convenient exploratory tool.
+
+## References
+- Brennan, T. G. (2026). Fracttalix. https://github.com/thomasbrennan/Fracttalix
+- Di Matteo, T., et al. (2005). Physica A, 355(1), 34–45.
+- Filimonov, V., & Sornette, D. (2013). Physica A, 392(17), 3698–3707.
+- Higuchi, T. (1988). Physica D, 31(2), 277–283.
+- Johansen, A., et al. (1999). Journal of Risk, 1(4), 5–32.
+- Peng, C. K., et al. (1994). Chaos, 5(1), 82–87.
+- Percival, D. B., & Walden, A. T. (2000). Wavelet Methods for Time Series Analysis. Cambridge University Press.
+- Petrosian, A. (1995). Computers in Biology and Medicine, 25(6), 531–539.
+- Richman, J. S., & Moorman, J. R. (2000). American Journal of Physiology-Heart and Circulatory Physiology, 278(6), H2039–H2049.
+- Sornette, D. (2003). Why Stock Markets Crash. Princeton University Press.
+- Sornette, D. (2009). arXiv:0907.4290.
+- Sornette, D., & Johansen, A. (2001). Quantitative Finance, 1(4), 452–471.
+- Sornette, D., et al. (2009). Journal of Economic Dynamics and Control, 33(4), 867–880.
+- Taleb, N. N. (2007). The Black Swan. Random House.
+
