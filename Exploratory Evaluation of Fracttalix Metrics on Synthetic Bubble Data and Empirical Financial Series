@@ -88,3 +88,9 @@ Fracttalix is a convenient exploratory tool.
 - Sornette, D., et al. (2009). Journal of Economic Dynamics and Control, 33(4), 867–880.
 - Taleb, N. N. (2007). The Black Swan. Random House.
 
+(Embedded Figures: 
+Synthetic LPPL time series ![Synthetic LPPL time series](synthetic_lppl.png); 
+DFA scaling log-log ![DFA scaling log-log](dfa_scaling.png); 
+Surrogate histograms ![Surrogate histograms](surrogates.png); 
+Sensitivity heatmap ![Sensitivity heatmap](sensitivity.png); 
+Sliding DFA evolution S&P/Bitcoin with change-points marked ![Sliding DFA evolution](sliding_dfa.png).)
