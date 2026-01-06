@@ -1,5 +1,7 @@
 # Fracttalix
 
+
+
 **Fracttalix v2.6.3** — Lightweight, open-source (CC0 public domain) Python CLI tool for exploratory fractal and rhythmic metrics in univariate time series.
 
 
@@ -95,6 +97,7 @@ What's New in V 2.6.3-
 		•  Stress-test and detrend support regime-shift exploration.
 
 		•  Docs/interpretation tips guide “look for jumps” + surrogate validation.
+
 
 Bonus Improvements 
 
