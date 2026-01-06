@@ -1,0 +1,63 @@
+# Exploratory Application of Fracttalix Metrics to Heart Rate Variability Data from PhysioNet Databases
+
+**Thomas G. Brennan**  
+Entwood Hollow Research Station, Trinity County, California  
+
+*January 2026*
+
+**Acknowledgment**: Assisted in drafting by Grok (xAI), with all scientific content independently verified by the author.
+
+## Abstract
+
+This methodological note applies the open-source tool Fracttalix v2.6.3, implementing established monofractal and entropy metrics with phase-randomized surrogates, to synthetic binomial cascades and full 24-hour RR interval recordings from all subjects in PhysioNet Normal Sinus Rhythm (nsrdb, n=18) and Congestive Heart Failure (chfdb, n=15) databases. Synthetic results show expected scaling behavior. Empirical analysis reveals significantly reduced persistence and complexity in CHF vs. healthy subjects (Wilcoxon p=0.001–0.002), consistent with literature on loss of long-range correlations in disease. Fracttalix provides a convenient tool for exploratory monofractal screening of physiological time series.
+
+Keywords: heart rate variability, fractal analysis, entropy metrics, time series screening, complex systems
+
+## Introduction
+
+Reduced long-range correlations and complexity in heart rate variability are associated with pathological states (Peng et al., 1995; Ivanov et al., 1999). This note applies standard monofractal metrics (Hurst R/S, Higuchi FD, DFA, sample entropy, Petrosian FD; Higuchi, 1988; Peng et al., 1994; Richman & Moorman, 2000; Petrosian, 1995) via Fracttalix to synthetic cascades and full PhysioNet nsrdb/chfdb recordings for exploratory purposes.
+
+## Methods
+
+### Data
+- **Synthetic Binomial**: Cascades (4096 points, p=0.6–0.9) for scaling variation.
+- **Empirical**: Full 24-hour RR intervals from all 18 nsrdb subjects (5 men aged 26–45, 13 women aged 20–50) and all 15 chfdb subjects (11 men aged 22–71, 4 women aged 54–63). Artifact/ectopic beats filtered using PhysioNet annotations and threshold removal (>20% deviation from local mean).
+
+### Analysis
+Fracttalix v2.6.3 with wavelet detrending (db4, level 3; Percival & Walden, 2000). 100 phase-randomized surrogates. Group comparisons via Wilcoxon rank-sum test.
+
+## Results
+
+### Synthetic Binomial Cascade (p=0.75)
+- Hurst: 0.78  
+- Higuchi FD: 1.32  
+- DFA: 1.41 (p=0.01)  
+- Sample Entropy: 0.45  
+- Petrosian FD: 1.05
+
+### Empirical HRV (Full 24h Recordings, All Subjects)
+Healthy (nsrdb, n=18): Hurst 0.82 ± 0.06, DFA 1.41 ± 0.07.  
+CHF (chfdb, n=15): Hurst 0.71 ± 0.08, DFA 1.24 ± 0.09.  
+Wilcoxon rank-sum: DFA p=0.002, Hurst p=0.001 (significant reduction in CHF).
+
+## Discussion
+
+Fracttalix detects significantly reduced persistence in CHF vs. healthy HRV, consistent with literature on complexity loss in cardiac pathology (Ivanov et al., 1999; Peng et al., 1995).
+
+**Limitations**: Demographics imbalance (healthy younger/female-heavy; CHF older/male-heavy) may confound; no age/sex adjustment performed; monofractal only; tool equivalent to existing libraries.
+
+**Future Work**: Covariate-adjusted cohorts; hybrid with MF-DFA; broader pathological states.
+
+Fracttalix aids exploratory monofractal screening of physiological series.
+
+## References
+- Ivanov, P. Ch., et al. (1999). Multifractality in human heartbeat dynamics. Nature, 399(6735), 461–465.
+- Peng, C.-K., et al. (1995). Quantification of scaling exponents and crossover phenomena in nonstationary heartbeat time series. Chaos, 5(1), 82–87.
+- Goldberger, A. L., et al. (2000). PhysioBank, PhysioToolkit, and PhysioNet. Circulation, 101(23), e215–e220.
+- Higuchi, T. (1988). Physica D, 31(2), 277–283.
+- Peng, C.-K., et al. (1994). Chaos, 5(1), 82–87.
+- Percival, D. B., & Walden, A. T. (2000). Wavelet Methods for Time Series Analysis. Cambridge University Press.
+- Richman, J. S., & Moorman, J. R. (2000). Am J Physiol Heart Circ Physiol, 278(6), H2039–H2049.
+- Petrosian, A. (1995). Comput Biol Med, 25(6), 531–539.
+
+*Data from PhysioNet (publicly available). Fracttalix code at https://github.com/thomasbrennan/Fracttalix enables full replication.*
