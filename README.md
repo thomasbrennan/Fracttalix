@@ -1,108 +1,78 @@
 # Fracttalix
 
+**Lightweight open-source toolbox for exploratory fractal and entropy metrics in univariate time series**
 
+Fracttalix is a single-file Python command-line tool designed for quick, cautious screening of long-range correlations, self-similarity, and complexity in time series data. It implements five established monofractal and entropy metrics with built-in phase-randomized surrogates for significance, adaptive detrending, and a synthetic stress-test suite.
 
-**Fracttalix v2.6.3** — Lightweight, open-source (CC0 public domain) Python CLI tool for exploratory fractal and rhythmic metrics in univariate time series.
+Current version: **v2.6.4** (January 2026) — with improved Higuchi FD robustness  
+License: **CC0 1.0 Universal** (public domain) — no rights reserved
 
+## Features
 
+- **Metrics**
+  - Hurst exponent (R/S analysis)
+  - Higuchi fractal dimension (improved with k_max cap and range warnings)
+  - Detrended fluctuation analysis (DFA) exponent
+  - Sample entropy
+  - Petrosian fractal dimension
 
-A "pocket knife" for quick checks of persistence, self-similarity, complexity, and potential regime shifts. Ideal for teaching, prototyping, or sanity-testing before deeper modeling.
+- **Statistical caution**
+  - Phase-randomized surrogates (default 100) with one-sided p-values and 95% CI
+  - Clear interpretation notes (“likely genuine structure” or “consistent with noise”)
 
+- **Preprocessing**
+  - Optional linear or wavelet detrending (db4)
 
+- **Built-in validation**
+  - Synthetic stress-test suite (white, persistent, periodic, chaotic, pink 1/f)
+  - Quick sanity checks on controlled series
 
-## Key Features
-
-
-
-- Standard metrics: Hurst (R/S), Higuchi FD, DFA exponent, Sample Entropy, Petrosian FD.
-
-- Optional linear detrending (`--detrend`).
-
-- Built-in plotting (`--plot`).
-
-- JSON output (`--json`).
-
-- **Surrogate significance testing** (`--surrogates N`): Phase-randomized surrogates to distinguish genuine structure from noise (p<0.05 indicates likely real signal). *Especially useful for noisy/short series—provides cautious guidance on when not to over-interpret.*
-
-- Simplified stress-test on synthetic series (`--stress`).
-
-
+- **Usage**
+  - Simple CLI: `python fracttalix.py data.csv --col 0 --surrogates 100 --detrend --plot --json`
+  - Minimal dependencies (numpy, scipy, optional matplotlib/pywt)
 
 ## Installation
 
-
-
 ```bash
+git clone https://github.com/thomasbrennan/Fracttalix.git
+cd Fracttalix
+# No pip install needed — run directly
+python fracttalix.py --help
 
-pip install numpy pandas scipy matplotlib  # matplotlib optional
+Optional for full features:
+Bashpip install matplotlib pywavelets
+Quick Example
+Bashpython fracttalix.py bitcoin_daily.csv --col 1 --detrend --surrogates 100
+Output includes base metrics, surrogate significance, and warnings for short/unreliable series.
+Why Fracttalix?
 
+Convenience: All common monofractal metrics + surrogates in one file.
+Caution: Built-in statistical testing to avoid over-interpreting noise.
+Teaching & prototyping: Ideal for classrooms, quick checks, or before advanced modeling.
+Open: CC0 — use, modify, extend freely.
 
+Papers & Applications
+See the /papers branch for exploratory notes applying Fracttalix to landmark datasets:
 
-Quick Usage
-Save as fracttalix.py and run:
+Dragon Kings in synthetic bubble data
+Monofractal screening in PhysioNet HRV (healthy vs. CHF)
 
-•  Basic analysis: python fracttalix.py data.csv --col 1
+More coming weekly.
 
-•  With detrend: python fracttalix.py data.csv --detrend
+Limitations
 
-•  Plot series: python fracttalix.py data.csv --plot
+Monofractal only (no multifractal extensions like MF-DFA)
+Known biases in finite samples (e.g., Hurst upward bias)
+Best for series >500–1000 points
+Equivalent to libraries like nolds/pyunicorn — advantage is CLI + surrogates bundle
 
-•  Surrogate test (recommended for noisy data): python fracttalix.py data.csv --surrogates 100
+Future Work
 
-•  JSON output: python fracttalix.py data.csv --json
+Adaptive refinements
+Broader validation
+Community contributions welcome
 
-•  Synthetic stress-test: python fracttalix.py --stress
-
-•  No file (synthetic demo): python fracttalix.py
-
-Interpretation Tips
-•  High Hurst/DFA (>0.5): Persistence/long-memory.
-
-•  Higuchi ~1.5: Fractal roughness (Brownian-like).
-
-•  Low Sample Entropy: More regular/complex.
-
-•  Use surrogates for confidence: p > 0.05 → “consistent with noise—interpret cautiously”.
-
-
-
-What's New in V 2.6.3-
-
-
-
-1.Replaced placeholders with full implementations:
-
-	•  DFA: Complete detrended fluctuation analysis (Peng et al. 1994 style, log-spaced scales, proper fluctuation averaging).
-
-	•  Sample Entropy: Full Richman & Moorman 2000 implementation (vectorized templates, r=0.2*std default).
-
-	•  Petrosian FD: Exact sign-change formula (Petrosian 1993)—fast and robust.
-→ Fully done—no more warnings or dummy returns.
-
-2.  Added surrogate-based validation:
-
-	•  New --surrogates N flag runs phase-randomized surrogates (Theiler 1992).
-
-	•  Reports observed value, p-value, 95% CI, and clear note (“likely genuine structure” or “consistent with noise”).
-
-	•  One-sided test tuned for high values indicating structure.
-→ Fully done—directly provides statistical caution for noisy/short series.
-
-3.  Lightweight comparison with change-point methods:
-
-	•  Not a full built-in benchmark (would bloat scope), but:
-
-		•  Surrogates enable user-level change-point flavor (run pre/post windows, compare p-values).
-
-		•  Stress-test and detrend support regime-shift exploration.
-
-		•  Docs/interpretation tips guide “look for jumps” + surrogate validation.
-
-
-Bonus Improvements 
-
-•  --detrend flag added (critical for real non-stationary data).
-
-•  Warnings captured and output (JSON + pretty-print).
-
-•  Stress-test retained and cleaned.
+Citation (suggested)
+If you find Fracttalix useful, consider citing the repo:
+textBrennan, T. G. (2026). Fracttalix: Lightweight toolbox for exploratory fractal and entropy metrics (v2.6.4). 
+https://github.com/thomasbrennan/Fracttalix
