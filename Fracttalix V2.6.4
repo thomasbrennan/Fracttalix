@@ -1,0 +1,313 @@
+import numpy as np
+import pandas as pd
+from scipy.stats import linregress
+from scipy.fft import rfft, irfft
+import argparse
+import json
+import sys
+import warnings
+
+# Optional for plotting
+try:
+    import matplotlib.pyplot as plt
+    HAS_PLT = True
+except ImportError:
+    HAS_PLT = False
+
+VERSION = "2.6.4"
+
+def phase_randomize(ts):
+    """Phase-randomized surrogate (Theiler 1992) - preserves power spectrum"""
+    ts = np.asarray(ts, dtype=float)
+    ts_fft = rfft(ts)
+    phases = np.exp(1j * np.random.uniform(0, 2*np.pi, len(ts_fft)))
+    phases[0] = 0  # DC component
+    if len(ts) % 2 == 0:
+        phases[-1] = 0  # Nyquist if even
+    ts_fft_rand = ts_fft * phases
+    return np.real(irfft(ts_fft_rand, n=len(ts)))
+
+def hurst_rs(ts):
+    """Hurst exponent via R/S analysis (classic global estimator)"""
+    ts = np.asarray(ts, dtype=float)
+    N = len(ts)
+    if N < 20:
+        warnings.warn("Series too short for reliable Hurst (<20 points)")
+        return np.nan
+    cumdev = np.cumsum(ts - np.mean(ts))
+    R = np.max(cumdev) - np.min(cumdev)
+    S = np.std(ts)
+    if S == 0:
+        return np.nan
+    return np.log(R / S) / np.log(N)
+
+def higuchi_fd(ts, k_max=None):
+    """Higuchi fractal dimension (Higuchi 1988) - improved robustness"""
+    ts = np.asarray(ts, dtype=float)
+    N = len(ts)
+    if N < 100:
+        warnings.warn("Series too short for reliable Higuchi FD (<100 points)")
+        return np.nan
+    if k_max is None:
+        k_max = min(50, int(np.sqrt(N)))  # Cap at 50 for stability
+    if k_max < 5:
+        return np.nan
+    L = []
+    for k in range(2, k_max + 1):  # Start from 2 to avoid single-point issues
+        Lk = []
+        for m in range(k):
+            idx = np.arange(m, N, k)
+            if len(idx) < 3:  # Need at least 3 points for meaningful diff
+                continue
+            diffs = np.diff(ts[idx])
+            n_points = len(idx) - 1
+            Lmk = np.sum(np.abs(diffs)) * (N - 1) / (n_points * k * n_points)
+            Lk.append(Lmk)
+        if Lk:
+            L.append(np.mean(Lk))
+    if len(L) < 5:  # Need enough points for reliable fit
+        return np.nan
+    log_L = np.log(L)
+    log_k = np.log(np.arange(2, len(L) + 2))  # Align with k start
+    slope, _, _, _, _ = linregress(log_k, log_L)
+    D = 2 - slope
+    if D < 1.0 or D > 2.0:
+        warnings.warn(f"Higuchi FD {D:.4f} outside expected range (1–2); check detrending/length")
+    return D
+
+def dfa(ts, scales=None):
+    """Detrended Fluctuation Analysis exponent (Peng et al. 1994)"""
+    ts = np.asarray(ts, dtype=float)
+    N = len(ts)
+    if N < 50:
+        warnings.warn("Series too short for reliable DFA (<50 points)")
+        return np.nan
+    if scales is None:
+        scales = np.logspace(1, np.log2(N//4), 8, base=2).astype(int)
+    y = np.cumsum(ts - np.mean(ts))
+    F = []
+    for s in scales:
+        if s >= N:
+            continue
+        fluctuations = []
+        for i in range(0, N, s):
+            segment = y[i:i+s]
+            if len(segment) < 4:
+                continue
+            x = np.arange(len(segment))
+            coeffs = np.polyfit(x, segment, 1)
+            trend = np.polyval(coeffs, x)
+            fluctuations.append(np.sqrt(np.mean((segment - trend)**2)))
+        if fluctuations:
+            F.append(np.mean(fluctuations))
+    if len(F) < 2:
+        return np.nan
+    log_F = np.log(F)
+    log_s = np.log(scales[:len(F)])
+    slope, _, _, _, _ = linregress(log_s, log_F)
+    return slope
+
+def sample_entropy(ts, m=2, r=0.2):
+    """Sample entropy (Richman & Moorman 2000)"""
+    ts = np.asarray(ts, dtype=float)
+    N = len(ts)
+    if N < m + 1:
+        warnings.warn("Series too short for sample entropy")
+        return np.nan
+    std = np.std(ts)
+    if std == 0:
+        return np.nan
+    r = r * std
+
+    def _phi(m):
+        x = np.array([ts[i:i+m] for i in range(N-m)])
+        dist = np.max(np.abs(x[:, None] - x[None, :]), axis=2)
+        C = np.sum(dist <= r, axis=1)
+        return np.sum(C) / (N - m)
+
+    phi_m = _phi(m)
+    phi_mp1 = _phi(m + 1)
+    if phi_m == 0 or phi_mp1 == 0:
+        return np.nan
+    return -np.log(phi_mp1 / phi_m)
+
+def petrosian_fd(ts):
+    """Petrosian fractal dimension (Petrosian 1993) - fast sign-change proxy"""
+    ts = np.asarray(ts, dtype=float)
+    if len(ts) < 10:
+        warnings.warn("Series too short for Petrosian FD")
+        return np.nan
+    diffs = np.diff(np.sign(np.diff(ts)))
+    n_sign_changes = np.sum(np.abs(diffs) > 0)
+    N = len(ts)
+    return np.log10(N) / (np.log10(N) + np.log10(N / (N + 0.4 * n_sign_changes)))
+
+def linear_detrend(ts):
+    """Simple linear detrend"""
+    x = np.arange(len(ts))
+    coeffs = np.polyfit(x, ts, 1)
+    trend = np.polyval(coeffs, x)
+    return ts - trend
+
+def surrogate_significance(ts, metric_func, n_surr=100):
+    """Phase-randomized surrogate test for metric significance"""
+    observed = metric_func(ts)
+    if np.isnan(observed):
+        return observed, np.nan, "NaN (metric unstable)"
+    surr_values = []
+    for _ in range(n_surr):
+        surr_ts = phase_randomize(ts)
+        val = metric_func(surr_ts)
+        if not np.isnan(val):
+            surr_values.append(val)
+    if len(surr_values) < n_surr // 2:
+        return observed, np.nan, "Insufficient valid surrogates"
+    surr_values = np.array(surr_values)
+    p = (np.sum(surr_values >= observed) + 1) / (len(surr_values) + 1)
+    ci_low, ci_high = np.percentile(surr_values, [5, 95])
+    note = "p <= 0.05: likely genuine structure" if p <= 0.05 else "p > 0.05: consistent with noise—interpret cautiously"
+    return observed, p, f"{ci_low:.4f}–{ci_high:.4f}", note
+
+def stress_test():
+    """Simplified stress-test with synthetic series and expected ranges"""
+    print("\nStress-test: Synthetic validation")
+    print("-" * 50)
+    np.random.seed(42)
+    series = {
+        "White noise": np.random.randn(1000),
+        "Brownian motion": np.cumsum(np.random.randn(1000)),
+        "Periodic sine": np.sin(np.linspace(0, 20*np.pi, 1000)) + 0.1*np.random.randn(1000),
+        "Chaotic logistic": np.zeros(1000)
+    }
+    # Simple logistic map burn-in
+    x = 0.5
+    r = 3.99
+    logistic = []
+    for _ in range(1500):  # Burn-in
+        x = r * x * (1 - x)
+    for _ in range(1000):
+        x = r * x * (1 - x)
+        logistic.append(x)
+    series["Chaotic logistic"] = np.array(logistic) - np.mean(logistic)  # Center
+    for name, ts in series.items():
+        print(f"\n{name}")
+        metrics = {
+            "Hurst": hurst_rs(ts),
+            "Higuchi": higuchi_fd(ts),
+            "DFA": dfa(ts),
+            "SampEn": sample_entropy(ts),
+            "Petrosian": petrosian_fd(ts),
+        }
+        for k, v in metrics.items():
+            print(f"  {k:12}: {v:.4f}" if not np.isnan(v) else f"  {k:12}: NaN")
+
+def main():
+    parser = argparse.ArgumentParser(description=f"Fracttalix v{VERSION} - Exploratory fractal/rhythmic metrics")
+    parser.add_argument('file', nargs='?', help='CSV file (single or multi-column)')
+    parser.add_argument('--col', type=int, default=0, help='Column index (0-based, default 0)')
+    parser.add_argument('--plot', action='store_true', help='Plot the time series')
+    parser.add_argument('--json', action='store_true', help='Output as JSON')
+    parser.add_argument('--detrend', action='store_true', help='Linear detrend before analysis')
+    parser.add_argument('--stress', action='store_true', help='Run simplified stress-test on synthetic series')
+    parser.add_argument('--surrogates', type=int, default=0, help='Run surrogate significance test (e.g., 100)')
+    args = parser.parse_args()
+
+    if args.stress:
+        stress_test()
+        sys.exit(0)
+
+    if args.file:
+        try:
+            df = pd.read_csv(args.file)
+            if args.col >= len(df.columns):
+                print(f"Error: Column {args.col} not found")
+                sys.exit(1)
+            ts = df.iloc[:, args.col].dropna().values.astype(float)
+        except Exception as e:
+            print(f"Error reading file: {e}")
+            sys.exit(1)
+    else:
+        print("No file - using synthetic random walk (Brownian motion)")
+        np.random.seed(42)
+        ts = np.cumsum(np.random.randn(1000))
+
+    if len(ts) == 0:
+        print("Error: Empty series")
+        sys.exit(1)
+
+    if args.detrend:
+        ts = linear_detrend(ts)
+
+    captured_warnings = []
+    with warnings.catch_warnings(record=True) as w:
+        warnings.simplefilter("always")
+        base_metrics = {
+            "Hurst (R/S)": hurst_rs(ts),
+            "Higuchi FD": higuchi_fd(ts),
+            "DFA exponent": dfa(ts),
+            "Sample Entropy": sample_entropy(ts),
+            "Petrosian FD": petrosian_fd(ts),
+        }
+        captured_warnings = [str(ww.message) for ww in w]
+
+    metrics = {"Length": len(ts), "Version": VERSION, "base_metrics": base_metrics}
+
+    if args.surrogates > 0:
+        print(f"Running {args.surrogates} phase-randomized surrogates for significance...")
+        surr_results = {}
+        metric_funcs = {
+            "Hurst (R/S)": hurst_rs,
+            "Higuchi FD": higuchi_fd,
+            "DFA exponent": dfa,
+            "Sample Entropy": sample_entropy,
+            "Petrosian FD": petrosian_fd,
+        }
+        for name, func in metric_funcs.items():
+            obs, p, ci, note = surrogate_significance(ts, func, n_surr=args.surrogates)
+            surr_results[name] = {"observed": obs, "p_value": p, "95%_CI": ci, "note": note}
+        metrics["surrogate_significance"] = surr_results
+
+    output = {"metrics": metrics}
+    if captured_warnings:
+        output["warnings"] = captured_warnings
+
+    if args.plot:
+        if HAS_PLT:
+            plt.figure(figsize=(10, 4))
+            plt.plot(ts)
+            plt.title("Time Series")
+            plt.xlabel("Index")
+            plt.ylabel("Value")
+            plt.grid(True)
+            plt.tight_layout()
+            plt.show()
+        else:
+            print("Matplotlib not available - install for plotting")
+
+    if args.json:
+        print(json.dumps(output, indent=2))
+    else:
+        print(f"\nFracttalix v{VERSION} Metrics")
+        print("-" * 50)
+        print(f"Length: {len(ts)}")
+        for k, v in base_metrics.items():
+            if np.isnan(v):
+                print(f"{k:20}: NaN")
+            else:
+                print(f"{k:20}: {v:.4f}")
+        if args.surrogates > 0:
+            print("\nSurrogate Significance (phase-randomized, one-sided p)")
+            print("-" * 50)
+            for name, res in surr_results.items():
+                print(f"{name}")
+                print(f"  Observed   : {res['observed']:.4f if not np.isnan(res['observed']) else 'NaN'}")
+                print(f"  p-value    : {res['p_value']:.4f if not np.isnan(res['p_value']) else 'NaN'}")
+                print(f"  95% CI     : {res['95%_CI']}")
+                print(f"  Note       : {res['note']}")
+        if captured_warnings:
+            print("\nWarnings:")
+            for warn in captured_warnings:
+                print(f"  - {warn}")
+
+if __name__ == "__main__":
+    main()
