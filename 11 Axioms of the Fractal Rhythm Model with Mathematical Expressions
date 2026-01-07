@@ -13,6 +13,8 @@ This exploratory note compiles eleven conceptual axioms from established complex
 
 Keywords: complex systems, network science, fractal geometry, heuristic axioms, time series analysis
 
+
+
 ## Introduction
 
 Complex systems exhibit recurring patterns of network formation, resource storage, rhythmicity, and resilience. This note compiles eleven conceptual axioms from existing literature and proposes heuristic mathematical expressions with exploratory tests. The axioms are interpretive, not a formal deductive system. No new theory is claimed.
@@ -25,6 +27,10 @@ The open-source tool Fracttalix v2.6.4[](https://github.com/thomasbrennan/Fractt
 - **Test**: Wilcoxon rank-sum vs. surrogates (p<0.05 reject H₀); Cohen's d reported.
 - **Units**: Dimensionless; series z-scored.
 - **Multi-entity**: External pairing for axioms 9–10; univariate proxies for tool compatibility.
+
+Note: The following eleven axioms are a provisional interpretive synthesis from complex systems literature. 
+Axioms 1–5 describe general patterns; Axioms 6–11 focus primarily on open, non-equilibrium networks actively processing 
+resources. Equilibrium systems (e.g., minerals) are dormant by nature and outside the dynamic scope of rhythm/resilience axioms.
 
 ## Heuristic Expressions and Tests
 
