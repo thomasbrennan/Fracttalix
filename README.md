@@ -1,5 +1,7 @@
 # Fracttalix
 
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.18180754.svg)](https://doi.org/10.5281/zenodo.18180754)
+
 **Lightweight open-source toolbox for exploratory fractal and entropy metrics in univariate time series**
 
 Fracttalix is a single-file Python command-line tool designed for quick, cautious screening of long-range correlations, self-similarity, and complexity in time series data. It implements five established monofractal and entropy metrics with built-in phase-randomized surrogates for significance, adaptive detrending, and a synthetic stress-test suite.
