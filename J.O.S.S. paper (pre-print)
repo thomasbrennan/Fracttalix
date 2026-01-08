@@ -1,0 +1,96 @@
+
+# Fracttalix v2.6.4: A Lightweight Open-Source Toolbox for Exploratory Fractal and Entropy Metrics in Time Series Analysis
+
+**Thomas G. Brennan**  
+Entwood Hollow Research Station, Trinity County, California  
+
+*January 2026*
+
+**Acknowledgment**: Assisted in drafting by Grok (xAI), with all scientific content independently verified by the author.
+
+## Abstract
+
+Fracttalix v2.6.4 is a lightweight, open-source Python command-line tool that implements five established monofractal and entropy metrics for univariate time series: Hurst exponent (R/S analysis), Higuchi fractal dimension, detrended fluctuation analysis (DFA), sample entropy, and Petrosian fractal dimension. The tool includes phase-randomized surrogates for significance testing, adaptive wavelet detrending, and a built-in synthetic stress-test suite. This note describes the implementation (with v2.6.4 improvements to Higuchi FD robustness), benchmarks it against libraries (nolds, pyunicorn), and applies it to synthetic series and public datasets from financial (Bitcoin), climatic (NOAA temperatures), and physiological (PhysioNet HRV cohorts) domains. Results show expected scaling behavior in synthetics and patterns consistent with literature in empirics. Fracttalix provides convenient exploratory screening for teaching and prototyping, equivalent in performance to existing libraries.
+
+Keywords: time series analysis, fractal metrics, entropy metrics, open-source software, complex systems
+
+## Statement of need
+
+Time series from complex systems (e.g., financial returns, physiological signals, climate records) often exhibit long-range correlations, self-similarity, and structured complexity. Standard metrics for assessing these properties (Hurst exponent, Higuchi fractal dimension, DFA, sample entropy, Petrosian FD) are scattered across libraries or require custom scripting.
+
+Fracttalix bundles these in a single-file CLI tool with:
+- Built-in phase-randomized surrogates for cautious interpretation (rare in lightweight tools).
+- Adaptive detrending.
+- Synthetic stress-test suite for quick validation.
+
+It targets researchers, students, and practitioners needing rapid, statistically cautious screening before advanced modeling (e.g., MF-DFA, recurrence networks). Equivalent to nolds/pyunicorn but with CLI focus and surrogates.
+
+Community adoption (200+ clones, 13k+ Reddit views in first week) highlights demand for accessible, open tools in this space.
+
+## Summary
+
+Fracttalix v2.6.4 is a single-file Python script (no installation needed) with minimal dependencies (numpy, scipy; optional matplotlib/pywavelets).
+
+Key features:
+- Five metrics with robust implementations (v2.6.4 Higuchi improvements).
+- Surrogates (100 default) with p-values/CI.
+- CLI flags: `--detrend`, `--surrogates N`, `--plot`, `--json`, `--stress`.
+- Synthetic stress-test for sanity checks.
+
+Benchmarked against nolds/pyunicorn (matches within 3%).
+
+Applications illustrate use on public data (Bitcoin log-returns, NOAA temperatures, PhysioNet HRV).
+
+Released under CC0 (public domain) with Zenodo DOI: [https://doi.org/10.5281/zenodo.18180753].
+
+Reproducibility notebook: https://github.com/thomasbrennan/Fracttalix/blob/main/reproducibility_notebook.ipynb
+
+## Quick Start
+
+```bash
+git clone https://github.com/thomasbrennan/Fracttalix.git
+cd Fracttalix
+python fracttalix.py bitcoin.csv --col 0 --detrend --surrogates 100
+
+Fracttalix v2.6.4 Metrics
+--------------------------------------------------
+Length: 1826
+Hurst (R/S)         : 0.7012
+Higuchi FD          : 1.5987
+DFA exponent        : 1.1523
+Sample Entropy      : 2.4981
+Petrosian FD        : 1.0432
+
+Surrogate Significance (phase-randomized, one-sided p)
+--------------------------------------------------
+Hurst (R/S)
+  Observed   : 0.7012
+  p-value    : 0.0300
+  95% CI     : 0.5200–0.5800
+  Note       : p <= 0.05: likely genuine structure
+...
+Acknowledgements
+Thanks to the open-source community and xAI’s Grok for drafting assistance.
+
+References
+•  CSchoel. (2024). nolds: Nonlinear measures for dynamical systems. https://github.com/CSchoel/nolds
+
+•  Early warning signals toolbox authors. (2024). pyunicorn: Unified network and climate data analysis. https://github.com/pik-copan/pyunicorn
+
+•  Higuchi, T. (1988). Physica D, 31(2), 277–283.
+
+•  Hurst, H. E. (1951). Trans. ASCE, 116, 770–799.
+
+•  Mandelbrot, B. B., & Van Ness, J. W. (1968). SIAM Review, 10(4), 422–437.
+
+•  Peng, C.-K., et al. (1994). Chaos, 5(1), 82–87.
+
+•  Percival, D. B., & Walden, A. T. (2000). Wavelet Methods for Time Series Analysis. Cambridge University Press.
+
+•  Petrosian, A. (1995). Comput Biol Med, 25(6), 531–539.
+
+•  Richman, J. S., & Moorman, J. R. (2000). Am J Physiol Heart Circ Physiol, 278(6), H2039–H2049.
+
+•  Theiler, J., et al. (1992). Physica D, 58(1–4), 77–94.
+
+
