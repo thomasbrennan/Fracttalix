@@ -1,0 +1,245 @@
+# fracttalix_sentinel v2.6.5 py
+# Fracttalix Sentinel v2.6.5 — Adaptive early detection with regime awareness
+# Designed for finance, medical, infrastructure/IoT/security monitoring, and research
+
+from collections import deque
+import math
+import warnings
+from typing import Dict, Any, Optional, List, Tuple, Callable, Union
+
+
+class Detector_2_6_5:
+    """
+    Lightweight, regime-aware anomaly detector with early sensitivity.
+    Core: EWMA adaptive thresholding + warm-up + bidirectional CUSUM regime reset.
+    Optional extensions: multivariate with configurable aggregation, alerting, volatility mode, explainability.
+    """
+    def __init__(
+        self,
+        # === Core parameters ===
+        alpha: float = 0.12,                    # EWMA smoothing (0 < alpha ≤ 1)
+        early_mult: float = 2.75,               # Sensitivity for early warning
+        fixed_mult: float = 3.2,                # Specificity for confirmed alerts
+        warm_up_period: int = 60,               # Points needed before adaptive mode
+        use_fixed_during_warmup: bool = True,
+
+        # === Regime change detection ===
+        cusum_threshold: float = 5.0,           # Sigma-multiplier to trigger reset
+        reset_after_regime_change: bool = True,
+
+        # === Multivariate & aggregation ===
+        multivariate: bool = False,
+        aggregation_func: Callable[[List[float]], float] = lambda x: sum(x)/len(x),  # mean by default
+
+        # === Volatility adaptation ===
+        volatility_adaptive: bool = False,
+        vol_min_factor: float = 0.6,
+        vol_max_factor: float = 2.0,
+
+        # === Extras ===
+        verbose_explain: bool = False,
+        alert_callback: Optional[Callable[[Dict[str, Any]], None]] = None,
+    ):
+        self.alpha = alpha
+        self.early_mult = early_mult
+        self.fixed_mult = fixed_mult
+        self.warm_up_period = warm_up_period
+        self.use_fixed_during_warmup = use_fixed_during_warmup
+
+        self.cusum_threshold = cusum_threshold
+        self.reset_after_regime_change = reset_after_regime_change
+
+        self.multivariate = multivariate
+        self.aggregation_func = aggregation_func
+        self.volatility_adaptive = volatility_adaptive
+        self.vol_min_factor = vol_min_factor
+        self.vol_max_factor = vol_max_factor
+
+        self.verbose_explain = verbose_explain
+        self.alert_callback = alert_callback
+
+        # State
+        self.count = 0
+        self.values_seen: List[Union[float, List[float]]] = []
+        self.values_deque: deque = deque(maxlen=warm_up_period * 2)
+
+        self.ewma: Optional[float] = None
+        self.dev_ewma: Optional[float] = None
+        self.baseline_mean: Optional[float] = None
+        self.baseline_std: Optional[float] = None
+
+        self.cusum_pos = 0.0
+        self.cusum_neg = 0.0
+
+        # Multivariate state
+        self.channel_ewmas: Optional[List[float]] = None
+        self.channel_dev_ewmas: Optional[List[float]] = None
+
+    def reset(self) -> None:
+        """Reset detection state while preserving configuration"""
+        self.count = 0
+        self.values_seen.clear()
+        self.values_deque.clear()
+
+        self.ewma = None
+        self.dev_ewma = None
+        self.baseline_mean = None
+        self.baseline_std = None
+
+        self.cusum_pos = 0.0
+        self.cusum_neg = 0.0
+
+        self.channel_ewmas = None
+        self.channel_dev_ewmas = None
+
+    def _initialize_from_warmup(self) -> None:
+        if not self.values_seen:
+            return
+
+        # Aggregate values for baseline using configurable function
+        aggregated = [self.aggregation_func(v) if isinstance(v, list) else v
+                      for v in self.values_seen]
+
+        n = len(aggregated)
+        self.baseline_mean = sum(aggregated) / n
+        variance = sum((x - self.baseline_mean) ** 2 for x in aggregated) / n
+        self.baseline_std = math.sqrt(variance) if variance > 0 else 1e-6
+
+        self.ewma = self.baseline_mean
+        self.dev_ewma = self.baseline_std
+
+        if self.multivariate and isinstance(self.values_seen[0], list):
+            n_channels = len(self.values_seen[0])
+            self.channel_ewmas = [0.0] * n_channels
+            self.channel_dev_ewmas = [0.0] * n_channels
+
+            for ch in range(n_channels):
+                ch_values = [v[ch] for v in self.values_seen if isinstance(v, list)]
+                if ch_values:
+                    ch_mean = sum(ch_values) / len(ch_values)
+                    self.channel_ewmas[ch] = ch_mean
+                    ch_var = sum((x - ch_mean) ** 2 for x in ch_values) / len(ch_values)
+                    self.channel_dev_ewmas[ch] = math.sqrt(ch_var) if ch_var > 0 else 1e-6
+
+    def update_and_check(self, value: Union[float, List[float]]) -> Dict[str, Any]:
+        """
+        Main method: feed a scalar (univariate) or list (multivariate).
+        Returns dict with alert status and diagnostics.
+        """
+        self.count += 1
+        self.values_deque.append(value)
+
+        # Input validation
+        if self.multivariate:
+            if not isinstance(value, (list, tuple)):
+                raise ValueError("Multivariate mode requires list/tuple input")
+            if not all(math.isfinite(v) for v in value):
+                warnings.warn("NaN or Inf detected in multivariate input", RuntimeWarning)
+                return {"status": "invalid_input", "message": "NaN or Inf in input"}
+        else:
+            if not isinstance(value, (int, float)) or not math.isfinite(value):
+                warnings.warn("NaN or Inf detected in input", RuntimeWarning)
+                return {"status": "invalid_input", "message": "NaN or Inf in input"}
+
+        # ── Warm-up phase ───────────────────────────────────────────────
+        if self.count <= self.warm_up_period:
+            self.values_seen.append(value)
+
+            result = {"early_alert": False, "confirmed_alert": False, "status": "warm_up"}
+
+            if self.use_fixed_during_warmup and len(self.values_seen) >= 10:
+                aggregated = [self.aggregation_func(v) if isinstance(v, list) else v
+                              for v in self.values_seen]
+                temp_mean = sum(aggregated) / len(aggregated)
+                temp_var = sum((x - temp_mean)**2 for x in aggregated) / len(aggregated)
+                temp_std = math.sqrt(temp_var) if temp_var > 0 else 1e-6
+                threshold = temp_mean + self.fixed_mult * temp_std
+
+                current_agg = self.aggregation_func(value) if isinstance(value, list) else value
+                confirmed = current_agg > threshold
+                result["confirmed_alert"] = confirmed
+
+            if self.verbose_explain:
+                result["progress"] = f"{self.count}/{self.warm_up_period}"
+
+            self._trigger_alert_callback(result)
+            return result
+
+        # Initialize baselines at end of warm-up
+        if self.baseline_mean is None:
+            self._initialize_from_warmup()
+
+        # ── Normal operation ────────────────────────────────────────────
+        current = self.aggregation_func(value) if isinstance(value, list) else value
+
+        # Volatility-adaptive alpha (deviation-based proxy)
+        current_alpha = self.alpha
+        if self.volatility_adaptive and self.dev_ewma is not None and self.ewma is not None:
+            rel_vol = self.dev_ewma / (abs(self.ewma) + 1e-9)
+            vol_factor = max(self.vol_min_factor, min(self.vol_max_factor, 1.0 + rel_vol))
+            current_alpha *= vol_factor
+
+        # Update EWMA & deviation
+        self.ewma = current_alpha * current + (1 - current_alpha) * self.ewma
+        deviation = current - self.ewma
+        self.dev_ewma = current_alpha * abs(deviation) + (1 - current_alpha) * self.dev_ewma
+
+        # Bidirectional CUSUM
+        k = 0.5 * self.dev_ewma
+        self.cusum_pos = max(0, self.cusum_pos + (deviation - k))
+        self.cusum_neg = max(0, self.cusum_neg + (-deviation - k))
+
+        regime_change = (
+            self.cusum_pos > (self.cusum_threshold * self.dev_ewma) or
+            self.cusum_neg > (self.cusum_threshold * self.dev_ewma)
+        )
+
+        if regime_change and self.reset_after_regime_change:
+            direction = "upward" if self.cusum_pos > self.cusum_neg else "downward"
+            self.reset()
+            result = {
+                "early_alert": False,
+                "confirmed_alert": False,
+                "status": "regime_reset",
+                "message": f"{direction.capitalize()} regime change detected — baseline reset"
+            }
+            self._trigger_alert_callback(result)
+            return result
+
+        # Early warning (sensitive)
+        early_threshold = self.ewma + self.early_mult * self.dev_ewma
+        early_alert = current > early_threshold
+
+        # Confirmed (high specificity)
+        confirmed_threshold = self.baseline_mean + self.fixed_mult * self.baseline_std
+        confirmed_alert = current > confirmed_threshold
+
+        # Build result
+        result = {
+            "early_alert": early_alert,
+            "confirmed_alert": confirmed_alert,
+            "early_threshold": round(early_threshold, 4),
+            "status": "active",
+            "current": round(current, 4),
+            "ewma": round(self.ewma, 4) if self.ewma is not None else None,
+            "dev_ewma": round(self.dev_ewma, 4) if self.dev_ewma is not None else None,
+            "cusum_pos": round(self.cusum_pos, 2),
+            "cusum_neg": round(self.cusum_neg, 2),
+        }
+
+        if self.verbose_explain:
+            result["explanation"] = (
+                f"Deviation {round(deviation, 3)} | "
+                f"CUSUM + {result['cusum_pos']} / - {result['cusum_neg']} | "
+                f"vs threshold {round(self.cusum_threshold * self.dev_ewma, 2)}"
+            )
+
+        self._trigger_alert_callback(result)
+        return result
+
+    def _trigger_alert_callback(self, result: Dict) -> None:
+        if self.alert_callback and (result.get("early_alert") or result.get("confirmed_alert")):
+            try:
+                self.alert_callback(result)
+            except Exception as e:
+                warnings.warn(f"Alert callback failed: {e}", RuntimeWarning)
