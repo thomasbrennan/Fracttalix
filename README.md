@@ -4,6 +4,8 @@
 
 **Lightweight open-source toolbox for exploratory fractal and entropy metrics in univariate time series**
 
+see docs @ https://github.com/thomasbrennan/Fracttalix/tree/Papers
+
 Fracttalix is a single-file Python command-line tool designed for quick, cautious screening of long-range correlations, self-similarity, and complexity in time series data. It implements five established monofractal and entropy metrics with built-in phase-randomized surrogates for significance, adaptive detrending, and a synthetic stress-test suite.
 
 Current version: 
