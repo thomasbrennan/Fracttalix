@@ -110,3 +110,4 @@ Release date: January 2026
 
 Developed in Entwood Hollow research station, Trinity County, California
 
+anomaly-detection, time-series, cusum, ewma, regime-detection, finance, iot-security, medical-monitoring
