@@ -10,9 +10,41 @@ Fracttalix is a single-file Python command-line tool designed for quick, cautiou
 
 Current version: 
 
-Fracttalix  v2.6.5 py "Sentinel"
+# Fracttalix – v7.0
 
-Overview
+**Latest Release: v7.0** (February 19, 2026)  
+**Zenodo Archive (v2.6.4 base + Sentinel v2.6.5)**:  
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.18180754.svg)](https://doi.org/10.5281/zenodo.18180754)  
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.18208542.svg)](https://doi.org/10.5281/zenodo.18208542)
+
+Fracttalix is a lightweight, single-file Python toolbox for exploratory fractal/rhythmic analysis and regime-aware anomaly detection in time series.
+
+**v7.0 Highlights**:
+- Two-sided anomaly detection (upward & downward)
+- Per-channel multivariate alerts + configurable aggregation
+- Soft regime reset (preserve baselines, gradual update)
+- NaN/Inf imputation (skip or mean)
+- State save/load via JSON
+- Enhanced per-channel explainability & regime probability
+- Improved efficiency (deques, validation, edge-case handling)
+
+**Quick Start (Sentinel v7.0)**:
+```python
+from fracttalix_sentinel import Detector_7_0  # or whatever class name you used
+
+detector = Detector_7_0(
+    alpha=0.12,
+    early_mult=2.75,
+    fixed_mult=3.2,
+    two_sided=True,
+    per_channel_detection=True,
+    volatility_adaptive=True
+)
+
+for value in your_time_series:  # scalar or list for multivariate
+    result = detector.update_and_check(value)
+    if result.get("early_alert"):
+        print("Early alert:", result)
 
 Fracttalix Sentinel is a lightweight, high-performance anomaly detection library optimized for early identification of deviations in time-series data. It combines adaptive EWMA thresholding with bidirectional CUSUM-based regime change detection to deliver low-latency alerts while maintaining strong specificity and minimal false positives.
 
