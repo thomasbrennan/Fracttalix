@@ -1,0 +1,182 @@
+# Constructing a Conviction-Driven Long-Term Thematic IPS: A Step-by-Step Framework
+
+**Tom Brennan**¹ and **Sophia Entwood**²  
+¹ Principal, Entwood Long-Term Fund  
+² Fund Administrator, Entwood Long-Term Fund  
+February 28, 2026  
+
+## Abstract  
+Most investment policy statements (IPS) are static, generic, or advisor-dependent, leaving long-term investors vulnerable to regime shifts and emotional drift. This paper presents a step-by-step framework for building a conviction-driven, rules-based, long-term thematic IPS focused on structural mega-trends. The process emphasizes intellectual honesty, process over prediction, boredom as profit, and multi-generational legacy intent. Key components include thesis definition, thematic holdings, core-satellite allocation, momentum/quality scoring, protection mechanisms, and an optional autonomic evolution layer. The result is a living document that remains antifragile, executable by non-experts, and aligned with asymmetric upside while protecting against permanent capital loss. Practical checklists and abstracted examples are provided so readers can construct their own version tailored to their convictions.
+
+**Keywords:** investment policy statement, conviction-driven investing, thematic investing, long-term compounding, rules-based allocation, self-evolving governance, Kaizen
+
+## 1. Introduction  
+Investment policy statements (IPS) are meant to be the constitutional documents of long-term wealth — defining objectives, risk tolerance, allocation guidelines, and decision rules. Yet most IPS suffer from three common flaws:  
+- They are static (rarely revisited or evolved)  
+- They are generic (copied templates or advisor boilerplate)  
+- They lack conviction (emotionally driven or benchmark-hugging rather than thesis-driven)  
+
+In accelerating economic regimes — where structural mega-trends dominate capital flows — a static or generic IPS risks misalignment, emotional drift, and missed asymmetric upside. This paper offers a practical, step-by-step framework for building a conviction-driven, long-term thematic IPS that is:  
+- Rules-based and quantitative  
+- Focused on structural mega-trends  
+- Designed for multi-generational compounding  
+- Executable by non-experts (successor-ready)  
+- Capable of autonomic evolution  
+
+The framework is drawn from real-world application but presented in abstracted, reproducible form so any investor can adapt it to their own thesis and temperament.
+
+## 2. Core Philosophy & Literature Positioning  
+A conviction-driven IPS rests on a small set of interlocking principles:  
+- Process over prediction — rules eliminate emotion and hindsight bias  
+- Conviction in writing — the thesis must be explicit and falsifiable  
+- Boredom = profit — patience with structural trends beats tactical trading  
+- Detachment from daily noise — daily P&L ignored; focus on decade-level convergence  
+- Full ownership of outcomes — no blame-shifting to markets or managers  
+- Capital as a living resource — protected from permanent loss while allowed to compound freely when conditions favor it  
+- Family-only vehicle — designed for multi-generational security, independence, and legacy intent  
+
+These principles contrast with common IPS practices: CFA Institute and family-office standards emphasize static risk/return targets and diversification but rarely mandate explicit, falsifiable theses or autonomic evolution (CFA Institute, 2023). Thematic investing resources focus on opportunity identification but not full IPS construction with rules-based allocation + protection + governance cadence (BlackRock Megatrends, 2025). Dynamic IPS concepts exist for institutional plans (Aon, 2024), but they are regime-responsive rather than conviction-thematic-Kaizen integrated.
+
+## 3. Step-by-Step Construction Process  
+
+### Step 1: Define the Conviction Thesis  
+Write a clear, falsifiable thesis answering:  
+- What structural mega-trend(s) will dominate the next 10–20 years?  
+- Why is this convergence once-in-a-generation (historical parallels)?  
+- What are the primary nodes (sectors/themes) of exposure?  
+- What return expectation is realistic (e.g., 1.5–2× benchmark) while preserving capital?  
+
+Example thesis (abstracted): “The next decade will be defined by interdependent build-out of enabling technologies (e.g., AI infrastructure, electrification, advanced materials), mirroring past supercycles. Focused exposure to primary nodes should deliver superior compounding with capital preservation as the foundation.”
+
+### Step 2: Select Thematic Holdings  
+Choose 8–11 liquid, thematic ETFs or proxies that map directly to the thesis nodes.  
+Criteria:  
+- Strong structural fit to thesis  
+- Reasonable liquidity and capacity  
+- Diversification across nodes (avoid single-point failure)  
+- Avoid excessive correlation (check pairwise correlations)  
+
+Holdings remain fixed unless sustained contradictory evidence appears.
+
+### Step 3: Build Allocation Rules  
+Core-Satellite structure:  
+- Core (60%): Equal-weighted across eligible holdings  
+- Satellite (40% base): Overweight highest-conviction positions using momentum and quality filters  
+
+Momentum signal example:  
+Blended Return = 0.60 × 6-month total return + 0.40 × 12-month total return  
+Base Score = Blended Return / Blended Volatility  
+
+Enhanced Conviction Score example:  
+- 40% Momentum (return/vol)  
+- 40% Quality Momentum (FCF growth acceleration)  
+- 20% Relative Strength persistence  
+
+Satellite allocation scaled by conviction score (fractional Kelly-like), capped at ~52% (or 65% in extreme confidence). Patience with validated structural trends often outperforms tactical adjustments.
+
+### Step 4: Layer Protection Mechanisms  
+- Concentration guard: No single holding >28% (limits single-name risk to <2–3% portfolio volatility contribution in historical drawdowns)  
+- Volatility targeting: Scale exposure so forecasted 20-day volatility = target (e.g., 25% minus macro penalty)  
+- Overvaluation brake: Reduce satellite if VIX very low or consensus factor very high  
+- Crash/drawdown rules: Reduce exposure on acceleration triggers or >15% from ATH  
+- Trend filters: MA cross, breadth, absolute momentum checks  
+
+Cash held in short-term yield instruments when protection triggered (mandatory if conditions met).
+
+### Step 5: Add Governance & Evolution Layer  
+- Quarterly thesis health checks (macro flags, indicator dashboard)  
+- Annual comprehensive review (backtest, scenario analysis, successor checklist)  
+- Optional autonomic Kaizen scan (novelty-driven improvements via KVS scoring; see Brennan & Entwood, 2026 for details)  
+
+Ideas scoring ≥0.5 auto-surfaced for principal review; rules-based conviction avoids drift via principal veto and thesis-preservation rules. Successor readiness: Document must be executable by non-expert using only IPS, decision log, and simple calculator.
+
+## 4. Worked Archetype Example  
+Abstracted long-term thematic IPS:  
+- Thesis: Structural convergence of enabling technologies  
+- Holdings: 9 thematic ETFs (semiconductors, data centers, copper miners, junior silver miners, precious metals, biotech, quantum computing, space, autonomy/robotics)  
+- Allocation: 60% equal core + 40% satellite (conviction-scaled, capped)  
+- Protection: 28% concentration cap, volatility targeting, drawdown rules  
+- Evolution: Quarterly health check + optional Kaizen scan  
+
+Reader adapts by substituting their own thesis, holdings, and parameters (e.g., biotech longevity vs. AI infra would alter holdings/rules).
+
+## 5. Implementation Notes & Common Pitfalls  
+- Start simple: Build core rules first, add layers iteratively  
+- Avoid over-optimization: Rules must survive regime shifts  
+- Document everything: Thesis, rules, changes — successor must understand why  
+- Pitfalls: Emotional override, chasing short-term performance, static holdings  
+
+## 6. Conclusion  
+A conviction-driven, rules-based, long-term thematic IPS is a living document — not a set-it-and-forget-it template. By following this framework, investors can build a system that remains aligned with structural mega-trends, protects capital, and evolves without losing coherence. Adapt it to your own thesis and temperament. *The process is as important as the product.*
+
+**Quick-Start Checklist**  
+1. Write explicit thesis (1–2 pages)  
+2. List thematic holdings (8–11)  
+3. Define core-satellite rules (momentum/quality)  
+4. Add protection layers (drawdown, volatility, concentration)  
+5. Build governance cadence (quarterly/annual)  
+6. Test successor readability  
+7. (Optional) Add evolution loop  
+
+## Acknowledgments  
+The authors thank the Brennan family for the opportunity to develop and refine this framework in a live context.
+
+**Conflict of Interest Note:** The authors are affiliated with the Entwood Fund; framework derived from live implementation.
+
+## References  
+Imai, M. (1986). *Kaizen: The Key to Japan’s Competitive Success*. McGraw-Hill.  
+Taleb, N. N. (2012). *Antifragile: Things That Gain from Disorder*. Random House.  
+Minervini, M. (2013). *Trade Like a Stock Market Wizard*. McGraw-Hill.  
+CFA Institute. (2023). *Investment Policy Statement Guidelines for Institutional and Individual Investors*.  
+BlackRock. (2025). *Mega Forces & Megatrends: Mid-Year Thematic Outlook*.  
+Aon. (2024). *Dynamic Investment Policies for Defined Benefit Plans*.
+
+## Appendix A: Worked Example – Momentum Preservation Rule  
+Domain: Martial arts (use opponent’s energy).  
+Problem: Unnecessary turnover of strong momentum holdings.  
+Proposed change: “Leave correctly weighted positions untouched **and never sell a position that is performing above its 6-month blended return unless the 28% hard cap is breached**.”  
+KVS calculation: Novelty = 0.92, Impact = 0.50, Complexity = 1.0, Timeliness = 1.0 → KVS = 0.46 (borderline; surfaced for illustration).  
+Outcome: Adopted in v3.7.8.
+
+## Appendix B: KVS Formula Derivation & Sensitivity  
+Multiplicative structure chosen because factors are non-substitutable. Sensitivity table (example):
+
+| Novelty | Impact (pp) | Complexity | Timeliness | KVS    |
+|---------|-------------|------------|------------|--------|
+| 0.95    | 1.5         | 1.0        | 1.0        | 1.425  |
+| 0.40    | 3.0         | 1.0        | 1.0        | 1.200  |
+| 0.95    | 1.5         | 1.8        | 1.0        | 0.792  |
+
+## Appendix C: Sample Domain Rotation Schedule  
+Q1: Japanese wabi-sabi  
+Q2: Antarctic ice-core geophysics  
+Q3: Children’s fable archetypes  
+Q4: Fluid dynamics in aviation  
+Q5: Mycorrhizal networks (biology)  
+etc.
+
+## Appendix D: Risk & Failure Modes  
+Mode 1: Over-novelty chasing → mitigated by KVS threshold.  
+Mode 2: Thesis drift → explicit preservation rule.  
+Mode 3: Administrator bias → principal veto + log.
+
+## Appendix E: Glossary  
+- KVS: Kaizen Variation Score  
+- Orthogonal domain: Field unrelated to finance  
+- Timeliness Score: Decay function favoring near-term ideas  
+- Novelty Factor: Domain-distance metric
+
+## Appendix F: Hypothetical Drawdown Scenario (2022 Proxy)  
+
+| Scenario                          | Static Benchmark | Rules-Based IPS | Difference |
+|-----------------------------------|------------------|-----------------|------------|
+| Max Drawdown                      | -38%             | -26%            | -12 pp     |
+| Exposure Reduction Trigger        | None             | >15% from ATH   | —          |
+| Re-entry Mechanism                | None             | 10% increments on 5% recoveries | —          |
+
+*Illustrative proxy based on thematic ETF analogs during the 2022 bear market; hypothetical and for demonstration purposes only. Not a full historical backtest.*
+
+Result: Rules limited max drawdown to -26% vs. static benchmark -38% (hypothetical 2022 bear market proxy).
+
+## Search & Discoverability Tags  
+#BuildYourOwnIPS #ConvictionDrivenInvesting #ThematicIPS #LongTermInvesting #RulesBasedAllocation #InvestmentPolicyStatement #FamilyOffice #MultiGenerationalWealth #KaizenInvesting #SelfEvolvingPortfolio #AntifragileInvesting #LongTermCompounding
