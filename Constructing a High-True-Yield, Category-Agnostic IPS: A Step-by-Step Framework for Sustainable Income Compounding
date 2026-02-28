@@ -1,0 +1,151 @@
+Constructing a High-True-Yield, Category-Agnostic IPS: A Step-by-Step Framework for Sustainable Income Compounding
+
+Tom Brennan¹ and Sophia Entwood²  
+¹ Independent Investor & Framework Developer  
+² Investment Process Consultant  
+February 28, 2026  
+
+## Abstract  
+Most income-oriented investment policy statements (IPS) fall into one of two traps: overly conservative low-yield strategies that preserve capital but fail to keep pace with inflation and spending needs, or high-headline-yield vehicles that deliver eye-catching distributions while quietly eroding principal through return of capital (ROC) and NAV decay. This paper presents a step-by-step, reproducible framework for building a conviction-driven, rules-based, high-true-yield IPS that is category-agnostic, trend-led, and optimized for sustainable new-cash generation. The process emphasizes true economic yield (AEY) as the primary gating metric, strict trend alignment as first priority, relative ranking via a composite TEYR score, weekly cash pooling with dynamic allocation, proportional decay penalties, tiered caution adjustments, and built-in antifragility mechanisms. Practical checklists, abstracted examples, and governance cadence are provided so fiduciaries and family offices can adapt the framework to their own income, risk, and legacy objectives.
+
+**Keywords:** investment policy statement, true economic yield, category-agnostic investing, high-yield compounding, ROC awareness, trend-led allocation, relative ranking, weekly reinvestment, self-evolving governance, sustainable income
+
+## 1. Introduction  
+Investment policy statements for income-seeking investors are intended to serve as enduring governance documents—defining objectives, yield requirements, risk controls, and decision rules. Yet most suffer from persistent shortcomings:  
+- Over-reliance on headline yield without measuring true economic yield (AEY)  
+- Static or infrequent rebalancing that ignores regime shifts  
+- Lack of systematic trend alignment, leading to counter-trend exposure  
+- Insufficient protection against return-of-capital illusion and NAV erosion  
+
+In a world of accelerating volatility and evolving distribution structures, these flaws can result in unreliable cash flow, permanent capital impairment, or missed compounding opportunities. This paper offers a practical, step-by-step framework for constructing a high-true-yield, category-agnostic IPS that is:  
+- Rules-based and quantitative  
+- Focused on real (non-ROC) income and trend alignment  
+- Designed for weekly compounding and multi-generational income security  
+- Executable by non-experts (successor-ready)  
+- Capable of controlled, incremental evolution  
+
+The framework is presented in generalized, abstracted form so any fiduciary, family office, or individual investor can adapt it to their specific goals, risk tolerance, and available investment vehicles.
+
+## 2. Core Philosophy  
+The framework rests on five interlocking principles:  
+- True economic yield is the only yield that compounds — headline distributions are irrelevant if they primarily return investor capital¹  
+- Trend alignment is first priority — allocating against the prevailing trend is mathematically suicidal  
+- Relative ranking over absolute cutoffs — the best available opportunity at any moment should be utilized, not an ideal that may not exist  
+- Weekly execution eliminates emotion — cash flow is pooled and redeployed systematically  
+- Continuous, low-risk refinement (Kaizen) keeps the IPS alive — small, data-validated improvements compound over decades  
+
+These principles stand in contrast to conventional high-yield approaches, which often prioritize stated yield or broad diversification without enforcing AEY thresholds, trend pre-filters, or dynamic allocation (Morningstar, 2025; CFA Institute, 2023).
+
+¹ “Boredom = profit” — patience with high-AEY compounds while others chase noise.
+
+## 3. Step-by-Step Construction Process  
+
+### Step 1: Define the Income Thesis  
+Write a clear, falsifiable thesis that answers:  
+- What is the primary goal (sustained high real income with compounding)?  
+- What minimum true economic yield (AEY) is required for sustainability?  
+- What structural characteristics define acceptable vehicles (high distribution, low destructive ROC, trend alignment)?  
+- What return expectation is realistic while protecting capital?  
+
+Example thesis (abstracted): “Sustainable family income requires vehicles delivering high true economic yield (AEY ≥40% target) with trend alignment and controlled decay. Weekly compounding of real cash flow, not headline yield, will build capital across decades.”
+
+### Step 2: Establish Minimal Floor Filters  
+Define non-negotiable gates that protect the thesis:  
+- Stated annualized distribution yield ≥15% (realistic floor for high-yield universe)  
+- ROC <95% in latest distribution (prevents extreme capital return)  
+- Trend alignment (trading above both 10-month and 50-day simple moving average)  
+
+These floors ensure only viable candidates enter the ranking engine.
+
+### Step 3: Build the TEYR Ranking Engine  
+Construct a composite 0–100 score (True Economic Yield Rank) using weighted factors:  
+- Core: Adjusted Economic Yield (AEY) 30% and True Yield Quality Score (TYQS) 20%  
+- Secondary: NAV Decay Penalty (10%), trend/momentum alignment (10–15%), quality metrics (ROE, leverage), payout stability, expense/tax efficiency, liquidity, etc.  
+
+Adjusted Economic Yield (AEY) is calculated as:  
+\[ AEY = \frac{\text{Distributions} - \text{ROC portion}}{\text{Average NAV}} \times 100\% \quad (\text{annualized}) \]  
+This excludes return of investor capital, focusing on sustainable new cash generation (e.g., net investment income + sustainable capital gains; see CEF/BDC reporting via NII/sustainable yield metrics).
+
+TEYR is a relative ranking tool: the highest-scoring available vehicles always qualify. Detailed factor definitions and calculation spreadsheet templates can be adapted by users.
+
+### Step 4: Define Allocation & Reinvestment Rules  
+- Pod size n: Determined quarterly via Sharpe-elbow simulation (typically 2–3).  
+- Weighting: Proportional to relative TEYR scores.  
+- Tiered Weighting Adjustment: Apply caution penalties to lower-quality candidates (e.g., 15% TEYR reduction for moderate decay or AEY shortfall).  
+- Weekly pooling: All cash (dividends + new deposits) pooled at week-end.  
+- Purchase timing: Thursday or Friday open to minimize ex-dividend price drag.  
+
+### Step 5: Layer Protection & Evolution Mechanisms  
+- Cash Deployment Timeout: If cash buffer >50% of sleeve value for 4 consecutive weeks, temporarily relax stated yield floor to ≥18% for one cycle only.  
+- Hybrid Fallback: If no investments qualify for 4 consecutive weeks, automatically transfer 100% of pooled cash to a designated growth sleeve.  
+- Quality Warning Flag (weekly statement): Green (high AEY/low decay), Yellow (moderate caution), Red (significant concern requiring review).  
+- Quarterly sharpening: Backtest prior 12 months of decisions vs. benchmark; adjust weights if traceable underperformance >2%.  
+
+## 4. Worked Archetype Example (Abstracted)  
+- Thesis: Sustainable income via high true economic yield  
+- Minimal floors: Stated yield ≥15%, ROC <95%, trend alignment  
+- TEYR ranking with decay penalty and tiered weighting  
+- Pod: Top 2–3 by TEYR, weekly pooling on Thursday/Friday  
+- Protection: Cash timeout + hybrid fallback to Growth Sleeve  
+- Evolution: Quarterly sharpening + Quality Warning Flag  
+
+Adapt by substituting your own yield thesis, floors, and parameters.
+
+## 5. Implementation Notes & Common Pitfalls  
+- Start simple: Core AEY + trend filters first, add layers iteratively  
+- Avoid over-optimization: Rules must survive low-opportunity regimes  
+- Document everything: Thesis, rules, changes — successor must understand why  
+- Pitfalls: Chasing headline yield, ignoring decay, static allocation, emotional override  
+
+## 6. Conclusion  
+A high-true-yield, category-agnostic IPS is a living document — not a static template. By following this framework, fiduciaries and family offices can build a system that delivers sustainable new cash flow, adapts to market regimes, and evolves without losing coherence. Adapt it to your own income and legacy goals. *The process is as important as the product.*
+
+**Quick-Start Checklist**  
+1. Write explicit income thesis (1–2 pages)  
+2. Define minimal floor filters (yield, ROC, trend)  
+3. Build TEYR ranking with decay penalty and tiered weighting  
+4. Add weekly pooling, Thursday/Friday purchase timing, and protection rules  
+5. Implement Quality Warning Flag and quarterly sharpening  
+6. Test successor readability  
+7. (Optional) Add cash timeout and hybrid fallback  
+
+## Acknowledgments  
+The authors thank the broader investment community for the collective insights that informed this framework.
+
+**Conflict of Interest Note:** None declared.
+
+## References  
+Imai, M. (1986). *Kaizen: The Key to Japan’s Competitive Success*. McGraw-Hill.  
+Taleb, N. N. (2012). *Antifragile: Things That Gain from Disorder*. Random House.  
+CFA Institute. (2023). *Investment Policy Statement Guidelines for Institutional and Individual Investors*.  
+Morningstar. (2025). *High-Yield ETF Research Report*.  
+AQR. (2024). *Trend-Following in Income Strategies*.  
+CEF Association. (2025). *Report on Sustainable Distributions in Closed-End Funds*.  
+Nuveen. (2025). *High-Yield Income Strategies: ROC and Sustainability Analysis*.
+
+## Supplementary Materials: Metrics, Examples & Evolution Details  
+
+### Appendix A: Hypothetical TEYR Ranking Example  
+| Fund | Stated Yield | ROC % | AEY % | Decay % | Trend Status | TEYR Score | Flag | Adjusted Weight |
+|------|--------------|-------|-------|---------|--------------|------------|------|-----------------|
+| A    | 45%          | 10%   | 40.5% | 4%      | Above SMAs   | 92         | Green| Full            |
+| B    | 38%          | 25%   | 28.5% | 7%      | Above SMAs   | 78         | Yellow| 15% penalty    |
+| C    | 30%          | 80%   | 6%    | 12%     | Above SMAs   | 65         | Red  | Excluded        |
+
+*Illustrative hypothetical example using simplified data; actual TEYR scores depend on full factor weights, current market conditions, and data sources.*
+
+### Appendix B: NAV Decay Penalty Formula  
+NAV Decay Penalty Score = 100 - min(100, max(0, (NAV Decay % - 5) × 20))  
+Example: 7% decay → 60 penalty score → 40% reduction in TEYR contribution.
+
+### Appendix C: Sample Quality Warning Flag  
+Green: AEY ≥40%, decay ≤5% → Normal operation.  
+Yellow: AEY 25–39% or decay 5–10% → Caution, reduced weighting possible.  
+Red: AEY <25% or decay >10% → Administrator review required before allocation.
+
+### Appendix D: Hypothetical Cash Drag Scenario  
+Cash >50% for 4 weeks → Timeout triggers → relax to ≥18% yield floor.  
+No qualifiers for 4 weeks → Hybrid fallback → cash flows to growth sleeve.
+
+## Search & Discoverability Tags  
+#HighYieldInvesting #TrueEconomicYield #CategoryAgnosticInvesting #SustainableIncome #ROCawareness #TrendLedAllocation #RelativeRanking #WeeklyReinvestment #InvestmentPolicyStatement #FamilyOffice #AntifragileInvesting #KaizenInvesting #FiduciaryFramework #IncomeCompounding #YieldTrapAvoidance #SustainableDistributions #HighYieldIPS #ClosedEndFunds #BDCInvesting #REITIncome #SelfEvolvingPortfolio #LongTermWealth #MultiGenerationalIncome
