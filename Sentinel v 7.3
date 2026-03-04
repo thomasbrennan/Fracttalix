@@ -1,0 +1,531 @@
+# fracttalix_sentinel v7.3 py
+# Fracttalix Sentinel v7.3 — Adaptive early detection with regime awareness
+# Updated: Optional Numba JIT, parallel surrogates, tqdm progress/verbose flag, proper FFT phase randomization
+# v7.2: Buffered CSV export (low-overhead for high-freq)
+# v7.3: Buffered CSV with empty-file header fix, flush on reset, doc polish
+# Designed for finance, medical, infrastructure/IoT/security monitoring, and research
+
+from collections import deque
+import math
+import warnings
+import json
+from typing import Dict, Any, Optional, List, Tuple, Callable, Union
+import multiprocessing as mp
+from multiprocessing import Pool, cpu_count
+import numpy as np
+import csv
+import os
+
+# Optional imports (guarded)
+try:
+    from numba import njit
+except ImportError:
+    def njit(*args, **kwargs):
+        def decorator(func):
+            return func
+        return decorator
+
+try:
+    from tqdm import tqdm
+except ImportError:
+    def tqdm(iterable, *args, **kwargs):
+        return iterable
+
+class Detector_7_3:
+    """
+    Enhanced lightweight, regime-aware anomaly detector.
+    Features:
+    - Two-sided alerts (upper & lower anomalies)
+    - Per-channel multivariate detection with aggregation flexibility
+    - Soft/full regime reset options
+    - NaN/Inf imputation (skip or mean)
+    - State persistence (JSON save/load)
+    - Volatility-adaptive smoothing
+    - Optional Numba JIT for speed (if installed)
+    - Optional parallel surrogates & tqdm progress
+    - Proper FFT-based phase randomization for surrogates
+    - Buffered CSV export (low filesystem overhead: flush on interval or manually)
+    
+    When to Use Fracttalix Sentinel vs. Other Tools:
+    | Feature / Need                          | Fracttalix Sentinel v7.3                     | Alternatives (PyOD, ADTK, ruptures, etc.) |
+    |-----------------------------------------|----------------------------------------------|--------------------------------------------|
+    | Single-file, no install/dependencies    | Yes                                          | No                                         |
+    | Real-time / streaming capable           | Yes (update_and_check)                       | Sometimes (heavier setup)                  |
+    | Two-sided + per-channel multivariate    | Yes                                          | Rare                                       |
+    | Soft regime reset (preserve baselines)  | Yes                                          | Almost never                               |
+    | State persistence (JSON save/load)      | Yes                                          | Rare                                       |
+    | Buffered CSV export (low-overhead)      | Yes (interval or manual flush)               | Varies (often manual)                      |
+    | Volatility-adaptive smoothing           | Yes                                          | Sometimes                                  |
+    | Built-in surrogates for significance    | Yes (FFT phase randomization)                | Yes (but heavier)                          |
+    | Best for                                | Quick screening, lightweight monitoring, exploratory work in finance/HRV/IoT/research | Full-featured research pipelines           |
+    """
+    def __init__(
+        self,
+        # === Core parameters ===
+        alpha: float = 0.12,
+        early_mult: float = 2.75,
+        fixed_mult: float = 3.2,
+        warm_up_period: int = 60,
+        use_fixed_during_warmup: bool = True,
+        two_sided: bool = True,
+
+        # === Regime change detection ===
+        cusum_threshold: float = 5.0,
+        reset_after_regime_change: Union[bool, str] = "full",
+
+        # === Multivariate & aggregation ===
+        multivariate: bool = False,
+        per_channel_detection: bool = True,
+        aggregation_func: Callable[[List[float]], float] = lambda x: sum(x)/len(x),
+        alert_if_any_channel: bool = True,
+
+        # === Volatility adaptation ===
+        volatility_adaptive: bool = False,
+        vol_min_factor: float = 0.6,
+        vol_max_factor: float = 2.0,
+
+        # === Extras ===
+        verbose_explain: bool = False,
+        alert_callback: Optional[Callable[[Dict[str, Any]], None]] = None,
+        impute_method: str = "skip",
+        parallel_surrogates: bool = False,
+        numba_enabled: bool = True,
+        csv_output_path: Optional[str] = None,          # Optional CSV file path
+        csv_flush_interval: int = 60,                   # Flush buffer every N alerts (0 = manual only)
+    ):
+        if not (0 < alpha <= 1):
+            raise ValueError("alpha must be between 0 and 1")
+        if warm_up_period < 10:
+            raise ValueError("warm_up_period should be at least 10")
+        if isinstance(reset_after_regime_change, bool):
+            reset_after_regime_change = "full" if reset_after_regime_change else False
+        if reset_after_regime_change not in [False, "full", "soft"]:
+            raise ValueError("reset_after_regime_change must be False, 'full', or 'soft'")
+
+        self.alpha = alpha
+        self.early_mult = early_mult
+        self.fixed_mult = fixed_mult
+        self.warm_up_period = warm_up_period
+        self.use_fixed_during_warmup = use_fixed_during_warmup
+        self.two_sided = two_sided
+
+        self.cusum_threshold = cusum_threshold
+        self.reset_after_regime_change = reset_after_regime_change
+
+        self.multivariate = multivariate
+        self.per_channel_detection = per_channel_detection
+        self.aggregation_func = aggregation_func
+        self.alert_if_any_channel = alert_if_any_channel
+        self.volatility_adaptive = volatility_adaptive
+        self.vol_min_factor = vol_min_factor
+        self.vol_max_factor = vol_max_factor
+
+        self.verbose_explain = verbose_explain
+        self.alert_callback = alert_callback
+        self.impute_method = impute_method
+        self.parallel_surrogates = parallel_surrogates
+        self.numba_enabled = numba_enabled
+        self.csv_output_path = csv_output_path
+        self.csv_flush_interval = csv_flush_interval
+        self.csv_buffer: List[Dict] = []  # In-memory buffer for CSV
+
+        # State
+        self.count = 0
+        self.values_deque: deque = deque(maxlen=warm_up_period * 2)
+
+        self.ewma: Optional[float] = None
+        self.dev_ewma: Optional[float] = None
+        self.baseline_mean: Optional[float] = None
+        self.baseline_std: Optional[float] = None
+
+        self.cusum_pos = 0.0
+        self.cusum_neg = 0.0
+
+        # Multivariate state
+        self.n_channels: int = 0
+        self.channel_ewmas: Optional[List[float]] = None
+        self.channel_dev_ewmas: Optional[List[float]] = None
+        self.channel_baselines: Optional[List[Tuple[float, float]]] = None
+
+    def reset(self, soft: bool = False) -> None:
+        """Reset detection state. If soft=True, preserve baselines and update gradually."""
+        self.count = 0
+        self.values_deque.clear()
+        self.flush_csv()  # Flush any buffered CSV on reset
+        self.csv_buffer = []
+
+        if not soft:
+            self.ewma = None
+            self.dev_ewma = None
+            self.baseline_mean = None
+            self.baseline_std = None
+            self.channel_ewmas = None
+            self.channel_dev_ewmas = None
+            self.channel_baselines = None
+
+        self.cusum_pos = 0.0
+        self.cusum_neg = 0.0
+
+    def save_state(self) -> str:
+        """Save current state to JSON string for persistence."""
+        state = {
+            "count": self.count,
+            "ewma": self.ewma,
+            "dev_ewma": self.dev_ewma,
+            "baseline_mean": self.baseline_mean,
+            "baseline_std": self.baseline_std,
+            "cusum_pos": self.cusum_pos,
+            "cusum_neg": self.cusum_neg,
+            "channel_ewmas": self.channel_ewmas,
+            "channel_dev_ewmas": self.channel_dev_ewmas,
+            "channel_baselines": self.channel_baselines,
+            "n_channels": self.n_channels,
+        }
+        return json.dumps(state)
+
+    def load_state(self, state_json: str) -> None:
+        """Load state from JSON string."""
+        state = json.loads(state_json)
+        self.count = state["count"]
+        self.ewma = state["ewma"]
+        self.dev_ewma = state["dev_ewma"]
+        self.baseline_mean = state["baseline_mean"]
+        self.baseline_std = state["baseline_std"]
+        self.cusum_pos = state["cusum_pos"]
+        self.cusum_neg = state["cusum_neg"]
+        self.channel_ewmas = state["channel_ewmas"]
+        self.channel_dev_ewmas = state["channel_dev_ewmas"]
+        self.channel_baselines = state["channel_baselines"]
+        self.n_channels = state["n_channels"]
+
+    def _initialize_from_warmup(self) -> None:
+        if len(self.values_deque) == 0:
+            return
+
+        if self.multivariate and self.n_channels > 0:
+            channel_values = [[] for _ in range(self.n_channels)]
+            for v in self.values_deque:
+                if isinstance(v, (list, tuple)) and len(v) == self.n_channels:
+                    for ch, val in enumerate(v):
+                        channel_values[ch].append(val)
+
+            self.channel_baselines = []
+            self.channel_ewmas = []
+            self.channel_dev_ewmas = []
+            aggregated = []
+            for ch_values in channel_values:
+                if not ch_values:
+                    continue
+                ch_mean = sum(ch_values) / len(ch_values)
+                ch_var = sum((x - ch_mean) ** 2 for x in ch_values) / len(ch_values)
+                ch_std = math.sqrt(ch_var) if ch_var > 0 else 1e-6
+                self.channel_baselines.append((ch_mean, ch_std))
+                self.channel_ewmas.append(ch_mean)
+                self.channel_dev_ewmas.append(ch_std)
+                aggregated.append(ch_mean)
+
+            if aggregated:
+                self.baseline_mean = self.aggregation_func(aggregated)
+                self.baseline_std = self.aggregation_func(self.channel_dev_ewmas)
+                self.ewma = self.baseline_mean
+                self.dev_ewma = self.baseline_std
+
+        else:
+            aggregated = [v for v in self.values_deque if isinstance(v, (int, float))]
+            if not aggregated:
+                return
+            n = len(aggregated)
+            self.baseline_mean = sum(aggregated) / n
+            variance = sum((x - self.baseline_mean) ** 2 for x in aggregated) / n
+            self.baseline_std = math.sqrt(variance) if variance > 0 else 1e-6
+            self.ewma = self.baseline_mean
+            self.dev_ewma = self.baseline_std
+
+    def update_and_check(self, value: Union[float, List[float]]) -> Dict[str, Any]:
+        # Input validation and imputation
+        if self.multivariate:
+            if not isinstance(value, (list, tuple)):
+                raise ValueError("Multivariate mode requires list/tuple input")
+            if self.n_channels == 0:
+                self.n_channels = len(value)
+            elif len(value) != self.n_channels:
+                raise ValueError(f"Expected {self.n_channels} channels, got {len(value)}")
+            cleaned_value = []
+            for v in value:
+                if not math.isfinite(v):
+                    if self.impute_method == "mean" and self.channel_ewmas:
+                        cleaned_value.append(self.channel_ewmas[len(cleaned_value)])
+                    elif self.impute_method == "skip":
+                        return {"status": "skipped", "message": "Invalid input skipped"}
+                    else:
+                        warnings.warn("Invalid value; using 0 as fallback", RuntimeWarning)
+                        cleaned_value.append(0.0)
+                else:
+                    cleaned_value.append(v)
+            value = cleaned_value
+        else:
+            if not math.isfinite(value):
+                if self.impute_method == "mean" and self.ewma is not None:
+                    value = self.ewma
+                elif self.impute_method == "skip":
+                    return {"status": "skipped", "message": "Invalid input skipped"}
+                else:
+                    warnings.warn("Invalid value; using 0 as fallback", RuntimeWarning)
+                    value = 0.0
+
+        self.count += 1
+        self.values_deque.append(value)
+
+        # Warm-up phase
+        if self.count <= self.warm_up_period:
+            result = {"early_alert": False, "confirmed_alert": False, "status": "warm_up"}
+
+            if self.use_fixed_during_warmup and len(self.values_deque) >= 10:
+                self._initialize_from_warmup()
+                result = self._compute_alerts(value)
+                self.reset(soft=True)
+
+            if self.verbose_explain:
+                result["progress"] = f"{self.count}/{self.warm_up_period}"
+
+            self._trigger_alert_callback(result)
+            self._buffer_csv_result(result)
+            return result
+
+        # Initialize baselines
+        if self.baseline_mean is None:
+            self._initialize_from_warmup()
+
+        # Normal operation
+        deviations = []
+        if self.multivariate and self.per_channel_detection:
+            early_alerts = [False] * self.n_channels
+            confirmed_alerts = [False] * self.n_channels
+            channel_details = []
+            for ch in range(self.n_channels):
+                ch_value = value[ch]
+                current_alpha = self._get_adaptive_alpha(ch)
+                self.channel_ewmas[ch] = current_alpha * ch_value + (1 - current_alpha) * self.channel_ewmas[ch]
+                deviation = ch_value - self.channel_ewmas[ch]
+                self.channel_dev_ewmas[ch] = current_alpha * abs(deviation) + (1 - current_alpha) * self.channel_dev_ewmas[ch]
+                deviations.append(deviation)
+
+                early_upper = self.channel_ewmas[ch] + self.early_mult * self.channel_dev_ewmas[ch]
+                confirmed_upper = self.channel_baselines[ch][0] + self.fixed_mult * self.channel_baselines[ch][1]
+                early_alerts[ch] = ch_value > early_upper or (self.two_sided and ch_value < self.channel_ewmas[ch] - self.early_mult * self.channel_dev_ewmas[ch])
+                confirmed_alerts[ch] = ch_value > confirmed_upper or (self.two_sided and ch_value < self.channel_baselines[ch][0] - self.fixed_mult * self.channel_baselines[ch][1])
+
+                if self.verbose_explain:
+                    channel_details.append({
+                        "channel": ch,
+                        "value": round(ch_value, 4),
+                        "ewma": round(self.channel_ewmas[ch], 4),
+                        "dev_ewma": round(self.channel_dev_ewmas[ch], 4),
+                        "early_alert": early_alerts[ch],
+                        "confirmed_alert": confirmed_alerts[ch],
+                    })
+
+            early_alert = any(early_alerts) if self.alert_if_any_channel else all(early_alerts)
+            confirmed_alert = any(confirmed_alerts) if self.alert_if_any_channel else all(confirmed_alerts)
+            current = self.aggregation_func(value)
+            deviation = sum(deviations) / self.n_channels
+
+            result = {
+                "early_alert": early_alert,
+                "confirmed_alert": confirmed_alert,
+                "status": "active",
+                "current": round(current, 4),
+            }
+
+            if self.verbose_explain:
+                result["channel_details"] = channel_details
+
+        else:
+            current = self.aggregation_func(value) if self.multivariate else value
+            current_alpha = self._get_adaptive_alpha()
+            self.ewma = current_alpha * current + (1 - current_alpha) * self.ewma
+            deviation = current - self.ewma
+            self.dev_ewma = current_alpha * abs(deviation) + (1 - current_alpha) * self.dev_ewma
+            result = self._compute_alerts(current)
+
+            early_alert = result["early_alert"]
+            confirmed_alert = result["confirmed_alert"]
+
+        # Bidirectional CUSUM
+        k = 0.5 * (self.dev_ewma if not self.multivariate or not self.per_channel_detection else sum(self.channel_dev_ewmas) / self.n_channels)
+        self.cusum_pos = max(0, self.cusum_pos + (deviation - k))
+        self.cusum_neg = max(0, self.cusum_neg + (-deviation - k))
+
+        cusum_dev = self.dev_ewma if not self.multivariate or not self.per_channel_detection else sum(self.channel_dev_ewmas) / self.n_channels
+        regime_change = (
+            self.cusum_pos > (self.cusum_threshold * cusum_dev) or
+            self.cusum_neg > (self.cusum_threshold * cusum_dev)
+        )
+
+        if regime_change and self.reset_after_regime_change:
+            direction = "upward" if self.cusum_pos > self.cusum_neg else "downward"
+            if self.reset_after_regime_change == "full":
+                self.reset()
+            else:
+                self.reset(soft=True)
+                self._initialize_from_warmup()
+            result = {
+                "early_alert": False,
+                "confirmed_alert": False,
+                "status": "regime_reset",
+                "message": f"{direction.capitalize()} regime change detected — {'full' if self.reset_after_regime_change == 'full' else 'soft'} reset"
+            }
+            self._trigger_alert_callback(result)
+            self._buffer_csv_result(result)
+            return result
+
+        # Build result
+        result = {
+            "early_alert": early_alert,
+            "confirmed_alert": confirmed_alert,
+            "status": "active",
+            "current": round(current, 4),
+            "ewma": round(self.ewma, 4) if self.ewma is not None else None,
+            "dev_ewma": round(self.dev_ewma, 4) if self.dev_ewma is not None else None,
+            "cusum_pos": round(self.cusum_pos, 2),
+            "cusum_neg": round(self.cusum_neg, 2),
+        }
+
+        if self.two_sided:
+            result["early_lower_threshold"] = round(self.ewma - self.early_mult * self.dev_ewma, 4) if self.ewma is not None and self.dev_ewma is not None else None
+
+        if self.verbose_explain:
+            result["explanation"] = (
+                f"Deviation {round(deviation, 3)} | "
+                f"CUSUM + {result['cusum_pos']} / - {result['cusum_neg']} | "
+                f"vs threshold {round(self.cusum_threshold * cusum_dev, 2)}"
+            )
+
+        self._trigger_alert_callback(result)
+        self._buffer_csv_result(result)
+        return result
+
+    def _get_adaptive_alpha(self, channel: Optional[int] = None) -> float:
+        """Get volatility-adaptive alpha."""
+        current_alpha = self.alpha
+        if self.volatility_adaptive:
+            if channel is not None and self.channel_ewmas and self.channel_dev_ewmas:
+                rel_vol = self.channel_dev_ewmas[channel] / (abs(self.channel_ewmas[channel]) + 1e-9)
+            else:
+                rel_vol = self.dev_ewma / (abs(self.ewma) + 1e-9) if self.dev_ewma is not None and self.ewma is not None else 0
+            vol_factor = max(self.vol_min_factor, min(self.vol_max_factor, 1.0 + rel_vol * 1.5))
+            current_alpha *= vol_factor
+        return current_alpha
+
+    def _compute_alerts(self, value: Union[float, List[float]]) -> Dict[str, Any]:
+        """Compute alerts for aggregate value."""
+        current = self.aggregation_func(value) if isinstance(value, (list, tuple)) else value
+        early_upper = self.ewma + self.early_mult * self.dev_ewma if self.ewma is not None and self.dev_ewma is not None else 0
+        confirmed_upper = self.baseline_mean + self.fixed_mult * self.baseline_std if self.baseline_mean is not None and self.baseline_std is not None else 0
+        early_alert = current > early_upper
+        confirmed_alert = current > confirmed_upper
+        early_lower = None
+        confirmed_lower = None
+        if self.two_sided:
+            early_lower = self.ewma - self.early_mult * self.dev_ewma if self.ewma is not None and self.dev_ewma is not None else 0
+            confirmed_lower = self.baseline_mean - self.fixed_mult * self.baseline_std if self.baseline_mean is not None and self.baseline_std is not None else 0
+            early_alert = early_alert or current < early_lower
+            confirmed_alert = confirmed_alert or current < confirmed_lower
+
+        return {
+            "early_alert": early_alert,
+            "confirmed_alert": confirmed_alert,
+            "early_threshold": round(early_upper, 4),
+            "early_lower_threshold": round(early_lower, 4) if early_lower is not None else None,
+            "confirmed_threshold": round(confirmed_upper, 4),
+            "confirmed_lower_threshold": round(confirmed_lower, 4) if confirmed_lower is not None else None,
+        }
+
+    def _trigger_alert_callback(self, result: Dict) -> None:
+        if self.alert_callback and (result.get("early_alert") or result.get("confirmed_alert")):
+            try:
+                self.alert_callback(result)
+            except Exception as e:
+                warnings.warn(f"Alert callback failed: {e}", RuntimeWarning)
+
+    def _buffer_csv_result(self, result: Dict) -> None:
+        """Buffer alert/result for CSV export (low-overhead)."""
+        if self.csv_output_path is None:
+            return
+
+        row = result.copy()
+        row["timestamp"] = result.get("timestamp", None)  # Add if you track time
+        self.csv_buffer.append(row)
+
+        # Auto-flush if interval reached
+        if self.csv_flush_interval > 0 and len(self.csv_buffer) >= self.csv_flush_interval:
+            self.flush_csv()
+
+    def flush_csv(self) -> None:
+        """Flush buffered results to CSV file (append mode)."""
+        if not self.csv_buffer or self.csv_output_path is None:
+            return
+
+        file_exists = os.path.exists(self.csv_output_path)
+        file_empty = file_exists and os.path.getsize(self.csv_output_path) == 0
+
+        with open(self.csv_output_path, 'a', newline='') as f:
+            writer = csv.DictWriter(f, fieldnames=self.csv_buffer[0].keys())
+            if not file_exists or file_empty:
+                writer.writeheader()
+            writer.writerows(self.csv_buffer)
+
+        self.csv_buffer = []  # Clear buffer
+
+    # Numba-accelerated cumulative sum (example for slow loops)
+    @njit
+    def _cumsum_jit(arr: np.ndarray) -> np.ndarray:
+        """JIT-compiled cumulative sum for speed."""
+        n = len(arr)
+        out = np.zeros(n, dtype=np.float64)
+        out[0] = arr[0]
+        for i in range(1, n):
+            out[i] = out[i-1] + arr[i]
+        return out
+
+    def phase_randomize(self, data: np.ndarray) -> np.ndarray:
+        """Proper phase randomization via FFT."""
+        if not isinstance(data, np.ndarray):
+            data = np.array(data, dtype=float)
+        if data.ndim != 1:
+            raise ValueError("phase_randomize expects 1D array")
+        if len(data) == 0:
+            return data.copy()
+
+        fft_vals = np.fft.rfft(data)
+        random_phase = np.random.uniform(0, 2 * np.pi, size=len(fft_vals))
+        fft_vals = np.abs(fft_vals) * np.exp(1j * random_phase)
+        randomized = np.fft.irfft(fft_vals, n=len(data))
+        return randomized
+
+    def generate_surrogates(self, data: Union[np.ndarray, List[float]], n_surrogates: int = 1000) -> List[np.ndarray]:
+        """Generate phase-randomized surrogates. Optional parallel mode."""
+        data = np.asarray(data, dtype=float)
+        if data.ndim != 1:
+            raise ValueError("generate_surrogates expects 1D data")
+
+        def surrogate_worker(_):
+            return self.phase_randomize(data)
+
+        if self.parallel_surrogates and n_surrogates >= 100:
+            with Pool(cpu_count()) as p:
+                surrogates = list(tqdm(
+                    p.imap(surrogate_worker, range(n_surrogates)),
+                    total=n_surrogates,
+                    desc="Generating surrogates",
+                    disable=not self.verbose_explain
+                ))
+        else:
+            surrogates = [
+                surrogate_worker(_) for _ in tqdm(
+                    range(n_surrogates),
+                    desc="Generating surrogates",
+                    disable=not self.verbose_explain
+                )
+            ]
+        return surrogates
