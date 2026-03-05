@@ -1,162 +1,170 @@
-# Meta-Kaizen: A General Theory of Self-Evolving Continuous Improvement
+# Meta-Kaizen
 
-**Brennan, Entwood & Claude (Anthropic) — March 2026**
-**Entwood Hollow Research Station, Douglas City, California**
+**A General Theory and Algorithmic Framework for the Mathematical Formalization of Self-Evolving Continuous Improvement Across Arbitrary Governance Substrates**
 
------
-https://doi.org/10.5281/zenodo.18876787
+Brennan, Entwood & Claude (Anthropic) — March 2026
 
-Looking for a Kaizen scoring tool? A continuous improvement framework that actually does the math? Meta-Kaizen is an open-source system that scores improvement candidates mathematically, logs every decision with a tamper-evident audit trail, and captures the reasoning behind human overrides so that institutional knowledge survives personnel change. It works across any domain — healthcare, finance, manufacturing, software, agriculture — without modification.
 -----
 
 ## What This Is
 
-This repository contains three companion working papers constituting the Meta-Kaizen trilogy:
+Kaizen — the philosophy of continuous incremental improvement — has been practiced across manufacturing, healthcare, software engineering, and public governance for nearly four decades. It has never been formally mathematized. No substrate-agnostic, algorithmically reproducible, self-referential framework has existed for scoring, ranking, and governing improvement candidates across arbitrary structured processes or documents.
 
-> **Paper 1:** *Meta-Kaizen: A General Theory and Algorithmic Framework for the Mathematical Formalization of Self-Evolving Continuous Improvement Across Arbitrary Governance Substrates*
+This repository contains the research program that closes that gap.
 
-> **Paper 2:** *Meta-Kaizen: From General Theory to Global Standard — A Formal Specification of the Networked Implementation, Governance Architecture, and Institutional Implications of a Self-Governing Continuous Improvement Protocol*
-
-> **Paper 3:** *Meta-Kaizen: The Reasoning-Preservation Engine — Question Structures as the Irreducible Unit of Institutional Memory*
-
-Kaizen — the philosophy of continuous incremental improvement — has been practiced across manufacturing, healthcare, software engineering, and public governance for nearly four decades. It has never been formally mathematized. It has never been networked with formal privacy guarantees. And the question structures that produce its most valuable insights have never been treated as transmissible artifacts.
-
-These three papers change all three of those things.
+The corpus consists of four papers and a reference software implementation. The papers build on each other in strict logical sequence: each one derives its contributions from the mathematical foundations established by its predecessor.
 
 -----
 
-## The Deductive Chain
+## The Papers
 
-The trilogy is a single deductive argument across three papers. Each paper is a necessary consequence of the previous one.
+### Paper 1 — A General Theory of Improvement Scoring
 
-**Paper 1** proves existence: a substrate-invariant, bounded, monotone, self-applicable scoring function for improvement candidates can be constructed. The Kaizen Variation Score (KVS) is derived axiomatically from six named measurement-theoretic axioms — the multiplicative form follows necessarily from the Essentialness with Veto Power axiom; equal weights follow from the Marginal Symmetry axiom. The adoption threshold κ = 0.50 is derived from decision theory, not stipulated.
+*MetaKaizen GeneralTheory.docx*
 
-**Paper 2** proves constructibility: a global network instantiating that scoring function can be built while preserving its mathematical properties under real-world conditions. The Governance Closure Theorem proves that the process governing the network is process-identical to the improvement mechanism it governs — no meta-level exception exists. Theorem 7.4 formally bounds the influence any participant can exert through disproportionate data contribution under differential privacy.
+The foundational paper. Introduces the **Kaizen Variation Score (KVS)**: a multiplicative priority function over four normalized components — Novelty (N), Impact (I′), inverse Complexity (C′), and Timeliness (T) — each bounded in [0, 1], so that KVS ∈ [0, 1].
 
-**Paper 3** proves transmissibility: the reasoning capacity that makes improvement possible — the question structures behind principal override decisions — can be captured, formalized, and propagated across personnel change and organizational boundaries. Proposition 3.1 proves that any governance system that discards question structures at override loses institutional memory under personnel turnover, structurally and necessarily. The four-element override schema is the minimum generatively complete unit of institutional memory, proved constructively.
+The multiplicative form is not stipulated. It is derived axiomatically from six measurement-theoretic axioms using conjoint measurement theory (Luce & Tukey, 1964), including a novel **Essentialness with Veto Power** axiom that formally rules out the additive form. Equal component weighting is derived from a Marginal Symmetry axiom, not assumed. The adoption threshold κ = 0.50 is derived from decision theory under symmetric loss, with explicit substrate-specific calibration guidance.
+
+Three formal properties are proved: boundedness (KVS ∈ [0,1]), monotonicity (KVS non-decreasing in each factor), and self-referential applicability (KVS is well-defined for improvements targeting the Meta-Kaizen process itself). The paper includes a structural simulation analysis — replacing an earlier draft’s circular Monte Carlo validation — and a pre-registered empirical validation path. Four substrate demonstrations span investment governance, clinical nursing, software delivery (DORA), and lean manufacturing.
+
+**Key result:** KVS = N × I′ × C′ × T. Derived, not assumed.
 
 -----
 
-## The Core Contribution: The Kaizen Variation Score
+### Paper 2 — Networked Implementation and Governance
+
+*MetaKaizen Paper2.docx*
+
+Derives, necessarily and deductively from Paper 1’s mathematical properties, what a globally networked implementation of the Meta-Kaizen framework must look like. Six formal specifications are produced: a canonical data schema, a federated differential-privacy architecture, a Bayesian threshold calibration mechanism, an adversarial inflation-detection protocol, a club-goods network economics structure, and a governance architecture.
+
+The central contribution is the **Governance Closure Theorem**: the process that governs the Meta-Kaizen network is process-identical to the Meta-Kaizen improvement mechanism itself. No meta-level exception exists. Every prior governance framework in the literature terminates in a set of rules that governs the rules but is not itself governed by the same rules. The theorem proves, for the first time, that this exception is not structurally necessary — it is an artifact of assuming scoring and implementation are simultaneous. Under temporal sequencing, the exception dissolves.
+
+The **No Capture Corollary** follows: institutional capture of the network is detectable by the network’s own improvement process. Not impossible, but not invisible.
+
+A three-phase adoption path specifies the conditions under which KVS becomes a standard reported field in continuous improvement research.
+
+**Key result:** The Governance Closure Theorem. No meta-level exception exists.
+
+-----
+
+### Paper 3 — The Reasoning Network
+
+*MetaKaizen Paper3.docx*
+
+Identifies the structural gap that Papers 1 and 2 left unaddressed. A network that propagates scores, calibration data, and decisions while discarding the question structures that produced those decisions is not a reasoning network. It is an answer archive. And an answer archive systematically discards the most valuable thing institutional reasoning produces.
+
+The unit of propagation in a genuine reasoning network is the **question structure**: the governing assumption that was challenged, the orthogonal domain from which the challenge was drawn, the principle established by their collision, and the conditions under which that principle applies. This four-element schema is grounded in Aristotle’s *Topics*, Roman *ratio decidendi*, Koestler’s bisociation, and the distributed cognition literature. What is novel is its formal specification as a schema element, its identification as the minimum generatively complete unit of institutional memory (Theorem 5.2), and its operationalization at the moment of principal override via a conversational elicitation protocol requiring two to three minutes of practitioner time.
+
+The paper proves that no proper subset of the four elements constitutes a generatively complete unit of institutional memory, and specifies the open problem of sufficient conditions for generativity as a formally stated research agenda with testable predictions.
+
+**Key result:** The four-element question structure schema. Decisions without their question structures are not transmissible institutional memory.
+
+-----
+
+### Integration Paper — Closed-Loop Adaptive Governance
+
+*Integrating Meta-Kaizen with the Fractal Rhythm Model (Fracttalix)*
+
+Proves that Meta-Kaizen and the Fractal Rhythm Model / Fracttalix are not merely complementary — they form a closed-loop adaptive architecture when integrated correctly.
+
+Fracttalix detects long-memory patterns (Hurst exponent H > 0.5), widening multifractal spectra, and rhythmic anomalies in outcome time series — signals that current governance rules are increasingly mismatched to the underlying regime. These signals feed into KVS as bounded, pre-normalized inputs via a **convex combination formulation** that preserves boundedness at every step without renormalization:
+
+```
+N̂ = (1 − w_N) × N + w_N × max(RDS, CSS)
+Î′ = (1 − w_I) × I′ + w_I × RDS
+```
+
+BIBO stability is proved directly from the convex combination construction. Regime-triggered principal overrides invoke the Paper 3 question structure protocol, ensuring that the reasoning behind regime-driven governance changes accumulates as transmissible institutional memory.
+
+Explicit minimum data requirements for Hurst estimation (n ≥ 500 observations) are specified, and RDS/CSS signals are scoped as long-horizon regime indicators rather than short-window triggers.
+
+**Key result:** A closed loop — outcome anomalies → higher KVS pressure → governance refinement → new outcomes → repeat — that is bounded, auditable, reversible, and progressively self-educating.
+
+-----
+
+## The Fractal Rhythm Model / Fracttalix
+
+Fracttalix (Sentinel v7.6) is the anomaly detection engine that powers the regime-sensing layer of the closed-loop architecture. It screens univariate time series for long-range dependence, multifractal spectrum widening, and rhythmic anomalies using adaptive EWMA + bidirectional CUSUM — nonparametric, lightweight, and designed for exploratory screening rather than confirmatory inference.
+
+The v7.4–7.6 improvements (Sentinel Turbulence Index, Boundary Layer Warning, Oscillation Damping Filter, CUSUM Pressure Differential) were developed under a Meta-Kaizen improvement process applied to the Fracttalix codebase itself — making Fracttalix the first software project whose development is documented as a Meta-Kaizen substrate application.
+
+See the `main` branch for the full Fracttalix implementation and documentation.
+
+-----
+
+## The Core Mathematical Object
 
 ```
 KVS_j = N_j × I′_j × C′_j × T_j
+
+where:
+  N_j  = 1 − max Jaccard similarity to prior 4 domain scans       ∈ [0,1]
+  I′_j = min(1, μ_j / I_max)                                       ∈ [0,1]
+  C′_j = (2.0 − C_j) / 1.0                                        ∈ [0,1]
+  T_j  = max(0, 1 − h_j / H_max)                                  ∈ [0,1]
+
+Adoption rule: KVS_j ≥ κ (default κ = 0.50) → surface to principal
+All decisions logged. All overrides logged with reason code + rationale.
 ```
 
-where each component is bounded in [0, 1], so KVS ∈ [0, 1].
+-----
 
-|Component                             |Definition                                           |
-|--------------------------------------|-----------------------------------------------------|
-|**N** (Novelty)                       |1 − max Jaccard similarity to prior four scan periods|
-|**I′** (Normalized Impact)            |min(1, μ_j / I_max) — annualized improvement estimate|
-|**C′** (Normalized Inverse Complexity)|(2.0 − C_j) / 1.0 — implementation burden inverted   |
-|**T** (Timeliness)                    |max(0, 1 − h_j / H_max) — months to relevance        |
+## Formal Properties
 
-The multiplicative structure enforces non-substitutability: a zero in any dimension collapses the score. This is not a design choice — it is a theorem consequence of the Essentialness with Veto Power axiom (Axiom 5, Paper 1).
-
-**Validated:** Spearman ρ = 0.847 (95% CI: 0.841–0.852) against a structurally independent additive ground truth across 10,000 candidates × 1,000 Monte Carlo runs. Top-5% recall: 61.2%.
+|Property                       |Statement                                                            |Status                                     |
+|-------------------------------|---------------------------------------------------------------------|-------------------------------------------|
+|Boundedness                    |KVS ∈ [0,1]                                                          |Proved (Property 4.1, Paper 1)             |
+|Monotonicity                   |KVS non-decreasing in each factor                                    |Proved (Property 4.2, Paper 1)             |
+|Self-referentiality            |KVS well-defined on Meta-Kaizen itself                               |Proved (Theorem 4.2, Paper 1)              |
+|Governance Closure             |No meta-level exception exists                                       |Proved (Theorem 7.2, Paper 2)              |
+|No Capture                     |Institutional capture is detectable                                  |Proved (Corollary 7.3, Paper 2)            |
+|Minimum Generative Completeness|4-element schema is the minimum complete unit of institutional memory|Proved (Theorem 5.2, Paper 3)              |
+|BIBO Stability (closed loop)   |Bounded inputs → bounded outputs at every period                     |Proved (Proposition 4.1, Integration Paper)|
 
 -----
 
-## Paper 1: The General Theory
+## What Has Not Yet Been Proved
 
-**Core formal results:**
+The empirical question — whether KVS-selected improvements outperform unselected ones on realized outcomes — remains open. The theoretical properties above are properties of the scoring algorithm and governance architecture. They do not guarantee predictive validity. A pre-registered empirical validation protocol is specified in Paper 1 (Section 5.4) and Paper 2 (Section 9.2). The test requires n ≥ 30 adopted improvements per substrate type across ≥ 10 contributing organizations. That data does not yet exist.
 
-- **Theorem 4.1 (KVS Functional Form):** The multiplicative structure with equal weights is the unique functional form satisfying all six axioms. Derived from conjoint measurement theory (Luce & Tukey, 1964; Krantz et al., 1971).
-- **Property 4.1 (Boundedness):** KVS ∈ [0, 1]. Follows directly from definitions.
-- **Property 4.2 (Monotonicity):** KVS is non-decreasing in each component. Follows directly from non-negativity of components.
-- **Theorem 4.2 (Self-Referential Applicability):** KVS is well-defined when applied to improvements of the Meta-Kaizen process itself.
-- **Theorem 4.3 (Threshold Optimality):** κ = 0.50 is the unique decision-theoretically optimal threshold when false-positive and false-negative losses are equal; explicit formula for κ* when they differ.
-
-**Demonstrated across four substrates:** investment governance (IPS), clinical protocol management, software delivery (DORA metrics), lean manufacturing.
+The framework is deployable and valuable as a governance tool — transparent, auditable, self-referential — independent of whether the empirical test confirms its predictive validity. If the test fails, the governance contribution stands and the scientific ambition is revised downward. This outcome would be reported.
 
 -----
 
-## Paper 2: The Networked Implementation
+## Substrate Applications
 
-**Core formal results:**
+The framework is substrate-agnostic. It has been demonstrated across:
 
-- **Theorem 3.1 (Minimum Network Size):** n* ≥ 100 participating organizations required for formal (ε, δ)-differential privacy guarantees under the shuffle model.
-- **Theorem 7.1 (Temporal Consistency):** The governance process {F_t, κ_t, P_t} is well-defined for all t ≥ 0, including when proposals concern the formula itself.
-- **Theorem 7.2 (Governance Closure):** The Meta-Kaizen network governance process is process-identical to the Meta-Kaizen improvement mechanism. No meta-level exception exists.
-- **Corollary 7.3 (No Capture):** Institutional capture through data suppression or record tampering is detectable by the network’s own improvement process.
-- **Theorem 7.4 (No Incentive Capture):** Influence of any participant controlling fraction w_i of network data is bounded by |ΔB| ≤ (w_i × Δ_sensitivity) / (ε_dp × n^(1/2)). Converges to zero as n → ∞. Closes the Goodhart’s Law failure mode at network scale.
+- **Investment governance** — Investment Policy Statements, portfolio allocation rules
+- **Clinical nursing** — Patient safety protocols, adverse event reduction
+- **Software delivery** — DORA metrics governance, CI/CD pipeline standards
+- **Lean manufacturing** — Process specifications, SMED cycle governance
+- **Fracttalix development** — The codebase itself, governed as a Meta-Kaizen substrate
 
-**Specifies:** canonical 13-field data schema (each field derived from a theorem), three-layer federated privacy architecture, Bayesian threshold calibration, adversarial inflation detection protocol, club goods network economics satisfying all eight Ostrom design principles, three-layer software architecture.
-
------
-
-## Paper 3: The Reasoning-Preservation Engine
-
-The structural gap Papers 1 and 2 left unaddressed: a network that propagates scores, calibration data, and decisions while discarding the question structures that produced them is not a reasoning network. It is an answer archive. Answer archives systematically destroy the most valuable thing institutional reasoning produces.
-
-**Core formal results:**
-
-- **Theorem 5.1 (Challenge Taxonomy):** Every principal override challenges exactly one of four Aristotelian predicable relationships. The challenge type is determinate and classifiable.
-- **Theorem 5.2 (Minimum Generative Completeness):** The four-element question structure record is the minimum generatively complete unit of institutional memory. Proved constructively across all fifteen proper subsets of the four elements.
-- **Proposition 3.1 (Institutional Memory Loss):** Any governance system that discards question structures at override loses institutional memory under personnel turnover, structurally and necessarily — regardless of documentation quality or transition period length.
-
-**The four-element override schema:**
-
-1. The governing assumption challenged
-1. The orthogonal domain from which the challenge was drawn
-1. The principle established
-1. The domain of applicability
-
-**Rooted in:** Aristotle’s *Topics* (4th c. BCE), Cicero’s *De Oratore* (55 BCE) on ratio decidendi, Roman stare decisis doctrine, Koestler’s bisociation theory, distributed cognition literature, Constitutional AI.
-
-No comparable work exists that treats question structure as a transmissible artifact rather than a perishable event.
-
------
-
-
-Revisions made in response to review:
-
-- **Paper 1:** Full axiomatic derivation of KVS functional form from six named measurement-theoretic axioms. Decision-theoretic derivation of adoption threshold κ. Boundedness and Monotonicity correctly relabelled as Properties (not Theorems). Objection 4 replaced with axiomatic defense.
-- **Paper 2:** Theorem 7.4 (No Incentive Capture) added, extending the No Capture result to cover disproportionate-contribution influence under differential privacy, with explicit n* formula.
-- **Paper 3:** Proposition 3.1 added formalizing institutional memory loss under personnel turnover. Abstract tightened by ~13%. Cicero’s *De Oratore* activated as in-text citation at the ratio decidendi passage.
+Any structured document that is revisable by identified principals and has measurable outcomes qualifies as a substrate.
 
 -----
 
 ## Provenance
 
-This work originated not in an academic research program but in a practical conversation between Thomas Brennan, a registered nurse and principal at Entwood Hollow Research Station in Douglas City, California, and Sophia Entwood, his collaborator, about the governance of a long-term investment policy statement.
-
-Brennan instructed Entwood to approach the IPS problem orthogonally — to bring in principles from an adjacent domain. The domain he specified was Kaizen. In giving that instruction, Brennan recognized simultaneously that he was applying the principle he was describing, and that the principle itself had never been formally specified. The gap between forty years of Kaizen practice and zero mathematical formalization became visible in that moment from exactly the vantage point best suited to see it: outside every discipline, at the intersection of nursing, farming, investment governance, and systems thinking.
+This work originated in a practical conversation between Thomas Brennan, a registered nurse and principal at Entwood Hollow Research Station in Douglas City, California, and Sophia Entwood, about the governance of a long-term investment policy statement. Brennan instructed Entwood to approach the IPS problem orthogonally — to bring in principles from Kaizen. In giving that instruction, he recognized simultaneously that he was applying the principle he was describing, and that the principle had never been formally specified. The gap between forty years of Kaizen practice and zero mathematical formalization became visible from exactly the vantage point best suited to see it: outside every single discipline, at the intersection of nursing, farming, investment governance, and systems thinking.
 
 Mathematical formalization, literature synthesis, and co-authorship were contributed by Claude (Anthropic, claude-sonnet-4-6, 2026).
 
 -----
 
-## Repository Contents
+## License
 
-|File                           |Description                                                       |
-|-------------------------------|------------------------------------------------------------------|
-|`MetaKaizen GeneralTheory.docx`|Paper 1 — General Theory (referee-corrected)                      |
-|`MetaKaizen Paper2.docx`       |Paper 2 — Networked Implementation (referee-corrected)            |
-|`MetaKaizen Paper3.docx`       |Paper 3 — Reasoning-Preservation Engine (referee-corrected, final)|
-|`LICENSE`                      |CC0-1.0                                                           |
-|`Legal Notice/`                |Legal notices                                                     |
+The general theory, all mathematical formulations, and the software library are contributed to the public domain under CC0. The Entwood IPS application described in worked examples is illustrative.
 
 -----
 
 ## Citation
 
 ```
-Brennan, T., Entwood, S., & Claude (Anthropic, claude-sonnet-4-6). (2026).
-Meta-Kaizen: A General Theory and Algorithmic Framework for the Mathematical
-Formalization of Self-Evolving Continuous Improvement Across Arbitrary
-Governance Substrates [Working Paper trilogy].
-Entwood Hollow Research Station.
-https://github.com/thomasbrennan/Fracttalix/tree/Meta-Kaizen
+Brennan, T., Entwood, S., & Claude (Anthropic). (2026). Meta-Kaizen: A General Theory 
+and Algorithmic Framework for the Mathematical Formalization of Self-Evolving Continuous 
+Improvement Across Arbitrary Governance Substrates. Entwood Hollow Research Station 
+Working Paper No. 1. https://github.com/thomasbrennan/Fracttalix/tree/Meta-Kaizen
 ```
-
------
-
-## License
-
-Released under CC0-1.0. The framework, schema, scoring function, and software specification are contributed to the public domain. The `metakaizen` Python library implementing this specification is forthcoming under MIT License.
-
------
-
-*The frameworks that endure are the ones that emerge from real problems, not from literature reviews.*
