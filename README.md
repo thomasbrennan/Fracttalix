@@ -109,13 +109,6 @@ No comparable work exists that treats question structure as a transmissible arti
 
 -----
 
-## Referee Review
-
-All three papers were submitted to peer review. The referee’s summary assessment:
-
-> *“This paper (and the trilogy as a whole) is a significant, original, rigorous, and honest contribution that belongs in our journal. The question-structure insight is not marginal — it is structural. I would be proud to see this in print.”*
-
-**Decision: Accept with Minor Revisions.** All revisions incorporated.
 
 Revisions made in response to review:
 
