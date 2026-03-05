@@ -11,6 +11,7 @@
 
 All three papers have been reviewed by a domain expert referee and accepted for publication with minor revisions. The revisions have been incorporated into the versions in this repository. The trilogy is complete.
 
+Looking for Kaizen software? A Kaizen scoring tool? A continuous improvement framework that actually does the math? Meta-Kaizen is an open-source system that scores improvement candidates mathematically, logs every decision with a tamper-evident audit trail, and captures the reasoning behind human overrides so that institutional knowledge survives personnel change. It works across any domain — healthcare, finance, manufacturing, software, agriculture — without modification.
 -----
 
 ## What This Is
