@@ -55,7 +55,7 @@
 # Theoretical foundation: The Fractal Rhythm Model (Brennan & Grok 4, 2026)
 # 11 Axioms — see Papers branch: https://github.com/thomasbrennan/Fracttalix
 
-__version__ = "7.11"
+__version__ = "7.11.1"
 __author__ = "Thomas Brennan & Grok 4"
 __license__ = "CC0"
 
@@ -99,6 +99,12 @@ try:
     _MATPLOTLIB_AVAILABLE = True
 except ImportError:
     _MATPLOTLIB_AVAILABLE = False
+
+
+# v7.11.1 hotfix: named function replaces lambda default (pickle / multiprocessing compatibility)
+def _mean(x: list) -> float:
+    """Picklable mean aggregation — default aggregation_func for Detector_7_10."""
+    return sum(x) / len(x)
 
 
 # v7.11 Bug Fix: module-level surrogate worker for Pool pickling compatibility on Windows/spawn
@@ -178,12 +184,12 @@ class Detector_7_10:
 
         # === Regime change detection ===
         cusum_threshold: float = 5.0,
-        reset_after_regime_change: Union[bool, str] = "full",
+        reset_after_regime_change: Union[bool, str] = False,
 
         # === Multivariate & aggregation ===
         multivariate: bool = False,
         per_channel_detection: bool = True,
-        aggregation_func: Callable[[List[float]], float] = lambda x: sum(x) / len(x),
+        aggregation_func: Callable[[List[float]], float] = None,  # None → _mean (picklable default)
         alert_if_any_channel: bool = True,
 
         # === Volatility adaptation ===
@@ -306,7 +312,7 @@ class Detector_7_10:
         self.reset_after_regime_change = reset_after_regime_change
         self.multivariate = multivariate
         self.per_channel_detection = per_channel_detection
-        self.aggregation_func = aggregation_func
+        self.aggregation_func = aggregation_func if aggregation_func is not None else _mean
         self.alert_if_any_channel = alert_if_any_channel
         self.volatility_adaptive = volatility_adaptive
         self.vol_min_factor = vol_min_factor
@@ -383,7 +389,8 @@ class Detector_7_10:
         self._ch_damping_active: List[bool] = []
 
         # v7.7 state — raw scalar rolling window (shared by RPI and RFI)
-        self._scalar_window: deque = deque(maxlen=max(rpi_window, rfi_window, pe_window))
+        # v7.11.1 hotfix: include ews_window so EWS is never starved of data (T0-01)
+        self._scalar_window: deque = deque(maxlen=max(rpi_window, rfi_window, pe_window, ews_window))
 
         # v7.7 — RPI (Axiom 6)
         self._rpi: float = 0.0
@@ -669,7 +676,7 @@ class Detector_7_10:
         self._ch_damping_active = s.get("ch_damping_active", [False] * n)
         # v7.7
         sw = s.get("scalar_window", [])
-        self._scalar_window = deque(sw, maxlen=max(self.rpi_window, self.rfi_window, self.pe_window))
+        self._scalar_window = deque(sw, maxlen=max(self.rpi_window, self.rfi_window, self.pe_window, self.ews_window))
         self._rpi = s.get("rpi", 0.0)
         self._rpi_regime = s.get("rpi_regime", "transitional")
         self._rfi = s.get("rfi", 1.5)
@@ -3972,6 +3979,9 @@ if __name__ == "__main__":
     assert "ews_regime" in r29, "ews_regime missing from result"
     assert d29._ews_score >= 0.0 and d29._ews_score <= 1.0, \
         f"EWS score out of [0,1]: {d29._ews_score}"
+    # v7.11.1 hotfix: EWS must be ACTIVE (>0) after rising-variance stimulus (T0-01 regression guard)
+    assert d29._ews_score > 0.0, \
+        f"EWS score is 0 — window starvation bug (T0-01): _scalar_window.maxlen must include ews_window"
     assert d29._ews_regime in ("stable", "approaching", "critical"), \
         f"Unknown EWS regime: {d29._ews_regime}"
     print(f"  EWS score={d29._ews_score:.4f}  regime={d29._ews_regime}")
