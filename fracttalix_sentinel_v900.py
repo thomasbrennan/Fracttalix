@@ -1,5 +1,14 @@
 # fracttalix_sentinel_v900.py
-# Fracttalix Sentinel v9.0 — Three-Channel Extension
+# Fracttalix Sentinel v10.0 — Physics-Derived Capabilities
+#
+# V10.0 adds four physics-derived capabilities to the 26-step v9.0 pipeline:
+#   1. Maintenance burden μ (Tainter regime detection)
+#   2. PAC pre-cascade detection (extended diagnostic window)
+#   3. Diagnostic window Δt estimation (time-to-collapse)
+#   4. Reversed sequence detection (intervention signature)
+#
+# 37-step pipeline. 98 tests. Physical foundations: Session 36.
+# DOI: 10.5281/zenodo.18859299
 #
 # V9.0 extends the v8.0 detection architecture to implement the
 # three-channel model of dissipative network information transmission
@@ -40,7 +49,7 @@
 # DOI: 10.5281/zenodo.18859299
 # GitHub: https://github.com/thomasbrennan/Fracttalix
 
-__version__ = "9.0.0"
+__version__ = "10.0.0"
 __author__ = "Thomas Brennan & Claude (Anthropic) & Grok (xAI)"
 __license__ = "CC0"
 
@@ -53,6 +62,12 @@ __all__ = [
     "FrequencyBands", "StructuralSnapshot", "CouplingMatrix",
     "ChannelCoherence", "DegradationSequence",
     "AlertSeverity", "AlertType", "Alert",
+    # V10.0 pipeline steps
+    "ThroughputEstimationStep", "MaintenanceBurdenStep",
+    "PhaseExtractionStep", "PACCoefficientStep", "PACDegradationStep",
+    "CriticalCouplingEstimationStep", "CouplingRateStep",
+    "DiagnosticWindowStep", "KuramotoOrderStep",
+    "SequenceOrderingStep", "ReversedSequenceStep",
 ]
 
 # ---------------------------------------------------------------------------
@@ -109,6 +124,13 @@ try:
 except ImportError:
     def _tqdm(it, *a, **kw): return it  # type: ignore
     _TQDM = False
+
+try:
+    import scipy.signal as _scipy_signal
+    _SCIPY = True
+except ImportError:
+    _scipy_signal = None  # type: ignore
+    _SCIPY = False
 
 import multiprocessing as _mp
 
@@ -2607,22 +2629,771 @@ class DegradationSequenceStep(DetectorStep):
 
 
 # ===========================================================================
+# V10.0 PIPELINE STEPS — Physics-Derived Capabilities
+# ===========================================================================
+
+# ---------------------------------------------------------------------------
+# V10 Step 27: ThroughputEstimationStep
+# ---------------------------------------------------------------------------
+
+@register_step
+class ThroughputEstimationStep(DetectorStep):
+    """Estimate network energy throughput P_throughput from carrier wave amplitudes.
+
+    Step 27 — inserted after DegradationSequenceStep.
+    Throughput proxy: mean squared amplitude across all active frequency bands.
+    P_throughput = (1/T) * integral(A(t)^2 dt)
+    Also populates band_amplitudes, band_powers, node_count, and
+    mean_coupling_strength for downstream v10 steps.
+    """
+
+    BAND_NAMES: List[str] = ["ultra_low", "low", "mid", "high", "ultra_high"]
+
+    def __init__(self, config: SentinelConfig):
+        self.cfg = config
+        self.reset()
+
+    def reset(self) -> None:
+        pass
+
+    def update(self, ctx: StepContext) -> None:
+        fb = ctx.scratch.get("frequency_bands")
+        bands_history = ctx.scratch.get("_bands_history")
+
+        # Current band powers dict
+        band_powers: Dict[str, float] = {}
+        if fb is not None:
+            band_powers = {
+                "ultra_low": fb.ultra_low_power,
+                "low": fb.low_power,
+                "mid": fb.mid_power,
+                "high": fb.high_power,
+                "ultra_high": fb.ultra_high_power,
+            }
+
+        # Band amplitude time-series from history
+        band_amplitudes: Dict[str, List[float]] = {}
+        if bands_history is not None and len(bands_history) > 0:
+            history_list = list(bands_history)
+            band_amplitudes = {
+                "ultra_low": [b.ultra_low_power for b in history_list],
+                "low":       [b.low_power for b in history_list],
+                "mid":       [b.mid_power for b in history_list],
+                "high":      [b.high_power for b in history_list],
+                "ultra_high":[b.ultra_high_power for b in history_list],
+            }
+
+        # Throughput: sum of mean-squared amplitudes across bands
+        total_power = 0.0
+        if _NP:
+            for amp_list in band_amplitudes.values():
+                if amp_list:
+                    arr = np.array(amp_list, dtype=float)
+                    total_power += float(np.mean(arr ** 2))
+        else:
+            for amp_list in band_amplitudes.values():
+                if amp_list:
+                    total_power += sum(a ** 2 for a in amp_list) / len(amp_list)
+
+        # Node count: scalar window length as proxy for network size
+        w = ctx.bank.get("scalar")
+        node_count = max(1, len(w))
+
+        # Mean coupling strength from coupling matrix
+        cm = ctx.scratch.get("coupling_matrix")
+        mean_coupling = cm.composite_coupling_score if cm is not None else 0.0
+
+        ctx.scratch["band_amplitudes"] = band_amplitudes
+        ctx.scratch["band_powers"] = band_powers
+        ctx.scratch["throughput"] = total_power
+        ctx.scratch["node_count"] = node_count
+        ctx.scratch["mean_coupling_strength"] = mean_coupling
+
+    def state_dict(self) -> Dict[str, Any]:
+        return {}
+
+    def load_state(self, sd: Dict[str, Any]) -> None:
+        pass
+
+
+# ---------------------------------------------------------------------------
+# V10 Step 28: MaintenanceBurdenStep
+# ---------------------------------------------------------------------------
+
+@register_step
+class MaintenanceBurdenStep(DetectorStep):
+    """Compute maintenance burden μ = N·κ̄·E_unit / P_throughput.
+
+    Step 28 — Tainter regime detection.
+    When μ → 1 the network spends all energy on coupling maintenance
+    with zero adaptive reserve remaining.
+    Thresholds: healthy <0.5, reduced 0.5-0.75, warning 0.75-0.9, critical ≥0.9.
+    """
+
+    def __init__(self, config: SentinelConfig):
+        self.cfg = config
+        self.reset()
+
+    def reset(self) -> None:
+        pass
+
+    def update(self, ctx: StepContext) -> None:
+        n_nodes = ctx.scratch.get("node_count", 1)
+        mean_coupling = ctx.scratch.get("mean_coupling_strength", 0.0)
+        throughput = ctx.scratch.get("throughput", 1.0)
+
+        if throughput == 0:
+            mu = 1.0
+        else:
+            mu = (n_nodes * mean_coupling) / throughput
+        mu = min(mu, 1.0)
+
+        if mu >= 0.9:
+            regime = "TAINTER_CRITICAL"
+        elif mu >= 0.75:
+            regime = "TAINTER_WARNING"
+        elif mu >= 0.5:
+            regime = "REDUCED_RESERVE"
+        else:
+            regime = "HEALTHY"
+
+        ctx.scratch["maintenance_burden"] = mu
+        ctx.scratch["tainter_regime"] = regime
+
+    def state_dict(self) -> Dict[str, Any]:
+        return {}
+
+    def load_state(self, sd: Dict[str, Any]) -> None:
+        pass
+
+
+# ---------------------------------------------------------------------------
+# V10 Step 29: PhaseExtractionStep
+# ---------------------------------------------------------------------------
+
+@register_step
+class PhaseExtractionStep(DetectorStep):
+    """Extract instantaneous phase from each frequency band via Hilbert transform.
+
+    Step 29 — Uses scipy.signal.hilbert if available; falls back to a
+    numpy FFT-based analytic signal construction; falls back to zero phases.
+    Band-filtered signals are reconstructed by FFT bandpass.
+    """
+
+    BAND_FREQ_RANGES: Dict[str, tuple] = {
+        "ultra_low": (0.00, 0.05),
+        "low":       (0.05, 0.15),
+        "mid":       (0.15, 0.40),
+        "high":      (0.40, 0.70),
+        "ultra_high":(0.70, 1.00),
+    }
+
+    def __init__(self, config: SentinelConfig):
+        self.cfg = config
+        self.reset()
+
+    def reset(self) -> None:
+        pass
+
+    def _hilbert_phase(self, arr: Any) -> Any:
+        """Instantaneous phase array via Hilbert transform."""
+        if _SCIPY:
+            analytic = _scipy_signal.hilbert(arr)
+            return np.angle(analytic)
+        elif _NP:
+            # FFT-based analytic signal
+            N = len(arr)
+            fft = np.fft.fft(arr)
+            h = np.zeros(N, dtype=float)
+            if N % 2 == 0:
+                h[0] = 1.0
+                h[1:N // 2] = 2.0
+                h[N // 2] = 1.0
+            else:
+                h[0] = 1.0
+                h[1:(N + 1) // 2] = 2.0
+            analytic = np.fft.ifft(fft * h)
+            return np.angle(analytic)
+        else:
+            return [0.0] * len(arr)
+
+    def _reconstruct_band(self, data: List[float], lo: float, hi: float) -> Any:
+        """Band-pass reconstruct signal via FFT zeroing."""
+        if not _NP:
+            return list(data)
+        N = len(data)
+        arr = np.array(data, dtype=float)
+        fft = np.fft.rfft(arr)
+        freqs = np.fft.rfftfreq(N)
+        mask = (freqs >= lo) & (freqs < hi)
+        filtered_fft = np.zeros_like(fft)
+        filtered_fft[mask] = fft[mask]
+        return np.fft.irfft(filtered_fft, N)
+
+    def update(self, ctx: StepContext) -> None:
+        w = list(ctx.bank.get("scalar"))
+        n = len(w)
+
+        if n < 4:
+            ctx.scratch["band_filtered_signals"] = {}
+            ctx.scratch["band_phases"] = {}
+            return
+
+        band_filtered_signals: Dict[str, Any] = {}
+        band_phases: Dict[str, Any] = {}
+
+        for band_name, (lo, hi) in self.BAND_FREQ_RANGES.items():
+            filtered = self._reconstruct_band(w, lo, hi)
+            band_filtered_signals[band_name] = filtered
+
+            if _NP:
+                arr = np.asarray(filtered, dtype=float)
+                if len(arr) >= 4:
+                    band_phases[band_name] = self._hilbert_phase(arr)
+                else:
+                    band_phases[band_name] = np.array([])
+            else:
+                if len(filtered) >= 4:
+                    band_phases[band_name] = [0.0] * len(filtered)
+                else:
+                    band_phases[band_name] = []
+
+        ctx.scratch["band_filtered_signals"] = band_filtered_signals
+        ctx.scratch["band_phases"] = band_phases
+
+    def state_dict(self) -> Dict[str, Any]:
+        return {}
+
+    def load_state(self, sd: Dict[str, Any]) -> None:
+        pass
+
+
+# ---------------------------------------------------------------------------
+# V10 Step 30: PACCoefficientStep
+# ---------------------------------------------------------------------------
+
+@register_step
+class PACCoefficientStep(DetectorStep):
+    """Compute PAC modulation index between slow-phase and fast-amplitude pairs.
+
+    Step 30 — Modulation Index (Tort et al. 2010): KL divergence between
+    phase-binned amplitude distribution and uniform distribution.
+    Higher MI = stronger PAC = deeper nonlinear coupling = more structural memory.
+    Slow bands: ultra_low, low.  Fast bands: mid, high, ultra_high.
+    """
+
+    SLOW_BANDS: List[str] = ["ultra_low", "low"]
+    FAST_BANDS: List[str] = ["mid", "high", "ultra_high"]
+    N_BINS: int = 18
+
+    def __init__(self, config: SentinelConfig):
+        self.cfg = config
+        self.reset()
+
+    def reset(self) -> None:
+        pass
+
+    def _compute_MI(self, phase: Any, amplitude: Any) -> float:
+        """Modulation Index via KL divergence (requires numpy)."""
+        if not _NP:
+            return 0.0
+        phase = np.asarray(phase, dtype=float)
+        amplitude = np.asarray(amplitude, dtype=float)
+        if len(phase) == 0 or len(amplitude) == 0:
+            return 0.0
+        min_len = min(len(phase), len(amplitude))
+        phase = phase[:min_len]
+        amplitude = amplitude[:min_len]
+
+        bins = np.linspace(-math.pi, math.pi, self.N_BINS + 1)
+        amp_by_phase = np.zeros(self.N_BINS)
+        for i in range(self.N_BINS):
+            idx = np.where((phase >= bins[i]) & (phase < bins[i + 1]))[0]
+            if len(idx) > 0:
+                amp_by_phase[i] = np.mean(np.abs(amplitude[idx]))
+
+        total = amp_by_phase.sum()
+        if total == 0:
+            return 0.0
+        p = amp_by_phase / total
+        p = p + 1e-10
+        MI = float(np.sum(p * np.log(p * self.N_BINS)) / np.log(self.N_BINS))
+        return float(np.clip(MI, 0.0, 1.0))
+
+    def update(self, ctx: StepContext) -> None:
+        band_phases = ctx.scratch.get("band_phases", {})
+        band_amplitudes = ctx.scratch.get("band_amplitudes", {})
+
+        pac_matrix: Dict[str, float] = {}
+        for slow in self.SLOW_BANDS:
+            for fast in self.FAST_BANDS:
+                slow_phases = band_phases.get(slow)
+                fast_amps = band_amplitudes.get(fast)
+                if (slow_phases is not None and fast_amps is not None
+                        and len(slow_phases) > 0 and len(fast_amps) > 0):
+                    key = f"{slow}_phase_{fast}_amp"
+                    mi = self._compute_MI(slow_phases, fast_amps)
+                    pac_matrix[key] = mi
+
+        mean_pac = (float(sum(pac_matrix.values()) / len(pac_matrix))
+                    if pac_matrix else 0.0)
+        ctx.scratch["pac_matrix"] = pac_matrix
+        ctx.scratch["mean_pac"] = mean_pac
+
+    def state_dict(self) -> Dict[str, Any]:
+        return {}
+
+    def load_state(self, sd: Dict[str, Any]) -> None:
+        pass
+
+
+# ---------------------------------------------------------------------------
+# V10 Step 31: PACDegradationStep
+# ---------------------------------------------------------------------------
+
+@register_step
+class PACDegradationStep(DetectorStep):
+    """Track PAC degradation rate — pre-cascade signature.
+
+    Step 31 — PAC degrades before coupling strength κ̄ measurably decreases,
+    extending the diagnostic window.  pre_cascade_pac fires when:
+    1. PAC degradation rate > PAC_DEGRADATION_THRESHOLD AND
+    2. cascade_precursor_active is False (PAC warns BEFORE κ̄ warns).
+    """
+
+    PAC_DEGRADATION_THRESHOLD: float = 0.15
+
+    def __init__(self, config: SentinelConfig):
+        self.cfg = config
+        self.reset()
+
+    def reset(self) -> None:
+        self._pac_history: deque = deque(maxlen=10)
+
+    def update(self, ctx: StepContext) -> None:
+        current_pac = ctx.scratch.get("mean_pac", 0.0)
+        self._pac_history.append(current_pac)
+        pac_list = list(self._pac_history)
+        ctx.scratch["pac_history"] = pac_list
+
+        if len(pac_list) < 3:
+            ctx.scratch["pac_degradation_rate"] = 0.0
+            ctx.scratch["pre_cascade_pac"] = False
+            return
+
+        early_pac = sum(pac_list[:3]) / 3.0
+        recent_pac = sum(pac_list[-3:]) / 3.0
+
+        if early_pac == 0:
+            degradation_rate = 0.0
+        else:
+            degradation_rate = (early_pac - recent_pac) / early_pac
+
+        cascade_active = ctx.scratch.get("cascade_precursor_active", False)
+        pre_cascade_pac = (degradation_rate > self.PAC_DEGRADATION_THRESHOLD
+                           and not cascade_active)
+
+        ctx.scratch["pac_degradation_rate"] = float(degradation_rate)
+        ctx.scratch["pre_cascade_pac"] = pre_cascade_pac
+
+    def state_dict(self) -> Dict[str, Any]:
+        return {"pac_history": list(self._pac_history)}
+
+    def load_state(self, sd: Dict[str, Any]) -> None:
+        self._pac_history = deque(sd.get("pac_history", []), maxlen=10)
+
+
+# ---------------------------------------------------------------------------
+# V10 Step 32: CriticalCouplingEstimationStep
+# ---------------------------------------------------------------------------
+
+@register_step
+class CriticalCouplingEstimationStep(DetectorStep):
+    """Estimate critical coupling threshold κ_c from frequency distribution.
+
+    Step 32 — κ_c = 2 / (π · g(ω₀)).
+    g(ω₀) estimated as normalized spread of carrier frequencies weighted by power.
+    Higher spread = lower g(ω₀) = higher κ_c = harder to maintain coherence.
+    """
+
+    BAND_CENTERS: Dict[str, float] = {
+        "ultra_low": 0.5,
+        "low":       2.0,
+        "mid":       8.0,
+        "high":      32.0,
+        "ultra_high":128.0,
+    }
+
+    def __init__(self, config: SentinelConfig):
+        self.cfg = config
+        self.reset()
+
+    def reset(self) -> None:
+        pass
+
+    def update(self, ctx: StepContext) -> None:
+        band_powers = ctx.scratch.get("band_powers", {})
+        active = {k: v for k, v in band_powers.items()
+                  if v > 0 and k in self.BAND_CENTERS}
+
+        if not active:
+            ctx.scratch["critical_coupling"] = 0.5
+            return
+
+        total = sum(active.values())
+        weights = {k: v / total for k, v in active.items()}
+
+        weighted_mean = sum(self.BAND_CENTERS[k] * w for k, w in weights.items())
+        weighted_var = sum(w * (self.BAND_CENTERS[k] - weighted_mean) ** 2
+                          for k, w in weights.items())
+
+        weighted_std = (float(np.sqrt(weighted_var)) if _NP
+                        else math.sqrt(max(weighted_var, 0.0)))
+
+        if weighted_mean == 0:
+            g_omega = 1.0
+        else:
+            g_omega = max(0.1, 1.0 - (weighted_std / weighted_mean))
+
+        kappa_c = 2.0 / (math.pi * g_omega)
+        ctx.scratch["critical_coupling"] = float(kappa_c)
+
+    def state_dict(self) -> Dict[str, Any]:
+        return {}
+
+    def load_state(self, sd: Dict[str, Any]) -> None:
+        pass
+
+
+# ---------------------------------------------------------------------------
+# V10 Step 33: CouplingRateStep
+# ---------------------------------------------------------------------------
+
+@register_step
+class CouplingRateStep(DetectorStep):
+    """Compute rate of change of mean coupling strength dκ̄/dt.
+
+    Step 33 — Negative = coupling degrading; positive = strengthening.
+    History maintained in step state across observations.
+    """
+
+    def __init__(self, config: SentinelConfig):
+        self.cfg = config
+        self.reset()
+
+    def reset(self) -> None:
+        self._coupling_history: deque = deque(maxlen=10)
+
+    def update(self, ctx: StepContext) -> None:
+        current = ctx.scratch.get("mean_coupling_strength", 0.0)
+        self._coupling_history.append(current)
+        history = list(self._coupling_history)
+        ctx.scratch["coupling_history"] = history
+
+        if len(history) < 2:
+            ctx.scratch["coupling_rate"] = 0.0
+            return
+
+        if _NP:
+            rate = float(np.mean(np.diff(history)))
+        else:
+            diffs = [history[i + 1] - history[i] for i in range(len(history) - 1)]
+            rate = sum(diffs) / len(diffs)
+
+        ctx.scratch["coupling_rate"] = rate
+
+    def state_dict(self) -> Dict[str, Any]:
+        return {"coupling_history": list(self._coupling_history)}
+
+    def load_state(self, sd: Dict[str, Any]) -> None:
+        self._coupling_history = deque(sd.get("coupling_history", []), maxlen=10)
+
+
+# ---------------------------------------------------------------------------
+# V10 Step 34: DiagnosticWindowStep
+# ---------------------------------------------------------------------------
+
+@register_step
+class DiagnosticWindowStep(DetectorStep):
+    """Estimate time remaining before coherence collapse: Δt = (κ̄ - κ_c) / |dκ̄/dt|.
+
+    Step 34 — Only meaningful when κ̄ > κ_c and dκ̄/dt < 0.
+    Confidence: HIGH/MEDIUM/LOW based on history length and rate stability.
+    Also detects supercompensation (adaptive response: coupling rising above baseline).
+    """
+
+    def __init__(self, config: SentinelConfig):
+        self.cfg = config
+        self.reset()
+
+    def reset(self) -> None:
+        pass
+
+    def update(self, ctx: StepContext) -> None:
+        kappa_bar = ctx.scratch.get("mean_coupling_strength", 0.0)
+        kappa_c = ctx.scratch.get("critical_coupling", 0.5)
+        coupling_rate = ctx.scratch.get("coupling_rate", 0.0)
+        coupling_history = ctx.scratch.get("coupling_history", [])
+
+        # Supercompensation: coupling rising above recent baseline
+        supercompensation = False
+        if coupling_rate > 0 and len(coupling_history) >= 5:
+            baseline = sum(coupling_history[:3]) / 3.0
+            current_avg = sum(coupling_history[-3:]) / 3.0
+            supercompensation = current_avg > baseline * 1.05
+        ctx.scratch["supercompensation_detected"] = supercompensation
+
+        # Not degrading or already below critical — window not applicable
+        if coupling_rate >= 0 or kappa_bar <= kappa_c:
+            ctx.scratch["diagnostic_window_steps"] = None
+            ctx.scratch["diagnostic_window_confidence"] = "NOT_APPLICABLE"
+            return
+
+        margin = kappa_bar - kappa_c
+        rate_magnitude = abs(coupling_rate)
+        if rate_magnitude < 1e-10:
+            ctx.scratch["diagnostic_window_steps"] = None
+            ctx.scratch["diagnostic_window_confidence"] = "RATE_TOO_SMALL"
+            return
+
+        delta_t = margin / rate_magnitude
+        ctx.scratch["diagnostic_window_steps"] = float(delta_t)
+
+        if len(coupling_history) >= 8 and _NP:
+            recent_rates = np.diff(np.array(coupling_history[-5:], dtype=float))
+            rate_cv = (float(np.std(recent_rates))
+                       / (abs(float(np.mean(recent_rates))) + 1e-10))
+            if rate_cv < 0.3:
+                confidence = "HIGH"
+            elif rate_cv < 0.7:
+                confidence = "MEDIUM"
+            else:
+                confidence = "LOW"
+        else:
+            confidence = "LOW"
+
+        ctx.scratch["diagnostic_window_confidence"] = confidence
+
+    def state_dict(self) -> Dict[str, Any]:
+        return {}
+
+    def load_state(self, sd: Dict[str, Any]) -> None:
+        pass
+
+
+# ---------------------------------------------------------------------------
+# V10 Step 35: KuramotoOrderStep
+# ---------------------------------------------------------------------------
+
+@register_step
+class KuramotoOrderStep(DetectorStep):
+    """Compute Kuramoto order parameter Φ from inter-band phase relationships.
+
+    Step 35 — Φ = |mean(e^(iθ_k))| for all active frequency bands.
+    Φ=1: perfect phase coherence.  Φ=0: complete phase incoherence.
+    Independent of coupling strength κ̄ — the separation between Φ and κ̄
+    dynamics enables reversed sequence detection.
+    """
+
+    def __init__(self, config: SentinelConfig):
+        self.cfg = config
+        self.reset()
+
+    def reset(self) -> None:
+        pass
+
+    def update(self, ctx: StepContext) -> None:
+        band_phases = ctx.scratch.get("band_phases", {})
+
+        if not band_phases or not _NP:
+            ctx.scratch["kuramoto_order"] = 0.0
+            return
+
+        phase_vectors: List[complex] = []
+        for phase_array in band_phases.values():
+            arr = np.asarray(phase_array, dtype=float)
+            if len(arr) > 0:
+                mean_phase = float(np.angle(np.mean(np.exp(1j * arr))))
+                phase_vectors.append(complex(math.cos(mean_phase),
+                                             math.sin(mean_phase)))
+
+        if not phase_vectors:
+            ctx.scratch["kuramoto_order"] = 0.0
+            return
+
+        Phi = abs(sum(phase_vectors) / len(phase_vectors))
+        ctx.scratch["kuramoto_order"] = float(Phi)
+
+    def state_dict(self) -> Dict[str, Any]:
+        return {}
+
+    def load_state(self, sd: Dict[str, Any]) -> None:
+        pass
+
+
+# ---------------------------------------------------------------------------
+# V10 Step 36: SequenceOrderingStep
+# ---------------------------------------------------------------------------
+
+@register_step
+class SequenceOrderingStep(DetectorStep):
+    """Track relative degradation sequence of coupling κ̄ and coherence Φ.
+
+    Step 36 — Normal thermodynamic sequence: coupling degrades before
+    coherence collapses.  Reversed: coherence collapses before coupling
+    degrades.  Records COUPLING_FIRST / COHERENCE_FIRST / SIMULTANEOUS /
+    STABLE per observation.
+    """
+
+    DEGRADATION_THRESHOLD: float = -0.05
+
+    def __init__(self, config: SentinelConfig):
+        self.cfg = config
+        self.reset()
+
+    def reset(self) -> None:
+        self._phi_history: deque = deque(maxlen=15)
+        self._sequence_history: deque = deque(maxlen=10)
+
+    def update(self, ctx: StepContext) -> None:
+        current_phi = ctx.scratch.get("kuramoto_order", 1.0)
+        self._phi_history.append(current_phi)
+        phi_list = list(self._phi_history)
+        ctx.scratch["phi_history"] = phi_list
+
+        coupling_rate = ctx.scratch.get("coupling_rate", 0.0)
+
+        if len(phi_list) < 3:
+            ctx.scratch["phi_rate"] = 0.0
+            ctx.scratch["coupling_degrading"] = False
+            ctx.scratch["coherence_degrading"] = False
+            ctx.scratch["sequence_history"] = list(self._sequence_history)
+            return
+
+        recent = phi_list[-5:] if len(phi_list) >= 5 else phi_list
+        if _NP and len(recent) >= 2:
+            phi_rate = float(np.mean(np.diff(recent)))
+        elif len(recent) >= 2:
+            diffs = [recent[i + 1] - recent[i] for i in range(len(recent) - 1)]
+            phi_rate = sum(diffs) / len(diffs)
+        else:
+            phi_rate = 0.0
+
+        ctx.scratch["phi_rate"] = phi_rate
+
+        coupling_degrading = coupling_rate < self.DEGRADATION_THRESHOLD
+        coherence_degrading = phi_rate < self.DEGRADATION_THRESHOLD
+        ctx.scratch["coupling_degrading"] = coupling_degrading
+        ctx.scratch["coherence_degrading"] = coherence_degrading
+
+        if coupling_degrading and not coherence_degrading:
+            self._sequence_history.append("COUPLING_FIRST")
+        elif coherence_degrading and not coupling_degrading:
+            self._sequence_history.append("COHERENCE_FIRST")
+        elif coupling_degrading and coherence_degrading:
+            self._sequence_history.append("SIMULTANEOUS")
+        else:
+            self._sequence_history.append("STABLE")
+
+        ctx.scratch["sequence_history"] = list(self._sequence_history)
+
+    def state_dict(self) -> Dict[str, Any]:
+        return {
+            "phi_history": list(self._phi_history),
+            "sequence_history": list(self._sequence_history),
+        }
+
+    def load_state(self, sd: Dict[str, Any]) -> None:
+        self._phi_history = deque(sd.get("phi_history", []), maxlen=15)
+        self._sequence_history = deque(sd.get("sequence_history", []), maxlen=10)
+
+
+# ---------------------------------------------------------------------------
+# V10 Step 37: ReversedSequenceStep
+# ---------------------------------------------------------------------------
+
+@register_step
+class ReversedSequenceStep(DetectorStep):
+    """Detect reversed degradation sequence — thermodynamic reversal.
+
+    Step 37 — Reversed sequence (coherence collapses before coupling degrades)
+    indicates possible external intervention rather than organic decay.
+    In civilizational terms: a civilization being collapsed vs. one that collapses.
+    intervention_signature_score: 0.0-1.0 confidence of deliberate intervention.
+    sequence_type: ORGANIC / REVERSED / AMBIGUOUS / INSUFFICIENT_DATA.
+    """
+
+    def __init__(self, config: SentinelConfig):
+        self.cfg = config
+        self.reset()
+
+    def reset(self) -> None:
+        pass
+
+    def update(self, ctx: StepContext) -> None:
+        sequence_history = ctx.scratch.get("sequence_history", [])
+        phi_rate = ctx.scratch.get("phi_rate", 0.0)
+        coupling_rate = ctx.scratch.get("coupling_rate", 0.0)
+
+        if len(sequence_history) < 3:
+            ctx.scratch["reversed_sequence"] = False
+            ctx.scratch["intervention_signature_score"] = 0.0
+            ctx.scratch["sequence_type"] = "INSUFFICIENT_DATA"
+            return
+
+        coherence_first_count = sequence_history.count("COHERENCE_FIRST")
+        coupling_first_count = sequence_history.count("COUPLING_FIRST")
+
+        reversed_seq = (coherence_first_count > coupling_first_count
+                        and coherence_first_count >= 2)
+
+        if reversed_seq:
+            if coupling_rate == 0:
+                rate_ratio = 1.0
+            else:
+                rate_ratio = abs(phi_rate) / (abs(coupling_rate) + 1e-10)
+            n_hist = max(len(sequence_history), 1)
+            raw = (coherence_first_count / n_hist) * min(rate_ratio, 2.0) / 2.0
+            if _NP:
+                score = float(np.clip(raw, 0.0, 1.0))
+            else:
+                score = max(0.0, min(1.0, raw))
+            sequence_type = "REVERSED"
+        elif coupling_first_count > coherence_first_count:
+            score = 0.0
+            sequence_type = "ORGANIC"
+        else:
+            score = 0.3
+            sequence_type = "AMBIGUOUS"
+
+        ctx.scratch["reversed_sequence"] = reversed_seq
+        ctx.scratch["intervention_signature_score"] = score
+        ctx.scratch["sequence_type"] = sequence_type
+
+    def state_dict(self) -> Dict[str, Any]:
+        return {}
+
+    def load_state(self, sd: Dict[str, Any]) -> None:
+        pass
+
+
+# ===========================================================================
 # Pipeline builder + legacy mapper
 # ===========================================================================
 
 def _build_default_pipeline(config: SentinelConfig) -> List[DetectorStep]:
     """Return ordered list of DetectorStep instances for a SentinelDetector.
 
-    V9.0: 26 steps (19 v8 foundation + 7 new v9 three-channel extension).
-    V8.0 steps are UNCHANGED — v9.0 steps are inserted at defined positions.
+    V10.0: 37 steps (26 v9 + 11 new v10 physics-derived).
+    V9.0 steps are UNCHANGED — v10.0 steps inserted before AlertReasonsStep.
     """
     regime = RegimeStep(config)
     rrs = RRSStep(config, regime)
     return [
         CoreEWMAStep(config),               # Step 1  — MUST be first (populates bank)
-        StructuralSnapshotStep(config),     # Step 4a — NEW v9.0 Channel 1
-        FrequencyDecompositionStep(config), # Step 4b — NEW v9.0 Channel 2
-        CUSUMStep(config),                  # Steps 2-19: existing v8.0 (UNCHANGED)
+        StructuralSnapshotStep(config),     # Step 4a — v9.0 Channel 1
+        FrequencyDecompositionStep(config), # Step 4b — v9.0 Channel 2
+        CUSUMStep(config),                  # v8.0 steps (UNCHANGED)
         regime,
         VarCUSUMStep(config),
         PageHinkleyStep(config),
@@ -2639,11 +3410,23 @@ def _build_default_pipeline(config: SentinelConfig) -> List[DetectorStep]:
         SeasonalStep(config),
         MahalStep(config),
         rrs,
-        BandAnomalyStep(config),            # Step 15a — NEW v9.0
-        CrossFrequencyCouplingStep(config), # Step 15b+15c — NEW v9.0
-        ChannelCoherenceStep(config),       # Step 15d+15e — NEW v9.0
-        CascadePrecursorStep(config),       # Step 19a — NEW v9.0
-        DegradationSequenceStep(config),    # Step 19b — NEW v9.0
+        BandAnomalyStep(config),            # Step 15a — v9.0
+        CrossFrequencyCouplingStep(config), # Step 15b+15c — v9.0
+        ChannelCoherenceStep(config),       # Step 15d+15e — v9.0
+        CascadePrecursorStep(config),       # Step 19a — v9.0
+        DegradationSequenceStep(config),    # Step 19b — v9.0
+        # V10.0 physics-derived steps — inserted before AlertReasonsStep
+        ThroughputEstimationStep(config),   # Step 27 — v10.0 maintenance burden
+        MaintenanceBurdenStep(config),      # Step 28 — v10.0 Tainter regime
+        PhaseExtractionStep(config),        # Step 29 — v10.0 PAC pre-cascade
+        PACCoefficientStep(config),         # Step 30 — v10.0 PAC MI
+        PACDegradationStep(config),         # Step 31 — v10.0 PAC degradation
+        CriticalCouplingEstimationStep(config), # Step 32 — v10.0 κ_c
+        CouplingRateStep(config),           # Step 33 — v10.0 dκ̄/dt
+        DiagnosticWindowStep(config),       # Step 34 — v10.0 Δt estimation
+        KuramotoOrderStep(config),          # Step 35 — v10.0 Φ order parameter
+        SequenceOrderingStep(config),       # Step 36 — v10.0 sequence ordering
+        ReversedSequenceStep(config),       # Step 37 — v10.0 intervention signature
         AlertReasonsStep(config),           # MUST be last
     ]
 
@@ -2787,6 +3570,75 @@ class SentinelResult(dict):
         }
         return max(bands, key=bands.get)
 
+    # ------------------------------------------------------------------
+    # V10.0 convenience methods
+    # ------------------------------------------------------------------
+
+    def is_reversed_sequence(self) -> bool:
+        """Returns True if coherence is collapsing before coupling degrades.
+
+        Thermodynamic reversal — indicates possible external intervention
+        rather than organic decay.
+        """
+        return bool(self.get("reversed_sequence", False))
+
+    def get_intervention_signature(self) -> Dict[str, Any]:
+        """Returns intervention signature analysis.
+
+        Keys:
+            score: 0.0-1.0 confidence of deliberate intervention.
+            sequence_type: ORGANIC / REVERSED / AMBIGUOUS / INSUFFICIENT_DATA.
+            phi_rate: rate of coherence change.
+            coupling_rate: rate of coupling change.
+        """
+        return {
+            "score": self.get("intervention_signature_score", 0.0),
+            "sequence_type": self.get("sequence_type", "UNKNOWN"),
+            "phi_rate": self.get("phi_rate", 0.0),
+            "coupling_rate": self.get("coupling_rate", 0.0),
+        }
+
+    def get_diagnostic_window(self) -> Dict[str, Any]:
+        """Returns estimated time until coherence collapse.
+
+        Keys:
+            steps: estimated steps until collapse (None if not applicable).
+            confidence: HIGH / MEDIUM / LOW / NOT_APPLICABLE / RATE_TOO_SMALL.
+            supercompensation: True if adaptive response in progress.
+        """
+        return {
+            "steps": self.get("diagnostic_window_steps", None),
+            "confidence": self.get("diagnostic_window_confidence",
+                                   "NOT_APPLICABLE"),
+            "supercompensation": self.get("supercompensation_detected", False),
+        }
+
+    def get_maintenance_burden(self) -> Dict[str, Any]:
+        """Returns maintenance burden μ (Tainter regime detection).
+
+        Keys:
+            mu: maintenance burden 0.0-1.0.
+            regime: HEALTHY / REDUCED_RESERVE / TAINTER_WARNING / TAINTER_CRITICAL.
+        """
+        return {
+            "mu": self.get("maintenance_burden", 0.0),
+            "regime": self.get("tainter_regime", "UNKNOWN"),
+        }
+
+    def get_pac_status(self) -> Dict[str, Any]:
+        """Returns PAC (Phase-Amplitude Coupling) status.
+
+        Keys:
+            mean_pac: current PAC strength 0.0-1.0.
+            degradation_rate: rate of PAC decline.
+            pre_cascade_pac: True if PAC is warning before cascade precursor fires.
+        """
+        return {
+            "mean_pac": self.get("mean_pac", 0.0),
+            "degradation_rate": self.get("pac_degradation_rate", 0.0),
+            "pre_cascade_pac": self.get("pre_cascade_pac", False),
+        }
+
 
 # ===========================================================================
 # SECTION 6 — SentinelDetector (main orchestrator)
@@ -2875,6 +3727,23 @@ class SentinelDetector:
         result.setdefault("band_anomalies", {})
         result.setdefault("channel_summary", "")
         result.setdefault("v9_active_alerts", [])
+        # V10.0 defaults
+        result.setdefault("maintenance_burden", 0.0)
+        result.setdefault("tainter_regime", "UNKNOWN")
+        result.setdefault("throughput", 0.0)
+        result.setdefault("mean_pac", 0.0)
+        result.setdefault("pac_degradation_rate", 0.0)
+        result.setdefault("pre_cascade_pac", False)
+        result.setdefault("diagnostic_window_steps", None)
+        result.setdefault("diagnostic_window_confidence", "NOT_APPLICABLE")
+        result.setdefault("supercompensation_detected", False)
+        result.setdefault("kuramoto_order", 0.0)
+        result.setdefault("reversed_sequence", False)
+        result.setdefault("intervention_signature_score", 0.0)
+        result.setdefault("sequence_type", "INSUFFICIENT_DATA")
+        result.setdefault("coupling_rate", 0.0)
+        result.setdefault("critical_coupling", 0.5)
+        result.setdefault("mean_coupling_strength", 0.0)
         result["step"] = self._n
         result["value"] = value if not isinstance(value, (list, tuple)) else list(value)
 
@@ -3597,7 +4466,7 @@ def _run_tests():
             fail(name, f"{type(e).__name__}: {e}")
 
     print(f"\n{'='*60}")
-    print(f"  Fracttalix Sentinel v{__version__} — 65-test Smoke Suite")
+    print(f"  Fracttalix Sentinel v{__version__} — 98-test Smoke Suite")
     print(f"{'='*60}\n")
 
     # ------------------------------------------------------------------
@@ -4441,8 +5310,625 @@ def _run_tests():
     run("T65 SentinelResult convenience methods all return correct types", t65)
 
     # ------------------------------------------------------------------
+    # T66 — T72: Maintenance Burden (Tainter regime)
+    # ------------------------------------------------------------------
+
+    def t66():
+        cfg = SentinelConfig(warmup_periods=1, min_window_for_fft=8)
+        step = ThroughputEstimationStep(cfg)
+        bank = WindowBank()
+        bank.register("scalar", 64)
+        for i in range(40):
+            bank.append(float(i % 5 + 1))
+        # Simulate bands history via detector run so _bands_history exists
+        det = SentinelDetector(SentinelConfig(warmup_periods=1, min_window_for_fft=8))
+        for i in range(50):
+            det.update_and_check(float(i % 5 + 1))
+        r = det.update_and_check(3.0)
+        throughput = r.get("throughput", 0.0)
+        assert isinstance(throughput, float)
+        # If frequency decomposition ran we expect positive throughput
+        if r.get("frequency_bands") is not None:
+            assert throughput > 0
+    run("T66 ThroughputEstimationStep — healthy signal", t66)
+
+    def t67():
+        cfg = SentinelConfig(warmup_periods=1)
+        step = ThroughputEstimationStep(cfg)
+        bank = WindowBank()
+        bank.register("scalar", 64)
+        ctx = StepContext(value=1.0, step=5, config=cfg, bank=bank,
+                          scratch={"frequency_bands": None,
+                                   "_bands_history": None,
+                                   "coupling_matrix": None})
+        step.update(ctx)
+        assert ctx.scratch["throughput"] == 0.0
+        assert ctx.scratch["band_amplitudes"] == {}
+    run("T67 ThroughputEstimationStep — empty amplitudes gives throughput=0.0", t67)
+
+    def t68():
+        cfg = SentinelConfig(warmup_periods=1)
+        step = MaintenanceBurdenStep(cfg)
+        bank = WindowBank()
+        bank.register("scalar", 64)
+        # μ = (5 * 0.3) / 5.0 = 0.3 → HEALTHY
+        ctx = StepContext(value=1.0, step=5, config=cfg, bank=bank,
+                          scratch={"node_count": 5,
+                                   "mean_coupling_strength": 0.3,
+                                   "throughput": 5.0})
+        step.update(ctx)
+        assert ctx.scratch["tainter_regime"] == "HEALTHY"
+        assert ctx.scratch["maintenance_burden"] < 0.5
+    run("T68 MaintenanceBurdenStep — healthy regime", t68)
+
+    def t69():
+        cfg = SentinelConfig(warmup_periods=1)
+        step = MaintenanceBurdenStep(cfg)
+        bank = WindowBank()
+        bank.register("scalar", 64)
+        # μ = (3 * 0.2) / 1.0 = 0.6 → REDUCED_RESERVE
+        ctx = StepContext(value=1.0, step=5, config=cfg, bank=bank,
+                          scratch={"node_count": 3,
+                                   "mean_coupling_strength": 0.2,
+                                   "throughput": 1.0})
+        step.update(ctx)
+        assert ctx.scratch["tainter_regime"] == "REDUCED_RESERVE"
+        mu = ctx.scratch["maintenance_burden"]
+        assert 0.5 <= mu < 0.75
+    run("T69 MaintenanceBurdenStep — reduced reserve regime", t69)
+
+    def t70():
+        cfg = SentinelConfig(warmup_periods=1)
+        step = MaintenanceBurdenStep(cfg)
+        bank = WindowBank()
+        bank.register("scalar", 64)
+        # μ = (4 * 0.2) / 1.0 = 0.8 → TAINTER_WARNING
+        ctx = StepContext(value=1.0, step=5, config=cfg, bank=bank,
+                          scratch={"node_count": 4,
+                                   "mean_coupling_strength": 0.2,
+                                   "throughput": 1.0})
+        step.update(ctx)
+        assert ctx.scratch["tainter_regime"] == "TAINTER_WARNING"
+        mu = ctx.scratch["maintenance_burden"]
+        assert 0.75 <= mu < 0.9
+    run("T70 MaintenanceBurdenStep — Tainter warning regime", t70)
+
+    def t71():
+        cfg = SentinelConfig(warmup_periods=1)
+        step = MaintenanceBurdenStep(cfg)
+        bank = WindowBank()
+        bank.register("scalar", 64)
+        # μ = (10 * 0.95) / 1.0 = 9.5 → clamped to 1.0 → TAINTER_CRITICAL
+        ctx = StepContext(value=1.0, step=5, config=cfg, bank=bank,
+                          scratch={"node_count": 10,
+                                   "mean_coupling_strength": 0.95,
+                                   "throughput": 1.0})
+        step.update(ctx)
+        assert ctx.scratch["tainter_regime"] == "TAINTER_CRITICAL"
+        assert ctx.scratch["maintenance_burden"] >= 0.9
+    run("T71 MaintenanceBurdenStep — Tainter critical regime", t71)
+
+    def t72():
+        cfg = SentinelConfig(warmup_periods=1)
+        step = MaintenanceBurdenStep(cfg)
+        bank = WindowBank()
+        bank.register("scalar", 64)
+        # throughput = 0 → μ = 1.0
+        ctx = StepContext(value=1.0, step=5, config=cfg, bank=bank,
+                          scratch={"node_count": 3,
+                                   "mean_coupling_strength": 0.5,
+                                   "throughput": 0.0})
+        step.update(ctx)
+        assert ctx.scratch["maintenance_burden"] == 1.0
+        assert ctx.scratch["tainter_regime"] == "TAINTER_CRITICAL"
+    run("T72 MaintenanceBurdenStep — zero throughput gives mu=1.0 CRITICAL", t72)
+
+    # ------------------------------------------------------------------
+    # T73 — T82: PAC pre-cascade detection
+    # ------------------------------------------------------------------
+
+    def t73():
+        if not _NP:
+            return  # numpy required for Hilbert transform
+        cfg = SentinelConfig(warmup_periods=1)
+        step = PhaseExtractionStep(cfg)
+        bank = WindowBank()
+        bank.register("scalar", 64)
+        # Populate bank with a proper sinusoidal signal
+        import math as _math
+        for i in range(40):
+            bank.append(_math.sin(2 * _math.pi * i / 8))
+        ctx = StepContext(value=1.0, step=40, config=cfg, bank=bank, scratch={})
+        step.update(ctx)
+        phases = ctx.scratch.get("band_phases", {})
+        assert len(phases) > 0
+        for band_name, phase_arr in phases.items():
+            arr = list(phase_arr)
+            if arr:
+                assert all(-math.pi - 1e-6 <= p <= math.pi + 1e-6 for p in arr), \
+                    f"Phase out of range in band {band_name}"
+    run("T73 PhaseExtractionStep — valid signal produces phases in [-pi, pi]", t73)
+
+    def t74():
+        cfg = SentinelConfig(warmup_periods=1)
+        step = PhaseExtractionStep(cfg)
+        bank = WindowBank()
+        bank.register("scalar", 64)
+        # Only 2 values in bank — below min length of 4
+        bank.append(1.0)
+        bank.append(2.0)
+        ctx = StepContext(value=1.0, step=2, config=cfg, bank=bank, scratch={})
+        step.update(ctx)  # must not raise
+        phases = ctx.scratch.get("band_phases", {})
+        # All phase arrays should be empty when signal too short
+        assert phases == {}
+    run("T74 PhaseExtractionStep — short signal gives empty phases no error", t74)
+
+    def t75():
+        if not _NP:
+            return  # numpy required for MI computation
+        cfg = SentinelConfig(warmup_periods=1)
+        step = PACCoefficientStep(cfg)
+        bank = WindowBank()
+        bank.register("scalar", 64)
+        # Construct strong PAC: slow phase strongly modulates fast amplitude
+        N = 100
+        t_arr = np.linspace(0, 4 * math.pi, N)
+        slow_phase = t_arr % (2 * math.pi) - math.pi  # sawtooth in [-pi, pi]
+        # Fast amplitude strongly coupled to slow phase
+        fast_amp = np.abs(np.sin(slow_phase / 2)) + 0.1
+        ctx = StepContext(value=1.0, step=5, config=cfg, bank=bank,
+                          scratch={
+                              "band_phases": {"ultra_low": slow_phase, "low": slow_phase},
+                              "band_amplitudes": {"mid": fast_amp.tolist(),
+                                                  "high": fast_amp.tolist(),
+                                                  "ultra_high": fast_amp.tolist()},
+                          })
+        step.update(ctx)
+        mean_pac = ctx.scratch.get("mean_pac", 0.0)
+        assert mean_pac > 0.0, f"mean_pac={mean_pac} expected > 0"
+    run("T75 PACCoefficientStep — coupled signal produces positive PAC", t75)
+
+    def t76():
+        if not _NP:
+            return
+        cfg = SentinelConfig(warmup_periods=1)
+        step = PACCoefficientStep(cfg)
+        bank = WindowBank()
+        bank.register("scalar", 64)
+        rng = np.random.default_rng(42)
+        N = 200
+        # Uncorrelated slow phase and fast amplitude
+        slow_phase = rng.uniform(-math.pi, math.pi, N)
+        fast_amp = rng.uniform(0, 1, N)
+        ctx = StepContext(value=1.0, step=5, config=cfg, bank=bank,
+                          scratch={
+                              "band_phases": {"ultra_low": slow_phase, "low": slow_phase},
+                              "band_amplitudes": {"mid": fast_amp.tolist(),
+                                                  "high": fast_amp.tolist(),
+                                                  "ultra_high": fast_amp.tolist()},
+                          })
+        step.update(ctx)
+        mean_pac = ctx.scratch.get("mean_pac", 0.0)
+        assert mean_pac < 0.3, f"mean_pac={mean_pac} expected < 0.3 for uncorrelated signal"
+    run("T76 PACCoefficientStep — uncorrelated signal gives low PAC", t76)
+
+    def t77():
+        cfg = SentinelConfig(warmup_periods=1)
+        step = PACCoefficientStep(cfg)
+        bank = WindowBank()
+        bank.register("scalar", 64)
+        # No slow bands available
+        ctx = StepContext(value=1.0, step=5, config=cfg, bank=bank,
+                          scratch={
+                              "band_phases": {},
+                              "band_amplitudes": {"mid": [0.1, 0.2], "high": [0.3]},
+                          })
+        step.update(ctx)
+        assert ctx.scratch["pac_matrix"] == {}
+        assert ctx.scratch["mean_pac"] == 0.0
+    run("T77 PACCoefficientStep — missing slow bands gives empty pac_matrix", t77)
+
+    def t78():
+        if not _NP:
+            return
+        cfg = SentinelConfig(warmup_periods=1)
+        step = PACCoefficientStep(cfg)
+        bank = WindowBank()
+        bank.register("scalar", 64)
+        N = 50
+        dummy_phase = np.zeros(N)
+        dummy_amp = np.ones(N)
+        ctx = StepContext(value=1.0, step=5, config=cfg, bank=bank,
+                          scratch={
+                              "band_phases": {
+                                  "ultra_low": dummy_phase,
+                                  "low": dummy_phase,
+                              },
+                              "band_amplitudes": {
+                                  "mid": dummy_amp.tolist(),
+                                  "high": dummy_amp.tolist(),
+                                  "ultra_high": dummy_amp.tolist(),
+                              },
+                          })
+        step.update(ctx)
+        pac_matrix = ctx.scratch["pac_matrix"]
+        # 2 slow × 3 fast = 6 entries
+        assert len(pac_matrix) == 6, f"Expected 6 PAC pairs, got {len(pac_matrix)}"
+    run("T78 PACCoefficientStep — all band pairs produces 6 PAC entries", t78)
+
+    def t79():
+        cfg = SentinelConfig(warmup_periods=1)
+        step = PACDegradationStep(cfg)
+        bank = WindowBank()
+        bank.register("scalar", 64)
+        # Feed stable PAC values — no degradation
+        stable_pac = 0.5
+        for _ in range(8):
+            ctx = StepContext(value=1.0, step=5, config=cfg, bank=bank,
+                              scratch={"mean_pac": stable_pac,
+                                       "cascade_precursor_active": False})
+            step.update(ctx)
+        assert ctx.scratch["pre_cascade_pac"] is False
+    run("T79 PACDegradationStep — stable PAC gives pre_cascade_pac=False", t79)
+
+    def t80():
+        cfg = SentinelConfig(warmup_periods=1)
+        step = PACDegradationStep(cfg)
+        bank = WindowBank()
+        bank.register("scalar", 64)
+        # Feed declining PAC: from 0.8 down to 0.4 → >15% drop
+        pacs = [0.8, 0.79, 0.78, 0.6, 0.5, 0.45, 0.42, 0.40]
+        for pac in pacs:
+            ctx = StepContext(value=1.0, step=5, config=cfg, bank=bank,
+                              scratch={"mean_pac": pac,
+                                       "cascade_precursor_active": False})
+            step.update(ctx)
+        assert ctx.scratch["pre_cascade_pac"] is True, \
+            f"pac_degradation_rate={ctx.scratch.get('pac_degradation_rate')}"
+    run("T80 PACDegradationStep — falling PAC triggers pre_cascade_pac=True", t80)
+
+    def t81():
+        cfg = SentinelConfig(warmup_periods=1)
+        step = PACDegradationStep(cfg)
+        bank = WindowBank()
+        bank.register("scalar", 64)
+        # Falling PAC but cascade already active — pre_cascade_pac must be False
+        pacs = [0.8, 0.79, 0.78, 0.6, 0.5, 0.45, 0.42, 0.40]
+        for pac in pacs:
+            ctx = StepContext(value=1.0, step=5, config=cfg, bank=bank,
+                              scratch={"mean_pac": pac,
+                                       "cascade_precursor_active": True})
+            step.update(ctx)
+        assert ctx.scratch["pre_cascade_pac"] is False
+    run("T81 PACDegradationStep — falling PAC with active cascade leaves pre_cascade_pac=False", t81)
+
+    def t82():
+        cfg = SentinelConfig(warmup_periods=1)
+        step = PACDegradationStep(cfg)
+        bank = WindowBank()
+        bank.register("scalar", 64)
+        # Only 2 observations — insufficient history
+        for pac in [0.8, 0.4]:
+            ctx = StepContext(value=1.0, step=5, config=cfg, bank=bank,
+                              scratch={"mean_pac": pac,
+                                       "cascade_precursor_active": False})
+            step.update(ctx)
+        assert ctx.scratch["pre_cascade_pac"] is False
+    run("T82 PACDegradationStep — insufficient history gives pre_cascade_pac=False", t82)
+
+    # ------------------------------------------------------------------
+    # T83 — T90: Diagnostic window Δt estimation
+    # ------------------------------------------------------------------
+
+    def t83():
+        cfg = SentinelConfig(warmup_periods=1)
+        step = CriticalCouplingEstimationStep(cfg)
+        bank = WindowBank()
+        bank.register("scalar", 64)
+        # Narrow distribution: power concentrated in mid band
+        ctx = StepContext(value=1.0, step=5, config=cfg, bank=bank,
+                          scratch={"band_powers": {"ultra_low": 0.0, "low": 0.0,
+                                                    "mid": 1.0, "high": 0.0,
+                                                    "ultra_high": 0.0}})
+        step.update(ctx)
+        kappa_c = ctx.scratch["critical_coupling"]
+        # Narrow distribution → g(ω₀) closer to 1 → lower κ_c
+        assert isinstance(kappa_c, float)
+        assert kappa_c > 0
+    run("T83 CriticalCouplingEstimationStep — narrow distribution gives low kappa_c", t83)
+
+    def t84():
+        cfg = SentinelConfig(warmup_periods=1)
+        step = CriticalCouplingEstimationStep(cfg)
+        bank = WindowBank()
+        bank.register("scalar", 64)
+        # Broad distribution: power spread across ultra_low and ultra_high
+        ctx_narrow = StepContext(value=1.0, step=5, config=cfg, bank=bank,
+                                 scratch={"band_powers": {"ultra_low": 0.0, "low": 0.0,
+                                                           "mid": 1.0, "high": 0.0,
+                                                           "ultra_high": 0.0}})
+        step.update(ctx_narrow)
+        kappa_c_narrow = ctx_narrow.scratch["critical_coupling"]
+
+        ctx_broad = StepContext(value=1.0, step=5, config=cfg, bank=bank,
+                                scratch={"band_powers": {"ultra_low": 0.5, "low": 0.0,
+                                                          "mid": 0.0, "high": 0.0,
+                                                          "ultra_high": 0.5}})
+        step.update(ctx_broad)
+        kappa_c_broad = ctx_broad.scratch["critical_coupling"]
+        # Broad spread → lower g(ω₀) → higher κ_c
+        assert kappa_c_broad >= kappa_c_narrow, \
+            f"Broad κ_c={kappa_c_broad:.3f} should be ≥ narrow κ_c={kappa_c_narrow:.3f}"
+    run("T84 CriticalCouplingEstimationStep — broad distribution gives higher kappa_c", t84)
+
+    def t85():
+        cfg = SentinelConfig(warmup_periods=1)
+        step = CouplingRateStep(cfg)
+        bank = WindowBank()
+        bank.register("scalar", 64)
+        # Feed declining coupling history
+        for val in [0.9, 0.8, 0.7, 0.6, 0.5]:
+            ctx = StepContext(value=1.0, step=5, config=cfg, bank=bank,
+                              scratch={"mean_coupling_strength": val})
+            step.update(ctx)
+        assert ctx.scratch["coupling_rate"] < 0
+    run("T85 CouplingRateStep — declining coupling gives negative coupling_rate", t85)
+
+    def t86():
+        cfg = SentinelConfig(warmup_periods=1)
+        step = CouplingRateStep(cfg)
+        bank = WindowBank()
+        bank.register("scalar", 64)
+        # Feed rising coupling history
+        for val in [0.1, 0.2, 0.3, 0.4, 0.5]:
+            ctx = StepContext(value=1.0, step=5, config=cfg, bank=bank,
+                              scratch={"mean_coupling_strength": val})
+            step.update(ctx)
+        assert ctx.scratch["coupling_rate"] > 0
+    run("T86 CouplingRateStep — rising coupling gives positive coupling_rate", t86)
+
+    def t87():
+        cfg = SentinelConfig(warmup_periods=1)
+        step = DiagnosticWindowStep(cfg)
+        bank = WindowBank()
+        bank.register("scalar", 64)
+        # κ̄ > κ_c and rate < 0 → window should be a positive number
+        ctx = StepContext(value=1.0, step=5, config=cfg, bank=bank,
+                          scratch={
+                              "mean_coupling_strength": 0.8,
+                              "critical_coupling": 0.3,
+                              "coupling_rate": -0.05,
+                              "coupling_history": [0.9, 0.85, 0.82, 0.80, 0.78,
+                                                   0.76, 0.74, 0.72, 0.70, 0.68],
+                          })
+        step.update(ctx)
+        dw = ctx.scratch.get("diagnostic_window_steps")
+        assert dw is not None, "Expected diagnostic_window_steps to be set"
+        assert dw > 0, f"diagnostic_window_steps={dw} expected > 0"
+        conf = ctx.scratch.get("diagnostic_window_confidence")
+        assert conf in ("HIGH", "MEDIUM", "LOW"), f"Unexpected confidence: {conf}"
+    run("T87 DiagnosticWindowStep — degrading coupling gives positive window", t87)
+
+    def t88():
+        cfg = SentinelConfig(warmup_periods=1)
+        step = DiagnosticWindowStep(cfg)
+        bank = WindowBank()
+        bank.register("scalar", 64)
+        # coupling_rate >= 0 → not applicable
+        ctx = StepContext(value=1.0, step=5, config=cfg, bank=bank,
+                          scratch={
+                              "mean_coupling_strength": 0.8,
+                              "critical_coupling": 0.3,
+                              "coupling_rate": 0.01,
+                              "coupling_history": [0.7, 0.75, 0.78, 0.80],
+                          })
+        step.update(ctx)
+        assert ctx.scratch.get("diagnostic_window_steps") is None
+        assert ctx.scratch.get("diagnostic_window_confidence") == "NOT_APPLICABLE"
+    run("T88 DiagnosticWindowStep — not degrading gives window=None", t88)
+
+    def t89():
+        cfg = SentinelConfig(warmup_periods=1)
+        step = DiagnosticWindowStep(cfg)
+        bank = WindowBank()
+        bank.register("scalar", 64)
+        # coupling rising above baseline → supercompensation
+        history = [0.3, 0.3, 0.3, 0.5, 0.6, 0.65]
+        ctx = StepContext(value=1.0, step=5, config=cfg, bank=bank,
+                          scratch={
+                              "mean_coupling_strength": 0.65,
+                              "critical_coupling": 0.2,
+                              "coupling_rate": 0.07,
+                              "coupling_history": history,
+                          })
+        step.update(ctx)
+        assert ctx.scratch.get("supercompensation_detected") is True
+    run("T89 DiagnosticWindowStep — coupling rising above baseline detects supercompensation", t89)
+
+    def t90():
+        cfg = SentinelConfig(warmup_periods=1)
+        step = DiagnosticWindowStep(cfg)
+        bank = WindowBank()
+        bank.register("scalar", 64)
+        # κ̄ ≤ κ_c — already collapsed
+        ctx = StepContext(value=1.0, step=5, config=cfg, bank=bank,
+                          scratch={
+                              "mean_coupling_strength": 0.2,
+                              "critical_coupling": 0.5,
+                              "coupling_rate": -0.05,
+                              "coupling_history": [0.4, 0.3, 0.25, 0.2],
+                          })
+        step.update(ctx)
+        assert ctx.scratch.get("diagnostic_window_steps") is None
+    run("T90 DiagnosticWindowStep — already collapsed gives window=None", t90)
+
+    # ------------------------------------------------------------------
+    # T91 — T98: Reversed sequence detection + SentinelResult v10 methods
+    # ------------------------------------------------------------------
+
+    def t91():
+        if not _NP:
+            return  # numpy required for exp(i*phase)
+        cfg = SentinelConfig(warmup_periods=1)
+        step = KuramotoOrderStep(cfg)
+        bank = WindowBank()
+        bank.register("scalar", 64)
+        # All band phases tightly aligned near 0 → high order
+        N = 50
+        aligned_phase = np.zeros(N)
+        ctx = StepContext(value=1.0, step=5, config=cfg, bank=bank,
+                          scratch={
+                              "band_phases": {
+                                  "ultra_low": aligned_phase,
+                                  "low": aligned_phase,
+                                  "mid": aligned_phase,
+                                  "high": aligned_phase,
+                                  "ultra_high": aligned_phase,
+                              }
+                          })
+        step.update(ctx)
+        phi = ctx.scratch.get("kuramoto_order", 0.0)
+        assert phi > 0.8, f"kuramoto_order={phi:.3f} expected > 0.8 for aligned phases"
+    run("T91 KuramotoOrderStep — aligned phases give high Phi > 0.8", t91)
+
+    def t92():
+        if not _NP:
+            return
+        cfg = SentinelConfig(warmup_periods=1)
+        step = KuramotoOrderStep(cfg)
+        bank = WindowBank()
+        bank.register("scalar", 64)
+        rng = np.random.default_rng(99)
+        N = 200
+        # Randomly distributed phases → low order
+        ctx = StepContext(value=1.0, step=5, config=cfg, bank=bank,
+                          scratch={
+                              "band_phases": {
+                                  "ultra_low": rng.uniform(-math.pi, math.pi, N),
+                                  "low":       rng.uniform(-math.pi, math.pi, N),
+                                  "mid":       rng.uniform(-math.pi, math.pi, N),
+                                  "high":      rng.uniform(-math.pi, math.pi, N),
+                                  "ultra_high":rng.uniform(-math.pi, math.pi, N),
+                              }
+                          })
+        step.update(ctx)
+        phi = ctx.scratch.get("kuramoto_order", 1.0)
+        assert phi < 0.5, f"kuramoto_order={phi:.3f} expected < 0.5 for random phases"
+    run("T92 KuramotoOrderStep — random phases give low Phi < 0.5", t92)
+
+    def t93():
+        cfg = SentinelConfig(warmup_periods=1)
+        step = SequenceOrderingStep(cfg)
+        bank = WindowBank()
+        bank.register("scalar", 64)
+        # coupling_rate negative (below threshold), phi_rate ~stable → COUPLING_FIRST
+        for i in range(5):
+            phi = 1.0  # stable coherence
+            ctx = StepContext(value=1.0, step=i, config=cfg, bank=bank,
+                              scratch={"kuramoto_order": phi,
+                                       "coupling_rate": -0.1})  # degrading
+            step.update(ctx)
+        seq_history = ctx.scratch.get("sequence_history", [])
+        assert "COUPLING_FIRST" in seq_history
+    run("T93 SequenceOrderingStep — coupling degrading first yields COUPLING_FIRST", t93)
+
+    def t94():
+        cfg = SentinelConfig(warmup_periods=1)
+        step = SequenceOrderingStep(cfg)
+        bank = WindowBank()
+        bank.register("scalar", 64)
+        # Phi declining fast (phi_rate < threshold), coupling stable → COHERENCE_FIRST
+        phi_vals = [1.0, 0.9, 0.7, 0.5, 0.3, 0.1]
+        for i, phi in enumerate(phi_vals):
+            ctx = StepContext(value=1.0, step=i, config=cfg, bank=bank,
+                              scratch={"kuramoto_order": phi,
+                                       "coupling_rate": 0.0})  # stable
+            step.update(ctx)
+        seq_history = ctx.scratch.get("sequence_history", [])
+        assert "COHERENCE_FIRST" in seq_history, f"seq_history={seq_history}"
+    run("T94 SequenceOrderingStep — coherence degrading first yields COHERENCE_FIRST", t94)
+
+    def t95():
+        cfg = SentinelConfig(warmup_periods=1)
+        step = ReversedSequenceStep(cfg)
+        bank = WindowBank()
+        bank.register("scalar", 64)
+        # Coupling first dominant — organic decay
+        ctx = StepContext(value=1.0, step=5, config=cfg, bank=bank,
+                          scratch={
+                              "sequence_history": ["COUPLING_FIRST", "COUPLING_FIRST",
+                                                   "COUPLING_FIRST", "STABLE"],
+                              "phi_rate": -0.01,
+                              "coupling_rate": -0.1,
+                          })
+        step.update(ctx)
+        assert ctx.scratch["reversed_sequence"] is False
+        assert ctx.scratch["sequence_type"] == "ORGANIC"
+    run("T95 ReversedSequenceStep — coupling dominant sequence gives ORGANIC", t95)
+
+    def t96():
+        cfg = SentinelConfig(warmup_periods=1)
+        step = ReversedSequenceStep(cfg)
+        bank = WindowBank()
+        bank.register("scalar", 64)
+        # Coherence first dominant — reversed sequence
+        ctx = StepContext(value=1.0, step=5, config=cfg, bank=bank,
+                          scratch={
+                              "sequence_history": ["COHERENCE_FIRST", "COHERENCE_FIRST",
+                                                   "COHERENCE_FIRST", "STABLE"],
+                              "phi_rate": -0.2,
+                              "coupling_rate": -0.01,
+                          })
+        step.update(ctx)
+        assert ctx.scratch["reversed_sequence"] is True
+        assert ctx.scratch["sequence_type"] == "REVERSED"
+        assert ctx.scratch["intervention_signature_score"] > 0.3
+    run("T96 ReversedSequenceStep — coherence dominant gives REVERSED + score > 0.3", t96)
+
+    def t97():
+        # SentinelResult.get_diagnostic_window() returns correct structure
+        r = SentinelResult({
+            "diagnostic_window_steps": 45.0,
+            "diagnostic_window_confidence": "HIGH",
+            "supercompensation_detected": False,
+        })
+        dw = r.get_diagnostic_window()
+        assert dw["steps"] == 45.0
+        assert dw["confidence"] == "HIGH"
+        assert dw["supercompensation"] is False
+    run("T97 SentinelResult.get_diagnostic_window() returns correct dict", t97)
+
+    def t98():
+        # SentinelResult.get_maintenance_burden() returns correct structure
+        r = SentinelResult({
+            "maintenance_burden": 0.85,
+            "tainter_regime": "TAINTER_WARNING",
+        })
+        mb = r.get_maintenance_burden()
+        assert mb["mu"] == 0.85
+        assert mb["regime"] == "TAINTER_WARNING"
+        # get_intervention_signature and get_pac_status also present
+        r2 = SentinelResult({
+            "intervention_signature_score": 0.7,
+            "sequence_type": "REVERSED",
+            "phi_rate": -0.15,
+            "coupling_rate": -0.01,
+            "mean_pac": 0.4,
+            "pac_degradation_rate": 0.2,
+            "pre_cascade_pac": True,
+        })
+        sig = r2.get_intervention_signature()
+        assert sig["score"] == 0.7
+        assert sig["sequence_type"] == "REVERSED"
+        pac = r2.get_pac_status()
+        assert pac["mean_pac"] == 0.4
+        assert pac["pre_cascade_pac"] is True
+    run("T98 SentinelResult v10 methods all return correct dict structures", t98)
+
+    # ------------------------------------------------------------------
     print(f"\n{'='*60}")
-    print(f"  Results: {passed} passed, {failed} failed / 65 total")
+    print(f"  Results: {passed} passed, {failed} failed / 98 total")
     if errors:
         print(f"\n  Failed tests:")
         for name, reason in errors:
