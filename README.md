@@ -1,5 +1,7 @@
 # Fracttalix Sentinel v8.0
 
+https://doi.org/10.5281/zenodo.18859299
+
 **A pipeline-architecture streaming anomaly detector grounded in the Fractal Rhythm Model**
 Single-file Python | Zero required dependencies | CC0 public domain
 
