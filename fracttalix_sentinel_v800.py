@@ -781,16 +781,28 @@ class VarCUSUMStep(DetectorStep):
         self._s_hi = 0.0
         self._s_lo = 0.0
         self._var_ewma = 1.0
+        self._warmed = False
 
     def update(self, ctx: StepContext) -> None:
         if ctx.is_warmup:
             return
+        if not self._warmed:
+            self._s_hi = 0.0
+            self._s_lo = 0.0
+            self._var_ewma = 0.0  # seed from real data, not default 1.0
+            self._warmed = True
         dev = ctx.dev_ewma
         z = ctx.scratch.get("z_score", 0.0)
         v2 = z * z  # variance proxy
+        self._var_ewma = 0.9 * self._var_ewma + 0.1 * v2
         k = self.cfg.var_cusum_k
         self._s_hi = max(0.0, self._s_hi + v2 - k)
-        self._s_lo = max(0.0, self._s_lo + k - v2)
+        # Only accumulate _s_lo when variance baseline is established; prevents
+        # false "variance drop" alerts on data that has always been constant.
+        if self._var_ewma > 1e-4:
+            self._s_lo = max(0.0, self._s_lo + k - v2)
+        else:
+            self._s_lo = 0.0
         alert = self._s_hi > self.cfg.var_cusum_h or self._s_lo > self.cfg.var_cusum_h
         ctx.scratch["var_cusum_hi"] = self._s_hi
         ctx.scratch["var_cusum_lo"] = self._s_lo
@@ -800,12 +812,13 @@ class VarCUSUMStep(DetectorStep):
             ctx.scratch["anomaly"] = True
 
     def state_dict(self) -> Dict[str, Any]:
-        return {"s_hi": self._s_hi, "s_lo": self._s_lo, "var_ewma": self._var_ewma}
+        return {"s_hi": self._s_hi, "s_lo": self._s_lo, "var_ewma": self._var_ewma, "warmed": self._warmed}
 
     def load_state(self, sd: Dict[str, Any]) -> None:
         self._s_hi = sd.get("s_hi", 0.0)
         self._s_lo = sd.get("s_lo", 0.0)
         self._var_ewma = sd.get("var_ewma", 1.0)
+        self._warmed = sd.get("warmed", False)
 
 
 # ---------------------------------------------------------------------------
