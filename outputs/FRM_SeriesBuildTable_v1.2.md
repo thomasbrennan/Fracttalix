@@ -1,57 +1,128 @@
-# Fracttalix Research Manuscripts — Series Build Table v1.2
-
-**Version:** 1.2
-**Updated:** 2026-03-07 — Session 36
-**Maintainer:** Claude (Architect Secretary Model via Claude Code)
-**Format:** Living document — updated as architect revises plans during construction
+# FRM Series Build Table v1.2
+*Fractal Rhythm Model — Twelve-Paper Corpus*
+*Living document. Updated by Claude (Anthropic) as architect
+revises plans during construction.*
+*Last revised: Session 36*
 
 ---
 
-## Series Build Table
+## Series Overview
 
-| # | Paper Title | Status | Target | Notes |
-|---|------------|--------|--------|-------|
-| 1 | **Fracttalix Sentinel: Adaptive Fractal Intelligence for Real-Time Market Regime Detection** | **Revision Flagged** | arXiv — Wave 1 | Series invitation paper. Embed build map for full series arc. Revision in progress to reframe as series opener. |
-| 2 | Fractal Dimension Estimation Under Non-Stationary Volatility | Draft | arXiv — Wave 1 | Core mathematical foundation. |
-| 3 | Multi-Scale Hurst Exponent Tracking in High-Frequency Data | Draft | arXiv — Wave 1 | Pairs with Paper 2 for fractal measurement stack. |
-| 4 | Regime-Dependent Fractal Signature Clustering | Planned | arXiv — Wave 2 | Regime detection methodology. |
-| 5 | Entropy-Weighted Fractal Portfolios | Planned | arXiv — Wave 2 | Portfolio construction layer. |
-| 6 | Fractal Risk Metrics: Beyond VaR and CVaR | Planned | arXiv — Wave 2 | Risk framework extension. |
-| 7 | Cross-Asset Fractal Correlation Structures | Planned | arXiv — Wave 3 | Multi-asset generalization. |
-| 8 | Machine Learning on Fractal Feature Spaces | Planned | arXiv — Wave 3 | ML integration layer. |
-| 9 | Fractal Market Microstructure Analysis | Planned | arXiv — Wave 3 | Microstructure application. |
-| 10 | Real-Time Fractal Dashboard Architecture | Planned | arXiv — Wave 4 | Systems/engineering paper. |
-| 11 | Backtesting Fractal Strategies: Methodological Pitfalls | Planned | arXiv — Wave 4 | Empirical validation. |
-| 12 | **Fracttalix: A Unified Fractal Framework for Quantitative Finance** | **Dual-Track Elevated** | arXiv — Wave 4 / Journal submission | Capstone synthesis. Dual-track: arXiv preprint + simultaneous journal submission. Elevated priority as series anchor. |
+**Total estimated words:** 195,100+
+**Publication strategy:** arXiv serial release, one paper per month
+**Theoretical foundation:** Fractal Rhythm Model, 11 axioms
+**DOI:** 10.5281/zenodo.18859299
+**GitHub:** https://github.com/thomasbrennan/Fracttalix
+
+---
+
+## Three-Act Architecture
+
+**Act One (Papers 1–4):** Deductive. Organizational scale. Each
+paper earns the next by revealing a structural problem the prior
+paper could not solve.
+
+**Act Two (Paper 5):** Transitional. Civilizational scale. Mode
+shifts from deductive to inductive.
+
+**Act Three (Papers 6–12):** Inductive, then formal, then applied.
+Paper 10 closes the loop by naming Meta-Kaizen as the reference
+implementation.
+
+---
+
+## Build Table
+
+| # | Title | Scale | Mode | Act | Est. Words | Status | Notes |
+|---|-------|-------|------|-----|------------|--------|-------|
+| 1 | General Theory & KVS | Organization | Deductive | I | 9,351 + revision | PUBLISHED — REVISION FLAGGED | Needs new opening: invitation into series + full build map embedded. Reader memory palace framing. Not a theoretical revision — a reader orientation revision. |
+| 2 | Networked Implementation | Network | Deductive | I | 5,116 | PUBLISHED | |
+| 3 | The Reasoning Network | Cognitive | Deductive | I | 5,559 | PUBLISHED | |
+| 4 | The Fractal Rhythm Model | Dynamic | Deductive | I | 5,695 | PUBLISHED | |
+| 5 | On the Decision to Act | Civilizational | Transitional | II | 15,393 + AMOC insert | PUBLISHED — PENDING v11 | AMOC results pending. Insert before arXiv posting. Transitional paper should arrive with empirical weight. |
+| 6 | The Universal Theory | All scales | Inductive | III | 28,000+ | NEXT MAJOR WRITING ACTION | Load-bearing paper for Act Three. Bolder framing than originally designed. Empirical grounding via AMOC. All Papers 7–12 depend on this formally. |
+| 7 | The Temporal Channel | Irreversibility | Theoretical | III | 18,000 | PENDING | |
+| 8 | The Exhaustiveness Proof | Mathematical | Formal | III | 20,000 | PENDING — HIGH RISK | Develop outline in parallel with Paper 6. Bottleneck for Papers 9–12. Hostile referee will be right until this exists. |
+| 9 | The Measurement Problem | Instrumentation | Bridge | III | 22,000 | PENDING | Depends on Papers 7 AND 8 both complete. |
+| 10 | The Design Paper | Applied | Practical | III | 20,000 | PENDING | Meta-Kaizen as reference implementation. Full channel mapping. |
+| 11 | The Thermodynamic Bridge | Physics | Formal | III | 24,000 | PENDING — HIGH RISK | Genuine derivation from Prigogine required — not sophisticated analogy. Physicist co-author decision required before writing begins. |
+| 12 | Civilizational Governance | Civilizational | Urgent | III | 22,000 | PENDING — DUAL TRACK | Working paper after Paper 6 (urgency track). Full version after Papers 10 and 11 (formal track). Do not soften civilizational diagnosis. |
+
+---
+
+## Formal Dependency Structure
+
+| Paper | Depends On | Enables |
+|-------|-----------|---------|
+| 1 | None | 2, 3, 4 |
+| 2 | 1 | 3 |
+| 3 | 1, 2 | 4 |
+| 4 | 1, 2, 3 | 5 |
+| 5 | 1, 2, 3, 4 | 6 |
+| 6 | 1–5 | 7, 8, 9, 10, 11, 12 |
+| 7 | 6 | 11 |
+| 8 | 6 | 9 |
+| 9 | 7 AND 8 | 10 |
+| 10 | 9 | 12 |
+| 11 | 7 | 12 |
+| 12 | 10, 11 | Terminus |
 
 ---
 
 ## arXiv Release Schedule
 
-| Wave | Papers | Target Window | Strategy |
-|------|--------|---------------|----------|
-| Wave 1 | Papers 1, 2, 3 | Near-term | Foundation trilogy. Paper 1 as series invitation. Establish presence and citation base. |
-| Wave 2 | Papers 4, 5, 6 | Mid-term | Core methodology expansion. Regime, portfolio, risk. |
-| Wave 3 | Papers 7, 8, 9 | Mid-term | Cross-asset, ML, microstructure extensions. |
-| Wave 4 | Papers 10, 11, 12 | Long-term | Systems, validation, and capstone synthesis. Paper 12 dual-track to journal. |
+One paper per month. Serial release allows reader absorption
+and memory palace construction. Papers may be revised between
+Zenodo publication and arXiv posting.
+
+| Month | Paper | Notes |
+|-------|-------|-------|
+| 1 | Paper 1 v9 | Revised opening + embedded build map. Sets series frame. Reader invitation. |
+| 2 | Paper 2 | |
+| 3 | Paper 3 | |
+| 4 | Paper 4 | |
+| 5 | Paper 5 v11 | AMOC results inserted. Arrives with empirical weight. |
+| 6 | Paper 6 | Load-bearing paper. Arrives after five months of reader preparation. |
+| 7–12 | Papers 7–12 | Sequenced per dependency structure. Paper 12 working paper may precede on urgency track. |
 
 ---
 
-## Status Key
+## Risk Register
 
-| Status | Meaning |
-|--------|---------|
-| **Revision Flagged** | Existing draft under active revision |
-| **Draft** | Working draft in progress |
-| **Planned** | Outlined, not yet drafted |
-| **Dual-Track Elevated** | Targeted for both arXiv preprint and journal submission |
+| ID | Scope | Level | Risk | Contingency |
+|----|-------|-------|------|-------------|
+| R-1 | Paper 8 | HIGH | Exhaustiveness proof may stall Act Three | Develop outline in parallel with Paper 6 |
+| R-2 | Paper 11 | HIGH | Thermodynamic derivation requires physics rigor | Identify physicist co-author OR reframe as theoretical bridge |
+| R-3 | Paper 12 | MEDIUM | Urgency vs. sequence tension | Working paper after Paper 6 on parallel track |
+| R-4 | AMOC data | MEDIUM | Empirical dependency — results unknown | Pre-specified failure modes publishable either direction |
+| R-5 | All | LOW | Single-author scope for Papers 8 and 11 | Identify co-authors |
 
 ---
 
-## Change Log
+## Connective Tissue Register
 
-| Version | Date | Changes |
-|---------|------|---------|
-| v1.0 | — | Initial build table |
-| v1.1 | — | First structured release |
-| v1.2 | 2026-03-07 | Added Status and Notes columns. Paper 1 revision flagged as series invitation with embedded build map. Paper 12 elevated to dual-track (arXiv + journal). arXiv wave release schedule added. Transitioned to living document format maintained by Claude via Claude Code. |
+| ID | Location | Purpose |
+|----|----------|---------|
+| CT-1 | End of Paper 5 conclusion | Opens door to Act Three |
+| CT-2 | Paper 6 series orientation | H-emergence as formal characterization of complex adaptive behavior |
+| CT-3 | Paper 6, Section 8 | Sentinel v9.0 as operational proof-of-concept |
+| CT-4 | Paper 10, Section 5 | Meta-Kaizen as reference implementation — full channel mapping |
+| CT-5 | Paper 12, closing | Civilizational Sentinel as extension of organizational Sentinel |
+| CT-6 | Paper 9, opening | Bridge from exhaustiveness proof to instrumentation |
+| CT-7 | Paper 12, opening | Bridge from thermodynamic proof to civilizational application |
+
+---
+
+## Revision History
+
+| Version | Session | Changes |
+|---------|---------|---------|
+| v1.0 | Session 33 | Initial build table |
+| v1.1 | Session 34 | KVS scoring added |
+| v1.2 | Session 36 | Status and Notes columns added. Paper 1 revision flagged. Paper 12 elevated to dual track. arXiv release schedule added. Format migrated from .docx to .md — living document, GitHub-native. |
+
+---
+
+*This document is maintained by Claude (Anthropic) and updated
+via Claude Code deposit. It is a living architectural plan,
+not a delivery artifact.*
