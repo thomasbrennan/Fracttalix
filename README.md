@@ -1,6 +1,6 @@
-# Fracttalix Sentinel v9.0
+# Fracttalix Sentinel v10.0
 
-**Streaming anomaly detection grounded in the Three-Channel Model of Dissipative Network Information Transmission.**
+**Streaming anomaly detection grounded in the Three-Channel Model of Dissipative Network Information Transmission — extended with four physics-derived capabilities from Session 36.**
 
 Sentinel ingests one scalar (or multivariate) observation at a time and emits a rich result dictionary on every call — no batching, no retraining, no warmup gap once past the configurable warmup window.
 
@@ -14,19 +14,20 @@ Sentinel ingests one scalar (or multivariate) observation at a time and emits a 
 
 1. [Overview](#overview)
 2. [Three-Channel Model](#three-channel-model)
-3. [Installation](#installation)
-4. [Quick Start](#quick-start)
-5. [SentinelConfig — Configuration](#sentinelconfig--configuration)
-6. [Pipeline Architecture — 26 Steps](#pipeline-architecture--26-steps)
-7. [V9.0 New Features](#v90-new-features)
-8. [SentinelResult API](#sentinelresult-api)
-9. [MultiStreamSentinel](#multistreamssentinel)
-10. [SentinelBenchmark](#sentinelbenchmark)
-11. [SentinelServer — REST API](#sentinelserver--rest-api)
-12. [CLI Reference](#cli-reference)
-13. [Backward Compatibility](#backward-compatibility)
-14. [Theoretical Foundation](#theoretical-foundation)
-15. [Authors & License](#authors--license)
+3. [V10.0 New Capabilities](#v100-new-capabilities)
+4. [Installation](#installation)
+5. [Quick Start](#quick-start)
+6. [SentinelConfig — Configuration](#sentinelconfig--configuration)
+7. [Pipeline Architecture — 37 Steps](#pipeline-architecture--37-steps)
+8. [V9.0 Alert Types and Data Structures](#v90-alert-types-and-data-structures)
+9. [SentinelResult API](#sentinelresult-api)
+10. [MultiStreamSentinel](#multistreamssentinel)
+11. [SentinelBenchmark](#sentinelbenchmark)
+12. [SentinelServer — REST API](#sentinelserver--rest-api)
+13. [CLI Reference](#cli-reference)
+14. [Backward Compatibility](#backward-compatibility)
+15. [Theoretical Foundation](#theoretical-foundation)
+16. [Authors & License](#authors--license)
 
 ---
 
@@ -34,32 +35,107 @@ Sentinel ingests one scalar (or multivariate) observation at a time and emits a 
 
 Fracttalix Sentinel is a single-file Python library (`fracttalix_sentinel_v900.py`) for real-time streaming anomaly detection. Its design priorities are:
 
-- **Zero external dependencies for core operation** — works on the Python standard library alone; numpy, numba, matplotlib, and tqdm are optional accelerators.
+- **Zero external dependencies for core operation** — works on the Python standard library alone; numpy, scipy, numba, matplotlib, and tqdm are optional accelerators.
 - **Immutable, inspectable configuration** — `SentinelConfig` is a frozen dataclass; every parameter is readable and picklable.
-- **Composable pipeline** — 26 `DetectorStep` subclasses execute in sequence; custom steps can be inserted via `register_step`.
-- **Three-channel anomaly model** — v9.0 monitors structural properties, broadband rhythmicity, and temporal degradation sequences as independent information channels.
-- **Full backward compatibility** — all v7.x and v8.0 call patterns continue to work unchanged.
+- **Composable pipeline** — 37 `DetectorStep` subclasses execute in sequence; custom steps can be inserted via `register_step`.
+- **Three-channel anomaly model** — monitors structural properties, broadband rhythmicity, and temporal degradation sequences as independent information channels.
+- **Physics-derived collapse dynamics** — v10.0 adds maintenance burden, PAC pre-cascade detection, diagnostic window estimation, and reversed sequence detection derived from the Kuramoto synchronization framework.
+- **Full backward compatibility** — all v7.x, v8.0, and v9.0 call patterns continue to work unchanged.
 
 ---
 
 ## Three-Channel Model
 
-V9.0 implements the three-channel model from Meta-Kaizen Paper 6:
+Implemented from Meta-Kaizen Paper 6:
 
 | Channel | Name | What it monitors |
 |---------|------|-----------------|
-| **1** | Structural | Network topology as active transmitter — mean, variance, skewness, kurtosis, autocorrelation, stationarity of the input stream |
-| **2** | Rhythmic | Broadband multiplexed oscillatory transmission — FFT decomposition into five independent carrier-wave bands and cross-frequency phase-amplitude coupling |
-| **3** | Temporal | One-way irreversible carrier wave — temporal sequence and ordering of channel degradation events, diagnostic about regime-change type and severity |
+| **1** | Structural | Network topology as active transmitter — mean, variance, skewness, kurtosis, autocorrelation, stationarity |
+| **2** | Rhythmic | Broadband multiplexed oscillatory transmission — FFT decomposition into five carrier-wave bands and cross-frequency phase-amplitude coupling |
+| **3** | Temporal | One-way irreversible carrier wave — temporal sequence and ordering of channel degradation events |
 
-**Degradation cascade logic:**
+**Degradation cascade logic (v9.0):**
 
 ```
 Band anomaly detected  →  Cross-frequency coupling degrades  →
   Structural-rhythmic channels decouple  →  CASCADE PRECURSOR (CRITICAL)
 ```
 
-The cascade precursor requires three simultaneous conditions: coupling degradation active, structural-rhythmic decoupling active, and at least `cascade_ews_threshold` EWS indicators elevated. This compound signature distinguishes a scale-level reversion event from a local anomaly.
+**Extended diagnostics (v10.0):**
+
+```
+PAC pre-cascade detected  →  Δt window opens  →  Maintenance burden μ → 1  →
+  Coupling rate dκ̄/dt negative  →  Collapse imminent
+```
+
+---
+
+## V10.0 New Capabilities
+
+Four physics-derived capabilities added in v10.0 (Session 36 physics program):
+
+### 1. Maintenance Burden μ (Tainter Regime Detection)
+
+```
+μ = N · κ̄ · E_coupling / P_throughput
+```
+
+When μ → 1, the network spends all energy on coupling maintenance with zero adaptive reserve — the Tainter collapse condition.
+
+| μ range | Regime | Meaning |
+|---------|--------|---------|
+| < 0.5 | `HEALTHY` | Full adaptive reserve |
+| 0.5 – 0.75 | `REDUCED_RESERVE` | Adaptive capacity diminishing |
+| 0.75 – 0.9 | `TAINTER_WARNING` | Approaching critical burden |
+| ≥ 0.9 | `TAINTER_CRITICAL` | Spending all energy on maintenance |
+
+```python
+mb = result.get_maintenance_burden()
+# {"mu": 0.82, "regime": "TAINTER_WARNING"}
+```
+
+### 2. PAC Pre-Cascade Detection (Extended Diagnostic Window)
+
+Phase-Amplitude Coupling (PAC) measures the depth of nonlinear coupling architecture — the structural memory of the network. PAC degrades **before** mean coupling strength κ̄ measurably decreases, providing an earlier warning signal than the v9.0 cascade precursor.
+
+Method: Modulation Index (Tort et al. 2010) across 6 slow-phase/fast-amplitude band pairs.
+
+```python
+pac = result.get_pac_status()
+# {"mean_pac": 0.41, "degradation_rate": 0.18, "pre_cascade_pac": True}
+```
+
+### 3. Diagnostic Window Δt Estimation (Time-to-Collapse)
+
+```
+Δt = (κ̄ - κ_c) / |dκ̄/dt|
+```
+
+The estimated number of observations remaining before coherence collapse, given current coupling strength and its rate of change. Sentinel stops just detecting that collapse is coming and starts estimating **when**.
+
+- Only active when κ̄ > κ_c and dκ̄/dt < 0
+- Confidence graded: `HIGH` / `MEDIUM` / `LOW` based on rate stability
+- Detects **supercompensation** (adaptive recovery in progress)
+
+```python
+dw = result.get_diagnostic_window()
+# {"steps": 47.3, "confidence": "HIGH", "supercompensation": False}
+```
+
+### 4. Reversed Sequence Detection (Intervention Signature)
+
+The thermodynamic arrow of network collapse is irreversible: **coupling degrades before coherence collapses**. A reversed sequence — coherence collapsing before coupling degrades — indicates:
+
+1. Measurement error
+2. Non-universality class membership
+3. **Deliberate external intervention** (a civilization being collapsed vs. one that collapses)
+
+```python
+if result.is_reversed_sequence():
+    sig = result.get_intervention_signature()
+    # {"score": 0.74, "sequence_type": "REVERSED",
+    #  "phi_rate": -0.18, "coupling_rate": -0.01}
+```
 
 ---
 
@@ -74,13 +150,14 @@ cp fracttalix_sentinel_v900.py myproject/
 **Optional accelerators (install any or none):**
 
 ```bash
-pip install numpy          # FFT, covariance, phase-amplitude coupling
+pip install numpy          # FFT, PAC computation, Hilbert transform
+pip install scipy          # scipy.signal.hilbert (falls back to numpy)
 pip install numba          # JIT compilation for hot loops
 pip install matplotlib     # plot_history() dashboard
 pip install tqdm           # progress bars in benchmark
 ```
 
-**Self-test (65 tests, all expected to pass):**
+**Self-test (98 tests, all expected to pass):**
 
 ```bash
 python fracttalix_sentinel_v900.py
@@ -102,28 +179,49 @@ det = SentinelDetector(SentinelConfig.production())
 for value in my_data_stream:
     result = det.update_and_check(value)
     if result["alert"]:
-        print(f"Step {result['step']}: alert — {result['alert_reasons']}")
+        print(f"Step {result['step']}: {result['alert_reasons']}")
+```
+
+### V10.0 collapse dynamics
+
+```python
+result = det.update_and_check(value)
+
+# Tainter regime
+mb = result.get_maintenance_burden()
+if mb["regime"] == "TAINTER_CRITICAL":
+    print(f"Tainter critical: μ={mb['mu']:.2f}")
+
+# PAC pre-cascade (earlier warning than cascade precursor)
+pac = result.get_pac_status()
+if pac["pre_cascade_pac"]:
+    print("PAC pre-cascade: coupling architecture degrading")
+
+# Time to collapse estimate
+dw = result.get_diagnostic_window()
+if dw["steps"] is not None:
+    print(f"Δt ≈ {dw['steps']:.0f} steps ({dw['confidence']} confidence)")
+if dw["supercompensation"]:
+    print("Supercompensation detected — adaptive recovery in progress")
+
+# Intervention signature
+if result.is_reversed_sequence():
+    sig = result.get_intervention_signature()
+    print(f"Reversed sequence — intervention score {sig['score']:.2f}")
 ```
 
 ### V9.0 three-channel status
 
 ```python
-result = det.update_and_check(value)
-
-# Boolean cascade test
 if result.is_cascade_precursor():
-    print("CRITICAL: cascade precursor detected")
+    print("CRITICAL: cascade precursor")
 
-# Per-channel health
 status = result.get_channel_status()
 # {"structural": "healthy", "rhythmic_composite": "degrading",
 #  "coupling": "healthy", "coherence": "healthy"}
 
-# Human-readable degradation narrative
 print(result.get_degradation_narrative())
-
-# Primary carrier wave (e.g. "mid")
-print(result.get_primary_carrier_wave())
+print(result.get_primary_carrier_wave())   # "mid", "low", etc.
 ```
 
 ### Multivariate mode
@@ -168,150 +266,156 @@ det = SentinelDetector.auto_tune(data=[], labeled_data=labeled)
 
 | Field | Default | Description |
 |-------|---------|-------------|
-| `alpha` | `0.1` | EWMA smoothing factor (0 < α ≤ 1). Smaller = slower, more stable. |
-| `dev_alpha` | `0.1` | EWMA factor for deviation (volatility) estimation. |
-| `multiplier` | `3.0` | Alert threshold = EWMA ± multiplier × dev_ewma. |
-| `warmup_periods` | `30` | Observations collected before alerts are issued. |
+| `alpha` | `0.1` | EWMA smoothing factor (0 < α ≤ 1) |
+| `dev_alpha` | `0.1` | EWMA factor for deviation estimation |
+| `multiplier` | `3.0` | Alert threshold = EWMA ± multiplier × dev_ewma |
+| `warmup_periods` | `30` | Observations before alerts are issued |
 
 #### B — Regime Detection
 
 | Field | Default | Description |
 |-------|---------|-------------|
-| `regime_threshold` | `3.5` | Z-score magnitude that triggers a regime change. |
-| `regime_alpha_boost` | `2.0` | Multiplicative boost to alpha during regime transitions (v8 fix δ). |
-| `regime_boost_decay` | `0.9` | Decay rate of regime boost per observation. |
+| `regime_threshold` | `3.5` | Z-score magnitude triggering regime change |
+| `regime_alpha_boost` | `2.0` | Multiplicative alpha boost during transitions |
+| `regime_boost_decay` | `0.9` | Decay rate of regime boost per observation |
 
 #### C — Multivariate
 
 | Field | Default | Description |
 |-------|---------|-------------|
-| `multivariate` | `False` | Enable Mahalanobis distance mode. |
-| `n_channels` | `1` | Number of input channels. |
-| `cov_alpha` | `0.05` | EWMA factor for covariance matrix (Woodbury rank-1 update). |
+| `multivariate` | `False` | Enable Mahalanobis distance mode |
+| `n_channels` | `1` | Number of input channels |
+| `cov_alpha` | `0.05` | EWMA factor for covariance (Woodbury rank-1) |
 
 #### D — FRM Metrics
 
 | Field | Default | Description |
 |-------|---------|-------------|
-| `rpi_window` | `64` | Window for Rhythm Periodicity Index FFT. |
-| `rfi_window` | `64` | Window for Rhythm Fractal Index (R/S analysis). |
-| `rpi_threshold` | `0.6` | Minimum RPI for "rhythm healthy". |
-| `rfi_threshold` | `0.4` | RFI alert threshold (higher = more irregular). |
+| `rpi_window` | `64` | Rhythm Periodicity Index FFT window |
+| `rfi_window` | `64` | Rhythm Fractal Index R/S window |
+| `rpi_threshold` | `0.6` | Minimum RPI for "rhythm healthy" |
+| `rfi_threshold` | `0.4` | RFI alert threshold |
 
 #### E — Complexity & EWS
 
 | Field | Default | Description |
 |-------|---------|-------------|
-| `pe_order` | `3` | Permutation Entropy embedding dimension. |
-| `pe_window` | `50` | Sliding window for PE computation. |
-| `pe_threshold` | `0.05` | PE deviation alert threshold. |
-| `ews_window` | `40` | EWS rolling window (independent from scalar window — v8 fix T0-01). |
-| `ews_threshold` | `0.6` | EWS score threshold for "approaching critical". |
+| `pe_order` | `3` | Permutation Entropy embedding dimension |
+| `pe_window` | `50` | PE sliding window |
+| `pe_threshold` | `0.05` | PE deviation alert threshold |
+| `ews_window` | `40` | EWS rolling window (independent from scalar window) |
+| `ews_threshold` | `0.6` | EWS "approaching critical" threshold |
 
 #### F — Fluid Dynamics
 
 | Field | Default | Description |
 |-------|---------|-------------|
-| `sti_window` | `20` | Shear-Turbulence Index window. |
-| `tps_window` | `30` | Temporal Phase Space reconstruction window. |
-| `osc_damp_window` | `20` | Oscillation damping detection window. |
-| `osc_threshold` | `1.5` | Oscillation damping alert multiplier. |
-| `cpd_window` | `30` | Change-Point Detection comparison window. |
-| `cpd_threshold` | `2.0` | CPD alert z-score threshold. |
+| `sti_window` | `20` | Shear-Turbulence Index window |
+| `tps_window` | `30` | Temporal Phase Space window |
+| `osc_damp_window` | `20` | Oscillation damping window |
+| `osc_threshold` | `1.5` | Oscillation damping alert multiplier |
+| `cpd_window` | `30` | Change-Point Detection window |
+| `cpd_threshold` | `2.0` | CPD alert z-score threshold |
 
 #### G — Drift / Volatility / Seasonal
 
 | Field | Default | Description |
 |-------|---------|-------------|
-| `ph_delta` | `0.01` | Page-Hinkley incremental sensitivity. |
-| `ph_lambda` | `50.0` | Page-Hinkley cumulative threshold. |
-| `var_cusum_k` | `0.5` | VarCUSUM allowance. |
-| `var_cusum_h` | `5.0` | VarCUSUM decision threshold. |
-| `seasonal_period` | `0` | Seasonal period (0 = auto-detect via FFT). |
+| `ph_delta` | `0.01` | Page-Hinkley incremental sensitivity |
+| `ph_lambda` | `50.0` | Page-Hinkley cumulative threshold |
+| `var_cusum_k` | `0.5` | VarCUSUM allowance |
+| `var_cusum_h` | `5.0` | VarCUSUM decision threshold |
+| `seasonal_period` | `0` | Seasonal period (0 = auto-detect via FFT) |
 
 #### H — AQB / Scoring / IO
 
 | Field | Default | Description |
 |-------|---------|-------------|
-| `quantile_threshold_mode` | `False` | Use Adaptive Quantile Baseline instead of EWMA ± mult. |
-| `aqb_window` | `200` | Rolling window for AQB quantile estimation. |
-| `aqb_q_low` | `0.01` | Lower quantile for AQB. |
-| `aqb_q_high` | `0.99` | Upper quantile for AQB. |
-| `history_maxlen` | `5000` | Maximum result records kept in memory. |
-| `csv_path` | `""` | If non-empty, stream results to this CSV file. |
-| `log_level` | `"WARNING"` | Python logging level name. |
+| `quantile_threshold_mode` | `False` | Use Adaptive Quantile Baseline |
+| `aqb_window` | `200` | AQB quantile estimation window |
+| `aqb_q_low` | `0.01` | Lower AQB quantile |
+| `aqb_q_high` | `0.99` | Upper AQB quantile |
+| `history_maxlen` | `5000` | Maximum result records in memory |
+| `csv_path` | `""` | Stream results to CSV if non-empty |
+| `log_level` | `"WARNING"` | Python logging level |
 
-#### V9.0 — Frequency Decomposition (Channel 2)
+#### V9.0 — Frequency Decomposition
 
 | Field | Default | Description |
 |-------|---------|-------------|
-| `enable_frequency_decomposition` | `True` | Enable FFT decomposition into five carrier-wave bands. |
-| `min_window_for_fft` | `32` | Minimum window before FFT decomposition runs. |
+| `enable_frequency_decomposition` | `True` | Enable FFT into five carrier-wave bands |
+| `min_window_for_fft` | `32` | Minimum window before FFT runs |
 
 #### V9.0 — Cross-Frequency Coupling
 
 | Field | Default | Description |
 |-------|---------|-------------|
-| `enable_coupling_detection` | `True` | Enable phase-amplitude coupling measurement. |
-| `coupling_degradation_threshold` | `0.3` | Composite coupling score below this triggers `COUPLING_DEGRADATION`. |
-| `coupling_trend_window` | `10` | Number of `FrequencyBands` snapshots for coupling trend. |
+| `enable_coupling_detection` | `True` | Enable phase-amplitude coupling |
+| `coupling_degradation_threshold` | `0.3` | Composite score below this → `COUPLING_DEGRADATION` |
+| `coupling_trend_window` | `10` | FrequencyBands snapshots for coupling trend |
 
 #### V9.0 — Structural-Rhythmic Coherence
 
 | Field | Default | Description |
 |-------|---------|-------------|
-| `enable_channel_coherence` | `True` | Enable Channel 1–2 coherence measurement. |
-| `coherence_threshold` | `0.4` | Coherence score below this triggers `STRUCTURAL_RHYTHMIC_DECOUPLING`. |
-| `coherence_window` | `20` | Rolling window for coherence computation. |
+| `enable_channel_coherence` | `True` | Enable Channel 1–2 coherence |
+| `coherence_threshold` | `0.4` | Score below this → `STRUCTURAL_RHYTHMIC_DECOUPLING` |
+| `coherence_window` | `20` | Rolling coherence window |
 
-#### V9.0 — Cascade Precursor
-
-| Field | Default | Description |
-|-------|---------|-------------|
-| `enable_cascade_detection` | `True` | Enable `CASCADE_PRECURSOR` detection. |
-| `cascade_ews_threshold` | `2` | Minimum EWS indicators elevated for cascade precursor. |
-
-#### V9.0 — Degradation Sequence Logging
+#### V9.0 — Cascade Precursor & Sequence Logging
 
 | Field | Default | Description |
 |-------|---------|-------------|
-| `enable_sequence_logging` | `True` | Enable temporal logging of degradation sequences. |
-| `sequence_retention` | `1000` | Maximum completed degradation sequences to retain. |
+| `enable_cascade_detection` | `True` | Enable `CASCADE_PRECURSOR` detection |
+| `cascade_ews_threshold` | `2` | Minimum EWS indicators elevated |
+| `enable_sequence_logging` | `True` | Enable temporal degradation sequence logging |
+| `sequence_retention` | `1000` | Maximum sequences to retain |
 
 ---
 
-## Pipeline Architecture — 26 Steps
+## Pipeline Architecture — 37 Steps
 
-Every call to `update_and_check()` runs all 26 steps in order. Each step reads from and writes to a shared `StepContext.scratch` dictionary. The `WindowBank` provides each step with its own named independent deque.
+Every call to `update_and_check()` runs all 37 steps in order. Steps read from and write to a shared `StepContext.scratch` dictionary.
 
-| # | Step | Added | Description |
-|---|------|-------|-------------|
+| # | Step | Version | Description |
+|---|------|---------|-------------|
 | 1 | `CoreEWMAStep` | v8 | EWMA baseline + deviation; must run first |
-| 2 | `StructuralSnapshotStep` | **v9** | Channel 1: mean, variance, skewness, kurtosis, autocorrelation (lag 1 & 2), stationarity score |
-| 3 | `FrequencyDecompositionStep` | **v9** | Channel 2: FFT decomposition into 5 carrier-wave bands with power and phase |
+| 2 | `StructuralSnapshotStep` | v9 | Channel 1: mean, variance, skewness, kurtosis, autocorrelation, stationarity |
+| 3 | `FrequencyDecompositionStep` | v9 | Channel 2: FFT into 5 carrier-wave bands with power and phase |
 | 4 | `CUSUMStep` | v8 | CUSUM persistent shift detection |
-| 5 | `RegimeStep` | v8 | Regime change detection with soft alpha boost (fix δ) |
-| 6 | `VarCUSUMStep` | v8 | CUSUM on variance — detects volatility changes |
+| 5 | `RegimeStep` | v8 | Regime change with soft alpha boost |
+| 6 | `VarCUSUMStep` | v8 | CUSUM on variance |
 | 7 | `PageHinkleyStep` | v8 | Page-Hinkley drift detector |
 | 8 | `STIStep` | v8 | Shear-Turbulence Index |
 | 9 | `TPSStep` | v8 | Temporal Phase Space reconstruction |
 | 10 | `OscDampStep` | v8 | Oscillation damping detection |
 | 11 | `CPDStep` | v8 | Change-Point Detection |
-| 12 | `RPIStep` | v8 | Rhythm Periodicity Index (FFT-based) |
-| 13 | `RFIStep` | v8 | Rhythm Fractal Index (Hurst / R-S analysis) |
-| 14 | `SSIStep` | v8 | Synchronization Stability Index — Kuramoto proxy via FFT phase coherence (`rsi` alias preserved) |
+| 12 | `RPIStep` | v8 | Rhythm Periodicity Index (FFT) |
+| 13 | `RFIStep` | v8 | Rhythm Fractal Index (Hurst / R-S) |
+| 14 | `SSIStep` | v8 | Synchronization Stability Index — Kuramoto proxy (`rsi` alias preserved) |
 | 15 | `PEStep` | v8 | Permutation Entropy (FRM Axiom 3) |
-| 16 | `EWSStep` | v8 | Early Warning Signals — rising variance + AC(1) (FRM Axiom 9; uses independent `ews_w` window) |
-| 17 | `AQBStep` | v8 | Adaptive Quantile Baseline — distribution-free thresholds |
-| 18 | `SeasonalStep` | v8 | Seasonal decomposition with FFT auto-period detection |
-| 19 | `MahalStep` | v8 | Mahalanobis distance (multivariate mode) with Woodbury rank-1 covariance update |
+| 16 | `EWSStep` | v8 | Early Warning Signals — variance + AC(1) (FRM Axiom 9) |
+| 17 | `AQBStep` | v8 | Adaptive Quantile Baseline |
+| 18 | `SeasonalStep` | v8 | Seasonal decomposition with FFT auto-period |
+| 19 | `MahalStep` | v8 | Mahalanobis distance (multivariate) |
 | 20 | `RRSStep` | v8 | Robust Residual Score |
-| 21 | `BandAnomalyStep` | **v9** | Per-carrier-wave anomaly detection — catches anomalies invisible to composite detection |
-| 22 | `CrossFrequencyCouplingStep` | **v9** | Phase-amplitude coupling between adjacent band pairs; declining score precedes regime change |
-| 23 | `ChannelCoherenceStep` | **v9** | Structural-rhythmic channel coherence; decoupling is an independent regime-change signal |
-| 24 | `CascadePrecursorStep` | **v9** | Detects tipping cascade precursor — CRITICAL severity; requires all three conditions |
-| 25 | `DegradationSequenceStep` | **v9** | Logs temporal ordering of channel degradation events (Channel 3 information) |
-| 26 | `AlertReasonsStep` | v8 | Must run last — aggregates all alert signals into `alert_reasons` list |
+| 21 | `BandAnomalyStep` | v9 | Per-carrier-wave anomaly invisible to composite |
+| 22 | `CrossFrequencyCouplingStep` | v9 | PAC coupling matrix + `COUPLING_DEGRADATION` alert |
+| 23 | `ChannelCoherenceStep` | v9 | Structural-rhythmic coherence + `SR_DECOUPLING` alert |
+| 24 | `CascadePrecursorStep` | v9 | `CASCADE_PRECURSOR` — CRITICAL; requires all three conditions |
+| 25 | `DegradationSequenceStep` | v9 | Channel 3: temporal degradation sequence log |
+| 26 | `ThroughputEstimationStep` | **v10** | P_throughput from band amplitudes; populates `band_amplitudes`, `band_powers`, `node_count`, `mean_coupling_strength` |
+| 27 | `MaintenanceBurdenStep` | **v10** | μ = N·κ̄ / P_throughput → Tainter regime classification |
+| 28 | `PhaseExtractionStep` | **v10** | FFT bandpass + Hilbert transform → instantaneous phase per band |
+| 29 | `PACCoefficientStep` | **v10** | Modulation Index (Tort 2010) across 6 slow/fast band pairs |
+| 30 | `PACDegradationStep` | **v10** | Rolling PAC history → `pac_degradation_rate`, `pre_cascade_pac` |
+| 31 | `CriticalCouplingEstimationStep` | **v10** | κ_c = 2/(π·g(ω₀)) from power-weighted frequency spread |
+| 32 | `CouplingRateStep` | **v10** | dκ̄/dt from rolling coupling history |
+| 33 | `DiagnosticWindowStep` | **v10** | Δt = (κ̄−κ_c)/|dκ̄/dt|; confidence grading; supercompensation |
+| 34 | `KuramotoOrderStep` | **v10** | Φ = |mean(e^iθ_k)| — phase coherence independent of κ̄ |
+| 35 | `SequenceOrderingStep` | **v10** | COUPLING_FIRST / COHERENCE_FIRST / SIMULTANEOUS / STABLE per step |
+| 36 | `ReversedSequenceStep` | **v10** | Reversed thermodynamic sequence → intervention signature |
+| 37 | `AlertReasonsStep` | v8 | Must run last — aggregates all alert signals |
 
 ### Custom steps
 
@@ -324,7 +428,6 @@ class MyStep(DetectorStep):
         self.cfg = config
 
     def update(self, ctx: StepContext) -> None:
-        # read from ctx.scratch, write results back
         ctx.scratch["my_metric"] = ctx.current * 2.0
 
     def reset(self) -> None:
@@ -339,143 +442,114 @@ class MyStep(DetectorStep):
 
 ---
 
-## V9.0 New Features
+## V9.0 Alert Types and Data Structures
 
-### New data structures
+### Frozen data structures
 
-#### `FrequencyBands`
-Channel 2 decomposition into five carrier-wave bands. Frozen dataclass.
+| Class | Channel | Description |
+|-------|---------|-------------|
+| `FrequencyBands` | 2 | Five carrier-wave band powers and phases |
+| `StructuralSnapshot` | 1 | Mean, variance, skewness, kurtosis, autocorrelation, stationarity |
+| `CouplingMatrix` | 2 | PAC coefficients between adjacent bands + composite score |
+| `ChannelCoherence` | 1↔2 | Structural-rhythmic coherence score |
+| `DegradationSequence` | 3 | Temporal ordering of channel degradation events |
 
-```python
-result["frequency_bands"]  # FrequencyBands or None
-fb = result["frequency_bands"]
-fb.ultra_low_power   # trend component
-fb.low_power         # slow oscillation
-fb.mid_power         # primary rhythmicity
-fb.high_power        # fast fluctuation
-fb.ultra_high_power  # noise floor
-fb.mid_phase         # phase of mid band (radians)
-```
-
-#### `StructuralSnapshot`
-Channel 1 structural properties. Frozen dataclass.
-
-```python
-ss = result["structural_snapshot"]
-ss.mean
-ss.variance
-ss.skewness
-ss.kurtosis
-ss.autocorrelation_lag1
-ss.autocorrelation_lag2
-ss.stationarity_score  # 0.0 = non-stationary, 1.0 = stationary
-```
-
-#### `CouplingMatrix`
-Cross-frequency phase-amplitude coupling. Frozen dataclass.
-
-```python
-cm = result["coupling_matrix"]
-cm.ultra_low_to_low           # PAC coefficient
-cm.low_to_mid
-cm.mid_to_high
-cm.high_to_ultra_high
-cm.composite_coupling_score   # aggregate health score
-cm.coupling_trend             # positive = strengthening, negative = degrading
-```
-
-#### `ChannelCoherence`
-Structural-rhythmic channel coherence. Frozen dataclass.
-
-```python
-cc = result["channel_coherence"]
-cc.coherence_score          # 0.0 = decoupled, 1.0 = coherent
-cc.structural_change_rate
-cc.rhythmic_change_rate
-cc.decoupling_trend
-```
-
-#### `DegradationSequence`
-Temporal ordering of channel degradation events. Frozen dataclass.
-
-```python
-ds = result["degradation_sequence"]
-ds.first_channel_anomaly        # alert type string
-ds.first_anomaly_timestamp
-ds.second_channel_anomaly
-ds.coupling_degradation_timestamp
-ds.decoupling_timestamp
-ds.cascade_precursor_timestamp
-ds.sequence_pattern             # human-readable narrative
-```
-
-### New alert types
+### Alert types
 
 | `AlertType` | `AlertSeverity` | Trigger |
 |-------------|-----------------|---------|
-| `BAND_ANOMALY` | WARNING | Per-carrier-wave anomaly in any of the five bands |
-| `COUPLING_DEGRADATION` | WARNING | `composite_coupling_score` below `coupling_degradation_threshold` |
-| `STRUCTURAL_RHYTHMIC_DECOUPLING` | ALERT | `coherence_score` below `coherence_threshold` |
-| `CASCADE_PRECURSOR` | **CRITICAL** | All three: coupling degraded + decoupling + ≥ N EWS elevated |
-
-Structured `Alert` objects are collected in `result["v9_active_alerts"]`.
+| `BAND_ANOMALY` | WARNING | Per-carrier-wave anomaly |
+| `COUPLING_DEGRADATION` | WARNING | `composite_coupling_score` below threshold |
+| `STRUCTURAL_RHYTHMIC_DECOUPLING` | ALERT | `coherence_score` below threshold |
+| `CASCADE_PRECURSOR` | **CRITICAL** | All three: coupling + decoupling + ≥N EWS |
 
 ---
 
 ## SentinelResult API
 
-`SentinelResult` is a `dict` subclass. All v8.0 dictionary access patterns work unchanged.
+`SentinelResult` is a `dict` subclass. All v8.0/v9.0 dictionary access patterns work unchanged.
 
-### Core fields (every result)
+### Core fields
 
 | Key | Type | Description |
 |-----|------|-------------|
 | `"step"` | `int` | Monotonic observation counter |
 | `"value"` | `float` | Raw input value |
 | `"ewma"` | `float` | Current EWMA estimate |
-| `"dev_ewma"` | `float` | Current deviation EWMA |
 | `"alert"` | `bool` | Any anomaly triggered |
 | `"warmup"` | `bool` | True during warmup period |
 | `"anomaly_score"` | `float` | Normalized composite score |
 | `"z_score"` | `float` | EWMA deviation in sigma units |
-| `"alert_reasons"` | `list[str]` | Human-readable list of triggered conditions |
-| `"cascade_precursor_active"` | `bool` | True if CASCADE_PRECURSOR active |
-| `"v9_active_alerts"` | `list[Alert]` | Structured v9.0 alert objects |
+| `"alert_reasons"` | `list[str]` | Triggered conditions |
+| `"cascade_precursor_active"` | `bool` | CASCADE_PRECURSOR active |
 
 ### V9.0 convenience methods
 
 ```python
 result.is_cascade_precursor() -> bool
-result.get_channel_status() -> dict   # keys: structural, rhythmic_composite, coupling, coherence
+result.get_channel_status() -> dict
 result.get_degradation_narrative() -> str
-result.get_primary_carrier_wave() -> str  # "ultra_low" | "low" | "mid" | "high" | "ultra_high"
+result.get_primary_carrier_wave() -> str
 ```
+
+### V10.0 convenience methods
+
+```python
+result.is_reversed_sequence() -> bool
+
+result.get_maintenance_burden() -> dict
+# {"mu": 0.82, "regime": "TAINTER_WARNING"}
+
+result.get_pac_status() -> dict
+# {"mean_pac": 0.35, "degradation_rate": 0.19, "pre_cascade_pac": True}
+
+result.get_diagnostic_window() -> dict
+# {"steps": 47.3, "confidence": "HIGH", "supercompensation": False}
+
+result.get_intervention_signature() -> dict
+# {"score": 0.74, "sequence_type": "REVERSED",
+#  "phi_rate": -0.18, "coupling_rate": -0.01}
+```
+
+### V10.0 scalar result keys
+
+| Key | Type | Description |
+|-----|------|-------------|
+| `"maintenance_burden"` | `float` | μ (0.0–1.0) |
+| `"tainter_regime"` | `str` | HEALTHY / REDUCED_RESERVE / TAINTER_WARNING / TAINTER_CRITICAL |
+| `"mean_pac"` | `float` | Current PAC strength (0.0–1.0) |
+| `"pac_degradation_rate"` | `float` | Fractional PAC decline rate |
+| `"pre_cascade_pac"` | `bool` | PAC warning before cascade precursor |
+| `"diagnostic_window_steps"` | `float\|None` | Steps until coherence collapse |
+| `"diagnostic_window_confidence"` | `str` | HIGH / MEDIUM / LOW / NOT_APPLICABLE |
+| `"supercompensation_detected"` | `bool` | Adaptive recovery in progress |
+| `"kuramoto_order"` | `float` | Φ inter-band phase coherence (0.0–1.0) |
+| `"reversed_sequence"` | `bool` | Coherence collapsing before coupling |
+| `"intervention_signature_score"` | `float` | 0.0–1.0 confidence of deliberate intervention |
+| `"sequence_type"` | `str` | ORGANIC / REVERSED / AMBIGUOUS / INSUFFICIENT_DATA |
+| `"coupling_rate"` | `float` | dκ̄/dt (negative = degrading) |
+| `"critical_coupling"` | `float` | κ_c estimated from frequency distribution |
 
 ---
 
 ## MultiStreamSentinel
 
-Thread-safe manager for multiple independent named streams. Each stream is lazily created on first observation and maintains fully independent state.
+Thread-safe manager for multiple independent named streams.
 
 ```python
 from fracttalix_sentinel_v900 import MultiStreamSentinel, SentinelConfig
 
 mss = MultiStreamSentinel(config=SentinelConfig.production())
 
-# Sync
 result = mss.update("sensor_42", 3.14)
-
-# Async
 result = await mss.aupdate("sensor_42", 3.14)
 
-# Management
-mss.list_streams()              # ["sensor_42", ...]
-mss.get_detector("sensor_42")   # SentinelDetector instance
-mss.status("sensor_42")         # {"n": ..., "alert_count": ..., "last_result": ...}
+mss.list_streams()
+mss.get_detector("sensor_42")
+mss.status("sensor_42")
 mss.reset_stream("sensor_42")
 mss.delete_stream("sensor_42")
 
-# Persistence
 state_json = mss.save_all()
 mss.load_all(state_json)
 ```
@@ -484,9 +558,7 @@ mss.load_all(state_json)
 
 ## SentinelBenchmark
 
-Built-in evaluation harness. Generates five labeled anomaly archetypes and reports F1, AUPRC, VUS-PR, mean detection lag, and naive 3-sigma baseline comparison.
-
-### Archetypes
+Built-in evaluation harness with five labeled anomaly archetypes.
 
 | Archetype | Description |
 |-----------|-------------|
@@ -496,20 +568,14 @@ Built-in evaluation harness. Generates five labeled anomaly archetypes and repor
 | `drift` | Slow linear mean drift starting mid-series |
 | `variance` | Sudden 4× variance explosion in second half |
 
-### Usage
-
 ```python
 from fracttalix_sentinel_v900 import SentinelBenchmark, SentinelConfig
 
 bench = SentinelBenchmark(n=500, config=SentinelConfig.sensitive())
-bench.run_suite()
+bench.run_suite()   # reports F1, AUPRC, VUS-PR, mean lag, 3σ baseline
 
-# Or evaluate a single archetype
 data, labels = bench.generate("drift")
 metrics = bench.evaluate(data, labels)
-print(metrics)
-# {"archetype": "drift", "f1": 0.82, "auprc": 0.79, "vus_pr": 0.74,
-#  "mean_lag": 3.2, "baseline_f1": 0.11}
 ```
 
 ---
@@ -518,20 +584,9 @@ print(metrics)
 
 Asyncio HTTP server wrapping a `MultiStreamSentinel`. No framework dependencies.
 
-```python
-from fracttalix_sentinel_v900 import SentinelServer, SentinelConfig
-
-server = SentinelServer(host="0.0.0.0", port=8765, config=SentinelConfig())
-server.run()  # blocking
-```
-
-Or from CLI:
-
 ```bash
 python fracttalix_sentinel_v900.py --serve --host 0.0.0.0 --port 8765
 ```
-
-### Endpoints
 
 | Method | Path | Description |
 |--------|------|-------------|
@@ -541,8 +596,6 @@ python fracttalix_sentinel_v900.py --serve --host 0.0.0.0 --port 8765
 | `GET` | `/status/<id>` | Stream stats and last result |
 | `DELETE` | `/stream/<id>` | Delete stream |
 | `POST` | `/reset/<id>` | Reset stream to factory state |
-
-**Example:**
 
 ```bash
 curl -X POST http://localhost:8765/update/my_sensor \
@@ -569,57 +622,35 @@ python fracttalix_sentinel_v900.py [OPTIONS]
 | `--host` | `0.0.0.0` | Server host |
 | `--port` | `8765` | Server port |
 | `--version` | — | Print version and exit |
-| `--test` | — | Run 65-test smoke suite and exit |
-
-**Examples:**
-
-```bash
-# Process a CSV file
-python fracttalix_sentinel_v900.py --file data.csv --alpha 0.2 --multiplier 2.5
-
-# Run benchmark suite
-python fracttalix_sentinel_v900.py --benchmark
-
-# Start REST server
-python fracttalix_sentinel_v900.py --serve --port 9000
-
-# Run tests
-python fracttalix_sentinel_v900.py --test
-```
+| `--test` | — | Run 98-test smoke suite and exit |
 
 ---
 
 ## Backward Compatibility
 
-V9.0 is a strict superset of v8.0 and v7.x. No existing step is removed. No existing result key is removed. All existing call patterns continue to work.
+V10.0 is a strict superset of v9.0, v8.0, and v7.x. No step is removed. No result key is removed.
 
-### V8.0 root-cause fixes (all preserved in v9.0)
+### V8.0 root-cause fixes (all preserved)
 
 | Fix | Label | Description |
 |-----|-------|-------------|
-| α | Frozen config | `SentinelConfig` is a frozen dataclass — immutable, picklable, inspectable |
-| β | WindowBank | Named independent deques; each consumer owns its window slot |
-| γ | Pipeline decomposition | 26 `DetectorStep` subclasses |
-| δ | Soft regime boost | Replaces hard alpha reset with multiplicative boost + decay |
-| ε | SSI naming | `SSIStep` replaces `RSIStep`; `result["rsi"]` alias preserved |
+| α | Frozen config | `SentinelConfig` is a frozen dataclass |
+| β | WindowBank | Named independent deques per consumer |
+| γ | Pipeline decomposition | 37 `DetectorStep` subclasses |
+| δ | Soft regime boost | Multiplicative boost + decay |
+| ε | SSI naming | `result["rsi"]` alias preserved |
 
-### V7.x flat-kwargs compatibility
+### V7.x compatibility
 
 ```python
-# V7.x pattern — still works via _legacy_kwargs_to_config
 from fracttalix_sentinel_v900 import Detector_7_10
 det = Detector_7_10(alpha=0.1, multiplier=3.0, warmup_periods=30)
 ```
 
-`Detector_7_10` is an alias for `SentinelDetector`. All v7.x keyword arguments are mapped to their `SentinelConfig` equivalents automatically, including `rsi_window → rpi_window`.
-
-### State persistence across versions
+### State persistence
 
 ```python
-# Save
 json_str = det.save_state()
-
-# Load (forward-compatible; new fields get defaults)
 det2 = SentinelDetector(config)
 det2.load_state(json_str)
 ```
@@ -628,16 +659,18 @@ det2.load_state(json_str)
 
 ## Theoretical Foundation
 
-Fracttalix Sentinel implements detection algorithms derived from the **Fractal Rhythm Model (FRM)** — a mathematical framework for understanding rhythmicity in dissipative networks.
-
 | FRM Component | Sentinel Implementation |
 |---------------|------------------------|
 | FRM Axiom 3 (ordinal pattern complexity) | `PEStep` — Permutation Entropy |
-| FRM Axiom 9 (critical slowing down) | `EWSStep` — rising variance + lag-1 autocorrelation |
-| Rhythm Periodicity Index | `RPIStep` — FFT-based spectral coherence |
-| Rhythm Fractal Index | `RFIStep` — Hurst exponent via R/S analysis |
-| Synchronization Stability Index | `SSIStep` — Kuramoto synchronization proxy via FFT phase coherence |
+| FRM Axiom 9 (critical slowing down) | `EWSStep` — variance + lag-1 autocorrelation |
+| Rhythm Periodicity Index | `RPIStep` — FFT spectral coherence |
+| Rhythm Fractal Index | `RFIStep` — Hurst exponent via R/S |
+| Synchronization Stability Index | `SSIStep` — Kuramoto proxy via FFT phase coherence |
 | Three-channel model (Paper 6) | `StructuralSnapshotStep`, `FrequencyDecompositionStep`, `ChannelCoherenceStep`, `CascadePrecursorStep`, `DegradationSequenceStep` |
+| Maintenance burden μ | `ThroughputEstimationStep`, `MaintenanceBurdenStep` |
+| PAC pre-cascade (Tort 2010) | `PhaseExtractionStep`, `PACCoefficientStep`, `PACDegradationStep` |
+| Diagnostic window Δt | `CriticalCouplingEstimationStep`, `CouplingRateStep`, `DiagnosticWindowStep` |
+| Kuramoto order Φ / reversed sequence | `KuramotoOrderStep`, `SequenceOrderingStep`, `ReversedSequenceStep` |
 
 **DOI:** [10.5281/zenodo.18859299](https://doi.org/10.5281/zenodo.18859299)
 
@@ -653,13 +686,9 @@ Fracttalix Sentinel implements detection algorithms derived from the **Fractal R
 
 **Version history:**
 
-| Version | File | Notes |
-|---------|------|-------|
-| v9.0.0 | `fracttalix_sentinel_v900.py` | Three-channel model, 26 steps, 65 tests |
-| v8.0.0 | `fracttalix_sentinel_v800.py` | Frozen config, WindowBank, 19-step pipeline |
-| v7.11 | `fracttalix_sentinel_v711.py` | — |
-| v7.10 | `fracttalix_sentinel_v710.py` | — |
-| v7.9 | `fracttalix_sentinel_v79.py` | — |
-| v7.8 | `fracttalix_sentinel_v78.py` | — |
-| v7.7 | `fracttalix_sentinel_v77.py` | — |
-| v7.6 | `fracttalix_sentinel_v76.py` | — |
+| Version | Notes |
+|---------|-------|
+| v10.0.0 | 4 physics-derived capabilities, 37 steps, 98 tests |
+| v9.0.0 | Three-channel model, 26 steps, 65 tests |
+| v8.0.0 | Frozen config, WindowBank, 19-step pipeline |
+| v7.11–v7.6 | Earlier releases |
