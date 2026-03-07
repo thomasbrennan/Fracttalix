@@ -1,5 +1,7 @@
 # Meta-Kaizen: A Formal Theory of Self-Evolving Governance
 
+https://doi.org/10.5281/zenodo.18859299
+
 **Thomas Brennan · with AI collaborators Claude (Anthropic) and Grok (xAI)**  
 March 2026 · Working Paper Series · All mathematical formulations contributed to the public domain
 
