@@ -790,7 +790,7 @@ class VarCUSUMStep(DetectorStep):
         v2 = z * z  # variance proxy
         k = self.cfg.var_cusum_k
         self._s_hi = max(0.0, self._s_hi + v2 - k)
-        self._s_lo = max(0.0, self._s_lo - v2 - k)
+        self._s_lo = max(0.0, self._s_lo + k - v2)
         alert = self._s_hi > self.cfg.var_cusum_h or self._s_lo > self.cfg.var_cusum_h
         ctx.scratch["var_cusum_hi"] = self._s_hi
         ctx.scratch["var_cusum_lo"] = self._s_lo
@@ -1315,7 +1315,7 @@ class EWSStep(DetectorStep):
 
         # EWS score: combine rising var + rising AC(1)
         # Both should be trending upward near a critical transition
-        var_trend = min(1.0, self._var_ewma / (var + 1e-10) if var > 0 else 0.0)
+        var_trend = min(1.0, var / (self._var_ewma + 1e-10) if var > 0 else 0.0)
         ac1_clamped = max(0.0, min(1.0, self._ac1_ewma))
         self._ews_score = 0.5 * var_trend + 0.5 * ac1_clamped
 
