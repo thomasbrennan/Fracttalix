@@ -22,7 +22,7 @@
 #
 # Phase 3 — Physics corrections (breaking changes; _v10 aliases provided):
 #   - KuramotoOrderStep: true Phi over per-sample phase vectors across all bands
-#   - MaintenanceBurdenStep: mu = coupling_cost / total_power — dimensionally consistent
+#   - MaintenanceBurdenStep: mu = 1−κ̄ (heuristic); window-size independent
 #   - CriticalCouplingEstimationStep: unified normalized frequency units (0.0-1.0)
 #   - New: phi_kappa_separation metric (Phi - kappa_bar gap) in SentinelResult
 #
@@ -2756,18 +2756,19 @@ class MaintenanceBurdenStep(DetectorStep):
     value, producing a number dominated by window size rather than network
     state.
 
-    v11.0 formula: μ = coupling_cost / (coupling_cost + productive_surplus)
-    where:
-      coupling_cost    = κ̄ · (1 - κ̄)   [energy fraction consumed maintaining
-                                          current coupling below saturation]
-      productive_surplus = κ̄²            [energy fraction available for useful
-                                          transmission, i.e. squared coupling
-                                          as proxy for channel capacity]
+    v11.0 formula: μ = 1 − κ̄  (empirical heuristic).
 
-    This yields μ ∈ [0, 1] that rises as κ̄ departs from 1.0 (full coupling)
-    and is purely dimensionless, independent of window size.
-    Special case: κ̄ = 0 → μ = 1.0 (no coupling, all energy wasted).
-    Special case: κ̄ = 1 → μ = 0.0 (perfect coupling, zero maintenance cost).
+    This is NOT derived from physics or Tainter's socioeconomic model.  It
+    is an engineering heuristic: low mean coupling κ̄ is interpreted as high
+    coordination overhead and therefore high maintenance burden.  The
+    intermediate decomposition in the implementation (coupling_cost = κ̄(1−κ̄),
+    productive_surplus = κ̄²) is algebraic bookkeeping only; those functional
+    forms are not grounded in any recognised energy or network model and must
+    not be cited as such in publications.
+
+    μ ∈ [0, 1], dimensionless and independent of window size.
+    Boundary cases: κ̄ → 0 ⟹ μ → 1 (fully fragmented);
+                    κ̄ → 1 ⟹ μ → 0 (fully coupled, zero inferred overhead).
 
     The v10.0 value is preserved as maintenance_burden_v10 for one cycle.
     """
@@ -2789,13 +2790,15 @@ class MaintenanceBurdenStep(DetectorStep):
         mu_v10 = min(1.0, (n_nodes * kappa) / throughput) if throughput > 0 else 1.0
         ctx.scratch["maintenance_burden_v10"] = mu_v10
 
-        # v11.0: dimensionally consistent formulation
+        # v11.0: μ = 1 − κ̄  (heuristic; algebraic decomposition below is
+        # bookkeeping only, not an energy-fraction derivation)
         coupling_cost = kappa * (1.0 - kappa)
         productive_surplus = kappa * kappa
         denom = coupling_cost + productive_surplus
         mu = coupling_cost / denom if denom > 1e-12 else 1.0
         mu = max(0.0, min(1.0, mu))
 
+        # Regime thresholds are empirically set; not calibrated from data.
         if mu >= 0.9:
             regime = "TAINTER_CRITICAL"
         elif mu >= 0.75:
