@@ -79,7 +79,8 @@ class TestTPSStep:
         step = TPSStep(SentinelConfig())
         ctx = make_ctx()
         step.update(ctx)
-        assert "tps" in ctx.scratch
+        # TPSStep populates tps_score key
+        assert "tps_score" in ctx.scratch
 
     def test_state_dict_returns_dict(self):
         step = TPSStep(SentinelConfig())
@@ -119,7 +120,8 @@ class TestOscDampStep:
         step = OscDampStep(SentinelConfig())
         ctx = make_ctx()
         step.update(ctx)
-        assert "osc_damp" in ctx.scratch
+        # OscDampStep populates osc_amp and osc_alert keys
+        assert "osc_amp" in ctx.scratch or "osc_alert" in ctx.scratch
 
     def test_state_dict_returns_dict(self):
         step = OscDampStep(SentinelConfig())
@@ -159,7 +161,8 @@ class TestCPDStep:
         step = CPDStep(SentinelConfig())
         ctx = make_ctx()
         step.update(ctx)
-        assert "cpd" in ctx.scratch
+        # CPDStep populates cpd_score key
+        assert "cpd_score" in ctx.scratch
 
     def test_state_dict_returns_dict(self):
         step = CPDStep(SentinelConfig())

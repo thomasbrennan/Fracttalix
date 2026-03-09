@@ -266,7 +266,7 @@ class MahalStep(DetectorStep):
         C_inv = self._cov_inv
         u = diff.reshape(-1, 1)
         C_inv_u = C_inv @ u
-        denom = (1.0 - a) + a * float(u.T @ C_inv_u)
+        denom = (1.0 - a) + a * float((u.T @ C_inv_u).item())
         if abs(denom) > 1e-12:
             self._cov_inv = (C_inv - a * (C_inv_u @ C_inv_u.T) / denom) / (1.0 - a)
         else:
