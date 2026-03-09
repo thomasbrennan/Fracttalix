@@ -46,44 +46,15 @@ Fracttalix Sentinel addresses this gap for four practitioner communities. Indust
 
 # Methodology
 
-## 37-Step Pipeline
-
-Every call to `update_and_check()` runs all 37 `DetectorStep` subclasses in strict sequence. Steps read from and write to a shared `StepContext.scratch` dictionary; no step has side effects outside this context. The pipeline is organized in six functional groups:
-
-1. **Foundation (steps 1–7):** Core EWMA baseline, structural snapshot, FFT frequency decomposition, CUSUM persistent shift, regime change detection with soft alpha boost, variance CUSUM, and Page-Hinkley drift [@Page1954].
-2. **Temporal (steps 8–11):** Shear-Turbulence Index, Temporal Phase Space reconstruction, oscillation damping, and change-point detection.
-3. **Frequency (steps 12–15):** Rhythm Periodicity Index (FFT spectral coherence), Rhythm Fractal Index (Hurst exponent via R/S analysis), Synchronization Stability Index (Kuramoto proxy), and Permutation Entropy [@BandtPompe2002].
-4. **Complexity (steps 16–20):** Early Warning Signals (variance plus lag-1 autocorrelation), Adaptive Quantile Baseline, seasonal decomposition, Mahalanobis distance (multivariate mode), and Robust Residual Score.
-5. **Channel (steps 21–25):** Per-band anomaly detection, cross-frequency coupling measurement, structural-rhythmic coherence, cascade precursor detection, and temporal degradation sequence logging.
-6. **Physics (steps 26–37):** The four physics-derived capabilities introduced in V12, described below.
+Every call to `update_and_check()` runs 37 `DetectorStep` subclasses in strict sequence via a shared `StepContext`. Steps are organized in six groups: Foundation (EWMA, CUSUM, Page-Hinkley [@Page1954], regime detection); Temporal (shear-turbulence, phase space, change-point); Frequency (rhythm periodicity/fractal indices, Permutation Entropy [@BandtPompe2002]); Complexity (early warning signals, adaptive quantile baseline, Mahalanobis distance); Channel (three-channel integration); and Physics (collapse dynamics). An ablation study in the benchmark package quantifies each group's F1 contribution.
 
 ## Three-Channel Model
 
-The pipeline implements the Three-Channel Dissipative Network Model from the Fractal Rhythm Model working papers [@FRM2026]:
+The pipeline implements the Three-Channel Dissipative Network Model [@FRM2026]. **Channel 1 (Structural)** computes distributional moments and stationarity at every step; elevated variance and lag-1 autocorrelation are the classical critical-slowing-down signature. **Channel 2 (Rhythmic)** decomposes the signal via FFT into five carrier-wave bands and measures phase-amplitude coupling (PAC) across six band pairs using the Modulation Index [@Tort2010]; declining composite coupling score triggers `COUPLING_DEGRADATION` before any single-band threshold is breached. **Channel 3 (Temporal)** records the ordering of degradation events: because thermodynamic irreversibility dictates that coupling degrades before coherence collapses organically, a reversed ordering is treated as a distinct signal class. The multi-stage cascade trigger (band anomaly → coupling degradation → channel decoupling → `CASCADE_PRECURSOR`) reduces false-positive critical alerts relative to any single threshold.
 
-**Channel 1 (Structural)** monitors the network as an active signal transmitter. `StructuralSnapshotStep` computes mean, variance, skewness, kurtosis, lag-1 autocorrelation, and a stationarity indicator at every step. Elevated variance and autocorrelation together constitute the classical critical-slowing-down signature of an approaching bifurcation.
+## Collapse Dynamics
 
-**Channel 2 (Rhythmic)** monitors broadband multiplexed oscillatory transmission. `FrequencyDecompositionStep` decomposes the signal via FFT into five carrier-wave bands (ultra-low, low, mid, high, ultra-high) with per-band power and instantaneous phase. `CrossFrequencyCouplingStep` computes the phase-amplitude coupling (PAC) Modulation Index [@Tort2010] across six slow-phase/fast-amplitude band pairs, producing a composite coupling matrix and triggering `COUPLING_DEGRADATION` when the composite score falls below threshold.
-
-**Channel 3 (Temporal)** monitors the one-way irreversible ordering of degradation events. `DegradationSequenceStep` logs the temporal sequence in which Channels 1 and 2 degrade. Because thermodynamic irreversibility dictates that coupling degrades before coherence collapses in an organic failure, a reversed ordering constitutes a distinct signal class.
-
-The cascade logic proceeds as: band anomaly detected → cross-frequency coupling degrades → structural-rhythmic channels decouple → `CASCADE_PRECURSOR` (CRITICAL severity). This multi-stage trigger substantially reduces the false-positive rate of the critical alert relative to any single-condition threshold.
-
-## Collapse Dynamics (V12 Physics Group)
-
-V12 adds four steps derived from network collapse physics:
-
-**Maintenance Burden μ** (`MaintenanceBurdenStep`) implements the Tainter collapse condition [@Tainter1988]. The burden μ = N · κ̄ · E_coupling / P_throughput measures the fraction of network energy consumed by coupling maintenance. When μ → 1, adaptive reserve is exhausted. Four regimes are reported: `HEALTHY` (μ < 0.5), `REDUCED_RESERVE` (0.5–0.75), `TAINTER_WARNING` (0.75–0.9), and `TAINTER_CRITICAL` (≥ 0.9).
-
-**PAC Pre-Cascade Detection** (`PACDegradationStep`) exploits the finding that phase-amplitude coupling degrades before mean coupling strength κ̄ measurably decreases [@Tort2010]. This provides an earlier warning signal than the V9 cascade precursor. The `pre_cascade_pac` flag is set when PAC degradation rate exceeds threshold while κ̄ remains above critical.
-
-**Diagnostic Window Δt** (`DiagnosticWindowStep`) estimates the remaining steps before coherence collapse using:
-
-Δt = (κ̄ − κ_c) / |dκ̄/dt|
-
-where κ_c is estimated from the power-weighted frequency distribution (`CriticalCouplingEstimationStep`) following the Kuramoto synchronization framework [@Kuramoto1984], and dκ̄/dt is computed from a rolling coupling history (`CouplingRateStep`). The estimate is only active when κ̄ > κ_c and dκ̄/dt < 0. Confidence is graded `HIGH`, `MEDIUM`, or `LOW` based on rate stability. Supercompensation (adaptive recovery, dκ̄/dt > 0 after prior decline) is also detected and reported.
-
-**Reversed Sequence Detection** (`ReversedSequenceStep`) identifies the intervention signature. The thermodynamic arrow of organic collapse is: coupling degrades first, coherence collapses second. A reversed sequence—Kuramoto order Φ collapsing before κ̄ decreases—indicates measurement error, non-universality class membership, or deliberate external intervention. The `intervention_signature_score` (0.0–1.0) quantifies confidence in this classification.
+Four physics-derived steps provide collapse forecasting. **Maintenance Burden** μ = 1 − κ̄ [@Tainter1988] encodes the fraction of adaptive reserve consumed; four regimes (`HEALTHY`, `REDUCED_RESERVE`, `TAINTER_WARNING`, `TAINTER_CRITICAL`) are reported continuously. **PAC pre-cascade detection** fires when PAC degrades before mean coupling κ̄ crosses its threshold [@Tort2010], providing an earlier precursor than the cascade logic alone. **Diagnostic window** Δt = (κ̄ − κ_c) / |dκ̄/dt| estimates remaining steps before coherence collapse under the Kuramoto synchronization framework [@Kuramoto1984], with pessimistic, expected, and optimistic bounds and a `HIGH/MEDIUM/LOW` confidence grading based on rate stability. **Reversed-sequence detection** classifies a coherence collapse preceding coupling decline as an intervention signature, quantified by `intervention_signature_score` (0.0–1.0).
 
 # Performance
 
