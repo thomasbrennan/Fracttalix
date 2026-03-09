@@ -1,0 +1,52 @@
+name: Release to PyPI
+
+on:
+  push:
+    tags:
+      - "v[0-9]+.[0-9]+.[0-9]+"
+
+jobs:
+  validate-changelog:
+    name: Validate CHANGELOG entry exists
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Check CHANGELOG has entry for this tag
+        run: |
+          TAG="${{ github.ref_name }}"
+          VERSION="${TAG#v}"
+          python -c "
+          import sys
+          version = '$VERSION'
+          with open('CHANGELOG.md') as f:
+              content = f.read()
+          if f'## [{version}]' not in content and f'## {version}' not in content:
+              print(f'ERROR: No CHANGELOG entry found for version {version}')
+              print('Add an entry before tagging a release.')
+              sys.exit(1)
+          print(f'CHANGELOG entry found for {version}')
+          "
+
+  test:
+    name: Full test suite before release
+    needs: validate-changelog
+    uses: ./.github/workflows/tests.yml
+
+  publish:
+    name: Publish to PyPI
+    needs: [validate-changelog, test]
+    runs-on: ubuntu-latest
+    environment: pypi
+    permissions:
+      id-token: write  # OIDC trusted publishing
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Build distribution
+        run: |
+          pip install build
+          python -m build
+      - name: Publish to PyPI
+        uses: pypa/gh-action-pypi-publish@release/v1

@@ -1,0 +1,85 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.backends.legacy:build"
+
+[project]
+name = "fracttalix"
+version = "12.0.0"
+description = "Real-time streaming anomaly detection via a Three-Channel Dissipative Network Model"
+readme = "README.md"
+license = { text = "CC0-1.0" }
+authors = [
+    { name = "Thomas Brennan" }
+]
+keywords = [
+    "anomaly-detection",
+    "streaming",
+    "time-series",
+    "online-learning",
+    "phase-amplitude-coupling",
+    "kuramoto",
+]
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "Intended Audience :: Science/Research",
+    "Intended Audience :: Developers",
+    "License :: CC0 1.0 Universal (CC0 1.0) Public Domain Dedication",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
+    "Topic :: Scientific/Engineering :: Information Analysis",
+    "Typing :: Typed",
+]
+requires-python = ">=3.9"
+dependencies = []  # zero hard dependencies — pure stdlib core
+
+[project.optional-dependencies]
+fast = ["numpy>=1.21", "scipy>=1.7"]
+full = ["numpy>=1.21", "scipy>=1.7", "numba>=0.56", "matplotlib>=3.4", "tqdm>=4.0"]
+dev = [
+    "pytest>=7.0",
+    "pytest-cov>=4.0",
+    "ruff>=0.3",
+    "mypy>=1.0",
+    "mkdocs>=1.5",
+    "mkdocstrings[python]>=0.24",
+]
+docs = ["mkdocs>=1.5", "mkdocstrings[python]>=0.24", "mkdocs-material>=9.0"]
+
+[project.urls]
+Homepage = "https://github.com/thomasbrennan/Fracttalix"
+Repository = "https://github.com/thomasbrennan/Fracttalix"
+"Bug Tracker" = "https://github.com/thomasbrennan/Fracttalix/issues"
+Documentation = "https://thomasbrennan.github.io/Fracttalix"
+DOI = "https://doi.org/10.5281/zenodo.18859299"
+
+[project.scripts]
+fracttalix = "fracttalix.__main__:main"
+
+[tool.setuptools.packages.find]
+include = ["fracttalix*", "benchmark*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "--tb=short -q"
+python_files = ["test_*.py"]
+python_functions = ["test_*"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py39"
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I"]
+ignore = ["E501"]
+
+[tool.coverage.run]
+source = ["fracttalix", "benchmark"]
+omit = ["fracttalix/extras/*", "legacy/*"]
+
+[tool.coverage.report]
+show_missing = true
+fail_under = 70
