@@ -1,0 +1,121 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://github.com/thomasbrennan/Fracttalix/blob/main/ai-layers/ai-layer-schema.json",
+  "title": "Fracttalix AI Layer Schema v2",
+  "description": "Schema for machine-readable falsification layers in the Fracttalix corpus. Implements the Dual Reader Standard (DRS). Version 2, Session 42.",
+  "version": "v2-S42",
+  "type": "object",
+  "required": ["_meta","paper_id","paper_title","paper_type","version","session","phase_ready","claim_registry","placeholder_register"],
+  "properties": {
+    "_meta": {
+      "type": "object",
+      "required": ["document_type","schema_version","produced_session","licence"],
+      "properties": {
+        "document_type": {"type": "string", "enum": ["AI_LAYER"]},
+        "schema_version": {"type": "string"},
+        "schema_url": {"type": "string"},
+        "produced_session": {"type": "string"},
+        "produced_by": {"type": "string"},
+        "licence": {"type": "string"}
+      }
+    },
+    "paper_id": {"type": "string", "description": "Fracttalix corpus paper ID. P1–P13 for FRM corpus; MK-P1–MK-P5 for Meta-Kaizen corpus."},
+    "paper_title": {"type": "string"},
+    "paper_type": {"type": "string", "enum": ["law_A", "derivation_B", "application_C", "methodology_D"]},
+    "version": {"type": "string", "pattern": "^v[0-9]+$"},
+    "session": {"type": "string", "pattern": "^S[0-9]+$"},
+    "phase_ready": {
+      "type": "object",
+      "required": ["verdict","placeholder_count"],
+      "properties": {
+        "verdict": {"enum": ["PHASE-READY","NOT-PHASE-READY"]},
+        "c1": {"enum": ["SATISFIED","UNSATISFIED"]},
+        "c2": {"enum": ["SATISFIED","UNSATISFIED"]},
+        "c3": {"enum": ["SATISFIED","UNSATISFIED"]},
+        "c4_mode": {"enum": ["PHASE-READY-TRACKING","CORPUS-COMPLETE-EVALUATED"]},
+        "c5": {"enum": ["SATISFIED","UNSATISFIED"]},
+        "c6": {"enum": ["SATISFIED","UNSATISFIED"]},
+        "placeholder_count": {"type": "integer", "minimum": 0},
+        "note": {"type": "string"}
+      }
+    },
+    "claim_registry": {
+      "type": "array",
+      "description": "All claims in the paper. Type A: axioms. Type D: definitions. Type F: falsifiable claims.",
+      "items": {
+        "type": "object",
+        "required": ["claim_id","type","statement","falsification_predicate"],
+        "properties": {
+          "claim_id": {"type": "string"},
+          "type": {"enum": ["F","D","A"]},
+          "label": {"type": "string"},
+          "name": {"type": "string"},
+          "statement": {"type": "string"},
+          "source": {"type": "string"},
+          "derivation_source": {"type": "array", "items": {"type": "string"}},
+          "placeholder": {"type": "boolean"},
+          "placeholder_id": {"type": "string"},
+          "falsification_predicate": {
+            "oneOf": [
+              {"type": "null"},
+              {
+                "type": "object",
+                "required": ["FALSIFIED_IF","WHERE","EVALUATION","BOUNDARY","CONTEXT"],
+                "properties": {
+                  "FALSIFIED_IF": {"type": "string", "minLength": 1},
+                  "WHERE": {"type": "object"},
+                  "EVALUATION": {"type": "string", "minLength": 1},
+                  "BOUNDARY": {"type": "string", "minLength": 1},
+                  "CONTEXT": {"type": "string", "minLength": 1}
+                }
+              }
+            ]
+          },
+          "sample_falsification_observation": {"type": "string"}
+        }
+      }
+    },
+    "placeholder_register": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["placeholder_id","source_claim","resolved"],
+        "properties": {
+          "placeholder_id": {"type": "string"},
+          "source_claim": {"type": "string"},
+          "description": {"type": "string"},
+          "resolved": {"type": "boolean"},
+          "blocks_phase_ready": {"type": "boolean"},
+          "target_paper": {"type": "string"},
+          "target_claim": {"type": "string"},
+          "target_session": {"type": "string"}
+        }
+      }
+    },
+    "summary": {
+      "type": "object",
+      "properties": {
+        "total_claims": {"type": "integer"},
+        "type_A": {"type": "integer"},
+        "type_D": {"type": "integer"},
+        "type_F": {"type": "integer"},
+        "placeholder_count": {"type": "integer"},
+        "phase_ready": {"type": "boolean"},
+        "session_produced": {"type": "string"}
+      }
+    }
+  },
+  "inference_rules": {
+    "description": "Canonical inference rule inventory for Fracttalix derivation traces.",
+    "rules": [
+      {"id": "IR-1", "name": "Modus Ponens", "description": "If P and P→Q then Q."},
+      {"id": "IR-2", "name": "Universal Instantiation", "description": "If ∀x P(x) then P(a) for any specific a."},
+      {"id": "IR-3", "name": "Substitution of Equals", "description": "If a=b then any expression containing a may replace a with b."},
+      {"id": "IR-4", "name": "Definition Expansion", "description": "Replace a defined term with its definition."},
+      {"id": "IR-5", "name": "Algebraic Manipulation", "description": "Valid algebraic transformation preserving equality or inequality."},
+      {"id": "IR-6", "name": "Logical Equivalence", "description": "Replace an expression with a logically equivalent one."},
+      {"id": "IR-7", "name": "Statistical Inference", "description": "Apply a named statistical test or estimation procedure to data."},
+      {"id": "IR-8", "name": "Parsimony / Modeling Principle Selection", "description": "Select a canonical value from a family of axiom-consistent options based on a named parsimony principle. Valid iff: (a) the family is established; (b) the principle is named and cited; (c) selection is documented as a canonical choice, not a necessary derivation."}
+    ]
+  }
+}

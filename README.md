@@ -249,6 +249,14 @@ python3 fracttalix_sentinel_v900.py --version
 
 ---
 
+## Channel 2 — AI Layers
+
+| ID | Paper | Status | File |
+|---|---|---|---|
+| MK-P1 | Meta-Kaizen Paper 1 | PHASE-READY | [ai-layers/MK-P1-ai-layer.json](ai-layers/MK-P1-ai-layer.json) |
+
+---
+
 ## Theoretical foundation
 
 Fractal Rhythm Model (FRM) — 11 axioms. Papers 1-6.

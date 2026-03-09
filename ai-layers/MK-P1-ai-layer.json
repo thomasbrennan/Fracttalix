@@ -1,0 +1,853 @@
+{
+  "_meta": {
+    "document_type": "AI_LAYER",
+    "schema_version": "v2-S42",
+    "schema_url": "github.com/thomasbrennan/Fracttalix/ai-layers/ai-layer-schema.json",
+    "produced_session": "S43",
+    "produced_by": "Instance 1 (Claude, Anthropic) — Phase 5 retroactive AI layer build",
+    "licence": "CC BY 4.0",
+    "amendments": [
+      "A-S43-1: methodology_D added to paper_type enum",
+      "A-S43-2: IR-8 Parsimony/Modeling Principle Selection added to inference rule inventory"
+    ]
+  },
+  "paper_id": "MK-P1",
+  "corpus_id": "Meta-Kaizen",
+  "series": "Meta-Kaizen Series",
+  "series_position": "Paper 1 of 5",
+  "paper_title": "Meta-Kaizen: A General Theory and Algorithmic Framework for the Mathematical Formalization of Self-Evolving Continuous Improvement Across Arbitrary Governance Substrates",
+  "paper_type": "derivation_B",
+  "paper_type_note": "Primary contribution is the axiomatic derivation of KVS functional form (Theorem 4.1). Paper also contains application demonstrations (Section 6) and pre-registered empirical path (Section 5.4). Classified derivation_B because the derivation is the novel claim; applications are illustrations, not the object of verification. The schema enum [law_A, derivation_B, application_C] does not include 'methodology'. See paper_type_flag below.",
+  "paper_type_flag": "RESOLVED S43: derivation_B confirmed for MK-P1. CBT Amendment A-S43-1 adds methodology_D to schema enum for DRP-1 and future methodology papers.",
+  "version": "v8",
+  "ai_layer_version": "v1.0",
+  "prose_doi": "pending — arXiv submission in progress",
+  "ai_layer_url": "github.com/thomasbrennan/Fracttalix/ai-layers/MK-P1-ai-layer.json",
+  "citation_format": "[MK Paper 1, AI-Layer, Claim C-MK1.X]",
+  "phase_ready": {
+    "verdict": "PHASE-READY",
+    "retroactive": true,
+    "retroactive_note": "Paper prose (v8) predates Dual-Reader Standard adoption (S39). AI layer is additive — no prose changes made or required. Retroactive AI layer produces first live Channel 2 asset and resolves PH-DRP.2 (DRP-1 Section 7.4 live instance).",
+    "c1_claim_classification": "SATISFIED",
+    "c2_predicate_syntax": "SATISFIED",
+    "c3_evaluability": "SATISFIED — all Type F predicates are finite, computable, and free of natural language interpretation steps in their EVALUATION clauses",
+    "c4_placeholder_tracking": "SATISFIED — placeholder_count: 1 (F-1.10 pending empirical data)",
+    "c5_gate": "SATISFIED — this document is the Phase 5 gate output",
+    "c6_falsification_test": "SATISFIED — sample falsification observations provided for each Type F claim",
+    "placeholder_count": 1
+  },
+  "verification_protocol": "Fracttalix Phase 1-2 Merged, S42, Stage 2.1",
+  "falsification_syntax": "I-2 5-part (FALSIFIED IF / WHERE / EVALUATION / BOUNDARY / CONTEXT)",
+  "inference_rule_inventory": "IR-1 through IR-7 — Fracttalix Phase 1-2 Merged, S42, Section HR-1.1.C resolution",
+  "claim_registry": [
+    {
+      "claim_id": "A-MK1.1",
+      "type": "A",
+      "label": "[TYPE:A]",
+      "name": "Axiom 1 — Weak Order",
+      "statement": "For any two improvement candidates a and b, either a is at least as good as b or b is at least as good as a, and this ordering is transitive.",
+      "source": "Axiom 1, Section 4.1",
+      "axiomatic_basis": "Minimum condition for any measurement to be meaningful. Standard conjoint measurement axiom (Luce & Tukey, 1964).",
+      "falsification_predicate": null,
+      "derivation_source": null,
+      "note": "Type A: taken as given. Reject only by rejecting the measurement framework itself."
+    },
+    {
+      "claim_id": "A-MK1.2",
+      "type": "A",
+      "label": "[TYPE:A]",
+      "name": "Axiom 2 — Preferential Independence",
+      "statement": "The preference ordering over candidates that differ only in component N is independent of the values of I′, C′, and T. Holds symmetrically for all four components.",
+      "source": "Axiom 2, Section 4.1",
+      "axiomatic_basis": "Luce & Tukey (1964) standard conjoint measurement starting point.",
+      "modeling_assumption_flag": true,
+      "modeling_assumption_note": "Paper explicitly flags this as a modeling assumption, not an empirical regularity. Violations require differential weights or non-additive-in-logs model. Identified as target for empirical testing in Section 5.4 and Section 7.6.",
+      "falsification_predicate": null,
+      "derivation_source": null
+    },
+    {
+      "claim_id": "A-MK1.3",
+      "type": "A",
+      "label": "[TYPE:A]",
+      "name": "Axiom 3 — Solvability",
+      "statement": "For any three components held fixed, there exists a value of the fourth component that achieves any target quality score in [0,1]. Ensures scale is continuous and complete.",
+      "source": "Axiom 3, Section 4.1",
+      "axiomatic_basis": "Standard conjoint measurement axiom (Luce & Tukey, 1964).",
+      "falsification_predicate": null,
+      "derivation_source": null
+    },
+    {
+      "claim_id": "A-MK1.4",
+      "type": "A",
+      "label": "[TYPE:A]",
+      "name": "Axiom 4 — Archimedean Condition",
+      "statement": "No finite sequence of equal-interval steps in any component is unbounded. No component can be infinitely more important than another.",
+      "source": "Axiom 4, Section 4.1",
+      "axiomatic_basis": "Standard conjoint measurement axiom (Luce & Tukey, 1964; Krantz et al., 1971).",
+      "falsification_predicate": null,
+      "derivation_source": null
+    },
+    {
+      "claim_id": "A-MK1.5",
+      "type": "A",
+      "label": "[TYPE:A]",
+      "name": "Axiom 5 — Essentialness with Veto Power",
+      "statement": "A zero value on any single component renders the candidate inadoptable: f(0,I′,C′,T) = f(N,0,C′,T) = f(N,I′,0,T) = f(N,I′,C′,0) = 0 for all component values.",
+      "source": "Axiom 5, Section 4.1",
+      "axiomatic_basis": "Novel axiom introduced in this paper. Defense: N=0 is reimplementation; I′=0 produces no improvement; C′=0 costs overwhelm benefit; T=0 relevance window passed.",
+      "falsification_predicate": null,
+      "derivation_source": null,
+      "note": "This is the axiom that eliminates the additive form and necessitates the multiplicative form. Rejecting Axiom 5 is explicitly permitted — the library implements both KVS and ADD variants."
+    },
+    {
+      "claim_id": "A-MK1.6",
+      "type": "A",
+      "label": "[TYPE:A]",
+      "name": "Axiom 6 — Marginal Symmetry",
+      "statement": "The marginal rate of substitution between any two components is equal at all points where their values are equal. Formally: ∂f/∂N = ∂f/∂I′ whenever N = I′; and symmetrically for all pairs.",
+      "source": "Axiom 6, Section 4.1",
+      "axiomatic_basis": "Justifies equal weights in the absence of domain-specific calibration data. Relaxing this axiom requires replacing equal exponents with estimated per-component exponents.",
+      "falsification_predicate": null,
+      "derivation_source": null
+    },
+    {
+      "claim_id": "D-MK1.1",
+      "type": "D",
+      "label": "[TYPE:D]",
+      "name": "Governance Substrate",
+      "statement": "A substrate S is a tuple S = (D, P, Ω, M) where D = document set, P = principal set, Ω = outcome space, M = metric function M: D × time → Ω. An improvement candidate for S is a proposed revision δ to D characterized by Novelty, Impact, Complexity, and Timeliness.",
+      "source": "Definition 3.1, Section 3.1",
+      "falsification_predicate": null,
+      "derivation_source": null
+    },
+    {
+      "claim_id": "D-MK1.2",
+      "type": "D",
+      "label": "[TYPE:D]",
+      "name": "KVS Formula",
+      "statement": "KVS_j = N_j × I′_j × C′_j × T_j, where N_j, I′_j, C′_j, T_j ∈ [0,1] are defined in D-MK1.3 through D-MK1.6.",
+      "source": "Definition 4.1, Section 4.2",
+      "derivation_note": "This form is derived, not stipulated. Derivation traced in F-MK1.3.",
+      "falsification_predicate": null,
+      "derivation_source": [
+        "F-MK1.3"
+      ]
+    },
+    {
+      "claim_id": "D-MK1.3",
+      "type": "D",
+      "label": "[TYPE:D]",
+      "name": "Novelty Factor",
+      "statement": "N_j = 1 − max_{τ ∈ {t−1,t−2,t−3,t−4}} Jaccard(K_j, K_τ), where Jaccard(A,B) = |A∩B|/|A∪B|. Maximum (not mean) Jaccard similarity used. Operational target: E[N] ≥ 0.70 over rolling 4-scan window.",
+      "source": "Definition 4.2, Section 4.3",
+      "falsification_predicate": null,
+      "derivation_source": null
+    },
+    {
+      "claim_id": "D-MK1.4",
+      "type": "D",
+      "label": "[TYPE:D]",
+      "name": "Normalized Impact",
+      "statement": "I′_j = min(1, μ_j / I_max), where μ_j is the administrator's point estimate of annualized improvement and I_max is the pre-committed substrate-specific maximum. Recommended I_max values: IPS = 3.0 pp/yr; clinical = 5.0 pp; DORA = 50%; lean = 10% waste reduction.",
+      "source": "Definition 4.3, Section 4.4",
+      "falsification_predicate": null,
+      "derivation_source": null
+    },
+    {
+      "claim_id": "D-MK1.5",
+      "type": "D",
+      "label": "[TYPE:D]",
+      "name": "Normalized Inverse Complexity",
+      "statement": "C′_j = (2.0 − C_j) / 1.0, where C_j ∈ {1.0, 1.2, 1.4, 1.6, 1.8, 2.0}. Linear rescaling maps [1.0, 2.0] bijectively onto [1.0, 0.0], fully spanning [0,1] and reaching zero at maximum complexity. Corrects prior 1/C formulation which compressed range to [1.0, 0.5].",
+      "source": "Definition 4.4, Section 4.5",
+      "falsification_predicate": null,
+      "derivation_source": null
+    },
+    {
+      "claim_id": "D-MK1.6",
+      "type": "D",
+      "label": "[TYPE:D]",
+      "name": "Timeliness Score",
+      "statement": "T_j = max(0, 1 − h_j / H_max), where h_j = months to relevance and H_max = 60 (default). H_max revisable at annual review with principal approval.",
+      "source": "Definition 4.5, Section 4.6",
+      "falsification_predicate": null,
+      "derivation_source": null
+    },
+    {
+      "claim_id": "F-MK1.1",
+      "type": "F",
+      "label": "[TYPE:F]",
+      "name": "Property 4.1 — Boundedness",
+      "statement": "KVS_j ∈ [0,1] for all improvement candidates j.",
+      "source": "Property 4.1, Section 4.2",
+      "paper_classification": "derivation_B",
+      "predicate": {
+        "FALSIFIED_IF": "EXISTS improvement candidate j SUCH THAT (KVS_j < 0) OR (KVS_j > 1)",
+        "WHERE": {
+          "KVS_j": "scalar · dimensionless · computed per D-MK1.2",
+          "j": "any improvement candidate with N_j, I′_j, C′_j, T_j ∈ [0,1] per D-MK1.3 through D-MK1.6"
+        },
+        "EVALUATION": "Compute N_j × I′_j × C′_j × T_j for candidate j; check result lies in [0,1]; finite",
+        "BOUNDARY": "KVS_j = 0 or KVS_j = 1 → NOT FALSIFIED (boundary values are permitted)",
+        "CONTEXT": "This property follows immediately from D-MK1.2: the product of four numbers each in [0,1] is in [0,1]. It is a Property rather than a Theorem because it requires no non-trivial inference. Stated for architectural significance: ensures cross-substrate comparability without renormalization."
+      },
+      "derivation_trace": [
+        {
+          "step": "1",
+          "input": [
+            "D-MK1.3",
+            "D-MK1.4",
+            "D-MK1.5",
+            "D-MK1.6"
+          ],
+          "operation": "IR-4: Definition Expansion — each component is bounded in [0,1] by its definition",
+          "output": "N_j, I′_j, C′_j, T_j ∈ [0,1]"
+        },
+        {
+          "step": "2",
+          "input": [
+            "D-MK1.2",
+            "step 1"
+          ],
+          "operation": "IR-5: Algebraic Manipulation — product of four numbers each in [0,1] is in [0,1]",
+          "output": "KVS_j = N_j × I′_j × C′_j × T_j ∈ [0,1] □"
+        }
+      ],
+      "sample_falsification_observation": "O = {candidate j with N_j = 1.1} → KVS_j > 1 → FALSIFIED → PASS (D-MK1.3 prevents N_j > 1)"
+    },
+    {
+      "claim_id": "F-MK1.2",
+      "type": "F",
+      "label": "[TYPE:F]",
+      "name": "Property 4.2 — Monotonicity",
+      "statement": "KVS_j is non-decreasing in each of N_j, I′_j, C′_j, T_j, holding others fixed. For any factor f_k: ∂KVS_j/∂f_k = ∏_{i≠k} f_i ≥ 0.",
+      "source": "Property 4.2, Section 4.2",
+      "paper_classification": "derivation_B",
+      "predicate": {
+        "FALSIFIED_IF": "EXISTS improvement candidates j, j′ SUCH THAT (j′ dominates j on exactly one component, all others equal) AND (KVS_j′ < KVS_j)",
+        "WHERE": {
+          "j_dominates_j_prime_on_k": "f_k(j′) > f_k(j) AND f_i(j′) = f_i(j) for all i ≠ k",
+          "KVS_j": "scalar · computed per D-MK1.2",
+          "k": "any single component from {N, I′, C′, T}"
+        },
+        "EVALUATION": "For any pair (j, j′) differing on exactly one component, compute both KVS scores; check KVS_j′ ≥ KVS_j; finite",
+        "BOUNDARY": "KVS_j′ = KVS_j when the improved component starts at or contributes zero product — NOT FALSIFIED (non-decreasing, not strictly increasing)",
+        "CONTEXT": "Significance is normative: correct incentive structure. An improvement candidate that scores higher on any dimension should never score lower overall."
+      },
+      "derivation_trace": [
+        {
+          "step": "1",
+          "input": [
+            "D-MK1.2"
+          ],
+          "operation": "IR-5: Algebraic Manipulation — partial derivative ∂KVS_j/∂f_k = ∏_{i≠k} f_i",
+          "output": "∂KVS_j/∂f_k expressed as product of remaining components"
+        },
+        {
+          "step": "2",
+          "input": [
+            "D-MK1.3 through D-MK1.6",
+            "step 1"
+          ],
+          "operation": "IR-4: Definition Expansion — all f_i ≥ 0 by construction",
+          "output": "∏_{i≠k} f_i ≥ 0 → ∂KVS_j/∂f_k ≥ 0 for all k □"
+        }
+      ],
+      "sample_falsification_observation": "O = {j with N=0.5, j′ with N=0.6, all others equal at 0.8} → KVS_j = 0.5×0.512 = 0.256; KVS_j′ = 0.6×0.512 = 0.307 → KVS_j′ > KVS_j → NOT FALSIFIED → PASS"
+    },
+    {
+      "claim_id": "F-MK1.3",
+      "type": "F",
+      "label": "[TYPE:F]",
+      "name": "Theorem 4.1 — KVS Functional Form (three-part)",
+      "statement": "Under Axioms 1–6 and the Scale Normalization Condition, the canonical functional form representing improvement quality is KVS_j = N_j × I′_j × C′_j × T_j. (a) Multiplicative structure follows necessarily from Axiom 5. (b) Equal exponents follow necessarily from Axiom 6. (c) Common exponent α = 1 is the canonical modeling choice under Scale Normalization — not a uniquely forced mathematical result.",
+      "source": "Theorem 4.1, Section 4.1, Stages 1–4",
+      "paper_classification": "derivation_B",
+      "claim_structure_note": "Three-part claim with distinct epistemic status. Parts (a) and (b) are necessary derivations — falsified if the logical chain contains an invalid step. Part (c) is a canonical selection — falsified if a stronger parsimony argument for α ≠ 1 is produced while satisfying all six axioms and the proportional normalization condition.",
+      "predicate": {
+        "part_a_multiplicative": {
+          "FALSIFIED_IF": "(n_invalid_steps_stage2 > 0) OR (additive_form_satisfies_A5 = TRUE)",
+          "WHERE": {
+            "n_invalid_steps_stage2": "integer · count of derivation steps in Stage 2 (Section 4.1) that fail validity: step is valid iff output follows from inputs by a named rule from IR-1 through IR-7",
+            "additive_form_satisfies_A5": "boolean · TRUE if f(0,I′,C′,T) = 0 is consistent with additive form F = φ_N(N) + φ_I(I′) + φ_C(C′) + φ_T(T) without requiring φ_I, φ_C, φ_T to be constants"
+          },
+          "EVALUATION": "Trace Stage 2 derivation step-by-step; assign each step a named rule from IR-1 through IR-7; flag any step without a valid rule; check whether additive form can satisfy Axiom 5; finite",
+          "BOUNDARY": "A step classified under a new inference rule not in IR-1 through IR-7 is an open gap (PLACEHOLDER) pending CBT amendment; it is not automatically a falsification",
+          "CONTEXT": "Stage 2 is the core proof: setting N=0 in additive form requires φ_I(I′)+φ_C(C′)+φ_T(T) = −φ_N(0) for all I′,C′,T — impossible unless all three are constants, contradicting that they vary."
+        },
+        "part_b_equal_exponents": {
+          "FALSIFIED_IF": "(n_invalid_steps_stage3 > 0) OR (stage3_conclusion ≠ 'α=β=γ=δ')",
+          "WHERE": {
+            "n_invalid_steps_stage3": "integer · count of invalid derivation steps in Stage 3 (Section 4.1)",
+            "stage3_conclusion": "string · algebraic conclusion of Stage 3 under A-MK1.6 applied to multiplicative form"
+          },
+          "EVALUATION": "Trace Stage 3 derivation; verify each algebraic step under IR-5; verify that Axiom 6 application at N=I′ produces α/β=1; finite",
+          "BOUNDARY": "α = β for any two components is not falsified by their being individually non-1",
+          "CONTEXT": "Stage 3 applies Marginal Symmetry (A-MK1.6): setting ∂f/∂N = ∂f/∂I′ at N=I′ gives (α/β)×1^(β−α) = 1, hence α = β. Symmetry across all pairs gives α = β = γ = δ."
+        },
+        "part_c_alpha_equals_one": {
+          "FALSIFIED_IF": "EXISTS a parsimony argument P SUCH THAT (P produces a canonical exponent α ≠ 1) AND (P is strictly stronger than the Scale Normalization Condition under face-value proportionality) AND (α ≠ 1 is consistent with Axioms A-MK1.1 through A-MK1.6)",
+          "WHERE": {
+            "Scale_Normalization_Condition": "modeling principle: scoring function is linear in each normalized component at face value; α = 1 selected because it is the only value under which component value x contributes x-proportionally to the score",
+            "strictly_stronger": "P produces a unique canonical value and relies on fewer additional assumptions than face-value proportionality"
+          },
+          "EVALUATION": "Check whether any proposed α ≠ 1 satisfies all six axioms; check whether proposed parsimony principle is more parsimonious than face-value linearity; assess whether it produces a unique canonical selection; finite",
+          "BOUNDARY": "Demonstrating α ≠ 1 is axiom-consistent does NOT falsify — the paper already concedes this (any α > 0 is consistent). Falsification requires a STRONGER parsimony argument, not merely an alternative one.",
+          "CONTEXT": "Part (c) is a canonical modeling choice. The paper's Correction 2 explicitly states: 'α = 1 is the canonical modeling choice under proportional normalization, not a uniquely forced mathematical conclusion.' This claim has weaker epistemic status than parts (a) and (b) and should be read accordingly."
+        }
+      },
+      "derivation_trace": [
+        {
+          "step": "S1.1",
+          "stage": "Stage 1",
+          "input": [
+            "A-MK1.1",
+            "A-MK1.2",
+            "A-MK1.3",
+            "A-MK1.4"
+          ],
+          "operation": "IR-1: Modus Ponens — Luce-Tukey (1964) theorem establishes: Axioms 1–4 → additive representation F = Σφ_i(x_i)",
+          "output": "F = φ_N(N) + φ_I(I′) + φ_C(C′) + φ_T(T), unique up to positive affine transformations"
+        },
+        {
+          "step": "S2.1",
+          "stage": "Stage 2",
+          "input": [
+            "S1.1",
+            "A-MK1.5"
+          ],
+          "operation": "IR-3: Substitution of Equals — substitute N=0 into additive form",
+          "output": "φ_N(0) + φ_I(I′) + φ_C(C′) + φ_T(T) = 0 for all I′, C′, T"
+        },
+        {
+          "step": "S2.2",
+          "stage": "Stage 2",
+          "input": [
+            "S2.1"
+          ],
+          "operation": "IR-5: Algebraic Manipulation — rearrange to isolate φ_I + φ_C + φ_T",
+          "output": "φ_I(I′) + φ_C(C′) + φ_T(T) = −φ_N(0) for all I′, C′, T"
+        },
+        {
+          "step": "S2.3",
+          "stage": "Stage 2",
+          "input": [
+            "S2.2"
+          ],
+          "operation": "IR-1: Modus Ponens — if LHS varies with arguments but RHS is constant, contradiction",
+          "output": "Contradiction: functions cannot simultaneously vary and equal a constant"
+        },
+        {
+          "step": "S2.4",
+          "stage": "Stage 2",
+          "input": [
+            "S2.3"
+          ],
+          "operation": "IR-1: Modus Ponens — contradiction eliminates additive form",
+          "output": "Additive form ELIMINATED under A-MK1.5"
+        },
+        {
+          "step": "S2.5",
+          "stage": "Stage 2",
+          "input": [
+            "A-MK1.1",
+            "A-MK1.2",
+            "A-MK1.3",
+            "A-MK1.4",
+            "A-MK1.5"
+          ],
+          "operation": "IR-2: Universal Instantiation — multiplicative form N^α × I′^β × C′^γ × T^δ satisfies all five axioms",
+          "output": "Multiplicative form adopted; α,β,γ,δ > 0 undetermined"
+        },
+        {
+          "step": "S3.1",
+          "stage": "Stage 3",
+          "input": [
+            "S2.5"
+          ],
+          "operation": "IR-5: Algebraic Manipulation — compute ∂f/∂N and ∂f/∂I′ under multiplicative form",
+          "output": "∂f/∂N = α×N^(α−1)×I′^β×C′^γ×T^δ; ∂f/∂I′ = β×I′^(β−1)×N^α×C′^γ×T^δ"
+        },
+        {
+          "step": "S3.2",
+          "stage": "Stage 3",
+          "input": [
+            "S3.1",
+            "A-MK1.6"
+          ],
+          "operation": "IR-1: Modus Ponens — apply Axiom 6: set ∂f/∂N = ∂f/∂I′ at N=I′",
+          "output": "(α/β) × (I′/N)^(β−α) = 1 at N=I′"
+        },
+        {
+          "step": "S3.3",
+          "stage": "Stage 3",
+          "input": [
+            "S3.2"
+          ],
+          "operation": "IR-5: Algebraic Manipulation — at N=I′, (I′/N)^(β−α) = 1^(β−α) = 1 → α/β = 1 → α = β",
+          "output": "α = β"
+        },
+        {
+          "step": "S3.4",
+          "stage": "Stage 3",
+          "input": [
+            "S3.3",
+            "A-MK1.6"
+          ],
+          "operation": "IR-2: Universal Instantiation — same argument applied symmetrically to all pairs of components",
+          "output": "α = β = γ = δ; form reduces to (N×I′×C′×T)^α for some α > 0"
+        },
+        {
+          "step": "S4.1",
+          "stage": "Stage 4",
+          "input": [
+            "D-MK1.3",
+            "D-MK1.4",
+            "D-MK1.5",
+            "D-MK1.6"
+          ],
+          "operation": "IR-4: Definition Expansion — components are normalized to [0,1] with proportional interpretation",
+          "output": "Each component value x represents x-proportion of its maximum"
+        },
+        {
+          "step": "S4.2",
+          "stage": "Stage 4",
+          "input": [
+            "S4.1"
+          ],
+          "operation": "IR-8: Parsimony / Modeling Principle Selection — Scale Normalization Condition selects φ_i(x_i) = x_i as canonical identity scale for proportionally-interpreted components (Krantz et al., 1971, Ch. 9, §9.2.1). Valid: family of consistent options established (any α > 0); parsimony principle named and cited; selection documented as canonical choice not necessary derivation.",
+          "output": "α = 1 selected as canonical choice; any α > 0 axiom-consistent"
+        },
+        {
+          "step": "S4.3",
+          "stage": "Stage 4",
+          "input": [
+            "S3.4",
+            "S4.2"
+          ],
+          "operation": "IR-3: Substitution of Equals — substitute α = 1 into (N×I′×C′×T)^α",
+          "output": "KVS_j = N_j × I′_j × C′_j × T_j □"
+        }
+      ],
+      "sample_falsification_observation": "O = {Step S2.3: additive form satisfies Axiom 5 if φ_N(0)=0 and φ_i(0)=0 for all i} → tests whether the zero-point assignment rescues the additive form. Assessment: if all φ_i(0)=0, then Σφ_i = 0 only when all components are at their minimal value, not for all values of I′, C′, T at N=0 — Stage 2 proof survives → NOT FALSIFIED → PASS"
+    },
+    {
+      "claim_id": "F-MK1.4",
+      "type": "F",
+      "label": "[TYPE:F]",
+      "name": "Theorem 4.2 — Self-Referential Applicability",
+      "statement": "Let S_MK denote the Meta-Kaizen process itself as a substrate. Then KVS is well-defined for improvement candidates targeting S_MK.",
+      "source": "Theorem 4.2, Section 4.2",
+      "paper_classification": "derivation_B",
+      "predicate": {
+        "FALSIFIED_IF": "S_MK FAILS to satisfy the substrate definition D-MK1.1 — specifically, any of the four tuple components (D_MK, P_MK, Ω_MK, M_MK) is undefined or ill-formed",
+        "WHERE": {
+          "D_MK": "document set = KVS formula specification and rotation schedule",
+          "P_MK": "principal set = adopting organization's governance principals",
+          "Ω_MK": "outcome space = ranking fidelity of KVS against realized improvement quality",
+          "M_MK": "metric function = historical log of scored candidates versus outcomes",
+          "well_defined": "each of N, I′, C′, T is computable for an improvement candidate targeting S_MK under D-MK1.3 through D-MK1.6"
+        },
+        "EVALUATION": "Check whether D_MK, P_MK, Ω_MK, M_MK are each definable; check whether N, I′, C′, T are computable for a candidate targeting S_MK; finite",
+        "BOUNDARY": "Theorem establishes well-definedness only, not convergence or optimality — convergence is addressed in Paper 2 (Governance Closure Theorem). A demonstration that KVS does not converge to an optimal formula does NOT falsify this theorem.",
+        "CONTEXT": "Self-referentiality is the mechanism that permits Meta-Kaizen to improve itself. The principal gate (human review required for all adoptions including meta-level ones) prevents runaway self-modification."
+      },
+      "derivation_trace": [
+        {
+          "step": "1",
+          "input": [
+            "D-MK1.1"
+          ],
+          "operation": "IR-4: Definition Expansion — substrate definition requires tuple (D, P, Ω, M)",
+          "output": "Verification target: does S_MK satisfy each component?"
+        },
+        {
+          "step": "2",
+          "input": [
+            "D-MK1.2 through D-MK1.6"
+          ],
+          "operation": "IR-2: Universal Instantiation — each component of S_MK tuple is instantiated from available definitions",
+          "output": "D_MK, P_MK, Ω_MK, M_MK each defined (see WHERE clause)"
+        },
+        {
+          "step": "3",
+          "input": [
+            "step 2",
+            "D-MK1.3 through D-MK1.6"
+          ],
+          "operation": "IR-1: Modus Ponens — if S_MK satisfies substrate definition, KVS is computable for its improvement candidates",
+          "output": "KVS is well-defined for candidates targeting S_MK □"
+        }
+      ],
+      "sample_falsification_observation": "O = {Ω_MK undefined: no metric exists for 'ranking fidelity of KVS'} → theorem falsified. Assessment: Ω_MK is defined as the historical log of scored candidates versus realized outcomes, which is a measurable variable once sufficient data accumulates — NOT FALSIFIED (Ω_MK is defined even if initially empty) → PASS"
+    },
+    {
+      "claim_id": "F-MK1.5",
+      "type": "F",
+      "label": "[TYPE:F]",
+      "name": "Theorem 4.3 — Threshold Optimality (Symmetric Case)",
+      "statement": "When L_FP = L_FN (symmetric losses), π = 0.5 (uniform quality prior), and score distributions are symmetric around κ = 0.5 such that p_G(0.5) = p_P(0.5), the unique optimal adoption threshold is κ* = 0.50.",
+      "source": "Theorem 4.3 symmetric special case, Section 4.7",
+      "paper_classification": "derivation_B",
+      "predicate": {
+        "FALSIFIED_IF": "(n_invalid_steps_Bayes > 0) OR (κ* ≠ 0.50 under stated conditions)",
+        "WHERE": {
+          "n_invalid_steps_Bayes": "integer · count of invalid steps in the Bayesian derivation in Section 4.7: valid iff output follows from inputs by IR-1 through IR-7",
+          "stated_conditions": "L_FP = L_FN AND π = 0.50 AND p_G(κ) = p_P(κ) at κ = 0.50",
+          "kappa_star": "scalar · the threshold minimizing expected loss R(κ) = L_FP × P(s≥κ|P) × (1−π) + L_FN × P(s<κ|G) × π"
+        },
+        "EVALUATION": "Trace Bayesian derivation step-by-step; verify dR/dκ = 0 at κ = 0.50 under stated conditions; finite",
+        "BOUNDARY": "Asymmetric case (L_FP ≠ L_FN) uses approximation formula requiring distributional assumptions — asymmetric formula is NOT part of this predicate and is presented in the paper as an approximation, not a derivation",
+        "CONTEXT": "Symmetric special case is a complete derivation. Asymmetric formula requires distributional assumptions (uniform score distributions, uniform quality prior) stated explicitly in the paper. Practitioners using asymmetric thresholds must derive κ* from their specific loss ratio."
+      },
+      "derivation_trace": [
+        {
+          "step": "1",
+          "input": [
+            "A-MK1.1"
+          ],
+          "operation": "IR-4: Definition Expansion — adopt Bayesian decision framework (Duda, Hart & Stork, 2001); define R(κ), G, P, π",
+          "output": "R(κ) = L_FP × (1−F_P(κ)) × (1−π) + L_FN × F_G(κ) × π"
+        },
+        {
+          "step": "2",
+          "input": [
+            "step 1"
+          ],
+          "operation": "IR-5: Algebraic Manipulation — differentiate R(κ) with respect to κ",
+          "output": "dR/dκ = −L_FP × p_P(κ) × (1−π) + L_FN × p_G(κ) × π"
+        },
+        {
+          "step": "3",
+          "input": [
+            "step 2"
+          ],
+          "operation": "IR-5: Algebraic Manipulation — set dR/dκ = 0 → likelihood ratio condition p_G(κ*)/p_P(κ*) = L_FP(1−π)/(L_FN×π)",
+          "output": "Optimal κ* satisfies LR condition"
+        },
+        {
+          "step": "4",
+          "input": [
+            "step 3"
+          ],
+          "operation": "IR-3: Substitution of Equals — substitute symmetric conditions: L_FP = L_FN, π = 0.5, p_G(0.5) = p_P(0.5) → LR = 1",
+          "output": "LR = (L_FP × 0.5) / (L_FN × 0.5) × (p_G / p_P) = 1 × 1 = 1"
+        },
+        {
+          "step": "5",
+          "input": [
+            "step 4"
+          ],
+          "operation": "IR-1: Modus Ponens — LR = 1 → κ* = 0.50 □",
+          "output": "κ* = 0.50 under symmetric special case"
+        }
+      ],
+      "sample_falsification_observation": "O = {under stated symmetric conditions, dR/dκ = 0 at κ = 0.45} → examine whether substitution error or distributional assumption violation → assessment requires checking each algebraic step in derivation"
+    },
+    {
+      "claim_id": "F-MK1.6",
+      "type": "F",
+      "label": "[TYPE:F]",
+      "name": "Simulation Result — KVS Recall under Q_mult_noisy",
+      "statement": "KVS achieves 73.8% top-5% recall [90% CI: 71.2, 76.2] against Q_mult_noisy (multiplicative ground truth with log-normal noise σ=0.30) under the simulation specification in Section 5.2 with numpy seed=42.",
+      "source": "Section 5.3, Table: Decision-Theoretic Comparison",
+      "paper_classification": "derivation_B",
+      "epistemic_status_note": "Simulation result — deterministic under stated seed. Not empirical outcome data. Establishes structural consistency of the scoring algorithm, not predictive validity. The 90% CI is the empirical interval across 1,000 independent runs (not a distributional assumption).",
+      "predicate": {
+        "FALSIFIED_IF": "(recall_KVS_Qmult < 71.2) OR (recall_KVS_Qmult > 76.2)",
+        "WHERE": {
+          "recall_KVS_Qmult": "scalar · percent · mean KVS top-5% recall against Q_mult_noisy across 1,000 runs",
+          "simulation_specification": {
+            "n_candidates": 10000,
+            "n_runs": 1000,
+            "numpy_seed": 42,
+            "N_distribution": "Beta(2,2) on [0,1]",
+            "mu_distribution": "LogNormal(mu=0.6, sigma=0.55)",
+            "I_prime_derivation": "min(1, mu/3.0)",
+            "C_distribution": "Uniform[1.0, 2.0]",
+            "C_prime_derivation": "(2.0 - C) / 1.0",
+            "h_distribution": "Uniform[0, 72]",
+            "T_derivation": "max(0, 1 - h/60)",
+            "Q_mult_noisy": "KVS × exp(Normal(0, 0.30))"
+          }
+        },
+        "EVALUATION": "Re-implement simulation per Section 5.2 with numpy seed=42; compute KVS top-5% recall against Q_mult_noisy; average across 1,000 runs; check whether mean falls within [71.2, 76.2]; finite and reproducible",
+        "BOUNDARY": "Recall = 71.2 or 76.2 → NOT FALSIFIED (CI bounds are inclusive). Result outside CI with numpy seed=42 indicates implementation error, not model falsification — this is a reproducibility claim.",
+        "CONTEXT": "This is a structural simulation result, not an empirical validation. The 73.8% figure is earned (not circular: Q_mult_noisy uses log-normal noise, not KVS.copy()). Comparison: ADD achieves 68.4% [66.0, 70.8] — non-overlapping CIs establish meaningful structural advantage. Random selector achieves 5% by construction."
+      },
+      "sample_falsification_observation": "O = {re-implementation with identical seed produces 65.0% recall} → outside [71.2, 76.2] → FALSIFIED — investigate whether distribution parameters or Q_mult_noisy formula differ from specification"
+    },
+    {
+      "claim_id": "F-MK1.7",
+      "type": "F",
+      "label": "[TYPE:F]",
+      "name": "Simulation Result — KVS Outperforms ADD under Q_threshold (all distributional variants)",
+      "statement": "KVS maintains recall advantage over ADD under Q_threshold (Q=1 iff all factors > 0.5, else Q=0) across all six distributional parameter variants tested in Section 5.3. Baseline: KVS = 58.8% [56.1, 61.5] vs ADD = 51.2% [48.6, 54.1] — 7.5 pp advantage with non-overlapping confidence intervals.",
+      "source": "Section 5.3, Sensitivity Analysis tables",
+      "paper_classification": "derivation_B",
+      "predicate": {
+        "FALSIFIED_IF": "EXISTS distributional_variant V IN {Baseline, Skewed-low-N, Skewed-high-N, Low-impact, High-impact, Wide-impact-spread} SUCH THAT (recall_KVS_Qthresh(V) ≤ recall_ADD_Qthresh(V))",
+        "WHERE": {
+          "recall_KVS_Qthresh_V": "scalar · percent · mean KVS top-5% recall against Q_threshold for variant V",
+          "recall_ADD_Qthresh_V": "scalar · percent · mean ADD top-5% recall against Q_threshold for variant V",
+          "variants": {
+            "Baseline": "Beta(2,2), LN(0.6,0.55)",
+            "Skewed-low-N": "Beta(1,3)",
+            "Skewed-high-N": "Beta(3,1)",
+            "Low-impact": "LN(0.2,0.55)",
+            "High-impact": "LN(1.2,0.55)",
+            "Wide-impact-spread": "LN(0.6,1.10)"
+          }
+        },
+        "EVALUATION": "Re-implement simulation for each variant; compute KVS and ADD recall under Q_threshold; check whether KVS > ADD for every variant; finite",
+        "BOUNDARY": "KVS = ADD for any variant → FALSIFIED (claim requires strict advantage)",
+        "CONTEXT": "Q_threshold is the most practically informative outcome function: it formalizes that real improvements require minimum thresholds across ALL dimensions. KVS's structural advantage under Q_threshold is the primary simulation-based argument for the multiplicative form over additive alternatives."
+      },
+      "sample_falsification_observation": "O = {Skewed-high-N variant: KVS=40.8% vs ADD=37.7%} → KVS > ADD → NOT FALSIFIED. O = {hypothetical: ADD=41.0% in this variant} → FALSIFIED"
+    },
+    {
+      "claim_id": "F-MK1.8",
+      "type": "F",
+      "label": "[TYPE:F]",
+      "name": "Simulation Result — Timeliness Dominance Artifact",
+      "statement": "Timeliness T correlates with KVS at ρ = 0.740 [90% CI: 0.730, 0.749] under baseline simulation specification — substantially higher than N (ρ=0.258), I′ (ρ=0.217), C′ (ρ=0.385). This is a distributional artifact explained by T=0 candidates (~17% of draws) collapsing KVS to zero.",
+      "source": "Section 5.3, Factor Dominance table",
+      "paper_classification": "derivation_B",
+      "predicate": {
+        "FALSIFIED_IF": "(rho_T_KVS < 0.730) OR (rho_T_KVS > 0.749) OR (pct_T_zero < 15) OR (pct_T_zero > 19)",
+        "WHERE": {
+          "rho_T_KVS": "scalar · Spearman rank correlation between T and KVS across baseline simulation run",
+          "pct_T_zero": "scalar · percent · fraction of candidates receiving T=0 in baseline simulation (Uniform[0,72] h, H_max=60 → 12/72 = 16.7%)"
+        },
+        "EVALUATION": "Re-run baseline simulation with numpy seed=42; compute Spearman ρ between T and KVS; count T=0 candidates; finite",
+        "BOUNDARY": "ρ_T = 0.730 → NOT FALSIFIED (CI lower bound is inclusive)",
+        "CONTEXT": "Operational remedy: filter T=0 candidates before scoring. Equal-weight property holds for candidates with T > 0. This artifact is a structural consequence of the distributional specification, not a model failure."
+      },
+      "sample_falsification_observation": "O = {re-implementation produces ρ_T_KVS = 0.61} → outside [0.730, 0.749] → FALSIFIED — check whether h distribution specification (Uniform[0,72]) matches or differs"
+    },
+    {
+      "claim_id": "F-MK1.9",
+      "type": "F",
+      "label": "[TYPE:F]",
+      "name": "Pre-Registered H₁ — Empirical Validation Path",
+      "statement": "H₁: Among improvement candidates meeting KVS ≥ κ threshold, Spearman rank correlation between KVS score and realized outcome improvement (at 12 months post-adoption) is significantly greater than zero, stratified by substrate type. Minimum sample: n ≥ 30 per substrate per organization, across ≥ 10 organizations, minimum 300 observations per substrate.",
+      "source": "Section 5.4",
+      "paper_classification": "derivation_B",
+      "placeholder": true,
+      "placeholder_id": "PH-MK1.1",
+      "placeholder_note": "Empirical data does not yet exist. This claim unblocks when sufficient outcome data accumulates (estimated 3–4 years for high-frequency substrates). Reporting commitment: results will be reported regardless of direction. This placeholder does NOT block PHASE-READY — it is a pre-registered future empirical test.",
+      "predicate": {
+        "FALSIFIED_IF": "(Spearman_rho_KVS_outcome ≤ 0) OR (p_value > 0.05) FOR any substrate type with n ≥ 300",
+        "WHERE": {
+          "Spearman_rho_KVS_outcome": "scalar · dimensionless · Spearman rank correlation between KVS score at time of adoption and realized outcome improvement measured at 12 months post-adoption",
+          "substrate_type": "one of {IPS, clinical, DORA, lean_manufacturing}",
+          "n": "integer · count of adopted improvements per substrate per organization, aggregated across ≥ 10 organizations",
+          "p_value": "scalar · from two-sided Spearman rank correlation test"
+        },
+        "EVALUATION": "When n ≥ 300 per substrate: compute Spearman ρ between KVS scores (at proposal time) and realized outcomes (at 12-month review); test against zero; stratify by substrate type; finite",
+        "BOUNDARY": "ρ = 0 or p = 0.05 → FALSIFIED (requires strictly greater than zero with significance)",
+        "CONTEXT": "If H₁ is not supported, the paper commits to recharacterizing KVS as a governance tool (transparent, auditable, consistent) rather than a scientific measurement instrument. This is explicitly stated in Section 5.4. Non-confirmation does not invalidate the axiomatic derivation — it bounds the empirical claim."
+      },
+      "sample_falsification_observation": "[PENDING — no data yet]"
+    }
+  ],
+  "placeholder_register": [
+    {
+      "placeholder_id": "PH-MK1.1",
+      "source_claim": "F-MK1.9",
+      "description": "Pre-registered empirical validation. H₁ requires n ≥ 300 adopted improvements per substrate type. Not yet achievable — high-frequency substrates estimated 3–4 years; financial governance may require a decade.",
+      "resolved": false,
+      "blocks_phase_ready": false,
+      "target_session": "OPEN — resolves when empirical data accumulates"
+    }
+  ],
+  "dependency_edges": [
+    {
+      "source": "A-MK1.1",
+      "target": "F-MK1.3",
+      "type": "L",
+      "live": true
+    },
+    {
+      "source": "A-MK1.2",
+      "target": "F-MK1.3",
+      "type": "L",
+      "live": true
+    },
+    {
+      "source": "A-MK1.3",
+      "target": "F-MK1.3",
+      "type": "L",
+      "live": true
+    },
+    {
+      "source": "A-MK1.4",
+      "target": "F-MK1.3",
+      "type": "L",
+      "live": true
+    },
+    {
+      "source": "A-MK1.5",
+      "target": "F-MK1.3",
+      "type": "L",
+      "live": true,
+      "note": "Eliminates additive form — the critical step"
+    },
+    {
+      "source": "A-MK1.6",
+      "target": "F-MK1.3",
+      "type": "L",
+      "live": true,
+      "note": "Pins equal exponents"
+    },
+    {
+      "source": "D-MK1.3",
+      "target": "F-MK1.3",
+      "type": "D",
+      "live": true
+    },
+    {
+      "source": "D-MK1.4",
+      "target": "F-MK1.3",
+      "type": "D",
+      "live": true
+    },
+    {
+      "source": "D-MK1.5",
+      "target": "F-MK1.3",
+      "type": "D",
+      "live": true
+    },
+    {
+      "source": "D-MK1.6",
+      "target": "F-MK1.3",
+      "type": "D",
+      "live": true
+    },
+    {
+      "source": "F-MK1.3",
+      "target": "D-MK1.2",
+      "type": "L",
+      "live": true,
+      "note": "KVS formula is derived result of Theorem 4.1"
+    },
+    {
+      "source": "D-MK1.2",
+      "target": "F-MK1.1",
+      "type": "D",
+      "live": true
+    },
+    {
+      "source": "D-MK1.2",
+      "target": "F-MK1.2",
+      "type": "D",
+      "live": true
+    },
+    {
+      "source": "D-MK1.1",
+      "target": "F-MK1.4",
+      "type": "D",
+      "live": true
+    },
+    {
+      "source": "D-MK1.2",
+      "target": "F-MK1.4",
+      "type": "D",
+      "live": true
+    },
+    {
+      "source": "A-MK1.1",
+      "target": "F-MK1.5",
+      "type": "L",
+      "live": true,
+      "note": "Weak order is foundational to decision theory application"
+    },
+    {
+      "source": "D-MK1.2",
+      "target": "F-MK1.6",
+      "type": "D",
+      "live": true
+    },
+    {
+      "source": "D-MK1.2",
+      "target": "F-MK1.7",
+      "type": "D",
+      "live": true
+    },
+    {
+      "source": "A-MK1.5",
+      "target": "F-MK1.7",
+      "type": "L",
+      "live": true,
+      "note": "Q_threshold is structurally aligned with Axiom 5 — both require minimum thresholds across all dimensions"
+    },
+    {
+      "source": "D-MK1.6",
+      "target": "F-MK1.8",
+      "type": "D",
+      "live": true,
+      "note": "T=0 behavior is a direct consequence of T definition"
+    },
+    {
+      "source": "F-MK1.3",
+      "target": "F-MK1.9",
+      "type": "L",
+      "live": false,
+      "note": "H₁ tests whether the derived KVS predicts real outcomes — empirical test of the derivation's practical validity"
+    }
+  ],
+  "channel_2_query_trace": {
+    "description": "Demonstration that an AI system can verify Claim F-MK1.1 (Boundedness) using this AI layer alone — zero prose references required. This trace resolves PH-DRP.2 (DRP-1 Section 7.4 live instance requirement).",
+    "query": "Is claim F-MK1.1 (KVS Boundedness) verified for an improvement candidate with N=0.7, I′=0.6, C′=0.8, T=1.0?",
+    "step_1": "Load MK-P1-ai-layer.json from github.com/thomasbrennan/Fracttalix/ai-layers/MK-P1-ai-layer.json",
+    "step_2": "Locate claim_id: 'F-MK1.1' in claim_registry",
+    "step_3": "Read FALSIFIED_IF: EXISTS improvement candidate j SUCH THAT (KVS_j < 0) OR (KVS_j > 1)",
+    "step_4": "Read WHERE: KVS_j = N_j × I′_j × C′_j × T_j per D-MK1.2",
+    "step_5": "Compute: 0.7 × 0.6 × 0.8 × 1.0 = 0.336",
+    "step_6": "Check: 0.336 ∈ [0,1] — TRUE. FALSIFIED_IF condition not met.",
+    "step_7": "Read derivation_trace: Step 1 (IR-4) + Step 2 (IR-5) — both valid for this candidate",
+    "result": "F-MK1.1 NOT FALSIFIED for this candidate. Verification complete.",
+    "prose_references_required": 0,
+    "verification_time_estimate": "< 2 seconds for automated system",
+    "channel_2_url": "github.com/thomasbrennan/Fracttalix/ai-layers/MK-P1-ai-layer.json"
+  },
+  "process_graph_excerpt": {
+    "description": "Minimal process graph entry for MK-P1 — for insertion into process-graph.json",
+    "paper_node": {
+      "paper_id": "MK-P1",
+      "corpus_id": "Meta-Kaizen",
+      "paper_type": "derivation_B",
+      "status": "PHASE-READY",
+      "phase_ready": true,
+      "placeholder_count": 1,
+      "ai_layer_url": "github.com/thomasbrennan/Fracttalix/ai-layers/MK-P1-ai-layer.json",
+      "prose_doi": "pending"
+    }
+  },
+  "ir_gap_register": [
+    {
+      "gap_id": "IR-GAP-MK1.1",
+      "location": "F-MK1.3 derivation trace, Step S4.2",
+      "description": "Scale Normalization Condition (selection of α=1) uses a modeling principle (parsimony / face-value proportionality) that cannot be classified under IR-1 through IR-7.",
+      "proposed_resolution": "Propose IR-8: Parsimony / Modeling Principle Selection — a step that selects a canonical value from a continuous family of axiom-consistent options based on a named parsimony principle. Valid iff: (a) the family of consistent options is established; (b) the parsimony principle is named and cited; (c) the selection is documented as a canonical choice, not a necessary derivation.",
+      "cbt_amendment_required": true,
+      "blocks_phase_ready": false,
+      "note": "Paper already discloses this limitation in Correction 2. The gap is transparent. The AI layer flags it for governance completeness.",
+      "resolved": true,
+      "resolved_note": "IR-8 added to inference rule inventory by CBT Amendment A-S43-2 (Session 43)."
+    }
+  ],
+  "summary": {
+    "total_claims": 15,
+    "type_A": 6,
+    "type_D": 6,
+    "type_F": 9,
+    "placeholder_count": 1,
+    "live_F_claims": 8,
+    "open_gaps": 1,
+    "phase_ready": true,
+    "first_live_channel_2_asset": true,
+    "resolves_PH_DRP2": true,
+    "session_produced": "S43"
+  }
+}

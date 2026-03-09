@@ -1,0 +1,47 @@
+{
+  "_meta": {
+    "document_type": "PROCESS_GRAPH",
+    "version": "v1-S43",
+    "produced_session": "S43",
+    "licence": "CC BY 4.0"
+  },
+  "corpora": [
+    {
+      "corpus_id": "Fracttalix",
+      "papers": [
+        {"paper_id": "P1", "paper_type": "law_A", "status": "PHASE-READY", "ai_layer_url": "https://github.com/thomasbrennan/Fracttalix/blob/main/ai-layers/P1-ai-layer.json", "prose_doi": "10.5281/zenodo.18859299", "placeholder_count": 1},
+        {"paper_id": "P2", "paper_type": "derivation_B", "status": "QUEUED", "ai_layer_url": null, "placeholder_count": null},
+        {"paper_id": "P3", "paper_type": "derivation_B", "status": "QUEUED", "ai_layer_url": null, "placeholder_count": null},
+        {"paper_id": "P4", "paper_type": "application_C", "status": "QUEUED", "ai_layer_url": null, "placeholder_count": null},
+        {"paper_id": "P5", "paper_type": "application_C", "status": "QUEUED", "ai_layer_url": null, "placeholder_count": null},
+        {"paper_id": "P6", "paper_type": "application_C", "status": "IN_PROGRESS", "ai_layer_url": null, "placeholder_count": null},
+        {"paper_id": "P7", "paper_type": "application_C", "status": "QUEUED", "ai_layer_url": null, "placeholder_count": null},
+        {"paper_id": "P8", "paper_type": "application_C", "status": "QUEUED", "ai_layer_url": null, "placeholder_count": null},
+        {"paper_id": "P9", "paper_type": "application_C", "status": "QUEUED", "ai_layer_url": null, "placeholder_count": null},
+        {"paper_id": "P10", "paper_type": "application_C", "status": "QUEUED", "ai_layer_url": null, "placeholder_count": null},
+        {"paper_id": "P11", "paper_type": "application_C", "status": "QUEUED", "ai_layer_url": null, "placeholder_count": null},
+        {"paper_id": "P12", "paper_type": "application_C", "status": "QUEUED", "ai_layer_url": null, "placeholder_count": null},
+        {"paper_id": "P13", "paper_type": "law_A", "status": "QUEUED", "ai_layer_url": null, "placeholder_count": null}
+      ]
+    },
+    {
+      "corpus_id": "Meta-Kaizen",
+      "papers": [
+        {"paper_id": "MK-P1", "paper_type": "derivation_B", "status": "PHASE-READY", "ai_layer_url": "https://github.com/thomasbrennan/Fracttalix/blob/main/ai-layers/MK-P1-ai-layer.json", "prose_doi": "pending", "placeholder_count": 1},
+        {"paper_id": "MK-P2", "paper_type": "derivation_B", "status": "QUEUED", "ai_layer_url": null, "placeholder_count": null},
+        {"paper_id": "MK-P3", "paper_type": "derivation_B", "status": "QUEUED", "ai_layer_url": null, "placeholder_count": null},
+        {"paper_id": "MK-P4", "paper_type": "application_C", "status": "QUEUED", "ai_layer_url": null, "placeholder_count": null},
+        {"paper_id": "MK-P5", "paper_type": "methodology_D", "status": "QUEUED", "ai_layer_url": null, "placeholder_count": null}
+      ]
+    }
+  ],
+  "channel_2_status": {
+    "live": true,
+    "live_assets": 2,
+    "assets": [
+      "https://github.com/thomasbrennan/Fracttalix/blob/main/ai-layers/MK-P1-ai-layer.json",
+      "https://github.com/thomasbrennan/Fracttalix/blob/main/ai-layers/P1-ai-layer.json"
+    ],
+    "schema_url": "https://github.com/thomasbrennan/Fracttalix/blob/main/ai-layers/ai-layer-schema.json"
+  }
+}
