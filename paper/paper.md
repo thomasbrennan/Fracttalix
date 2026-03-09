@@ -10,7 +10,7 @@ tags:
   - Kuramoto synchronization
 authors:
   - name: Thomas Brennan
-    orcid: 0000-0000-0000-0000
+    orcid: 0009-0002-6353-7115
     affiliation: 1
 affiliations:
   - name: Independent Researcher
