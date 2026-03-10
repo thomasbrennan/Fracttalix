@@ -500,14 +500,27 @@ class VarCUSUMStep(DetectorStep):
         self._s_lo = 0.0
         self._var_ewma = 1.0
         self._warmed = False
+        self._var_baseline = 0.0   # warmup-estimated windowed variance
+        self._warmup_var_sum = 0.0
+        self._warmup_var_count = 0
 
     def update(self, ctx: StepContext) -> None:
+        # Accumulate structural-snapshot variance during warmup to build a fixed
+        # pre-anomaly baseline that never adapts away (unlike dev_ewma).
         if ctx.is_warmup:
+            ss = ctx.scratch.get("structural_snapshot")
+            if ss is not None:
+                self._warmup_var_sum += ss.variance
+                self._warmup_var_count += 1
             return
         if not self._warmed:
             self._s_hi = 0.0
             self._s_lo = 0.0
             self._var_ewma = 0.0  # seed from real data, not default 1.0
+            self._var_baseline = (
+                self._warmup_var_sum / self._warmup_var_count
+                if self._warmup_var_count > 0 else 1.0
+            )
             self._warmed = True
         dev = ctx.dev_ewma
         z = ctx.scratch.get("z_score", 0.0)
@@ -521,22 +534,49 @@ class VarCUSUMStep(DetectorStep):
             self._s_lo = max(0.0, self._s_lo + k - v2)
         else:
             self._s_lo = 0.0
-        alert = self._s_hi > self.cfg.var_cusum_h or self._s_lo > self.cfg.var_cusum_h
+        cusum_alert = self._s_hi > self.cfg.var_cusum_h or self._s_lo > self.cfg.var_cusum_h
+
+        # Sustained-variance detection: compare the current 64-step windowed
+        # variance (from StructuralSnapshot) against the fixed warmup baseline.
+        # The 64-step window absorbs isolated spikes (a single 8σ spike raises
+        # windowed variance by only ~1x, not ~25x), so this does not trigger on
+        # point anomalies but fires throughout a prolonged volatility regime.
+        ss = ctx.scratch.get("structural_snapshot")
+        baseline = max(self._var_baseline, 1e-4)
+        sustained_alert = (
+            ss is not None
+            and ss.variance > 4.0 * baseline
+        )
+
+        alert = cusum_alert or sustained_alert
         ctx.scratch["var_cusum_hi"] = self._s_hi
         ctx.scratch["var_cusum_lo"] = self._s_lo
         ctx.scratch["var_cusum_alert"] = alert
+        if cusum_alert:
+            # Re-arm: reset accumulators so the statistic can detect the next event.
+            # Without this, the statistic stays permanently above h after the first
+            # crossing, generating a continuous false-positive stream on normal data.
+            self._s_hi = 0.0
+            self._s_lo = 0.0
         if alert:
             ctx.scratch["alert"] = True
             ctx.scratch["anomaly"] = True
 
     def state_dict(self) -> Dict[str, Any]:
-        return {"s_hi": self._s_hi, "s_lo": self._s_lo, "var_ewma": self._var_ewma, "warmed": self._warmed}
+        return {
+            "s_hi": self._s_hi,
+            "s_lo": self._s_lo,
+            "var_ewma": self._var_ewma,
+            "warmed": self._warmed,
+            "var_baseline": self._var_baseline,
+        }
 
     def load_state(self, sd: Dict[str, Any]) -> None:
         self._s_hi = sd.get("s_hi", 0.0)
         self._s_lo = sd.get("s_lo", 0.0)
         self._var_ewma = sd.get("var_ewma", 1.0)
         self._warmed = sd.get("warmed", False)
+        self._var_baseline = sd.get("var_baseline", 1.0)
 
 
 # ---------------------------------------------------------------------------

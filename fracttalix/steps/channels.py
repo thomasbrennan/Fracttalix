@@ -249,6 +249,30 @@ class ChannelCoherenceStep(DetectorStep):
             maxlen=self.cfg.coherence_window * 2)
         self._sr_decoupling_active: bool = False
 
+    @staticmethod
+    def _pearson_coherence(sc: list, rc: list) -> float:
+        """Pearson correlation between structural and rhythmic change series.
+
+        Scale-invariant: eliminates the unit mismatch between windowed-variance
+        changes (structural) and EWMA changes (rhythmic).  Returns a value in
+        [0, 1] where 1 = perfectly co-moving, 0.5 = uncorrelated, 0 = opposing.
+        Returns 0.5 (neutral) when either series is constant or too short.
+        """
+        n = min(len(sc), len(rc))
+        if n < 3:
+            return 0.5
+        sc_n = sc[-n:]
+        rc_n = rc[-n:]
+        sc_mean = _mean(sc_n)
+        rc_mean = _mean(rc_n)
+        num = sum((a - sc_mean) * (b - rc_mean) for a, b in zip(sc_n, rc_n))
+        denom_s = math.sqrt(sum((a - sc_mean) ** 2 for a in sc_n))
+        denom_r = math.sqrt(sum((b - rc_mean) ** 2 for b in rc_n))
+        if denom_s < 1e-10 or denom_r < 1e-10:
+            return 0.5
+        r = num / (denom_s * denom_r)
+        return (r + 1.0) / 2.0  # map [-1, 1] → [0, 1]
+
     def _coherence_score_from_slices(
         self, struct_slice: list, rhythmic_slice: list
     ) -> float:
@@ -259,10 +283,7 @@ class ChannelCoherenceStep(DetectorStep):
         rs = rhythmic_slice[-n:]
         sc = [abs(ss[i].variance - ss[i - 1].variance) for i in range(1, len(ss))]
         rc = [abs(rs[i] - rs[i - 1]) for i in range(1, len(rs))]
-        s_rate = _mean(sc) if sc else 0.0
-        r_rate = _mean(rc) if rc else 0.0
-        max_rate = max(s_rate, r_rate, 1e-10)
-        return max(0.0, min(1.0, 1.0 - abs(s_rate - r_rate) / max_rate))
+        return self._pearson_coherence(sc, rc)
 
     def update(self, ctx: StepContext) -> None:
         if not self.cfg.enable_channel_coherence:
@@ -295,10 +316,7 @@ class ChannelCoherenceStep(DetectorStep):
               for i in range(1, len(recent_rhythmic))]
         structural_change_rate = _mean(sc) if sc else 0.0
         rhythmic_change_rate = _mean(rc) if rc else 0.0
-        max_rate = max(structural_change_rate, rhythmic_change_rate, 1e-10)
-        coherence_score = max(
-            0.0, min(1.0, 1.0 - abs(structural_change_rate - rhythmic_change_rate) / max_rate)
-        )
+        coherence_score = self._pearson_coherence(sc, rc)
 
         half = window // 2
         early_coh = self._coherence_score_from_slices(
