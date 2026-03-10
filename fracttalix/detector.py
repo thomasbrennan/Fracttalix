@@ -20,7 +20,7 @@ from fracttalix.window import StepContext, WindowBank
 
 try:
     from fracttalix import __version__
-except Exception:
+except ImportError:
     __version__ = "12.0.0"
 
 
@@ -261,7 +261,7 @@ class SentinelDetector:
         # Import __version__ lazily to avoid circular imports
         try:
             from fracttalix import __version__ as _ver
-        except Exception:
+        except ImportError:
             _ver = "12.0.0"
         sd: Dict[str, Any] = {
             "version": _ver,
@@ -398,7 +398,7 @@ class SentinelDetector:
     def __repr__(self) -> str:
         try:
             from fracttalix import __version__ as _ver
-        except Exception:
+        except ImportError:
             _ver = "12.0.0"
         return (f"SentinelDetector(v{_ver}, n={self._n}, "
                 f"alpha={self.config.alpha}, warmup={self.config.warmup_periods}, "

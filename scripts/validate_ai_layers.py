@@ -12,8 +12,13 @@ Exit code 0 if all layers pass, 1 if any fail.
 """
 
 import json
+import logging
 import sys
 from pathlib import Path
+from typing import List
+
+logger = logging.getLogger(__name__)
+logging.basicConfig(level=logging.INFO, format="%(levelname)s: %(message)s")
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
 AI_LAYERS_DIR = REPO_ROOT / "ai-layers"
@@ -45,7 +50,7 @@ class ValidationError:
         return f"  [{self.file}] {self.path}: {self.message}"
 
 
-def validate_layer(filepath: Path) -> list[ValidationError]:
+def validate_layer(filepath: Path) -> "List[ValidationError]":
     errors = []
     fname = filepath.name
 
@@ -205,12 +210,12 @@ def validate_layer(filepath: Path) -> list[ValidationError]:
 
 def main():
     if not SCHEMA_PATH.exists():
-        print(f"FATAL: Schema not found at {SCHEMA_PATH}")
+        logger.fatal("Schema not found at %s", SCHEMA_PATH)
         sys.exit(1)
 
     layer_files = sorted(AI_LAYERS_DIR.glob("*-ai-layer.json"))
     if not layer_files:
-        print("WARNING: No AI layer files found matching *-ai-layer.json")
+        logger.warning("No AI layer files found matching *-ai-layer.json")
         sys.exit(0)
 
     print(f"Fracttalix AI Layer Validator")
