@@ -3569,7 +3569,7 @@ def _cli_main(argv=None):
 
 
 # ===========================================================================
-# 40-test smoke suite
+# 75-test smoke suite
 # ===========================================================================
 
 def _run_tests():
@@ -3597,7 +3597,7 @@ def _run_tests():
             fail(name, f"{type(e).__name__}: {e}")
 
     print(f"\n{'='*60}")
-    print(f"  Fracttalix Sentinel v12.0 — 65-test Smoke Suite")
+    print(f"  Fracttalix Sentinel v12.0 — 75-test Smoke Suite")
     print(f"{'='*60}\n")
 
     # ------------------------------------------------------------------
@@ -4441,8 +4441,117 @@ def _run_tests():
     run("T65 SentinelResult convenience methods all return correct types", t65)
 
     # ------------------------------------------------------------------
+    # T66 — T75: Stress Tests
+    # ------------------------------------------------------------------
+    def t66():
+        # Long stream: 10,000 observations without error
+        det = SentinelDetector(SentinelConfig(warmup_periods=5))
+        for i in range(10_000):
+            r = det.update_and_check(math.sin(i * 0.01) + (i % 100) * 0.001)
+        assert det._n == 10_000
+        assert "alert" in r
+    run("T66 Stress: 10k observations no crash", t66)
+
+    def t67():
+        # Large spike (within float range but extreme for detector)
+        det = SentinelDetector(SentinelConfig(warmup_periods=5))
+        for _ in range(10):
+            det.update_and_check(1.0)
+        r = det.update_and_check(1e15)
+        assert "alert" in r
+        assert r["alert"] is True
+    run("T67 Stress: large positive spike (1e15)", t67)
+
+    def t68():
+        # Large negative spike
+        det = SentinelDetector(SentinelConfig(warmup_periods=5))
+        for _ in range(10):
+            det.update_and_check(0.0)
+        r = det.update_and_check(-1e15)
+        assert "alert" in r
+        assert r["alert"] is True
+    run("T68 Stress: large negative spike (-1e15)", t68)
+
+    def t69():
+        # Zero-variance stream (all identical values) — no crash
+        det = SentinelDetector(SentinelConfig(warmup_periods=5))
+        for _ in range(200):
+            r = det.update_and_check(42.0)
+        assert det._n == 200
+        assert "alert" in r
+    run("T69 Stress: zero-variance stream completes (200 identical values)", t69)
+
+    def t70():
+        # Alternating extreme values
+        det = SentinelDetector(SentinelConfig(warmup_periods=5))
+        for i in range(100):
+            v = 1e6 if i % 2 == 0 else -1e6
+            r = det.update_and_check(v)
+        assert det._n == 100
+        assert "alert" in r
+    run("T70 Stress: alternating extreme values", t70)
+
+    def t71():
+        # Very small values near zero
+        det = SentinelDetector(SentinelConfig(warmup_periods=5))
+        for i in range(100):
+            r = det.update_and_check(1e-300 * (i % 3))
+        assert det._n == 100
+        assert "alert" in r
+    run("T71 Stress: very small values near zero (1e-300)", t71)
+
+    def t72():
+        # Rapid regime changes
+        det = SentinelDetector(SentinelConfig(warmup_periods=5))
+        for block in range(10):
+            baseline = block * 100.0
+            for _ in range(20):
+                r = det.update_and_check(baseline)
+        assert det._n == 200
+        assert "alert" in r
+    run("T72 Stress: rapid regime changes (10 blocks)", t72)
+
+    def t73():
+        # Save/load round-trip after long stream
+        det = SentinelDetector(SentinelConfig(warmup_periods=5))
+        for i in range(500):
+            det.update_and_check(math.sin(i * 0.1))
+        state = det.save_state()
+        det2 = SentinelDetector(SentinelConfig(warmup_periods=5))
+        det2.load_state(state)
+        r1 = det.update_and_check(0.5)
+        r2 = det2.update_and_check(0.5)
+        assert r1["alert"] == r2["alert"]
+        assert abs(r1.get("ewma", 0) - r2.get("ewma", 0)) < 0.01
+    run("T73 Stress: save/load fidelity after 500 observations", t73)
+
+    def t74():
+        # MultiStreamSentinel with many streams
+        mss = MultiStreamSentinel()
+        for s in range(50):
+            for i in range(10):
+                mss.update(f"stream_{s}", float(i))
+        assert len(mss.list_streams()) == 50
+        for s in range(50):
+            st = mss.status(f"stream_{s}")
+            assert st["n"] == 10
+    run("T74 Stress: MultiStreamSentinel 50 streams", t74)
+
+    def t75():
+        # All config presets run full pipeline without error
+        for factory in [SentinelConfig.fast, SentinelConfig.production,
+                        SentinelConfig.sensitive, SentinelConfig.realtime]:
+            det = SentinelDetector(factory())
+            for i in range(100):
+                r = det.update_and_check(math.sin(i * 0.05) * 10)
+            assert det._n == 100
+            assert "alert" in r
+    run("T75 Stress: all config presets complete pipeline", t75)
+
+    # ------------------------------------------------------------------
+    total = passed + failed
     print(f"\n{'='*60}")
-    print(f"  Results: {passed} passed, {failed} failed / 65 total")
+    print(f"  Results: {passed} passed, {failed} failed / {total} total")
     if errors:
         print(f"\n  Failed tests:")
         for name, reason in errors:

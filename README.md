@@ -170,6 +170,28 @@ python3 fracttalix_sentinel_v1200.py --version
 
 ---
 
+## Performance
+
+**Time complexity per observation:** O(W) where W is the largest window size (default 64). All 26 pipeline steps are O(W) or better. No step requires full history traversal — the WindowBank caps memory and compute.
+
+**Memory:** O(W × S) where S is the number of registered window slots (~30). State is bounded regardless of stream length. For default config, steady-state memory is under 100 KB per detector instance.
+
+**Throughput (pure Python, no NumPy):** ~2,000–5,000 observations/second on modern hardware. With NumPy: ~5,000–15,000 obs/sec depending on pipeline features enabled. Numba JIT (if available) accelerates inner loops further.
+
+**Scaling:** MultiStreamSentinel scales linearly with stream count. Each stream is independent — no cross-stream overhead.
+
+---
+
+## Known limitations
+
+- **Float overflow:** Values near ±1e308 can cause OverflowError in exponential calculations. Keep input values within ±1e100 for safe operation, or normalize inputs.
+- **Zero-variance streams:** Constant-value streams may trigger spurious alerts from steps that compute variance-based statistics (division by near-zero variance). This is by design — zero variance is itself anomalous in most real-world contexts.
+- **FFT resolution:** Frequency decomposition requires `min_window_for_fft` observations (default 32). Short windows limit frequency resolution in the lower bands.
+- **Warmup period:** No alerts are generated during the warmup phase. The detector needs `warmup_periods` observations (default 30) before producing meaningful results.
+- **Pure Python FFT:** Without NumPy, frequency decomposition uses a pure Python DFT which is O(N²) rather than O(N log N). For large FFT windows, install NumPy.
+
+---
+
 ## Version history
 
 | Version | Date | Description |

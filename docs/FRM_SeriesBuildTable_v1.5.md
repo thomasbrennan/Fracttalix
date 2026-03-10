@@ -508,6 +508,7 @@ not expansion version.
 | v1.3 | Session 36 | Physical theory of association reframe. Scale inversion. Temporal networks. Taleb relationship. |
 | v1.4 | Session 36 | Complete reframe. No exceptions law. Mathematical form. Paper 6 retitled. Paper 12 retitled. Rippetoe. Ibn Khaldun. Asimov. Heisenberg. Burke. |
 | v1.5 | Session 36 | Consolidation version. Referee analysis complete. All seven objections addressed. Circular definition resolved via information-theoretic foundation. Measurement decoupling threshold named precisely. 13-month release schedule. Meta-Kaizen analysis. KVS 0.832. Synchronization point identified and mitigated. Paper 11b flagged. Internal consistency action item. |
+| v1.6 | Session 45 | DevOps hardening. GitHub Actions CI added (Python 3.8–3.13 matrix, pure Python + NumPy). 10 stress tests added (T66–T75): 10k-observation endurance, extreme values, zero-variance, alternating extremes, rapid regime changes, save/load fidelity, 50-stream MultiStreamSentinel, all-presets pipeline. Test suite now 75/75. Performance and known limitations documented in README. Git tag v12.0.0 created. |
 
 ---
 
