@@ -306,7 +306,9 @@ Fracttalix/
 ├── fracttalix_sentinel_v1200.py       ← Sentinel v12.0
 ├── README.md
 ├── LICENSE                           ← CC0
-└── Legal Notice/
+├── .gitignore
+├── pyproject.toml
+└── legal/
 ```
 
 ---

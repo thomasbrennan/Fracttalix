@@ -175,6 +175,8 @@ python3 fracttalix_sentinel_v1200.py --version
 | Version | Date | Description |
 |---|---|---|
 | **v12.0** | 2026-03-10 | Current release |
+| **v11.0** | 2026-03-08 | Incremental pipeline and channel refinements |
+| **v10.0** | 2026-03-06 | Incremental pipeline and metric improvements |
 | **v9.0** | 2026-03-03 | Three-channel extension: structural, rhythmic, temporal information channels |
 | **v8.0** | 2026-02-19 | Ground-up rewrite: frozen config, WindowBank, 19-step pipeline |
 | v7.6 | 2026-02-09 | Last monolithic version (scaling and consistency fixes) |

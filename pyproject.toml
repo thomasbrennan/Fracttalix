@@ -1,0 +1,35 @@
+[build-system]
+requires = ["setuptools>=64"]
+build-backend = "setuptools.backends._legacy:_Backend"
+
+[project]
+name = "fracttalix-sentinel"
+version = "12.0.0"
+description = "Three-channel streaming anomaly detector grounded in the Fractal Rhythm Model"
+readme = "README.md"
+license = "CC0-1.0"
+requires-python = ">=3.8"
+authors = [
+    { name = "Thomas Brennan" },
+]
+keywords = ["anomaly-detection", "streaming", "fractal-rhythm-model", "time-series"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Science/Research",
+    "License :: CC0 1.0 Universal (CC0 1.0) Public Domain Dedication",
+    "Programming Language :: Python :: 3",
+    "Topic :: Scientific/Engineering",
+]
+
+[project.optional-dependencies]
+full = ["numpy", "matplotlib", "numba", "tqdm"]
+
+[project.urls]
+Repository = "https://github.com/thomasbrennan/Fracttalix"
+Documentation = "https://github.com/thomasbrennan/Fracttalix/blob/main/README.md"
+
+[project.scripts]
+fracttalix-sentinel = "fracttalix_sentinel_v1200:_cli_main"
+
+[tool.setuptools]
+py-modules = ["fracttalix_sentinel_v1200"]
