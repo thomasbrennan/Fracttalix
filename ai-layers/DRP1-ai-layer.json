@@ -1,0 +1,156 @@
+{
+  "_meta": {
+    "document_type": "AI_LAYER",
+    "schema_version": "v2-S42",
+    "schema_url": "https://github.com/thomasbrennan/Fracttalix/blob/main/ai-layers/ai-layer-schema.json",
+    "produced_session": "S47",
+    "produced_by": "Build — Thomas Brennan (Architect)",
+    "licence": "CC BY 4.0"
+  },
+
+  "paper_id": "DRP-1",
+  "paper_title": "Dual-Reader Scientific Publishing: A Framework for Machine-Verifiable Knowledge Corpora",
+  "paper_type": "methodology_D",
+  "version": "v1",
+  "session": "S47",
+
+  "phase_ready": {
+    "verdict": "PHASE-READY",
+    "c1": "SATISFIED",
+    "c2": "SATISFIED",
+    "c3": "SATISFIED",
+    "c4_mode": "PHASE-READY-TRACKING",
+    "c5": "SATISFIED",
+    "c6": "SATISFIED",
+    "placeholder_count": 0,
+    "note": "I-9 run S47. Fixed: _meta added, paper_title added, version v0.3->v1, predicate field names uppercase per schema, 3 unregistered prose claims registered (C-DRP.3 Type D, C-DRP.4 Type D, C-DRP.5 Type F), C-DRP.1 evaluation rewritten to remove NL judgment. Prior C-DRP.3 and C-DRP.4 renumbered C-DRP.6 and C-DRP.7."
+  },
+
+  "claim_registry": [
+
+    {
+      "claim_id": "C-DRP.1",
+      "type": "F",
+      "label": "Syntax Necessity and Sufficiency",
+      "statement": "The 5-part predicate syntax (FALSIFIED IF / WHERE / EVALUATION / BOUNDARY / CONTEXT) is necessary and sufficient to express any falsifiable scientific claim as a machine-evaluable predicate.",
+      "derivation_source": ["DRP-1 Section 3"],
+      "falsification_predicate": {
+        "FALSIFIED_IF": "n_inexpressible > 0",
+        "WHERE": {
+          "n_inexpressible": "count of falsifiable claims in the Fracttalix corpus for which no 5-part predicate can be constructed that satisfies all schema validation constraints (FALSIFIED_IF: named variables only; WHERE: typed definitions; EVALUATION: finite terminating procedure; BOUNDARY: explicit threshold case; CONTEXT: threshold justification)"
+        },
+        "EVALUATION": "For each falsifiable claim in claim_registry across all corpus AI layers: (1) load existing predicate if present; (2) run schema validator against predicate object; (3) if validator returns errors OR predicate absent: increment n_inexpressible; (4) report count. Tool: JSON schema validator against ai-layer-schema.json. Procedure terminates in finite steps bounded by claim count.",
+        "BOUNDARY": "n_inexpressible = 0 -> NOT FALSIFIED (inclusive)",
+        "CONTEXT": "C-DRP.1 · threshold 0 · necessity claim: any single schema-failing predicate falsifies sufficiency; any claim requiring a 6th field falsifies necessity · evaluability is determined by schema validation, not human judgment"
+      },
+      "sample_falsification_observation": "A claim in the corpus for which schema validator rejects all attempted 5-part predicate formulations."
+    },
+
+    {
+      "claim_id": "C-DRP.2",
+      "type": "F",
+      "label": "Gate Enforcement Requirement",
+      "statement": "Gate enforcement — not format alone — is required for sustained DRS adoption: without a phase gate, the AI layer will be omitted in the majority of papers in any corpus claiming to use the DRS.",
+      "derivation_source": ["DRP-1 Section 9", "DRP-1 Section 4"],
+      "falsification_predicate": {
+        "FALSIFIED_IF": "n_omitted_optional > 0.5 * n_total_papers",
+        "WHERE": {
+          "n_omitted_optional": "count of papers in a corpus that declares DRS adoption as optional and that have been published without a schema-valid AI layer",
+          "n_total_papers": "total count of papers published in that same corpus"
+        },
+        "EVALUATION": "(1) Identify a corpus that declares DRS format as optional (no phase gate blocking publication); (2) count published papers lacking a schema-valid AI layer (n_omitted_optional); (3) count total published papers (n_total_papers); (4) evaluate: n_omitted_optional > 0.5 * n_total_papers. Finite deterministic audit.",
+        "BOUNDARY": "fraction = 0.5 -> FALSIFIED (inclusive per condition operator >); fraction < 0.5 -> NOT FALSIFIED",
+        "CONTEXT": "C-DRP.2 · threshold 0.5 · majority-omission criterion: if fewer than half omit, gate enforcement claim is not falsified · threshold derived from: claim is about majority behaviour, not unanimity"
+      },
+      "sample_falsification_observation": "A corpus of 10 papers declaring optional DRS in which 6 papers are published without AI layers."
+    },
+
+    {
+      "claim_id": "C-DRP.3",
+      "type": "D",
+      "label": "DRS Self-Sufficiency Definition",
+      "statement": "The DRS enables any AI system with access to the AI layer to verify any falsifiable claim in the corpus without reading the prose narrative — self-sufficiency is a design requirement, not an empirical claim, and is enforced by C5 at every PHASE-READY gate.",
+      "derivation_source": ["DRP-1 Section 1", "DRP-1 Section 5"],
+      "falsification_predicate": null
+    },
+
+    {
+      "claim_id": "C-DRP.4",
+      "type": "D",
+      "label": "DRS Core Requirement Definition",
+      "statement": "In a DRS corpus, every falsifiable claim is associated with a machine-evaluable falsification predicate satisfying the 5-part syntax; this association is mandatory, not optional, and is enforced by the PHASE-READY gate.",
+      "derivation_source": ["DRP-1 Section 2"],
+      "falsification_predicate": null
+    },
+
+    {
+      "claim_id": "C-DRP.5",
+      "type": "F",
+      "label": "Live C5 Instance — MK-P1",
+      "statement": "The MK-P1 AI layer achieves C5 self-sufficiency: an AI system can verify claim F-MK1.1 using only the structured layer, requiring zero prose references.",
+      "derivation_source": ["DRP-1 Section 7.4.3", "MK-P1 AI layer channel_2_query_trace"],
+      "falsification_predicate": {
+        "FALSIFIED_IF": "n_prose_refs_MKP1 > 0",
+        "WHERE": {
+          "n_prose_refs_MKP1": "count of prose references required to complete the verification trace for claim F-MK1.1 as recorded in the channel_2_query_trace field of MK-P1-ai-layer.json"
+        },
+        "EVALUATION": "(1) Load MK-P1-ai-layer.json from github.com/thomasbrennan/Fracttalix/ai-layers/MK-P1-ai-layer.json; (2) locate channel_2_query_trace field; (3) count any step in the trace that requires loading or reading prose content (n_prose_refs_MKP1); (4) evaluate condition. Finite deterministic procedure.",
+        "BOUNDARY": "n_prose_refs_MKP1 = 0 -> NOT FALSIFIED (inclusive)",
+        "CONTEXT": "C-DRP.5 · threshold 0 · zero-prose criterion · query trace is the committed record in MK-P1-ai-layer.json — evaluation references that file, not the prose paper"
+      },
+      "sample_falsification_observation": "The query trace for F-MK1.1 contains a step requiring prose content to obtain a formula or value."
+    },
+
+    {
+      "claim_id": "C-DRP.6",
+      "type": "D",
+      "label": "PHASE-READY Definition",
+      "statement": "PHASE-READY: AI layer satisfies C1 (schema valid), C2 (all falsifiable claims registered with predicates), C3 (all predicates machine-evaluable), C5 (verification self-sufficient), C6 (all predicates non-vacuous); C4 tracked in placeholder register, non-blocking.",
+      "derivation_source": ["DRP-1 Section 2", "Phase 1-2 Merged governance document"],
+      "falsification_predicate": null
+    },
+
+    {
+      "claim_id": "C-DRP.7",
+      "type": "D",
+      "label": "CORPUS-COMPLETE Definition",
+      "statement": "CORPUS-COMPLETE: all papers PHASE-READY, C4 (dependency closure) fully satisfied with zero unresolved placeholders across all corpus objects.",
+      "derivation_source": ["DRP-1 Section 2"],
+      "falsification_predicate": null
+    }
+
+  ],
+
+  "placeholder_register": [
+    {
+      "placeholder_id": "PH-DRP.1",
+      "source_claim": "C-DRP.1",
+      "description": "Section 9 prior art systematic survey",
+      "resolved": true,
+      "blocks_phase_ready": false,
+      "target_paper": "DRP-1",
+      "target_claim": "Section 9 differentiation survey",
+      "target_session": "S43"
+    },
+    {
+      "placeholder_id": "PH-DRP.2",
+      "source_claim": "C-DRP.5",
+      "description": "Section 7.4 live demonstrated instance — first paper PHASE-READY with published AI layer",
+      "resolved": true,
+      "blocks_phase_ready": false,
+      "target_paper": "MK-P1",
+      "target_claim": "F-MK1.1 channel_2_query_trace",
+      "target_session": "S43"
+    }
+  ],
+
+  "summary": {
+    "total_claims": 7,
+    "type_A": 0,
+    "type_D": 4,
+    "type_F": 3,
+    "placeholder_count": 0,
+    "phase_ready": true,
+    "session_produced": "S47"
+  }
+}
