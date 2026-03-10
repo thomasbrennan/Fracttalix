@@ -1,10 +1,8 @@
 # tests/test_steps_complexity.py
 # Tests for Steps 16-20: EWSStep, AQBStep, SeasonalStep, MahalStep, RRSStep
 
-import pytest
 from fracttalix import SentinelConfig
-from fracttalix.steps import EWSStep, AQBStep, SeasonalStep, MahalStep, RRSStep
-from fracttalix.steps import RegimeStep
+from fracttalix.steps import AQBStep, EWSStep, MahalStep, RegimeStep, RRSStep, SeasonalStep
 from fracttalix.window import StepContext, WindowBank
 
 

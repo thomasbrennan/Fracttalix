@@ -9,7 +9,6 @@ from fracttalix.config import SentinelConfig
 from fracttalix.steps.base import DetectorStep
 from fracttalix.window import StepContext
 
-
 # ---------------------------------------------------------------------------
 # Step 12: RPIStep — Rhythm Periodicity Index (FRM Axiom 6)
 # ---------------------------------------------------------------------------
@@ -163,7 +162,6 @@ class PEStep(DetectorStep):
         return tuple(sorted(range(len(window)), key=lambda i: window[i]))
 
     def _pe(self, data: List[float], m: int) -> float:
-        from math import log, factorial
         n = len(data)
         counts: Dict[tuple, int] = {}
         total = 0

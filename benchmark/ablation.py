@@ -9,8 +9,7 @@
 from typing import Any, Dict, List, Optional
 
 from benchmark.archetypes import generate
-from benchmark.metrics import _pr_auc, _vus_pr, _compute_f1_with_tolerance
-
+from benchmark.metrics import _compute_f1_with_tolerance, _pr_auc, _vus_pr
 
 # ---------------------------------------------------------------------------
 # Step group definitions (step indices in the 37-step pipeline, 0-indexed)

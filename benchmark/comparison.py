@@ -10,11 +10,10 @@
 # with a note.
 
 import math
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any, Dict, List, Optional
 
 from benchmark.archetypes import generate
-from benchmark.metrics import _pr_auc, _vus_pr, _compute_f1_with_tolerance
-
+from benchmark.metrics import _compute_f1_with_tolerance, _pr_auc, _vus_pr
 
 # ---------------------------------------------------------------------------
 # Internal helpers
@@ -67,8 +66,8 @@ def _pyod_ecod(
     Returns None if pyod is not installed.
     """
     try:
-        from pyod.models.ecod import ECOD  # type: ignore
         import numpy as np  # type: ignore
+        from pyod.models.ecod import ECOD  # type: ignore
     except ImportError:
         return None
 
@@ -135,9 +134,9 @@ def _run_fracttalix(
     config: Optional[Any] = None,
 ) -> Dict[str, float]:
     """Run Fracttalix Sentinel full pipeline."""
+    from benchmark.metrics import _compute_f1_with_tolerance, _pr_auc, _vus_pr
     from fracttalix.config import SentinelConfig
     from fracttalix.detector import SentinelDetector
-    from benchmark.metrics import _pr_auc, _vus_pr, _compute_f1_with_tolerance
 
     if config is None:
         config = SentinelConfig()

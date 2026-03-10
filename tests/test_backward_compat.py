@@ -1,8 +1,7 @@
 # tests/test_backward_compat.py
 # Tests for backward compatibility
 
-import pytest
-from fracttalix import SentinelDetector, SentinelConfig, Detector_7_10, SentinelResult
+from fracttalix import Detector_7_10, SentinelConfig, SentinelDetector
 
 
 class TestDetector710Alias:

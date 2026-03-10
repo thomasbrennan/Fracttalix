@@ -6,12 +6,11 @@ import math
 from collections import deque
 from typing import Any, Dict, List, Optional
 
-from fracttalix._compat import _NP, _mean, np
+from fracttalix._compat import _mean
 from fracttalix.config import SentinelConfig
 from fracttalix.steps.base import DetectorStep, RegimeBoostState
 from fracttalix.types import FrequencyBands, StructuralSnapshot
 from fracttalix.window import StepContext, WindowBank
-
 
 # ---------------------------------------------------------------------------
 # Step 1: CoreEWMAStep
@@ -90,7 +89,6 @@ class CoreEWMAStep(DetectorStep):
             sorted_buf = sorted(self._aqb_buf)
             n = len(sorted_buf)
             hi_idx = min(int(cfg.aqb_q_high * n), n - 1)
-            lo_idx = max(int(cfg.aqb_q_low * n), 0)
             hi_thresh = self._ewma + sorted_buf[hi_idx]
             lo_thresh = self._ewma - sorted_buf[hi_idx]
             alert = v > hi_thresh or v < lo_thresh
@@ -522,7 +520,6 @@ class VarCUSUMStep(DetectorStep):
                 if self._warmup_var_count > 0 else 1.0
             )
             self._warmed = True
-        dev = ctx.dev_ewma
         z = ctx.scratch.get("z_score", 0.0)
         v2 = z * z  # variance proxy
         self._var_ewma = 0.9 * self._var_ewma + 0.1 * v2
@@ -620,8 +617,10 @@ class PageHinkleyStep(DetectorStep):
             ctx.scratch["alert"] = True
             ctx.scratch["anomaly"] = True
             # reset to avoid continuous triggering
-            self._cum_hi = 0.0; self._cum_lo = 0.0
-            self._m_hi = 0.0; self._m_lo = 0.0
+            self._cum_hi = 0.0
+            self._cum_lo = 0.0
+            self._m_hi = 0.0
+            self._m_lo = 0.0
 
     def state_dict(self) -> Dict[str, Any]:
         return {"cum_hi": self._cum_hi, "cum_lo": self._cum_lo,

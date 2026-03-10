@@ -1,9 +1,8 @@
 # tests/test_steps_temporal.py
 # Tests for Steps 8-11: STIStep, TPSStep, OscDampStep, CPDStep
 
-import pytest
 from fracttalix import SentinelConfig
-from fracttalix.steps import STIStep, TPSStep, OscDampStep, CPDStep
+from fracttalix.steps import CPDStep, OscDampStep, STIStep, TPSStep
 from fracttalix.window import StepContext, WindowBank
 
 

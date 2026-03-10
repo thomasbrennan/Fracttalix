@@ -39,8 +39,8 @@ except ImportError:
 # matplotlib
 # ---------------------------------------------------------------------------
 try:
-    import matplotlib.pyplot as plt
     import matplotlib.patches as mpatches
+    import matplotlib.pyplot as plt
     _MPL = True
 except ImportError:
     plt = None  # type: ignore
@@ -70,7 +70,6 @@ except ImportError:
 # ---------------------------------------------------------------------------
 # multiprocessing
 # ---------------------------------------------------------------------------
-import multiprocessing as _mp
 
 # ---------------------------------------------------------------------------
 # Pure-Python helpers — re-exported from _utils for backward compatibility.
@@ -79,9 +78,9 @@ import multiprocessing as _mp
 # ---------------------------------------------------------------------------
 from fracttalix._utils import (  # noqa: E402, F401
     _mean,
-    _np_rng,
-    _to_np,
     _np_fft,
     _np_ifft,
+    _np_rng,
     _phase_randomize_worker,
+    _to_np,
 )

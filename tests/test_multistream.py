@@ -2,8 +2,8 @@
 # Tests for MultiStreamSentinel
 
 import threading
-import pytest
-from fracttalix import SentinelDetector, SentinelConfig, MultiStreamSentinel
+
+from fracttalix import MultiStreamSentinel, SentinelConfig, SentinelDetector
 
 
 class TestMultiStreamBasic:
