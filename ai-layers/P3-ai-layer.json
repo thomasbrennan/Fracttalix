@@ -1,0 +1,157 @@
+{
+  "_meta": {
+    "document_type": "AI_LAYER",
+    "schema_version": "v2-S42",
+    "schema_url": "https://github.com/thomasbrennan/Fracttalix/blob/main/ai-layers/ai-layer-schema.json",
+    "produced_session": "S48",
+    "produced_by": "Claude (Anthropic) — Session 48 Phase 2 retroactive build",
+    "licence": "CC BY 4.0"
+  },
+  "paper_id": "P3",
+  "corpus_id": "Fracttalix",
+  "series": "Fracttalix Corpus",
+  "series_position": "Paper 3 of 12",
+  "paper_title": "The Reasoning Network: Neural Association as Electromagnetic Association",
+  "paper_type": "law_A",
+  "version": "v1",
+  "session": "S48",
+  "phase_ready": {
+    "verdict": "NOT-PHASE-READY",
+    "c1": "SATISFIED",
+    "c2": "SATISFIED",
+    "c3": "UNSATISFIED",
+    "c4_mode": "PHASE-READY-TRACKING",
+    "c5": "UNSATISFIED",
+    "c6": "UNSATISFIED",
+    "placeholder_count": 2,
+    "note": "Retroactive AI layer from build table descriptions. Paper published but pending framing review. Claims derived from bootstrap doc and build table — full prose audit required for phase readiness."
+  },
+  "claim_registry": [
+    {
+      "claim_id": "A-3.1",
+      "type": "A",
+      "label": "[TYPE:A]",
+      "name": "Neural substrate is a network",
+      "statement": "The neural system is a network in the precise sense of P1 A-1.3: neurons are nodes, synaptic connections are directed edges, and coupling κ is measurable as the ratio of active to possible synaptic connections.",
+      "derivation_source": ["A-1.3", "A-1.5"],
+      "falsification_predicate": null
+    },
+    {
+      "claim_id": "A-3.2",
+      "type": "A",
+      "label": "[TYPE:A]",
+      "name": "Electromagnetic basis of neural association",
+      "statement": "Neural information transmission is electromagnetic association. Thought is carrier wave transmission in a biological substrate.",
+      "derivation_source": ["A-1.2", "A-1.4"],
+      "falsification_predicate": null
+    },
+    {
+      "claim_id": "D-3.1",
+      "type": "D",
+      "label": "[TYPE:D]",
+      "name": "FRM at cognitive scale",
+      "statement": "f(t) = B + A·e^(−λt)·cos(ωt + φ) describes adaptive response at cognitive/neural scale, where τ_gen is the neural generation timescale.",
+      "derivation_source": ["D-1.1", "A-3.1", "A-3.2"],
+      "falsification_predicate": null
+    },
+    {
+      "claim_id": "D-3.2",
+      "type": "D",
+      "label": "[TYPE:D]",
+      "name": "Bridge between physical and experiential",
+      "statement": "The FRM provides a mathematical bridge between physical substrate (electromagnetic association) and human experience (thought, reasoning). The bridge is the carrier wave: the same mechanism that transmits information in any network transmits information in neural networks.",
+      "derivation_source": ["A-3.1", "A-3.2", "D-3.1"],
+      "falsification_predicate": null
+    },
+    {
+      "claim_id": "F-3.1",
+      "type": "F",
+      "label": "[TYPE:F]",
+      "name": "Neural β = 1/2",
+      "statement": "The critical exponent β = 1/2 holds at neural scale: T_neural = 4·τ_gen_neural for neural oscillatory processes.",
+      "placeholder": true,
+      "placeholder_id": "PH-3.1",
+      "derivation_source": ["D-1.2", "D-3.1", "F-1.4"],
+      "falsification_predicate": {
+        "FALSIFIED_IF": "(mean_β_neural < 0.5 − 2·σ_β) OR (mean_β_neural > 0.5 + 2·σ_β)",
+        "WHERE": {
+          "mean_β_neural": "scalar · dimensionless · mean β_measured across neural oscillation datasets",
+          "σ_β": "scalar · dimensionless · standard error of β across neural substrates"
+        },
+        "EVALUATION": "Fit FRM to neural time series (EEG, LFP); extract ω; compute β = ω·τ_gen/(π); compare to 0.5 ± 2σ; finite",
+        "BOUNDARY": "Exact equality → NOT FALSIFIED (measure zero)",
+        "CONTEXT": "[PLACEHOLDER: pending empirical validation with neural time series data]"
+      }
+    },
+    {
+      "claim_id": "F-3.2",
+      "type": "F",
+      "label": "[TYPE:F]",
+      "name": "FRM fit quality at cognitive scale",
+      "statement": "FRM provides R² ≥ 0.85 fit to neural adaptive response data, outperforming alternative functional forms by the P1 criterion (ΔR² < 0.05).",
+      "derivation_source": ["D-3.1", "F-1.1"],
+      "falsification_predicate": {
+        "FALSIFIED_IF": "(R2_frm_neural < 0.85) OR (R2_best_alt >= R2_frm_neural + 0.05)",
+        "WHERE": {
+          "R2_frm_neural": "scalar · dimensionless · R² of FRM fit to neural time series",
+          "R2_best_alt": "scalar · dimensionless · best alternative form R²"
+        },
+        "EVALUATION": "Fit FRM and alternatives to neural data; compare R²; finite",
+        "BOUNDARY": "R2_best_alt = R2_frm + 0.05 → FALSIFIED (threshold inclusive)",
+        "CONTEXT": "Instantiation of P1 F-1.1 at cognitive scale"
+      }
+    },
+    {
+      "claim_id": "F-3.3",
+      "type": "F",
+      "label": "[TYPE:F]",
+      "name": "Carrier wave necessity in neural transmission",
+      "statement": "Neural information transmission requires an oscillatory carrier (rhythmicity). Non-oscillatory neural transmission decays to noise — the signal cannot persist across time without a carrier wave.",
+      "placeholder": true,
+      "placeholder_id": "PH-3.2",
+      "derivation_source": ["A-3.2", "D-3.1"],
+      "falsification_predicate": {
+        "FALSIFIED_IF": "EXISTS neural_system NS SUCH THAT (information_transmitted(NS) = TRUE) AND (oscillatory_component(NS) = FALSE) AND (signal_persists_beyond_tau_gen(NS) = TRUE)",
+        "WHERE": {
+          "information_transmitted": "boolean · TRUE if NS transmits distinguishable states",
+          "oscillatory_component": "boolean · TRUE if time series contains detectable periodic component (significance p < 0.05)",
+          "signal_persists_beyond_tau_gen": "boolean · TRUE if signal-to-noise ratio remains above detection threshold beyond one generation timescale"
+        },
+        "EVALUATION": "Measure neural time series; test for oscillatory component; test signal persistence; single counterexample sufficient; finite",
+        "BOUNDARY": "Single counterexample → FALSIFIED",
+        "CONTEXT": "[PLACEHOLDER: full derivation of rhythmicity as necessary carrier pending P11 thermodynamic bridge]"
+      }
+    }
+  ],
+  "placeholder_register": [
+    {
+      "placeholder_id": "PH-3.1",
+      "source_claim": "F-3.1",
+      "description": "Neural β = 1/2 empirical validation. Requires neural time series data with known τ_gen.",
+      "resolved": false,
+      "blocks_phase_ready": false,
+      "target_paper": "P3",
+      "target_claim": "F-3.1",
+      "target_session": "OPEN"
+    },
+    {
+      "placeholder_id": "PH-3.2",
+      "source_claim": "F-3.3",
+      "description": "Carrier wave necessity at neural scale. Full derivation pending P11.",
+      "resolved": false,
+      "blocks_phase_ready": false,
+      "target_paper": "P11",
+      "target_claim": null,
+      "target_session": "OPEN — resolves with P11 thermodynamic derivation"
+    }
+  ],
+  "summary": {
+    "total_claims": 7,
+    "type_A": 2,
+    "type_D": 2,
+    "type_F": 3,
+    "placeholder_count": 2,
+    "phase_ready": false,
+    "session_produced": "S48"
+  }
+}

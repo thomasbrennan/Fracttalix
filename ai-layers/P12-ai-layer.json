@@ -1,0 +1,35 @@
+{
+  "_meta": {
+    "document_type": "AI_LAYER",
+    "schema_version": "v2-S42",
+    "schema_url": "https://github.com/thomasbrennan/Fracttalix/blob/main/ai-layers/ai-layer-schema.json",
+    "produced_session": "S48",
+    "produced_by": "Claude (Anthropic) — Session 48 Phase 2 scaffold",
+    "licence": "CC BY 4.0"
+  },
+  "paper_id": "P12",
+  "corpus_id": "Fracttalix",
+  "series": "Fracttalix Corpus",
+  "series_position": "P12 of 12",
+  "paper_title": "What Is The Second Foundation?",
+  "paper_type": "application_C",
+  "version": "v0",
+  "session": "S48",
+  "phase_ready": {
+    "verdict": "NOT-PHASE-READY",
+    "placeholder_count": 0,
+    "note": "Scaffold only — paper not yet written. PENDING — DUAL TRACK. Working paper after P6, full version after P10 and P11."
+  },
+  "core_claim_preview": "Design specification for civilizational Sentinel. Mule detection via band anomalies. Mathematical comparison of instrumented vs uninstrumented interregnum.",
+  "claim_registry": [],
+  "placeholder_register": [],
+  "summary": {
+    "total_claims": 0,
+    "type_A": 0,
+    "type_D": 0,
+    "type_F": 0,
+    "placeholder_count": 0,
+    "phase_ready": false,
+    "session_produced": "S48"
+  }
+}

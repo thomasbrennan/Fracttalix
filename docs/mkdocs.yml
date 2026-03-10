@@ -1,0 +1,28 @@
+site_name: Fracttalix Sentinel
+site_url: https://thomasbrennan.github.io/Fracttalix
+repo_url: https://github.com/thomasbrennan/Fracttalix
+theme:
+  name: material
+  features:
+    - navigation.tabs
+    - navigation.sections
+nav:
+  - Home: index.md
+  - Getting Started: getting_started.md
+  - API Reference:
+    - SentinelDetector: api/detector.md
+    - SentinelConfig: api/config.md
+    - SentinelResult: api/result.md
+    - MultiStreamSentinel: api/multistream.md
+    - Benchmark: api/benchmark.md
+  - Internals:
+    - Three-Channel Model: three_channel_model.md
+    - Step Dependency Graph: dependency_graph.md
+    - State Schema: state_schema.md
+plugins:
+  - search
+  - mkdocstrings:
+      handlers:
+        python:
+          options:
+            show_source: true

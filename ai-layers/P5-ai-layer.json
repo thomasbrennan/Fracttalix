@@ -1,0 +1,166 @@
+{
+  "_meta": {
+    "document_type": "AI_LAYER",
+    "schema_version": "v2-S42",
+    "schema_url": "https://github.com/thomasbrennan/Fracttalix/blob/main/ai-layers/ai-layer-schema.json",
+    "produced_session": "S48",
+    "produced_by": "Claude (Anthropic) — Session 48 Phase 2 retroactive build",
+    "licence": "CC BY 4.0"
+  },
+  "paper_id": "P5",
+  "corpus_id": "Fracttalix",
+  "series": "Fracttalix Corpus",
+  "series_position": "Paper 5 of 12",
+  "paper_title": "On the Decision to Act: Scale Independence and Empirical Validation",
+  "paper_type": "application_C",
+  "version": "v1",
+  "session": "S48",
+  "phase_ready": {
+    "verdict": "NOT-PHASE-READY",
+    "c1": "SATISFIED",
+    "c2": "SATISFIED",
+    "c3": "UNSATISFIED",
+    "c4_mode": "PHASE-READY-TRACKING",
+    "c5": "UNSATISFIED",
+    "c6": "UNSATISFIED",
+    "placeholder_count": 2,
+    "note": "Retroactive AI layer. Paper published but pending v11 — P5 contains AMOC data and Ibn Khaldun comparison. Full independent validation requires P11 derivation of ω from first principles. This is the transitional paper between Act One and Act Three."
+  },
+  "claim_registry": [
+    {
+      "claim_id": "A-5.1",
+      "type": "A",
+      "label": "[TYPE:A]",
+      "name": "Scale independence principle",
+      "statement": "If the FRM derives from topology and information content (P1 A-1.5), it must hold at any scale where the conditions are satisfied. Scale independence is not an additional assumption — it is a consequence of substrate independence.",
+      "derivation_source": [
+        "A-1.5",
+        "D-1.1"
+      ],
+      "falsification_predicate": null
+    },
+    {
+      "claim_id": "D-5.1",
+      "type": "D",
+      "label": "[TYPE:D]",
+      "name": "AMOC parameter extraction",
+      "statement": "Parameters λ, ω, A, B extracted from Atlantic Meridional Overturning Circulation (AMOC) data by fitting the FRM functional form f(t) = B + A·e^(−λt)·cos(ωt + φ) to ocean circulation measurements.",
+      "derivation_source": [
+        "D-1.1",
+        "A-5.1"
+      ],
+      "falsification_predicate": null
+    },
+    {
+      "claim_id": "D-5.2",
+      "type": "D",
+      "label": "[TYPE:D]",
+      "name": "Ibn Khaldun ω measurement",
+      "statement": "Ibn Khaldun's three-generation estimate of the asabiyyah (social cohesion) cycle (1377 AD) constitutes an independent empirical measurement of the characteristic frequency ω at civilizational scale. This measurement was made without knowledge of the FRM.",
+      "derivation_source": [
+        "D-1.2"
+      ],
+      "falsification_predicate": null
+    },
+    {
+      "claim_id": "F-5.1",
+      "type": "F",
+      "label": "[TYPE:F]",
+      "name": "FRM fit to AMOC data",
+      "statement": "The FRM functional form fits AMOC ocean circulation data with R² ≥ 0.85, and extracted parameters are physically meaningful (λ > 0, ω > 0).",
+      "derivation_source": [
+        "D-5.1",
+        "F-1.1"
+      ],
+      "falsification_predicate": {
+        "FALSIFIED_IF": "(R2_frm_AMOC < 0.85) OR (λ_AMOC ≤ 0) OR (ω_AMOC ≤ 0)",
+        "WHERE": {
+          "R2_frm_AMOC": "scalar · dimensionless · R² of FRM fit to AMOC time series",
+          "λ_AMOC": "scalar · yr⁻¹ · extracted decay rate",
+          "ω_AMOC": "scalar · yr⁻¹ · extracted characteristic frequency"
+        },
+        "EVALUATION": "Fit FRM to AMOC data; extract parameters; verify R² ≥ 0.85 and parameters physically meaningful; finite",
+        "BOUNDARY": "R² = 0.85 → NOT FALSIFIED (boundary inclusive). λ = 0 or ω = 0 → FALSIFIED (degenerate FRM)",
+        "CONTEXT": "First empirical application at ocean-circulation scale. This is an application paper — failure here does not falsify the law, only this instantiation."
+      }
+    },
+    {
+      "claim_id": "F-5.2",
+      "type": "F",
+      "label": "[TYPE:F]",
+      "name": "ω agreement across scales",
+      "statement": "The characteristic frequency ω extracted from AMOC data and the ω implied by Ibn Khaldun's three-generation estimate are consistent: |ω_AMOC − ω_Khaldun| / ω_AMOC < 0.3.",
+      "placeholder": true,
+      "placeholder_id": "PH-5.1",
+      "derivation_source": [
+        "D-5.1",
+        "D-5.2"
+      ],
+      "falsification_predicate": {
+        "FALSIFIED_IF": "|ω_AMOC − ω_Khaldun| / ω_AMOC ≥ 0.3",
+        "WHERE": {
+          "ω_AMOC": "scalar · yr⁻¹ · characteristic frequency from AMOC fit",
+          "ω_Khaldun": "scalar · yr⁻¹ · π/(2·τ_gen) where τ_gen = one generation ≈ 25–30 yr"
+        },
+        "EVALUATION": "Extract ω_AMOC from fit; compute ω_Khaldun from generational estimate; compute fractional difference; finite",
+        "BOUNDARY": "30% threshold is generous — accounts for uncertainty in generational timescale (25–30 yr range). If P11 derives ω independently and matches both, threshold tightens to 10%.",
+        "CONTEXT": "[PLACEHOLDER: full independent validation requires P11 derivation of ω from first principles. Current comparison is preliminary.]"
+      }
+    },
+    {
+      "claim_id": "F-5.3",
+      "type": "F",
+      "label": "[TYPE:F]",
+      "name": "Scale independence demonstration",
+      "statement": "The same functional form (FRM) fits both AMOC ocean circulation data and civilizational-scale data (Ibn Khaldun cycle) without substrate-specific modifications. This is the first empirical demonstration of scale independence.",
+      "placeholder": true,
+      "placeholder_id": "PH-5.2",
+      "derivation_source": [
+        "A-5.1",
+        "F-5.1",
+        "F-5.2"
+      ],
+      "falsification_predicate": {
+        "FALSIFIED_IF": "(R2_frm_AMOC < 0.85) OR (FRM_modification_required = TRUE)",
+        "WHERE": {
+          "R2_frm_AMOC": "scalar · dimensionless · R² of standard (unmodified) FRM fit",
+          "FRM_modification_required": "boolean · TRUE if achieving R² ≥ 0.85 requires adding scale-dependent terms to the FRM"
+        },
+        "EVALUATION": "Fit standard FRM (no scale-dependent terms) to AMOC data; if R² < 0.85, attempt modified form; if only modified form achieves threshold → scale independence falsified; finite",
+        "BOUNDARY": "Any modification that introduces scale-dependent parameters → FALSIFIED. Initial conditions (B, A, φ) are not scale-dependent parameters — they are measured per instance.",
+        "CONTEXT": "[PLACEHOLDER: pending complete AMOC parameter extraction in P5 v11 revision]"
+      }
+    }
+  ],
+  "placeholder_register": [
+    {
+      "placeholder_id": "PH-5.1",
+      "source_claim": "F-5.2",
+      "description": "ω cross-scale agreement. Preliminary comparison available; full validation requires P11.",
+      "resolved": false,
+      "blocks_phase_ready": false,
+      "target_paper": "P11",
+      "target_claim": null,
+      "target_session": "OPEN — resolves with P11 derivation of ω from first principles"
+    },
+    {
+      "placeholder_id": "PH-5.2",
+      "source_claim": "F-5.3",
+      "description": "Scale independence demonstration. Pending P5 v11 revision with complete AMOC parameter extraction.",
+      "resolved": false,
+      "blocks_phase_ready": false,
+      "target_paper": "P5",
+      "target_claim": "F-5.3",
+      "target_session": "OPEN — resolves with P5 v11"
+    }
+  ],
+  "summary": {
+    "total_claims": 6,
+    "type_A": 1,
+    "type_D": 2,
+    "type_F": 3,
+    "placeholder_count": 2,
+    "phase_ready": false,
+    "session_produced": "S48"
+  }
+}

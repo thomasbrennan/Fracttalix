@@ -1,0 +1,3 @@
+# MultiStreamSentinel
+
+::: fracttalix.multistream.MultiStreamSentinel

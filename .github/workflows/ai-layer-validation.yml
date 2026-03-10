@@ -1,0 +1,35 @@
+name: AI Layer Validation
+
+on:
+  push:
+    paths:
+      - 'ai-layers/**'
+    branches: ["main", "claude/**"]
+  pull_request:
+    paths:
+      - 'ai-layers/**'
+    branches: ["main"]
+
+jobs:
+  validate:
+    name: Validate AI layers against schema
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install jsonschema
+        run: pip install jsonschema
+
+      - name: Validate all AI layers
+        run: python scripts/validate_ai_layers.py
+
+      - name: Corpus status check
+        run: python scripts/corpus_status.py --check-only
+
+      - name: Cross-paper consistency check
+        run: python scripts/cross_paper_checker.py --check-only

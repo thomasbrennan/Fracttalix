@@ -1,0 +1,58 @@
+{
+  "title": "Fracttalix Sentinel: Three-Channel Streaming Anomaly Detector",
+  "description": "Three-channel streaming anomaly detector grounded in the Fractal Rhythm Model (FRM). Implements structural, rhythmic, and temporal information channels in a 26-step detection pipeline. Single-file Python with zero required dependencies.",
+  "upload_type": "software",
+  "license": {
+    "id": "CC0-1.0"
+  },
+  "creators": [
+    {
+      "name": "Brennan, Thomas",
+      "orcid": "0009-0002-6353-7115",
+      "affiliation": "Independent Researcher"
+    }
+  ],
+  "contributors": [
+    {
+      "name": "Claude (Anthropic)",
+      "type": "Other",
+      "affiliation": "Anthropic"
+    },
+    {
+      "name": "Grok (xAI)",
+      "type": "Other",
+      "affiliation": "xAI"
+    }
+  ],
+  "keywords": [
+    "anomaly detection",
+    "streaming",
+    "time series",
+    "fractal rhythm model",
+    "early warning signals",
+    "change point detection",
+    "cross-frequency coupling",
+    "cascade precursor",
+    "information theory",
+    "dissipative networks"
+  ],
+  "subjects": [
+    {
+      "term": "Anomaly detection",
+      "identifier": "https://id.loc.gov/authorities/subjects/sh85004937",
+      "scheme": "url"
+    }
+  ],
+  "related_identifiers": [
+    {
+      "identifier": "https://github.com/thomasbrennan/Fracttalix",
+      "relation": "isSupplementTo",
+      "resource_type": "software",
+      "scheme": "url"
+    }
+  ],
+  "version": "12.1.0",
+  "language": "eng",
+  "access_right": "open",
+  "notes": "Theoretical foundation: Fractal Rhythm Model (FRM) — 11 axioms, Papers 1-6. Introduced by Thomas Brennan and Grok 4."
+}
