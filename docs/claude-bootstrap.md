@@ -124,7 +124,9 @@ Fracttalix/
 ├── fracttalix_sentinel_v1200.py  ← Sentinel v12.0
 ├── README.md
 ├── LICENSE
-└── Legal Notice/
+├── .gitignore
+├── pyproject.toml
+└── legal/
 ```
 
 ---
