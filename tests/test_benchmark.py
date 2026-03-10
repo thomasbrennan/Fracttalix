@@ -1,14 +1,15 @@
 # tests/test_benchmark.py
 # Tests for benchmark package (generate and evaluate functions)
 
-import pytest
-import sys
 import os
+import sys
+
+import pytest
 
 # Ensure benchmark package is importable
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
 
-from benchmark.archetypes import generate, ARCHETYPES
+from benchmark.archetypes import ARCHETYPES, generate
 from benchmark.metrics import evaluate
 
 

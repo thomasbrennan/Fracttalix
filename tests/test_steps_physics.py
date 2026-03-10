@@ -1,21 +1,20 @@
 # tests/test_steps_physics.py
 # Tests for Steps 26-37: physics/dynamics steps
 
-import pytest
 from fracttalix import SentinelConfig
 from fracttalix.steps import (
-    ThroughputEstimationStep,
-    MaintenanceBurdenStep,
-    PhaseExtractionStep,
-    PACCoefficientStep,
-    PACDegradationStep,
-    CriticalCouplingEstimationStep,
+    AlertReasonsStep,
     CouplingRateStep,
+    CriticalCouplingEstimationStep,
     DiagnosticWindowStep,
     KuramotoOrderStep,
-    SequenceOrderingStep,
+    MaintenanceBurdenStep,
+    PACCoefficientStep,
+    PACDegradationStep,
+    PhaseExtractionStep,
     ReversedSequenceStep,
-    AlertReasonsStep,
+    SequenceOrderingStep,
+    ThroughputEstimationStep,
 )
 from fracttalix.window import StepContext, WindowBank
 

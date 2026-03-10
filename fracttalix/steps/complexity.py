@@ -10,7 +10,6 @@ from fracttalix.config import SentinelConfig
 from fracttalix.steps.base import DetectorStep
 from fracttalix.window import StepContext, WindowBank
 
-
 # ---------------------------------------------------------------------------
 # Step 16: EWSStep — Early Warning Signals (FRM Axiom 9) — T0-01 fix
 # ---------------------------------------------------------------------------

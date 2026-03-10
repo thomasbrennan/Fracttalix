@@ -4,7 +4,6 @@
 import math
 from unittest.mock import patch
 
-import pytest
 from fracttalix._utils import (
     _mean,
     _np_fft,

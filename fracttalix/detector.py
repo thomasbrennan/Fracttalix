@@ -6,10 +6,9 @@
 import csv
 import dataclasses
 import json
-import math
 import warnings
 from collections import deque
-from typing import Any, Callable, Dict, List, Optional, Sequence, Tuple
+from typing import Any, Dict, List, Optional, Sequence, Tuple
 
 from fracttalix._compat import _MPL, plt
 from fracttalix.config import SentinelConfig
@@ -234,9 +233,12 @@ class SentinelDetector:
                     tp = fp = fn = 0
                     for r, lbl in zip(results, labels):
                         pred = r["alert"]
-                        if pred and lbl: tp += 1
-                        elif pred and not lbl: fp += 1
-                        elif not pred and lbl: fn += 1
+                        if pred and lbl:
+                            tp += 1
+                        elif pred and not lbl:
+                            fp += 1
+                        elif not pred and lbl:
+                            fn += 1
                     prec = tp / (tp + fp + 1e-10)
                     rec = tp / (tp + fn + 1e-10)
                     f1 = 2 * prec * rec / (prec + rec + 1e-10)

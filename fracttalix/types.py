@@ -5,10 +5,8 @@
 # _build_sequence_narrative() helper
 
 import dataclasses
-import math
 from enum import Enum
 from typing import Any, Dict, Optional
-
 
 # ===========================================================================
 # V9.0 DATA STRUCTURES — Three-Channel Model

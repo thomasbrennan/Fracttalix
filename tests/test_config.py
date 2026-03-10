@@ -2,7 +2,9 @@
 # Tests for SentinelConfig frozen dataclass
 
 import dataclasses
+
 import pytest
+
 from fracttalix import SentinelConfig
 
 
