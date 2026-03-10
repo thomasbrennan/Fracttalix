@@ -68,13 +68,8 @@ For maximum fidelity, also attach these live files from GitHub:
 - Prior art: 52+ queries, 15 languages, max score 1.5/5
 
 ### Session 48 (current)
-- Merged sentinel branch (v7.6-v12.1 full evolution, 33 commits)
-- AI layer schema compliance: fixed `predicate` → `falsification_predicate`, summary counts
-- CI workflow added for automated AI layer validation
-- Corpus status report script created
-- Process graph updated (v2-S48): titles, statuses, dependency edges, P13 removed
-- Journal entries created for S43, S44
-- Bootstrap doc reconciled with actual project state
+- **Phase 1**: Merged sentinel branch, fixed 35 schema errors, added CI, corpus status script, process graph v2, journal entries, bootstrap reconciliation
+- **Phase 2**: AI layers for all 12 papers (P2-P5 retroactive, P6-P12 scaffolds), MK-P1 schema fixes (phase_ready fields, derivation_source nulls), cross-paper consistency checker, reproducibility manifest, P1 series_position fix (13→12), process graph updated to 15 live assets
 
 ### 12-Paper Corpus
 
@@ -101,13 +96,18 @@ For maximum fidelity, also attach these live files from GitHub:
 - **AI Layer schema**: v2-S42
 - **KVS Score**: 0.832 (threshold κ = 0.75)
 
-### Live AI Layers (all PHASE-READY)
-| ID | Paper | File |
-|----|-------|------|
-| P1 | FRM Paper 1 | ai-layers/P1-ai-layer.json |
-| MK-P1 | Meta-Kaizen Paper 1 | ai-layers/MK-P1-ai-layer.json |
-| DRP-1 | Dual-Reader Publishing | ai-layers/DRP1-ai-layer.json |
-| SFW-1 | Sentinel Software | ai-layers/SFW1-ai-layer.json |
+### AI Layers (15 total)
+| ID | Paper | Status | File |
+|----|-------|--------|------|
+| P1 | FRM Paper 1 | PHASE-READY | ai-layers/P1-ai-layer.json |
+| P2 | Networked Implementation | NOT-PHASE-READY | ai-layers/P2-ai-layer.json |
+| P3 | The Reasoning Network | NOT-PHASE-READY | ai-layers/P3-ai-layer.json |
+| P4 | The Fractal Rhythm Model | NOT-PHASE-READY | ai-layers/P4-ai-layer.json |
+| P5 | On the Decision to Act | NOT-PHASE-READY | ai-layers/P5-ai-layer.json |
+| P6–P12 | Act III papers | Scaffold (v0) | ai-layers/P{6-12}-ai-layer.json |
+| MK-P1 | Meta-Kaizen Paper 1 | PHASE-READY | ai-layers/MK-P1-ai-layer.json |
+| DRP-1 | Dual-Reader Publishing | PHASE-READY | ai-layers/DRP1-ai-layer.json |
+| SFW-1 | Sentinel Software | PHASE-READY | ai-layers/SFW1-ai-layer.json |
 
 ## Conventions
 
@@ -147,7 +147,7 @@ Fracttalix/
 ├── tests/                   ← 374 tests
 ├── benchmark/               ← Anomaly archetype benchmarks
 ├── paper/                   ← JOSS paper draft
-├── scripts/                 ← Validation and status scripts
+├── scripts/                 ← Validation, status, and consistency scripts
 ├── legacy/                  ← Archived monolith versions
 ├── README.md
 ├── pyproject.toml

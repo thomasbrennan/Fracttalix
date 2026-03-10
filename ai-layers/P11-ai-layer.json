@@ -1,0 +1,35 @@
+{
+  "_meta": {
+    "document_type": "AI_LAYER",
+    "schema_version": "v2-S42",
+    "schema_url": "https://github.com/thomasbrennan/Fracttalix/blob/main/ai-layers/ai-layer-schema.json",
+    "produced_session": "S48",
+    "produced_by": "Claude (Anthropic) — Session 48 Phase 2 scaffold",
+    "licence": "CC BY 4.0"
+  },
+  "paper_id": "P11",
+  "corpus_id": "Fracttalix",
+  "series": "Fracttalix Corpus",
+  "series_position": "P11 of 12",
+  "paper_title": "The Thermodynamic Bridge",
+  "paper_type": "derivation_B",
+  "version": "v0",
+  "session": "S48",
+  "phase_ready": {
+    "verdict": "NOT-PHASE-READY",
+    "placeholder_count": 0,
+    "note": "Scaffold only — paper not yet written. PENDING — LOAD BEARING. CRITICAL risk. Physicist co-author non-negotiable."
+  },
+  "core_claim_preview": "Three targets: (1) why association produces carrier waves, (2) why coupling degradation precedes coherence loss, (3) measurement decoupling threshold. Provides independent validation of Ibn Khaldun ω.",
+  "claim_registry": [],
+  "placeholder_register": [],
+  "summary": {
+    "total_claims": 0,
+    "type_A": 0,
+    "type_D": 0,
+    "type_F": 0,
+    "placeholder_count": 0,
+    "phase_ready": false,
+    "session_produced": "S48"
+  }
+}

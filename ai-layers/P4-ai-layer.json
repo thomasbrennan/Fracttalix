@@ -1,0 +1,150 @@
+{
+  "_meta": {
+    "document_type": "AI_LAYER",
+    "schema_version": "v2-S42",
+    "schema_url": "https://github.com/thomasbrennan/Fracttalix/blob/main/ai-layers/ai-layer-schema.json",
+    "produced_session": "S48",
+    "produced_by": "Claude (Anthropic) — Session 48 Phase 2 retroactive build",
+    "licence": "CC BY 4.0"
+  },
+  "paper_id": "P4",
+  "corpus_id": "Fracttalix",
+  "series": "Fracttalix Corpus",
+  "series_position": "Paper 4 of 12",
+  "paper_title": "The Fractal Rhythm Model: Mathematical Formalization of Structure and Rhythmicity",
+  "paper_type": "derivation_B",
+  "version": "v1",
+  "session": "S48",
+  "phase_ready": {
+    "verdict": "NOT-PHASE-READY",
+    "c1": "SATISFIED",
+    "c2": "SATISFIED",
+    "c3": "UNSATISFIED",
+    "c4_mode": "PHASE-READY-TRACKING",
+    "c5": "UNSATISFIED",
+    "c6": "UNSATISFIED",
+    "placeholder_count": 1,
+    "note": "Retroactive AI layer. Paper published but pending framing review. This paper formalizes the 'fractal' property: self-similar carrier wave architecture across scales. The fractal property is a signature of the law, not a property of any particular substrate."
+  },
+  "claim_registry": [
+    {
+      "claim_id": "A-4.1",
+      "type": "A",
+      "label": "[TYPE:A]",
+      "name": "Self-similarity across scales",
+      "statement": "The FRM functional form f(t) = B + A·e^(−λt)·cos(ωt + φ) is self-similar: the same functional form applies at every scale where the FRM conditions are satisfied.",
+      "derivation_source": [
+        "D-1.1",
+        "A-1.5"
+      ],
+      "falsification_predicate": null
+    },
+    {
+      "claim_id": "D-4.1",
+      "type": "D",
+      "label": "[TYPE:D]",
+      "name": "Fractal property as carrier wave signature",
+      "statement": "The 'fractal' in Fractal Rhythm Model refers to the self-similar carrier wave architecture across scales. This is a property of the law (the functional form), not of any particular substrate or organization.",
+      "derivation_source": [
+        "A-4.1",
+        "D-1.1",
+        "D-1.2"
+      ],
+      "falsification_predicate": null
+    },
+    {
+      "claim_id": "D-4.2",
+      "type": "D",
+      "label": "[TYPE:D]",
+      "name": "Scale-invariant parameters",
+      "statement": "The universal constants β = 1/2, k* = π/2, and Γ = 1 + π²/4 are scale-invariant — they take the same values at every scale. Only τ_gen varies with substrate.",
+      "derivation_source": [
+        "F-1.4",
+        "F-1.5",
+        "D-1.2",
+        "D-1.3"
+      ],
+      "falsification_predicate": null
+    },
+    {
+      "claim_id": "D-4.3",
+      "type": "D",
+      "label": "[TYPE:D]",
+      "name": "Mathematical structure of FRM",
+      "statement": "The FRM is the exact transient solution of the Stuart-Landau normal form for μ < 0. The mathematical properties (exponential decay envelope, oscillatory core, phase offset) are derivable from the DDE characteristic equation.",
+      "derivation_source": [
+        "F-1.7",
+        "F-1.4",
+        "F-1.5"
+      ],
+      "falsification_predicate": null
+    },
+    {
+      "claim_id": "F-4.1",
+      "type": "F",
+      "label": "[TYPE:F]",
+      "name": "Scale-invariance of β",
+      "statement": "β = 1/2 holds across all scales tested in P1 validation set (36 substrates, biological through civilisational). No scale-dependent correction is needed.",
+      "derivation_source": [
+        "D-4.2",
+        "F-1.3",
+        "F-1.4"
+      ],
+      "falsification_predicate": {
+        "FALSIFIED_IF": "EXISTS scale_class SC IN {biological, physical, social, cognitive, civilisational} SUCH THAT (mean_β(SC) < 0.5 − 3·σ_β(SC)) OR (mean_β(SC) > 0.5 + 3·σ_β(SC))",
+        "WHERE": {
+          "mean_β": "scalar · dimensionless · mean β across substrates in scale class SC",
+          "σ_β": "scalar · dimensionless · standard error within scale class"
+        },
+        "EVALUATION": "Compute β per substrate from P3 protocol; group by scale class; test each class against 0.5 ± 3σ; finite",
+        "BOUNDARY": "3σ threshold (stricter than P1 F-1.3's 2σ) — testing the stronger claim of exact scale invariance",
+        "CONTEXT": "This is the mathematical backbone of the 'fractal' property. If β varies by scale, the self-similarity claim fails."
+      }
+    },
+    {
+      "claim_id": "F-4.2",
+      "type": "F",
+      "label": "[TYPE:F]",
+      "name": "Fractal-like behavior from carrier wave architecture",
+      "statement": "The self-similar appearance across scales (fractal-like behavior) emerges from the carrier wave structure, not from fractal geometry. Removing the oscillatory component (ω → 0) destroys the self-similarity.",
+      "placeholder": true,
+      "placeholder_id": "PH-4.1",
+      "derivation_source": [
+        "D-4.1",
+        "A-4.1"
+      ],
+      "falsification_predicate": {
+        "FALSIFIED_IF": "(self_similarity_index_with_oscillation <= self_similarity_index_without_oscillation + ε)",
+        "WHERE": {
+          "self_similarity_index_with_oscillation": "scalar · dimensionless · cross-scale correlation of FRM fits with full ω",
+          "self_similarity_index_without_oscillation": "scalar · dimensionless · cross-scale correlation with ω forced to 0 (pure exponential)",
+          "ε": "scalar · 0.05 · tolerance for numerical noise"
+        },
+        "EVALUATION": "Fit FRM at multiple scales; compute cross-scale correlation; repeat with ω=0; compare; finite",
+        "BOUNDARY": "ε = 0.05 inclusive",
+        "CONTEXT": "[PLACEHOLDER: requires multi-scale dataset with at least 3 scale classes]"
+      }
+    }
+  ],
+  "placeholder_register": [
+    {
+      "placeholder_id": "PH-4.1",
+      "source_claim": "F-4.2",
+      "description": "Multi-scale self-similarity test. Requires datasets across at least 3 scale classes.",
+      "resolved": false,
+      "blocks_phase_ready": false,
+      "target_paper": "P4",
+      "target_claim": "F-4.2",
+      "target_session": "OPEN"
+    }
+  ],
+  "summary": {
+    "total_claims": 6,
+    "type_A": 1,
+    "type_D": 3,
+    "type_F": 2,
+    "placeholder_count": 1,
+    "phase_ready": false,
+    "session_produced": "S48"
+  }
+}

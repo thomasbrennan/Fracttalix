@@ -4,13 +4,13 @@
     "schema_version": "v2-S42",
     "schema_url": "https://github.com/thomasbrennan/Fracttalix/blob/main/ai-layers/ai-layer-schema.json",
     "produced_session": "S44",
-    "produced_by": "Claude (Anthropic) \u2014 Session 43 theoretical foundations build",
+    "produced_by": "Claude (Anthropic) — Session 43 theoretical foundations build",
     "licence": "CC BY 4.0"
   },
   "paper_id": "P1",
   "corpus_id": "Fracttalix",
   "series": "Fracttalix Corpus",
-  "series_position": "Paper 1 of 13",
+  "series_position": "Paper 1 of 12",
   "paper_title": "The Fractal Rhythm Model: A Universal Law of Network Information Transmission",
   "paper_type": "law_A",
   "version": "v9",
@@ -27,41 +27,41 @@
     "c5": "SATISFIED",
     "c6": "SATISFIED",
     "placeholder_count": 1,
-    "note": "One live placeholder: C-1.3 dependency on P2 C-2.1 (\u03b2=1/2 class-level empirical test pending P2 universality derivation). All other claims fully resolved including \u03b2=1/2 analytic proof (S43), \u03bb derivation (S43). CBT I-9 all 7 steps passed \u2014 Session 44."
+    "note": "One live placeholder: C-1.3 dependency on P2 C-2.1 (β=1/2 class-level empirical test pending P2 universality derivation). All other claims fully resolved including β=1/2 analytic proof (S43), λ derivation (S43). CBT I-9 all 7 steps passed — Session 44."
   },
   "verification_protocol": "Fracttalix Phase 1-2 Merged, S42, Stage 2.1",
   "falsification_syntax": "I-2 5-part (FALSIFIED IF / WHERE / EVALUATION / BOUNDARY / CONTEXT)",
-  "inference_rule_inventory": "IR-1 through IR-8 \u2014 Fracttalix Phase 1-2 Merged, S42",
+  "inference_rule_inventory": "IR-1 through IR-8 — Fracttalix Phase 1-2 Merged, S42",
   "universal_constants": {
     "beta": {
       "value": 0.5,
       "status": "DERIVED",
-      "derivation": "Quarter-wave resonance coefficient of delayed negative feedback at Hopf criticality. At \u03b1=0: cos(\u03a9)=0 \u2192 \u03a9*=\u03c0/2 \u2192 \u03c9=\u03c0/(2\u03c4_gen) \u2192 \u03b2=1/2. Session 43.",
+      "derivation": "Quarter-wave resonance coefficient of delayed negative feedback at Hopf criticality. At α=0: cos(Ω)=0 → Ω*=π/2 → ω=π/(2τ_gen) → β=1/2. Session 43.",
       "numerical_confirmation": "0.46% error (Euler discretization only)",
       "physical_meaning": "One quarter-wavelength fits inside the feedback delay at criticality"
     },
     "k_star": {
       "value": 1.5708,
-      "expression": "\u03c0/2",
+      "expression": "π/2",
       "status": "DERIVED",
-      "derivation": "Critical feedback gain at Hopf bifurcation. From Im(\u03bb)=0 at criticality: k*=\u03c0/2."
+      "derivation": "Critical feedback gain at Hopf bifurcation. From Im(λ)=0 at criticality: k*=π/2."
     },
     "Gamma": {
       "value": 3.4674,
-      "expression": "1 + \u03c0\u00b2/4",
+      "expression": "1 + π²/4",
       "status": "DERIVED",
-      "derivation": "Universal loop impedance constant. Magnitude of dh/d\u03bb at critical point (1+i\u03c0/2). Session 43.",
-      "physical_meaning": "Feedback loop impedance at resonant frequency \u2014 energy absorbed/redistributed per unit bifurcation distance"
+      "derivation": "Universal loop impedance constant. Magnitude of dh/dλ at critical point (1+iπ/2). Session 43.",
+      "physical_meaning": "Feedback loop impedance at resonant frequency — energy absorbed/redistributed per unit bifurcation distance"
     }
   },
   "frm_parameters": {
     "omega": {
-      "expression": "\u03c0 / (2\u00b7\u03c4_gen)",
+      "expression": "π / (2·τ_gen)",
       "status": "DERIVED",
       "free_parameter": false
     },
     "lambda": {
-      "expression": "|\u03b1| / (\u0393 \u00b7 \u03c4_gen)",
+      "expression": "|α| / (Γ · τ_gen)",
       "status": "DERIVED",
       "free_parameter": false,
       "mean_error_leading_order": "3.61%",
@@ -82,11 +82,11 @@
   },
   "scope_boundary": {
     "criterion": "Hopf bifurcation",
-    "in_scope": "Systems with \u03bc < 0 (damped oscillators approaching stable fixed point)",
-    "out_of_scope": "Systems with \u03bc > 0 (limit cycles \u2014 Hopf bifurcation crossed)",
-    "degenerate": "Systems at \u03bc = 0 (\u03bb\u21920, FRM degenerates)",
-    "type": "TOPOLOGICAL \u2014 not empirical",
-    "adversarial_confirmation": "ADV-BZ (van der Pol \u03bc>0): correctly excluded. ADV-RIDGECREST (power-law): correctly falsified. Session 43."
+    "in_scope": "Systems with μ < 0 (damped oscillators approaching stable fixed point)",
+    "out_of_scope": "Systems with μ > 0 (limit cycles — Hopf bifurcation crossed)",
+    "degenerate": "Systems at μ = 0 (λ→0, FRM degenerates)",
+    "type": "TOPOLOGICAL — not empirical",
+    "adversarial_confirmation": "ADV-BZ (van der Pol μ>0): correctly excluded. ADV-RIDGECREST (power-law): correctly falsified. Session 43."
   },
   "claim_registry": [
     {
@@ -116,7 +116,7 @@
       "type": "A",
       "label": "[TYPE:A]",
       "name": "Network definition",
-      "statement": "A network is a set of nodes and directed edges; coupling \u03ba is the ratio of active to possible edges.",
+      "statement": "A network is a set of nodes and directed edges; coupling κ is the ratio of active to possible edges.",
       "derivation_source": [
         "First Principle FP-3"
       ],
@@ -149,7 +149,7 @@
       "type": "D",
       "label": "[TYPE:D]",
       "name": "FRM functional form",
-      "statement": "f(t) = B + A\u00b7e^(\u2212\u03bbt)\u00b7cos(\u03c9t+\u03c6), where B is baseline, A is initial amplitude, \u03bb is decay rate, \u03c9 is characteristic frequency, \u03c6 is phase offset.",
+      "statement": "f(t) = B + A·e^(−λt)·cos(ωt+φ), where B is baseline, A is initial amplitude, λ is decay rate, ω is characteristic frequency, φ is phase offset.",
       "derivation_source": [
         "A-1.1",
         "A-1.2",
@@ -163,7 +163,7 @@
       "type": "D",
       "label": "[TYPE:D]",
       "name": "Characteristic frequency",
-      "statement": "\u03c9 = \u03c0/(2\u00b7\u03c4_gen), where \u03c4_gen is the substrate-specific generation timescale. Derived from Hopf quarter-wave theorem (Session 43). \u03b2 = 1/2 is not fitted.",
+      "statement": "ω = π/(2·τ_gen), where τ_gen is the substrate-specific generation timescale. Derived from Hopf quarter-wave theorem (Session 43). β = 1/2 is not fitted.",
       "derivation_source": [
         "D-1.1",
         "A-1.1",
@@ -176,7 +176,7 @@
       "type": "D",
       "label": "[TYPE:D]",
       "name": "Decay rate",
-      "statement": "\u03bb \u2248 |\u03b1| / (\u0393\u00b7\u03c4_gen), where \u03b1 is the normalized distance from the Hopf bifurcation and \u0393 = 1+\u03c0\u00b2/4 \u2248 3.467 is the universal loop impedance constant. Leading-order perturbation expansion. Mean error 3.61%.",
+      "statement": "λ ≈ |α| / (Γ·τ_gen), where α is the normalized distance from the Hopf bifurcation and Γ = 1+π²/4 ≈ 3.467 is the universal loop impedance constant. Leading-order perturbation expansion. Mean error 3.61%.",
       "derivation_source": [
         "D-1.1",
         "F-1.5"
@@ -188,7 +188,7 @@
       "type": "D",
       "label": "[TYPE:D]",
       "name": "Validation set P1",
-      "statement": "36 substrates spanning biological, physical, social, cognitive, and civilisational domains. Full list: P1 Appendix A. Characteristic timescales span from ~10^\u221235 s (Planck) to ~10^1 s (neural).",
+      "statement": "36 substrates spanning biological, physical, social, cognitive, and civilisational domains. Full list: P1 Appendix A. Characteristic timescales span from ~10^−35 s (Planck) to ~10^1 s (neural).",
       "derivation_source": [],
       "falsification_predicate": null
     },
@@ -197,9 +197,9 @@
       "type": "F",
       "label": "[TYPE:F]",
       "name": "FRM functional form uniqueness",
-      "statement": "The FRM functional form f(t)=B+A\u00b7e^(\u2212\u03bbt)\u00b7cos(\u03c9t+\u03c6) is the unique solution for network information transmission across time satisfying conditions C1\u2013C4.",
+      "statement": "The FRM functional form f(t)=B+A·e^(−λt)·cos(ωt+φ) is the unique solution for network information transmission across time satisfying conditions C1–C4.",
       "source": "P1 Section 2",
-      "sample_falsification_observation": "O = {substrate with R2_alt = R2_frm + 0.06} \u2192 FALSIFIED \u2192 PASS",
+      "sample_falsification_observation": "O = {substrate with R2_alt = R2_frm + 0.06} → FALSIFIED → PASS",
       "derivation_source": [
         "D-1.1",
         "A-1.1",
@@ -210,13 +210,13 @@
       "falsification_predicate": {
         "FALSIFIED_IF": "EXISTS substrate S IN validation_set_P1 SUCH THAT (FRM_conditions(S) = TRUE) AND (R2_frm(S) < 0.85) AND (R2_best_alt(S) >= R2_frm(S) + 0.05)",
         "WHERE": {
-          "validation_set_P1": "set \u00b7 36 substrates \u00b7 P1 Appendix A",
-          "FRM_conditions": "binary \u00b7 TRUE if S satisfies C1\u2013C4 \u00b7 P1 Section 2",
-          "R2_frm": "scalar \u00b7 dimensionless \u00b7 P3 Section 4 regression",
-          "R2_best_alt": "scalar \u00b7 dimensionless \u00b7 best alternative form \u00b7 P1 Appendix B"
+          "validation_set_P1": "set · 36 substrates · P1 Appendix A",
+          "FRM_conditions": "binary · TRUE if S satisfies C1–C4 · P1 Section 2",
+          "R2_frm": "scalar · dimensionless · P3 Section 4 regression",
+          "R2_best_alt": "scalar · dimensionless · best alternative form · P1 Appendix B"
         },
-        "EVALUATION": "Run P3 regression for each substrate; compare R\u00b2 values; finite",
-        "BOUNDARY": "R2_best_alt = R2_frm + 0.05 \u2192 FALSIFIED (threshold inclusive)",
+        "EVALUATION": "Run P3 regression for each substrate; compare R² values; finite",
+        "BOUNDARY": "R2_best_alt = R2_frm + 0.05 → FALSIFIED (threshold inclusive)",
         "CONTEXT": "threshold 0.05 accounts for overfitting in higher-parameter alternatives (conservative); threshold 0.85 is minimum fit criterion per P3 protocol"
       }
     },
@@ -227,58 +227,58 @@
       "name": "36-orders validation",
       "statement": "FRM holds across 36 orders of magnitude of characteristic timescale.",
       "source": "P1 Section 3",
-      "sample_falsification_observation": "O = {span = 35.9 orders} \u2192 FALSIFIED \u2192 PASS",
+      "sample_falsification_observation": "O = {span = 35.9 orders} → FALSIFIED → PASS",
       "derivation_source": [
         "D-1.4",
         "F-1.1",
         "A-1.1"
       ],
       "falsification_predicate": {
-        "FALSIFIED_IF": "(log10(T_max) \u2212 log10(T_min) < 36) OR (n_passing < 30)",
+        "FALSIFIED_IF": "(log10(T_max) − log10(T_min) < 36) OR (n_passing < 30)",
         "WHERE": {
-          "T_max": "scalar \u00b7 seconds \u00b7 max T_char across validation_set_P1",
-          "T_min": "scalar \u00b7 seconds \u00b7 min T_char across validation_set_P1",
-          "T_char": "scalar \u00b7 seconds \u00b7 2\u03c0/\u03c9_S from P3 measurement protocol",
-          "n_passing": "integer \u00b7 count of substrates with R2_frm(S) \u2265 0.85"
+          "T_max": "scalar · seconds · max T_char across validation_set_P1",
+          "T_min": "scalar · seconds · min T_char across validation_set_P1",
+          "T_char": "scalar · seconds · 2π/ω_S from P3 measurement protocol",
+          "n_passing": "integer · count of substrates with R2_frm(S) ≥ 0.85"
         },
         "EVALUATION": "Compute log10(T_char) per substrate; find max/min; count passing; finite",
-        "BOUNDARY": "T_max/T_min span exactly 36 orders \u2192 FALSIFIED (condition \u2265 36, not >)",
-        "CONTEXT": "threshold 30/36 permits up to 6 failures \u2014 conservative margin for edge cases"
+        "BOUNDARY": "T_max/T_min span exactly 36 orders → FALSIFIED (condition ≥ 36, not >)",
+        "CONTEXT": "threshold 30/36 permits up to 6 failures — conservative margin for edge cases"
       }
     },
     {
       "claim_id": "F-1.3",
       "type": "F",
       "label": "[TYPE:F]",
-      "name": "\u03b2 = 1/2 substrate independence (empirical)",
-      "statement": "The critical exponent \u03b2 = 1/2 is substrate-independent across all five domain classes.",
+      "name": "β = 1/2 substrate independence (empirical)",
+      "statement": "The critical exponent β = 1/2 is substrate-independent across all five domain classes.",
       "source": "P1 Section 4",
       "placeholder": true,
       "placeholder_id": "PH-1.1",
-      "sample_falsification_observation": "O = {biological class mean_\u03b2 = 0.3, pooled_\u03c3 = 0.05} \u2192 FALSIFIED \u2192 PASS",
+      "sample_falsification_observation": "O = {biological class mean_β = 0.3, pooled_σ = 0.05} → FALSIFIED → PASS",
       "derivation_source": [
         "F-1.4",
         "D-1.4",
         "A-1.5"
       ],
       "falsification_predicate": {
-        "FALSIFIED_IF": "EXISTS substrate_class SC IN {biological,physical,social,cognitive,civilisational} SUCH THAT (mean_\u03b2(SC) < 0.5 \u2212 2\u00b7pooled_\u03c3_\u03b2) OR (mean_\u03b2(SC) > 0.5 + 2\u00b7pooled_\u03c3_\u03b2)",
+        "FALSIFIED_IF": "EXISTS substrate_class SC IN {biological,physical,social,cognitive,civilisational} SUCH THAT (mean_β(SC) < 0.5 − 2·pooled_σ_β) OR (mean_β(SC) > 0.5 + 2·pooled_σ_β)",
         "WHERE": {
-          "mean_\u03b2": "scalar \u00b7 dimensionless \u00b7 mean \u03b2_measured across substrates in SC using P3 Section 4 protocol",
-          "pooled_\u03c3_\u03b2": "scalar \u00b7 dimensionless \u00b7 pooled std error of \u03b2 across validation_set_P1",
-          "\u03b2_measured": "scalar \u00b7 dimensionless \u00b7 per-substrate fit from P3 protocol"
+          "mean_β": "scalar · dimensionless · mean β_measured across substrates in SC using P3 Section 4 protocol",
+          "pooled_σ_β": "scalar · dimensionless · pooled std error of β across validation_set_P1",
+          "β_measured": "scalar · dimensionless · per-substrate fit from P3 protocol"
         },
-        "EVALUATION": "For each class compute mean_\u03b2; compare to 0.5 \u00b1 2\u00b7pooled_\u03c3; finite",
-        "BOUNDARY": "exact equality \u2192 NOT FALSIFIED (measure zero for continuous \u03b2)",
-        "CONTEXT": "[PLACEHOLDER: pending P2, AI-Layer, Claim C-2.1, Phase 1] \u2014 class-level 2\u03c3 test"
+        "EVALUATION": "For each class compute mean_β; compare to 0.5 ± 2·pooled_σ; finite",
+        "BOUNDARY": "exact equality → NOT FALSIFIED (measure zero for continuous β)",
+        "CONTEXT": "[PLACEHOLDER: pending P2, AI-Layer, Claim C-2.1, Phase 1] — class-level 2σ test"
       }
     },
     {
       "claim_id": "F-1.4",
       "type": "F",
       "label": "[TYPE:F]",
-      "name": "\u03b2 = 1/2 analytic derivation (Hopf quarter-wave theorem)",
-      "statement": "\u03b2 = 1/2 follows necessarily from the Hopf criticality condition of a normalized first-order DDE with delayed negative feedback. This is a theorem, not an empirical result.",
+      "name": "β = 1/2 analytic derivation (Hopf quarter-wave theorem)",
+      "statement": "β = 1/2 follows necessarily from the Hopf criticality condition of a normalized first-order DDE with delayed negative feedback. This is a theorem, not an empirical result.",
       "source": "P1 Theoretical Foundations Section 3, Session 43",
       "derivation_trace": [
         {
@@ -286,44 +286,44 @@
           "input": [
             "Normalized DDE definition"
           ],
-          "operation": "IR-4: Definition Expansion \u2014 dx/ds = \u03b1\u00b7x(s) \u2212 k\u00b7x(s\u22121)",
-          "output": "Characteristic equation h(\u03bb) = \u03bb \u2212 \u03b1 + k\u00b7e^{\u2212\u03bb} = 0"
+          "operation": "IR-4: Definition Expansion — dx/ds = α·x(s) − k·x(s−1)",
+          "output": "Characteristic equation h(λ) = λ − α + k·e^{−λ} = 0"
         },
         {
           "step": "2",
           "input": [
             "Step 1"
           ],
-          "operation": "IR-3: Substitution \u2014 set \u03b1=0 (criticality), \u03bb=i\u03a9 (purely imaginary)",
-          "output": "i\u03a9 + k\u00b7e^{\u2212i\u03a9} = 0"
+          "operation": "IR-3: Substitution — set α=0 (criticality), λ=iΩ (purely imaginary)",
+          "output": "iΩ + k·e^{−iΩ} = 0"
         },
         {
           "step": "3",
           "input": [
             "Step 2"
           ],
-          "operation": "IR-5: Algebraic Manipulation \u2014 separate real and imaginary parts",
-          "output": "Real: k\u00b7cos(\u03a9)=0; Imaginary: \u03a9=k\u00b7sin(\u03a9)"
+          "operation": "IR-5: Algebraic Manipulation — separate real and imaginary parts",
+          "output": "Real: k·cos(Ω)=0; Imaginary: Ω=k·sin(Ω)"
         },
         {
           "step": "4",
           "input": [
             "Step 3"
           ],
-          "operation": "IR-1: Modus Ponens \u2014 k\u00b7cos(\u03a9)=0 with k>0 \u2192 cos(\u03a9)=0 \u2192 \u03a9*=\u03c0/2 (fundamental mode)",
-          "output": "\u03a9* = \u03c0/2"
+          "operation": "IR-1: Modus Ponens — k·cos(Ω)=0 with k>0 → cos(Ω)=0 → Ω*=π/2 (fundamental mode)",
+          "output": "Ω* = π/2"
         },
         {
           "step": "5",
           "input": [
             "Step 4"
           ],
-          "operation": "IR-5: Algebraic Manipulation \u2014 \u03c9* = \u03a9*/\u03c4_gen = \u03c0/(2\u03c4_gen)",
-          "output": "\u03c9* = \u03c0/(2\u03c4_gen); T = 2\u03c0/\u03c9 = 4\u03c4_gen; \u03b2 = 1/2 \u25a1"
+          "operation": "IR-5: Algebraic Manipulation — ω* = Ω*/τ_gen = π/(2τ_gen)",
+          "output": "ω* = π/(2τ_gen); T = 2π/ω = 4τ_gen; β = 1/2 □"
         }
       ],
-      "numerical_confirmation": "\u03a9_fit/\u03a9_theory = 1.00461 \u00b1 0.00073 across 6 simulation points. 0.46% = Euler discretization only.",
-      "sample_falsification_observation": "O = {cos(\u03a9*)\u22600 for k>0} \u2192 Step 4 invalid \u2192 FALSIFIED. Assessment: cos(\u03c0/2)=0 exactly \u2192 NOT FALSIFIED \u2192 PASS",
+      "numerical_confirmation": "Ω_fit/Ω_theory = 1.00461 ± 0.00073 across 6 simulation points. 0.46% = Euler discretization only.",
+      "sample_falsification_observation": "O = {cos(Ω*)≠0 for k>0} → Step 4 invalid → FALSIFIED. Assessment: cos(π/2)=0 exactly → NOT FALSIFIED → PASS",
       "derivation_source": [
         "D-1.1",
         "D-1.2",
@@ -331,58 +331,58 @@
         "A-1.2"
       ],
       "falsification_predicate": {
-        "FALSIFIED_IF": "(n_invalid_steps > 0) OR (derivation_output \u2260 0.5)",
+        "FALSIFIED_IF": "(n_invalid_steps > 0) OR (derivation_output ≠ 0.5)",
         "WHERE": {
-          "n_invalid_steps": "integer \u00b7 count of steps in the analytic proof (Section 3.2) that fail validity: step valid iff output follows from inputs by named rule IR-1 through IR-8",
-          "derivation_output": "scalar \u00b7 \u03b2 value produced by applying Hopf condition cos(\u03a9)=0 to normalized DDE at \u03b1=0"
+          "n_invalid_steps": "integer · count of steps in the analytic proof (Section 3.2) that fail validity: step valid iff output follows from inputs by named rule IR-1 through IR-8",
+          "derivation_output": "scalar · β value produced by applying Hopf condition cos(Ω)=0 to normalized DDE at α=0"
         },
-        "EVALUATION": "Trace proof step-by-step: (1) normalized DDE dx/ds = \u03b1\u00b7x(s) \u2212 k\u00b7x(s\u22121); (2) substitute \u03bb=i\u03a9 at criticality \u03b1=0; (3) real part: k\u00b7cos(\u03a9)=0 \u2192 \u03a9*=\u03c0/2; (4) \u03c9*=\u03a9*/\u03c4_gen=\u03c0/(2\u03c4_gen) \u2192 \u03b2=1/2; verify each step named inference rule; finite",
-        "BOUNDARY": "numerical confirmation within 1% of analytic \u2192 NOT FALSIFIED (0.46% Euler discretization error is expected)",
-        "CONTEXT": "Prior art: Hayes (1950) and Kuang (1993) establish \u03c9\u03c4=\u03c0/2 in individual domains. Novelty: identification as universal source of empirical \u03b2=1/2 across 36 orders of magnitude."
+        "EVALUATION": "Trace proof step-by-step: (1) normalized DDE dx/ds = α·x(s) − k·x(s−1); (2) substitute λ=iΩ at criticality α=0; (3) real part: k·cos(Ω)=0 → Ω*=π/2; (4) ω*=Ω*/τ_gen=π/(2τ_gen) → β=1/2; verify each step named inference rule; finite",
+        "BOUNDARY": "numerical confirmation within 1% of analytic → NOT FALSIFIED (0.46% Euler discretization error is expected)",
+        "CONTEXT": "Prior art: Hayes (1950) and Kuang (1993) establish ωτ=π/2 in individual domains. Novelty: identification as universal source of empirical β=1/2 across 36 orders of magnitude."
       }
     },
     {
       "claim_id": "F-1.5",
       "type": "F",
       "label": "[TYPE:F]",
-      "name": "\u03bb derivation \u2014 leading order",
-      "statement": "The FRM damping rate \u03bb \u2248 |\u03b1|/(\u0393\u00b7\u03c4_gen) where \u0393 = 1+\u03c0\u00b2/4 \u2248 3.467 is the universal loop impedance constant, derived from the DDE characteristic equation via perturbation expansion about the Hopf critical point.",
+      "name": "λ derivation — leading order",
+      "statement": "The FRM damping rate λ ≈ |α|/(Γ·τ_gen) where Γ = 1+π²/4 ≈ 3.467 is the universal loop impedance constant, derived from the DDE characteristic equation via perturbation expansion about the Hopf critical point.",
       "source": "P1 Theoretical Foundations Section 4, Session 43",
       "derivation_trace": [
         {
           "step": "1",
           "input": [
-            "Characteristic equation h(\u03bb) = \u03bb \u2212 \u03b1 + k\u00b7e^{\u2212\u03bb} = 0"
+            "Characteristic equation h(λ) = λ − α + k·e^{−λ} = 0"
           ],
-          "operation": "IR-5: Algebraic Manipulation \u2014 compute partial derivatives at critical point (\u03b1=0, k*=\u03c0/2, \u03bb*=i\u03c0/2)",
-          "output": "dh/d\u03bb|* = 1+i\u03c0/2; dh/d\u03b1|* = \u22121"
+          "operation": "IR-5: Algebraic Manipulation — compute partial derivatives at critical point (α=0, k*=π/2, λ*=iπ/2)",
+          "output": "dh/dλ|* = 1+iπ/2; dh/dα|* = −1"
         },
         {
           "step": "2",
           "input": [
             "Step 1"
           ],
-          "operation": "IR-1: Modus Ponens \u2014 implicit function theorem: d\u03bb/d\u03b1 = \u2212(dh/d\u03b1)/(dh/d\u03bb) = 1/(1+i\u03c0/2)",
-          "output": "\u03bb\u2081 = \u03b1\u2081/(1+i\u03c0/2)"
+          "operation": "IR-1: Modus Ponens — implicit function theorem: dλ/dα = −(dh/dα)/(dh/dλ) = 1/(1+iπ/2)",
+          "output": "λ₁ = α₁/(1+iπ/2)"
         },
         {
           "step": "3",
           "input": [
             "Step 2"
           ],
-          "operation": "IR-5: Algebraic Manipulation \u2014 rationalize denominator: Re(\u03bb\u2081) = \u03b1\u2081/(1+\u03c0\u00b2/4)",
-          "output": "Re(\u03bb) \u2248 |\u03b1|/(1+\u03c0\u00b2/4) = |\u03b1|/\u0393 in normalized time"
+          "operation": "IR-5: Algebraic Manipulation — rationalize denominator: Re(λ₁) = α₁/(1+π²/4)",
+          "output": "Re(λ) ≈ |α|/(1+π²/4) = |α|/Γ in normalized time"
         },
         {
           "step": "4",
           "input": [
             "Step 3"
           ],
-          "operation": "IR-5: Algebraic Manipulation \u2014 restore physical units: s=t/\u03c4_gen \u2192 \u03bb_phys = \u03bb_norm/\u03c4_gen",
-          "output": "\u03bb \u2248 |\u03b1|/(\u0393\u00b7\u03c4_gen) \u25a1"
+          "operation": "IR-5: Algebraic Manipulation — restore physical units: s=t/τ_gen → λ_phys = λ_norm/τ_gen",
+          "output": "λ ≈ |α|/(Γ·τ_gen) □"
         }
       ],
-      "sample_falsification_observation": "O = {\u03b1=\u22120.5: \u03bb_theory=0.1442, \u03bb_fit=0.1435} \u2192 ratio=0.995 \u2192 within bounds \u2192 NOT FALSIFIED \u2192 PASS",
+      "sample_falsification_observation": "O = {α=−0.5: λ_theory=0.1442, λ_fit=0.1435} → ratio=0.995 → within bounds → NOT FALSIFIED → PASS",
       "derivation_source": [
         "D-1.3",
         "F-1.4",
@@ -391,12 +391,12 @@
       "falsification_predicate": {
         "FALSIFIED_IF": "(n_invalid_steps_lambda > 0) OR (mean_ratio_fit_theory > 1.15) OR (mean_ratio_fit_theory < 0.85)",
         "WHERE": {
-          "n_invalid_steps_lambda": "integer \u00b7 count of invalid steps in perturbation derivation",
-          "mean_ratio_fit_theory": "scalar \u00b7 mean(\u03bb_fit/\u03bb_theory) across 8 simulation points in stable regime"
+          "n_invalid_steps_lambda": "integer · count of invalid steps in perturbation derivation",
+          "mean_ratio_fit_theory": "scalar · mean(λ_fit/λ_theory) across 8 simulation points in stable regime"
         },
-        "EVALUATION": "Trace perturbation derivation step-by-step; compute \u03bb_theory = |\u03b1|/\u0393 for each \u03b1; fit FRM to DDE simulation; compute ratio; average; finite",
-        "BOUNDARY": "ratio > 1.15 or < 0.85 \u2192 FALSIFIED. Note: leading-order expression is valid near criticality; deviation expected to grow with |\u03b1|.",
-        "CONTEXT": "Mean ratio observed: 1.036 \u00b1 0.089 across stable regime. \u0393 = |dh/d\u03bb|* = |1+i\u03c0/2| = 1+\u03c0\u00b2/4 falls out of the quarter-wave geometry. Second-order correction reduces mean error to 0.06%."
+        "EVALUATION": "Trace perturbation derivation step-by-step; compute λ_theory = |α|/Γ for each α; fit FRM to DDE simulation; compute ratio; average; finite",
+        "BOUNDARY": "ratio > 1.15 or < 0.85 → FALSIFIED. Note: leading-order expression is valid near criticality; deviation expected to grow with |α|.",
+        "CONTEXT": "Mean ratio observed: 1.036 ± 0.089 across stable regime. Γ = |dh/dλ|* = |1+iπ/2| = 1+π²/4 falls out of the quarter-wave geometry. Second-order correction reduces mean error to 0.06%."
       }
     },
     {
@@ -404,9 +404,9 @@
       "type": "F",
       "label": "[TYPE:F]",
       "name": "Circadian period prediction",
-      "statement": "T = 4\u00b7\u03c4_gen predicts the mammalian circadian period T = 24 hr from \u03c4_gen = 6 hr with no fitted parameters. \u03c4_gen independently measured by four molecular biology sources.",
+      "statement": "T = 4·τ_gen predicts the mammalian circadian period T = 24 hr from τ_gen = 6 hr with no fitted parameters. τ_gen independently measured by four molecular biology sources.",
       "source": "P1 Theoretical Foundations Section 5, Session 43",
-      "sample_falsification_observation": "O = {\u03c4_gen = 3 hr \u2192 T_predicted = 12 hr} \u2192 12 < 20 \u2192 FALSIFIED \u2192 PASS. Assessment: with \u03c4_gen = 6 hr \u2192 T_predicted = 24 hr \u2192 20 \u2264 24 \u2264 28 \u2192 NOT FALSIFIED \u2192 correct.",
+      "sample_falsification_observation": "O = {τ_gen = 3 hr → T_predicted = 12 hr} → 12 < 20 → FALSIFIED → PASS. Assessment: with τ_gen = 6 hr → T_predicted = 24 hr → 20 ≤ 24 ≤ 28 → NOT FALSIFIED → correct.",
       "derivation_source": [
         "D-1.2",
         "F-1.4",
@@ -415,12 +415,12 @@
       "falsification_predicate": {
         "FALSIFIED_IF": "(T_predicted < 20) OR (T_predicted > 28) OR (n_independent_tau_sources < 3)",
         "WHERE": {
-          "T_predicted": "scalar \u00b7 hours \u00b7 4 \u00d7 \u03c4_gen_consensus",
-          "tau_gen_consensus": "scalar \u00b7 hours \u00b7 mean of independent molecular biology measurements",
-          "n_independent_tau_sources": "integer \u00b7 count of independent peer-reviewed sources measuring \u03c4_gen \u2265 5.5 hr in mammals"
+          "T_predicted": "scalar · hours · 4 × τ_gen_consensus",
+          "tau_gen_consensus": "scalar · hours · mean of independent molecular biology measurements",
+          "n_independent_tau_sources": "integer · count of independent peer-reviewed sources measuring τ_gen ≥ 5.5 hr in mammals"
         },
-        "EVALUATION": "Verify \u03c4_gen from at least 3 independent sources; compute T=4\u00b7\u03c4_gen; compare to observed T=24 hr; finite and parameter-free",
-        "BOUNDARY": "T=20 or T=28 hr \u2192 FALSIFIED (bounds are inclusive). Sensitivity: \u03c4_gen range 5.5\u20136.5 hr gives T=22\u201326 hr \u2014 all within biological variance.",
+        "EVALUATION": "Verify τ_gen from at least 3 independent sources; compute T=4·τ_gen; compare to observed T=24 hr; finite and parameter-free",
+        "BOUNDARY": "T=20 or T=28 hr → FALSIFIED (bounds are inclusive). Sensitivity: τ_gen range 5.5–6.5 hr gives T=22–26 hr — all within biological variance.",
         "CONTEXT": "Sources: Kim & Forger 2012 (5.9 hr, direct measurement); Hardin et al. 1990 (~6 hr); Lee et al. 2001 (~6 hr sub-step); Takahashi 2017 (~6 hr). No free parameters. First derivation of circadian period from a universal delayed feedback principle."
       }
     },
@@ -429,35 +429,35 @@
       "type": "F",
       "label": "[TYPE:F]",
       "name": "Stuart-Landau connection",
-      "statement": "FRM is the exact transient solution of the Stuart-Landau normal form for \u03bc < 0, with \u03bb = |\u03bc|. The FRM scope boundary coincides with the Hopf bifurcation.",
+      "statement": "FRM is the exact transient solution of the Stuart-Landau normal form for μ < 0, with λ = |μ|. The FRM scope boundary coincides with the Hopf bifurcation.",
       "source": "P1 Theoretical Foundations Section 2, Session 43",
       "adversarial_battery": {
         "ADV_BZ": {
           "result": "NOT FALSIFIED",
-          "reason": "van der Pol \u03bc>0 is a limit cycle \u2014 topologically outside FRM scope. \u03bb\u21920 as predicted.",
+          "reason": "van der Pol μ>0 is a limit cycle — topologically outside FRM scope. λ→0 as predicted.",
           "R2_frm": 0.9537,
           "session": "S43"
         },
         "ADV_RIDGECREST": {
           "result": "FALSIFIED",
-          "reason": "Power-law aftershock envelope (Omori-Utsu) is incompatible with FRM exponential form. \u0394R\u00b2=0.515. Hard boundary confirmed.",
+          "reason": "Power-law aftershock envelope (Omori-Utsu) is incompatible with FRM exponential form. ΔR²=0.515. Hard boundary confirmed.",
           "R2_frm": 0.4835,
           "R2_alt": 0.9982,
           "session": "S43"
         },
         "ADV_ENSO": {
-          "result": "NOT FALSIFIED \u2014 scope contested",
-          "reason": "\u03c4_gen undefined for ENSO. Flagged, not cleared.",
+          "result": "NOT FALSIFIED — scope contested",
+          "reason": "τ_gen undefined for ENSO. Flagged, not cleared.",
           "R2_frm": 0.0805,
           "session": "S43"
         },
         "ADV_CIRCADIAN": {
           "result": "CONFIRMED",
-          "reason": "T=24 hr predicted analytically from \u03c4_gen=6 hr, no fitting.",
+          "reason": "T=24 hr predicted analytically from τ_gen=6 hr, no fitting.",
           "session": "S43"
         }
       },
-      "sample_falsification_observation": "O = {\u03bc=\u22121.0: R\u00b2=0.9969, \u03bb_fit=1.313 vs |\u03bc|=1.0} \u2192 ratio 1.313 (higher-order effects at |\u03bc|=1) \u2192 R\u00b2\u22650.99 \u2192 NOT FALSIFIED \u2192 PASS",
+      "sample_falsification_observation": "O = {μ=−1.0: R²=0.9969, λ_fit=1.313 vs |μ|=1.0} → ratio 1.313 (higher-order effects at |μ|=1) → R²≥0.99 → NOT FALSIFIED → PASS",
       "derivation_source": [
         "D-1.1",
         "F-1.4",
@@ -465,14 +465,14 @@
         "A-1.4"
       ],
       "falsification_predicate": {
-        "FALSIFIED_IF": "(max_residual_SL > 0.05) OR (R2_SL_frm < 0.99) FOR any \u03bc IN {\u22123.0, \u22122.0, \u22121.0, \u22120.5, \u22120.3, \u22120.1}",
+        "FALSIFIED_IF": "(max_residual_SL > 0.05) OR (R2_SL_frm < 0.99) FOR any μ IN {−3.0, −2.0, −1.0, −0.5, −0.3, −0.1}",
         "WHERE": {
-          "max_residual_SL": "scalar \u00b7 max pointwise residual between FRM fit and Stuart-Landau ODE solution",
-          "R2_SL_frm": "scalar \u00b7 R\u00b2 of FRM fit to Stuart-Landau solution"
+          "max_residual_SL": "scalar · max pointwise residual between FRM fit and Stuart-Landau ODE solution",
+          "R2_SL_frm": "scalar · R² of FRM fit to Stuart-Landau solution"
         },
-        "EVALUATION": "Simulate Stuart-Landau ODE for each \u03bc; fit FRM; compute R\u00b2 and \u03bb_fit vs |\u03bc|; check R\u00b2\u22650.99; finite",
-        "BOUNDARY": "R\u00b2=0.99 \u2192 NOT FALSIFIED (boundary inclusive)",
-        "CONTEXT": "Confirmed numerically: R\u00b2>0.99 for \u03bc\u2208{\u22123.0,\u22121.0}. \u03bb_fit tracks |\u03bc| with slope k=1.10, R\u00b2=0.965 across stable regime. At \u03bc=0: FRM degenerates (\u03bb\u21920) as predicted."
+        "EVALUATION": "Simulate Stuart-Landau ODE for each μ; fit FRM; compute R² and λ_fit vs |μ|; check R²≥0.99; finite",
+        "BOUNDARY": "R²=0.99 → NOT FALSIFIED (boundary inclusive)",
+        "CONTEXT": "Confirmed numerically: R²>0.99 for μ∈{−3.0,−1.0}. λ_fit tracks |μ| with slope k=1.10, R²=0.965 across stable regime. At μ=0: FRM degenerates (λ→0) as predicted."
       }
     }
   ],
@@ -480,12 +480,12 @@
     {
       "placeholder_id": "PH-1.1",
       "source_claim": "F-1.3",
-      "description": "\u03b2=1/2 class-level empirical test. Pending P2 universality derivation (C-2.1). Note: the analytic proof (F-1.4) is complete \u2014 PH-1.1 concerns only the class-level 2\u03c3 empirical confirmation across all five domain classes.",
+      "description": "β=1/2 class-level empirical test. Pending P2 universality derivation (C-2.1). Note: the analytic proof (F-1.4) is complete — PH-1.1 concerns only the class-level 2σ empirical confirmation across all five domain classes.",
       "resolved": false,
       "blocks_phase_ready": false,
       "target_paper": "P2",
       "target_claim": "C-2.1",
-      "target_session": "OPEN \u2014 resolves with P2 completion"
+      "target_session": "OPEN — resolves with P2 completion"
     }
   ],
   "prior_art": {
@@ -497,30 +497,30 @@
       {
         "source": "Quinn & Ostriker 2008, MNRAS 386:2227",
         "score": 1.5,
-        "note": "T\u22484\u03c4 explicitly stated for astrophysical DDE \u2014 single domain, no Hopf derivation, no universality claim. Required citation."
+        "note": "T≈4τ explicitly stated for astrophysical DDE — single domain, no Hopf derivation, no universality claim. Required citation."
       },
       {
         "source": "Caltech BE150 lecture notes (unpublished)",
         "score": 1.5,
-        "note": "T\u22484\u03c4 in gene regulatory DDE \u2014 single domain, not peer-reviewed"
+        "note": "T≈4τ in gene regulatory DDE — single domain, not peer-reviewed"
       },
       {
         "source": "Hayes 1950",
         "score": "prior art",
-        "note": "\u03c9\u03c4=\u03c0/2 Hopf condition \u2014 individual domain"
+        "note": "ωτ=π/2 Hopf condition — individual domain"
       },
       {
         "source": "Kuang 1993 Ch. 2",
         "score": "prior art",
-        "note": "DDE Hopf theory \u2014 mathematical, not cross-domain"
+        "note": "DDE Hopf theory — mathematical, not cross-domain"
       }
     ],
     "non_english_result": "Complete null across all 14 non-English language groups",
     "novelty_confirmed": [
-      "\u03b2=1/2 as Hopf quarter-wave coefficient",
+      "β=1/2 as Hopf quarter-wave coefficient",
       "Cross-domain universality across 36 orders of magnitude",
       "Hopf bifurcation as FRM scope boundary",
-      "\u03bb=|\u03b1|/(\u0393\u00b7\u03c4_gen) with \u0393=1+\u03c0\u00b2/4",
+      "λ=|α|/(Γ·τ_gen) with Γ=1+π²/4",
       "T=24hr parameter-free circadian prediction"
     ]
   },

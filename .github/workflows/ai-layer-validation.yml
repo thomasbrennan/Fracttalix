@@ -28,5 +28,8 @@ jobs:
       - name: Validate all AI layers
         run: python scripts/validate_ai_layers.py
 
-      - name: Cross-reference claim integrity
+      - name: Corpus status check
         run: python scripts/corpus_status.py --check-only
+
+      - name: Cross-paper consistency check
+        run: python scripts/cross_paper_checker.py --check-only

@@ -1,0 +1,157 @@
+{
+  "_meta": {
+    "document_type": "AI_LAYER",
+    "schema_version": "v2-S42",
+    "schema_url": "https://github.com/thomasbrennan/Fracttalix/blob/main/ai-layers/ai-layer-schema.json",
+    "produced_session": "S48",
+    "produced_by": "Claude (Anthropic) — Session 48 Phase 2 retroactive build",
+    "licence": "CC BY 4.0"
+  },
+  "paper_id": "P2",
+  "corpus_id": "Fracttalix",
+  "series": "Fracttalix Corpus",
+  "series_position": "Paper 2 of 12",
+  "paper_title": "Networked Implementation: Structure and Rhythmicity at Organizational Scale",
+  "paper_type": "law_A",
+  "version": "v1",
+  "session": "S48",
+  "phase_ready": {
+    "verdict": "NOT-PHASE-READY",
+    "c1": "SATISFIED",
+    "c2": "SATISFIED",
+    "c3": "UNSATISFIED",
+    "c4_mode": "PHASE-READY-TRACKING",
+    "c5": "UNSATISFIED",
+    "c6": "UNSATISFIED",
+    "placeholder_count": 2,
+    "note": "Retroactive AI layer from build table and bootstrap descriptions. Paper published but pending framing review. C3 unsatisfied: EVALUATION clauses need empirical protocol detail from full paper text. C5/C6 pending full claim audit against prose."
+  },
+  "claim_registry": [
+    {
+      "claim_id": "A-2.1",
+      "type": "A",
+      "label": "[TYPE:A]",
+      "name": "Network is literal, not metaphorical",
+      "statement": "An organization is a network in the precise sense of P1 Definition A-1.3: a set of nodes and directed edges with coupling κ. The term 'network' is not a metaphor — it is the thing itself.",
+      "derivation_source": ["A-1.3", "A-1.5"],
+      "falsification_predicate": null
+    },
+    {
+      "claim_id": "A-2.2",
+      "type": "A",
+      "label": "[TYPE:A]",
+      "name": "Organizational substrate satisfies FRM conditions",
+      "statement": "Organizational networks satisfy conditions C1–C4 of P1 Section 2: they transmit information across time between distinguishable states via coupling of nodes.",
+      "derivation_source": ["A-1.1", "A-1.2", "A-1.3", "A-1.4"],
+      "falsification_predicate": null
+    },
+    {
+      "claim_id": "D-2.1",
+      "type": "D",
+      "label": "[TYPE:D]",
+      "name": "FRM at organizational scale",
+      "statement": "f(t) = B + A·e^(−λt)·cos(ωt + φ) describes adaptive response at organizational scale, where τ_gen is the organization-specific generation timescale.",
+      "derivation_source": ["D-1.1", "A-2.1", "A-2.2"],
+      "falsification_predicate": null
+    },
+    {
+      "claim_id": "D-2.2",
+      "type": "D",
+      "label": "[TYPE:D]",
+      "name": "Organizational coupling κ",
+      "statement": "Coupling coefficient κ at organizational scale is the ratio of active information-transmitting edges to possible edges in the organizational network. This is a measurable quantity, not a metaphor.",
+      "derivation_source": ["A-1.3", "A-2.1"],
+      "falsification_predicate": null
+    },
+    {
+      "claim_id": "F-2.1",
+      "type": "F",
+      "label": "[TYPE:F]",
+      "name": "Organizational β = 1/2",
+      "statement": "The critical exponent β = 1/2 holds at organizational scale: T_org = 4·τ_gen_org for organizational networks.",
+      "placeholder": true,
+      "placeholder_id": "PH-2.1",
+      "derivation_source": ["D-1.2", "D-2.1", "F-1.4"],
+      "falsification_predicate": {
+        "FALSIFIED_IF": "(mean_β_org < 0.5 − 2·σ_β) OR (mean_β_org > 0.5 + 2·σ_β)",
+        "WHERE": {
+          "mean_β_org": "scalar · dimensionless · mean β_measured across organizational substrates using P3 Section 4 protocol",
+          "σ_β": "scalar · dimensionless · standard error of β across organizational substrates"
+        },
+        "EVALUATION": "Fit FRM to organizational time series data; extract ω; compute β = ω·τ_gen/(π); average across substrates; compare to 0.5 ± 2σ; finite",
+        "BOUNDARY": "Exact equality → NOT FALSIFIED (measure zero for continuous β)",
+        "CONTEXT": "[PLACEHOLDER: pending empirical validation with organizational time series data] — resolves PH-1.1 for organizational class"
+      }
+    },
+    {
+      "claim_id": "F-2.2",
+      "type": "F",
+      "label": "[TYPE:F]",
+      "name": "FRM fit quality at organizational scale",
+      "statement": "FRM provides R² ≥ 0.85 fit to organizational adaptive response data, and no alternative functional form achieves R²_alt ≥ R²_frm + 0.05.",
+      "derivation_source": ["D-2.1", "F-1.1"],
+      "falsification_predicate": {
+        "FALSIFIED_IF": "(R2_frm_org < 0.85) OR (R2_best_alt_org >= R2_frm_org + 0.05)",
+        "WHERE": {
+          "R2_frm_org": "scalar · dimensionless · R² of FRM fit to organizational time series",
+          "R2_best_alt_org": "scalar · dimensionless · R² of best alternative functional form (exponential, power-law, linear)"
+        },
+        "EVALUATION": "Fit FRM and three alternative forms to organizational data; compare R² values; finite",
+        "BOUNDARY": "R2_best_alt = R2_frm + 0.05 → FALSIFIED (threshold inclusive)",
+        "CONTEXT": "Instantiation of P1 F-1.1 at organizational scale. Conservative threshold accounts for overfitting in higher-parameter alternatives."
+      }
+    },
+    {
+      "claim_id": "F-2.3",
+      "type": "F",
+      "label": "[TYPE:F]",
+      "name": "Structure and rhythmicity necessary at organizational scale",
+      "statement": "Organizational networks exhibit both structure (differential association between nodes) and rhythmicity (oscillatory carrier maintaining signal). Neither property alone is sufficient.",
+      "placeholder": true,
+      "placeholder_id": "PH-2.2",
+      "derivation_source": ["A-2.1", "A-2.2", "D-2.1"],
+      "falsification_predicate": {
+        "FALSIFIED_IF": "EXISTS organizational_network ON SUCH THAT (FRM_conditions(ON) = TRUE) AND ((channel_1_absent(ON) = TRUE) OR (channel_2_absent(ON) = TRUE)) AND (information_transmission_persists(ON) = TRUE)",
+        "WHERE": {
+          "channel_1_absent": "boolean · TRUE if no measurable differential association between nodes",
+          "channel_2_absent": "boolean · TRUE if no detectable oscillatory component in time series",
+          "information_transmission_persists": "boolean · TRUE if network continues to transmit information across time"
+        },
+        "EVALUATION": "Measure Channel 1 (structural) and Channel 2 (rhythmic) indicators; test if information transmission persists when either is absent; finite",
+        "BOUNDARY": "Single counterexample sufficient for falsification",
+        "CONTEXT": "[PLACEHOLDER: pending empirical measurement protocol for organizational networks]"
+      }
+    }
+  ],
+  "placeholder_register": [
+    {
+      "placeholder_id": "PH-2.1",
+      "source_claim": "F-2.1",
+      "description": "Organizational β = 1/2 empirical validation. Requires organizational time series data with known τ_gen.",
+      "resolved": false,
+      "blocks_phase_ready": false,
+      "target_paper": "P2",
+      "target_claim": "F-2.1",
+      "target_session": "OPEN — resolves with empirical data collection"
+    },
+    {
+      "placeholder_id": "PH-2.2",
+      "source_claim": "F-2.3",
+      "description": "Necessity of both structure and rhythmicity at organizational scale. Requires measurement protocol.",
+      "resolved": false,
+      "blocks_phase_ready": false,
+      "target_paper": "P2",
+      "target_claim": "F-2.3",
+      "target_session": "OPEN — resolves with organizational measurement protocol"
+    }
+  ],
+  "summary": {
+    "total_claims": 7,
+    "type_A": 2,
+    "type_D": 2,
+    "type_F": 3,
+    "placeholder_count": 2,
+    "phase_ready": false,
+    "session_produced": "S48"
+  }
+}

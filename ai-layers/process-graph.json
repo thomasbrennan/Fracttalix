@@ -9,58 +9,267 @@
     {
       "corpus_id": "Fracttalix",
       "papers": [
-        {"paper_id": "P1", "title": "General Theory & KVS", "paper_type": "law_A", "scale": "Organization", "act": "I", "status": "PHASE-READY", "ai_layer_url": "https://github.com/thomasbrennan/Fracttalix/blob/main/ai-layers/P1-ai-layer.json", "prose_doi": "10.5281/zenodo.18859299", "placeholder_count": 1},
-        {"paper_id": "P2", "title": "Networked Implementation", "paper_type": "law_A", "scale": "Network", "act": "I", "status": "PUBLISHED", "ai_layer_url": null, "placeholder_count": null},
-        {"paper_id": "P3", "title": "The Reasoning Network", "paper_type": "law_A", "scale": "Cognitive", "act": "I", "status": "PUBLISHED", "ai_layer_url": null, "placeholder_count": null},
-        {"paper_id": "P4", "title": "The Fractal Rhythm Model", "paper_type": "derivation_B", "scale": "Dynamic", "act": "I", "status": "PUBLISHED", "ai_layer_url": null, "placeholder_count": null},
-        {"paper_id": "P5", "title": "On the Decision to Act", "paper_type": "application_C", "scale": "Civilizational", "act": "II", "status": "PUBLISHED", "ai_layer_url": null, "placeholder_count": null},
-        {"paper_id": "P6", "title": "What Is A Network?", "paper_type": "law_A", "scale": "All scales", "act": "III", "status": "IN_PROGRESS", "ai_layer_url": null, "placeholder_count": null},
-        {"paper_id": "P7", "title": "The Temporal Channel", "paper_type": "derivation_B", "scale": "Irreversibility", "act": "III", "status": "QUEUED", "ai_layer_url": null, "placeholder_count": null},
-        {"paper_id": "P8", "title": "The Exhaustiveness Proof", "paper_type": "derivation_B", "scale": "Mathematical", "act": "III", "status": "QUEUED", "ai_layer_url": null, "placeholder_count": null},
-        {"paper_id": "P9", "title": "The Measurement Problem", "paper_type": "methodology_D", "scale": "Instrumentation", "act": "III", "status": "QUEUED", "ai_layer_url": null, "placeholder_count": null, "sync_point": true, "sync_note": "Requires both P7 AND P8"},
-        {"paper_id": "P10", "title": "The Design Paper", "paper_type": "application_C", "scale": "Applied", "act": "III", "status": "QUEUED", "ai_layer_url": null, "placeholder_count": null},
-        {"paper_id": "P11", "title": "The Thermodynamic Bridge", "paper_type": "derivation_B", "scale": "Physics", "act": "III", "status": "QUEUED", "ai_layer_url": null, "placeholder_count": null, "risk_level": "CRITICAL", "risk_note": "Physicist co-author non-negotiable"},
-        {"paper_id": "P12", "title": "What Is The Second Foundation?", "paper_type": "application_C", "scale": "Civilizational", "act": "III", "status": "QUEUED", "ai_layer_url": null, "placeholder_count": null}
+        {
+          "paper_id": "P1",
+          "title": "General Theory & KVS",
+          "paper_type": "law_A",
+          "scale": "Organization",
+          "act": "I",
+          "status": "PHASE-READY",
+          "ai_layer_url": "https://github.com/thomasbrennan/Fracttalix/blob/main/ai-layers/P1-ai-layer.json",
+          "prose_doi": "10.5281/zenodo.18859299",
+          "placeholder_count": 1
+        },
+        {
+          "paper_id": "P2",
+          "title": "Networked Implementation",
+          "paper_type": "law_A",
+          "scale": "Network",
+          "act": "I",
+          "status": "PUBLISHED",
+          "ai_layer_url": "https://github.com/thomasbrennan/Fracttalix/blob/main/ai-layers/P2-ai-layer.json",
+          "placeholder_count": null
+        },
+        {
+          "paper_id": "P3",
+          "title": "The Reasoning Network",
+          "paper_type": "law_A",
+          "scale": "Cognitive",
+          "act": "I",
+          "status": "PUBLISHED",
+          "ai_layer_url": "https://github.com/thomasbrennan/Fracttalix/blob/main/ai-layers/P3-ai-layer.json",
+          "placeholder_count": null
+        },
+        {
+          "paper_id": "P4",
+          "title": "The Fractal Rhythm Model",
+          "paper_type": "derivation_B",
+          "scale": "Dynamic",
+          "act": "I",
+          "status": "PUBLISHED",
+          "ai_layer_url": "https://github.com/thomasbrennan/Fracttalix/blob/main/ai-layers/P4-ai-layer.json",
+          "placeholder_count": null
+        },
+        {
+          "paper_id": "P5",
+          "title": "On the Decision to Act",
+          "paper_type": "application_C",
+          "scale": "Civilizational",
+          "act": "II",
+          "status": "PUBLISHED",
+          "ai_layer_url": "https://github.com/thomasbrennan/Fracttalix/blob/main/ai-layers/P5-ai-layer.json",
+          "placeholder_count": null
+        },
+        {
+          "paper_id": "P6",
+          "title": "What Is A Network?",
+          "paper_type": "law_A",
+          "scale": "All scales",
+          "act": "III",
+          "status": "IN_PROGRESS",
+          "ai_layer_url": "https://github.com/thomasbrennan/Fracttalix/blob/main/ai-layers/P6-ai-layer.json",
+          "placeholder_count": null
+        },
+        {
+          "paper_id": "P7",
+          "title": "The Temporal Channel",
+          "paper_type": "derivation_B",
+          "scale": "Irreversibility",
+          "act": "III",
+          "status": "QUEUED",
+          "ai_layer_url": "https://github.com/thomasbrennan/Fracttalix/blob/main/ai-layers/P7-ai-layer.json",
+          "placeholder_count": null
+        },
+        {
+          "paper_id": "P8",
+          "title": "The Exhaustiveness Proof",
+          "paper_type": "derivation_B",
+          "scale": "Mathematical",
+          "act": "III",
+          "status": "QUEUED",
+          "ai_layer_url": "https://github.com/thomasbrennan/Fracttalix/blob/main/ai-layers/P8-ai-layer.json",
+          "placeholder_count": null
+        },
+        {
+          "paper_id": "P9",
+          "title": "The Measurement Problem",
+          "paper_type": "methodology_D",
+          "scale": "Instrumentation",
+          "act": "III",
+          "status": "QUEUED",
+          "ai_layer_url": "https://github.com/thomasbrennan/Fracttalix/blob/main/ai-layers/P9-ai-layer.json",
+          "placeholder_count": null,
+          "sync_point": true,
+          "sync_note": "Requires both P7 AND P8"
+        },
+        {
+          "paper_id": "P10",
+          "title": "The Design Paper",
+          "paper_type": "application_C",
+          "scale": "Applied",
+          "act": "III",
+          "status": "QUEUED",
+          "ai_layer_url": "https://github.com/thomasbrennan/Fracttalix/blob/main/ai-layers/P10-ai-layer.json",
+          "placeholder_count": null
+        },
+        {
+          "paper_id": "P11",
+          "title": "The Thermodynamic Bridge",
+          "paper_type": "derivation_B",
+          "scale": "Physics",
+          "act": "III",
+          "status": "QUEUED",
+          "ai_layer_url": "https://github.com/thomasbrennan/Fracttalix/blob/main/ai-layers/P11-ai-layer.json",
+          "placeholder_count": null,
+          "risk_level": "CRITICAL",
+          "risk_note": "Physicist co-author non-negotiable"
+        },
+        {
+          "paper_id": "P12",
+          "title": "What Is The Second Foundation?",
+          "paper_type": "application_C",
+          "scale": "Civilizational",
+          "act": "III",
+          "status": "QUEUED",
+          "ai_layer_url": "https://github.com/thomasbrennan/Fracttalix/blob/main/ai-layers/P12-ai-layer.json",
+          "placeholder_count": null
+        }
       ],
       "dependencies": [
-        {"from": "P1", "to": "P2"},
-        {"from": "P2", "to": "P3"},
-        {"from": "P3", "to": "P4"},
-        {"from": "P4", "to": "P5"},
-        {"from": "P5", "to": "P6"},
-        {"from": "P6", "to": "P7"},
-        {"from": "P6", "to": "P8"},
-        {"from": "P7", "to": "P9"},
-        {"from": "P8", "to": "P9"},
-        {"from": "P9", "to": "P10"},
-        {"from": "P7", "to": "P11"},
-        {"from": "P10", "to": "P12"},
-        {"from": "P11", "to": "P12"}
+        {
+          "from": "P1",
+          "to": "P2"
+        },
+        {
+          "from": "P2",
+          "to": "P3"
+        },
+        {
+          "from": "P3",
+          "to": "P4"
+        },
+        {
+          "from": "P4",
+          "to": "P5"
+        },
+        {
+          "from": "P5",
+          "to": "P6"
+        },
+        {
+          "from": "P6",
+          "to": "P7"
+        },
+        {
+          "from": "P6",
+          "to": "P8"
+        },
+        {
+          "from": "P7",
+          "to": "P9"
+        },
+        {
+          "from": "P8",
+          "to": "P9"
+        },
+        {
+          "from": "P9",
+          "to": "P10"
+        },
+        {
+          "from": "P7",
+          "to": "P11"
+        },
+        {
+          "from": "P10",
+          "to": "P12"
+        },
+        {
+          "from": "P11",
+          "to": "P12"
+        }
       ]
     },
     {
       "corpus_id": "Meta-Kaizen",
       "papers": [
-        {"paper_id": "MK-P1", "title": "KVS Functional Form", "paper_type": "derivation_B", "status": "PHASE-READY", "ai_layer_url": "https://github.com/thomasbrennan/Fracttalix/blob/main/ai-layers/MK-P1-ai-layer.json", "prose_doi": "pending", "placeholder_count": 1},
-        {"paper_id": "MK-P2", "paper_type": "derivation_B", "status": "QUEUED", "ai_layer_url": null, "placeholder_count": null},
-        {"paper_id": "MK-P3", "paper_type": "derivation_B", "status": "QUEUED", "ai_layer_url": null, "placeholder_count": null},
-        {"paper_id": "MK-P4", "paper_type": "application_C", "status": "QUEUED", "ai_layer_url": null, "placeholder_count": null},
-        {"paper_id": "MK-P5", "paper_type": "methodology_D", "status": "QUEUED", "ai_layer_url": null, "placeholder_count": null}
+        {
+          "paper_id": "MK-P1",
+          "title": "KVS Functional Form",
+          "paper_type": "derivation_B",
+          "status": "PHASE-READY",
+          "ai_layer_url": "https://github.com/thomasbrennan/Fracttalix/blob/main/ai-layers/MK-P1-ai-layer.json",
+          "prose_doi": "pending",
+          "placeholder_count": 1
+        },
+        {
+          "paper_id": "MK-P2",
+          "paper_type": "derivation_B",
+          "status": "QUEUED",
+          "ai_layer_url": null,
+          "placeholder_count": null
+        },
+        {
+          "paper_id": "MK-P3",
+          "paper_type": "derivation_B",
+          "status": "QUEUED",
+          "ai_layer_url": null,
+          "placeholder_count": null
+        },
+        {
+          "paper_id": "MK-P4",
+          "paper_type": "application_C",
+          "status": "QUEUED",
+          "ai_layer_url": null,
+          "placeholder_count": null
+        },
+        {
+          "paper_id": "MK-P5",
+          "paper_type": "methodology_D",
+          "status": "QUEUED",
+          "ai_layer_url": null,
+          "placeholder_count": null
+        }
       ]
     },
     {
       "corpus_id": "Supporting",
       "papers": [
-        {"paper_id": "DRP-1", "title": "Dual-Reader Publishing", "paper_type": "methodology_D", "status": "PHASE-READY", "ai_layer_url": "https://github.com/thomasbrennan/Fracttalix/blob/main/ai-layers/DRP1-ai-layer.json", "placeholder_count": 0},
-        {"paper_id": "SFW-1", "title": "Sentinel Software Paper", "paper_type": "application_C", "status": "PHASE-READY", "ai_layer_url": "https://github.com/thomasbrennan/Fracttalix/blob/main/ai-layers/SFW1-ai-layer.json", "placeholder_count": 1}
+        {
+          "paper_id": "DRP-1",
+          "title": "Dual-Reader Publishing",
+          "paper_type": "methodology_D",
+          "status": "PHASE-READY",
+          "ai_layer_url": "https://github.com/thomasbrennan/Fracttalix/blob/main/ai-layers/DRP1-ai-layer.json",
+          "placeholder_count": 0
+        },
+        {
+          "paper_id": "SFW-1",
+          "title": "Sentinel Software Paper",
+          "paper_type": "application_C",
+          "status": "PHASE-READY",
+          "ai_layer_url": "https://github.com/thomasbrennan/Fracttalix/blob/main/ai-layers/SFW1-ai-layer.json",
+          "placeholder_count": 1
+        }
       ]
     }
   ],
   "channel_2_status": {
     "live": true,
-    "live_assets": 4,
+    "live_assets": 15,
     "assets": [
       "https://github.com/thomasbrennan/Fracttalix/blob/main/ai-layers/P1-ai-layer.json",
+      "https://github.com/thomasbrennan/Fracttalix/blob/main/ai-layers/P2-ai-layer.json",
+      "https://github.com/thomasbrennan/Fracttalix/blob/main/ai-layers/P3-ai-layer.json",
+      "https://github.com/thomasbrennan/Fracttalix/blob/main/ai-layers/P4-ai-layer.json",
+      "https://github.com/thomasbrennan/Fracttalix/blob/main/ai-layers/P5-ai-layer.json",
+      "https://github.com/thomasbrennan/Fracttalix/blob/main/ai-layers/P6-ai-layer.json",
+      "https://github.com/thomasbrennan/Fracttalix/blob/main/ai-layers/P7-ai-layer.json",
+      "https://github.com/thomasbrennan/Fracttalix/blob/main/ai-layers/P8-ai-layer.json",
+      "https://github.com/thomasbrennan/Fracttalix/blob/main/ai-layers/P9-ai-layer.json",
+      "https://github.com/thomasbrennan/Fracttalix/blob/main/ai-layers/P10-ai-layer.json",
+      "https://github.com/thomasbrennan/Fracttalix/blob/main/ai-layers/P11-ai-layer.json",
+      "https://github.com/thomasbrennan/Fracttalix/blob/main/ai-layers/P12-ai-layer.json",
       "https://github.com/thomasbrennan/Fracttalix/blob/main/ai-layers/MK-P1-ai-layer.json",
       "https://github.com/thomasbrennan/Fracttalix/blob/main/ai-layers/DRP1-ai-layer.json",
       "https://github.com/thomasbrennan/Fracttalix/blob/main/ai-layers/SFW1-ai-layer.json"

@@ -1,0 +1,35 @@
+{
+  "_meta": {
+    "document_type": "AI_LAYER",
+    "schema_version": "v2-S42",
+    "schema_url": "https://github.com/thomasbrennan/Fracttalix/blob/main/ai-layers/ai-layer-schema.json",
+    "produced_session": "S48",
+    "produced_by": "Claude (Anthropic) — Session 48 Phase 2 scaffold",
+    "licence": "CC BY 4.0"
+  },
+  "paper_id": "P10",
+  "corpus_id": "Fracttalix",
+  "series": "Fracttalix Corpus",
+  "series_position": "P10 of 12",
+  "paper_title": "The Design Paper",
+  "paper_type": "application_C",
+  "version": "v0",
+  "session": "S48",
+  "phase_ready": {
+    "verdict": "NOT-PHASE-READY",
+    "placeholder_count": 0,
+    "note": "Scaffold only — paper not yet written. PENDING. Antifragility engineering grounded in adaptive response mathematics."
+  },
+  "core_claim_preview": "Calibrated stress-recovery cycles at coupling resonance intervals. Meta-Kaizen as organizational training program in precise Rippetoe sense.",
+  "claim_registry": [],
+  "placeholder_register": [],
+  "summary": {
+    "total_claims": 0,
+    "type_A": 0,
+    "type_D": 0,
+    "type_F": 0,
+    "placeholder_count": 0,
+    "phase_ready": false,
+    "session_produced": "S48"
+  }
+}

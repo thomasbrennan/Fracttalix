@@ -80,6 +80,62 @@ Integrity Issues:   0
 
 ---
 
+---
+
+## Phase 2 — Corpus Completion and Referee Hardening
+
+### 9. AI Layers for P2-P5 (Retroactive)
+Created full AI layers for all 4 published papers that were missing machine-readable claim registries:
+- **P2** (Networked Implementation): 7 claims (2A, 2D, 3F), 2 placeholders
+- **P3** (The Reasoning Network): 7 claims (2A, 2D, 3F), 2 placeholders
+- **P4** (The Fractal Rhythm Model): 6 claims (1A, 3D, 2F), 1 placeholder
+- **P5** (On the Decision to Act): 6 claims (1A, 2D, 3F), 2 placeholders
+
+All layers validated against schema v2-S42. Falsification predicates follow I-2 5-part syntax. Derivation sources cross-reference P1 claims.
+
+### 10. AI Layer Scaffolds for P6-P12
+Created v0 scaffold layers for all 7 Act III papers. These contain paper metadata, core claim previews, and empty registries — ready to populate as papers are written. Every paper in the corpus now has an AI layer file.
+
+### 11. MK-P1 Schema Fixes
+- Fixed `phase_ready` field names: `c1_claim_classification` → `c1`, etc. to match schema
+- Fixed 11 `derivation_source: null` → `[]` (empty array, per schema type: array)
+- Fixed P1 `series_position`: "Paper 1 of 13" → "Paper 1 of 12"
+- Post-fix: 15/15 layers PASS.
+
+### 12. Cross-Paper Consistency Checker
+Created `scripts/cross_paper_checker.py`:
+- Validates derivation_source claim-ID references across all layers
+- Distinguishes formal claim IDs from prose references (section numbers, first principles)
+- Checks placeholder target integrity
+- Detects orphan claims (not referenced and no sources)
+- Verifies process graph dependencies are reflected in derivation chains
+- Result: 0 errors, 26 warnings (all expected: orphans in self-contained papers, unresolved future placeholders)
+
+### 13. Reproducibility Manifest
+Created `REPRODUCIBILITY.md` — maps every Type F claim to executable tests, documents the verification pipeline, lists all key files, and provides step-by-step reproduction instructions.
+
+### 14. Process Graph and Bootstrap Updates
+- Process graph: all 15 AI layer URLs set, channel_2_status updated to 15 live assets
+- Bootstrap doc: updated AI layer table, session 48 Phase 2 summary
+- CI workflow: added cross-paper checker step
+
+---
+
+## Validation Results (Phase 2 Final)
+
+```
+AI Layers:          15/15 PASS (0 errors)
+Phase-Ready:        4/15 (P1, MK-P1, DRP-1, SFW-1)
+NOT-Phase-Ready:    4/15 (P2-P5 — published, pending framing review)
+Scaffold:           7/15 (P6-P12 — not yet written)
+Total Claims:       80 (A:14 D:25 F:41)
+Cross-references:   118 derivation_source entries (102 claim IDs, 16 prose refs)
+Cross-paper errors: 0
+Open Placeholders:  10
+```
+
+---
+
 ## Session Significance
 
-This session was pure infrastructure — no new theory, no new code features. But every artifact in the repo is now internally consistent, machine-verifiable, and CI-enforced. The foundation holds.
+Phase 1 was infrastructure — making what existed consistent. Phase 2 was completion — every paper now has a machine-readable layer, every cross-reference is validated, and the reproducibility pipeline is documented end to end. The corpus is referee-ready at the structural level.
