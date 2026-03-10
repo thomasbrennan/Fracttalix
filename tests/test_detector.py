@@ -1,9 +1,7 @@
 # tests/test_detector.py
 # Tests for SentinelDetector
 
-import pytest
-from fracttalix import SentinelDetector, SentinelConfig, SentinelResult
-
+from fracttalix import SentinelConfig, SentinelDetector, SentinelResult
 
 REQUIRED_KEYS = {
     "step", "value", "ewma", "alert", "anomaly_score", "z_score", "alert_reasons"

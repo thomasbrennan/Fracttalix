@@ -6,13 +6,12 @@
 
 import math
 from collections import deque
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List
 
-from fracttalix._compat import _NP, _mean, np, _scipy_signal, _SCIPY
+from fracttalix._compat import _NP, _SCIPY, _scipy_signal, np
 from fracttalix.config import SentinelConfig
 from fracttalix.steps.base import DetectorStep
 from fracttalix.window import StepContext
-
 
 # ---------------------------------------------------------------------------
 # Step 26: ThroughputEstimationStep

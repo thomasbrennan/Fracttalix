@@ -4,7 +4,6 @@
 import math
 import time
 
-import pytest
 from fracttalix import SentinelConfig, SentinelDetector
 
 

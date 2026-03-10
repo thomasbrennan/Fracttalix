@@ -2,8 +2,10 @@
 # Shared pytest fixtures for Fracttalix V12 test suite.
 
 import math
+
 import pytest
-from fracttalix import SentinelDetector, SentinelConfig
+
+from fracttalix import SentinelConfig, SentinelDetector
 
 
 @pytest.fixture

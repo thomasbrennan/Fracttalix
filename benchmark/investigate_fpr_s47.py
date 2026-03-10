@@ -4,16 +4,16 @@ FALSE POSITIVE RATE INVESTIGATION — v12.1
 Work Order S47 | Session: thomasbrennan/Fracttalix
 """
 import sys
+
 sys.path.insert(0, '/home/user/Fracttalix')
 
+from benchmark.ablation import _NopStep
+from benchmark.archetypes import ARCHETYPES, _randn_list, generate
+from benchmark.metrics import evaluate
 from fracttalix.config import SentinelConfig
 from fracttalix.detector import SentinelDetector
 from fracttalix.steps import _build_default_pipeline
 from fracttalix.steps.base import DetectorStep
-from benchmark.archetypes import generate, _randn_list, ARCHETYPES
-from benchmark.metrics import _compute_f1_with_tolerance, evaluate
-from benchmark.ablation import _NopStep
-
 
 # ─────────────────────────────────────────────────────────────────────────────
 # Helpers
@@ -74,7 +74,7 @@ print(f"{'Physics/maintenance disabled (Steps 26-36)':<42} {phys_off_rate*100:>1
 print(f"\nEligible post-warmup steps: {eligible}")
 
 # Attribution deltas
-print(f"\nContribution to false-alert rate (baseline - disabled):")
+print("\nContribution to false-alert rate (baseline - disabled):")
 print(f"  EWMA threshold:    {(baseline_rate - ewma_off_rate)*100:+.1f} pp")
 print(f"  Coherence:         {(baseline_rate - coh_off_rate)*100:+.1f} pp")
 print(f"  Coupling:          {(baseline_rate - coup_off_rate)*100:+.1f} pp")
@@ -82,7 +82,7 @@ print(f"  VarCUSUM:          {(baseline_rate - var_off_rate)*100:+.1f} pp")
 print(f"  Physics:           {(baseline_rate - phys_off_rate)*100:+.1f} pp")
 
 # Alert reasons breakdown on baseline
-print(f"\nAlert-reasons frequency on baseline (top reasons on normal noise):")
+print("\nAlert-reasons frequency on baseline (top reasons on normal noise):")
 base_cfg2 = SentinelConfig()
 pipeline2 = _build_default_pipeline(base_cfg2)
 det2 = SentinelDetector(config=base_cfg2, steps=pipeline2)
@@ -129,8 +129,8 @@ for mult in multipliers:
     print(f"{mult:>5.1f} | {nrate*100:>5.1f}% | {pt:>6.3f} | {ctx:>7.3f} | {coll:>8.3f} | {drft:>9.3f} | {var:>7.3f}{flag}")
 
 if not optimal_found:
-    print(f"\n  NOTE: No multiplier in [1.5, 4.0] achieves <5% normal alert rate.")
-    print(f"  Searching extended range...")
+    print("\n  NOTE: No multiplier in [1.5, 4.0] achieves <5% normal alert rate.")
+    print("  Searching extended range...")
     for mult in [5.0, 6.0, 7.0, 8.0, 10.0]:
         cfg = SentinelConfig(multiplier=mult)
         nrate, _ = alert_rate_on_noise(cfg)
@@ -155,11 +155,11 @@ print("=" * 67)
 print("3. Normal Data Characterisation")
 print("=" * 67)
 
-print(f"\n(a) Pure N(0,1) white noise (seed=99, n=1000):")
+print("\n(a) Pure N(0,1) white noise (seed=99, n=1000):")
 print(f"    Alert rate = {baseline_rate*100:.1f}%  (eligible steps = {eligible})")
 
-print(f"\n(b) Benchmark 'normal' label segments (seed=42, n=1000):")
-print(f"    (label=0 steps only, post-warmup, per archetype)")
+print("\n(b) Benchmark 'normal' label segments (seed=42, n=1000):")
+print("    (label=0 steps only, post-warmup, per archetype)")
 print()
 for arch in ARCHETYPES:
     data, labels = generate(arch, n=1000, seed=42)
@@ -174,9 +174,9 @@ for arch in ARCHETYPES:
     rate = alerts_n / eligible_n if eligible_n else 0.0
     print(f"    {arch:<12}: {rate*100:.1f}%  (eligible normal steps = {eligible_n})")
 
-print(f"\n  'contextual' archetype base = 3*sin(2πi/20) + N(0,1)")
-print(f"  (structured seasonal component — not stationary Gaussian)")
-print(f"  All other archetypes: base signal is pure N(0,1) white noise")
+print("\n  'contextual' archetype base = 3*sin(2πi/20) + N(0,1)")
+print("  (structured seasonal component — not stationary Gaussian)")
+print("  All other archetypes: base signal is pure N(0,1) white noise")
 
 # The reported 35.6% is from the full benchmark suite across all archetypes.
 # Compute the aggregate (all-archetype) normal rate:
@@ -191,7 +191,7 @@ for arch in ARCHETYPES:
             if r.get('alert', False):
                 total_alerts_bench += 1
 agg_rate = total_alerts_bench / total_eligible_bench if total_eligible_bench else 0.0
-print(f"\n  Aggregate normal-label rate across all 5 archetypes (benchmark suite):")
+print("\n  Aggregate normal-label rate across all 5 archetypes (benchmark suite):")
 print(f"  {agg_rate*100:.1f}%  ({total_alerts_bench} alerts / {total_eligible_bench} eligible steps)")
 
 

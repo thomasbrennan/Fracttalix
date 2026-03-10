@@ -1,9 +1,8 @@
 # tests/test_steps_frequency.py
 # Tests for Steps 12-15: RPIStep, RFIStep, SSIStep, PEStep
 
-import pytest
 from fracttalix import SentinelConfig
-from fracttalix.steps import RPIStep, RFIStep, SSIStep, PEStep
+from fracttalix.steps import PEStep, RFIStep, RPIStep, SSIStep
 from fracttalix.window import StepContext, WindowBank
 
 

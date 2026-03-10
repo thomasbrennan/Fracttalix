@@ -2,11 +2,9 @@
 # Metric calculation ported from SentinelBenchmark in v11.
 # Computes F1 (with buffer tolerance), AUPRC, VUS-PR, and mean detection lag.
 
-import math
 from typing import Any, Dict, List, Optional, Tuple
 
 from benchmark.archetypes import ARCHETYPES, generate
-
 
 # ---------------------------------------------------------------------------
 # Internal helpers

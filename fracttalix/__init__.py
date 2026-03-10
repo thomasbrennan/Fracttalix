@@ -2,7 +2,7 @@
 # Fracttalix Sentinel V12 — streaming anomaly detector package
 
 try:
-    from importlib.metadata import version, PackageNotFoundError
+    from importlib.metadata import PackageNotFoundError, version
     try:
         __version__ = version("fracttalix")
     except PackageNotFoundError:
@@ -11,69 +11,69 @@ except ImportError:
     __version__ = "12.1.0"
 
 from fracttalix.config import SentinelConfig
-from fracttalix.types import (
-    FrequencyBands,
-    StructuralSnapshot,
-    CouplingMatrix,
-    ChannelCoherence,
-    DegradationSequence,
-    AlertSeverity,
-    AlertType,
-    Alert,
-    SentinelResult,
-)
-from fracttalix.window import WindowBank, StepContext
-from fracttalix.steps.base import DetectorStep, RegimeBoostState
+from fracttalix.detector import Detector_7_10, SentinelDetector, _legacy_kwargs_to_config
+from fracttalix.multistream import MultiStreamSentinel
 from fracttalix.steps import (
-    # Foundation
-    CoreEWMAStep,
-    StructuralSnapshotStep,
-    FrequencyDecompositionStep,
-    CUSUMStep,
-    RegimeStep,
-    VarCUSUMStep,
-    PageHinkleyStep,
-    # Temporal
-    STIStep,
-    TPSStep,
-    OscDampStep,
-    CPDStep,
-    # Frequency
-    RPIStep,
-    RFIStep,
-    SSIStep,
-    PEStep,
-    # Complexity
-    EWSStep,
-    AQBStep,
-    SeasonalStep,
-    MahalStep,
-    RRSStep,
-    # Channels
-    BandAnomalyStep,
-    CrossFrequencyCouplingStep,
-    ChannelCoherenceStep,
-    CascadePrecursorStep,
-    DegradationSequenceStep,
-    # Physics
-    ThroughputEstimationStep,
-    MaintenanceBurdenStep,
-    PhaseExtractionStep,
-    PACCoefficientStep,
-    PACDegradationStep,
-    CriticalCouplingEstimationStep,
-    CouplingRateStep,
-    DiagnosticWindowStep,
-    KuramotoOrderStep,
-    SequenceOrderingStep,
-    ReversedSequenceStep,
-    AlertReasonsStep,
     # Pipeline builder
     PIPELINE,
+    AlertReasonsStep,
+    AQBStep,
+    # Channels
+    BandAnomalyStep,
+    CascadePrecursorStep,
+    ChannelCoherenceStep,
+    # Foundation
+    CoreEWMAStep,
+    CouplingRateStep,
+    CPDStep,
+    CriticalCouplingEstimationStep,
+    CrossFrequencyCouplingStep,
+    CUSUMStep,
+    DegradationSequenceStep,
+    DiagnosticWindowStep,
+    # Complexity
+    EWSStep,
+    FrequencyDecompositionStep,
+    KuramotoOrderStep,
+    MahalStep,
+    MaintenanceBurdenStep,
+    OscDampStep,
+    PACCoefficientStep,
+    PACDegradationStep,
+    PageHinkleyStep,
+    PEStep,
+    PhaseExtractionStep,
+    RegimeStep,
+    ReversedSequenceStep,
+    RFIStep,
+    # Frequency
+    RPIStep,
+    RRSStep,
+    SeasonalStep,
+    SequenceOrderingStep,
+    SSIStep,
+    # Temporal
+    STIStep,
+    StructuralSnapshotStep,
+    # Physics
+    ThroughputEstimationStep,
+    TPSStep,
+    VarCUSUMStep,
     _build_default_pipeline,
 )
-from fracttalix.detector import SentinelDetector, Detector_7_10, _legacy_kwargs_to_config
-from fracttalix.multistream import MultiStreamSentinel
+from fracttalix.steps.base import DetectorStep, RegimeBoostState
+from fracttalix.types import (
+    Alert,
+    AlertSeverity,
+    AlertType,
+    ChannelCoherence,
+    CouplingMatrix,
+    DegradationSequence,
+    FrequencyBands,
+    SentinelResult,
+    StructuralSnapshot,
+)
+from fracttalix.window import StepContext, WindowBank
 
 __all__ = [
     "__version__",
