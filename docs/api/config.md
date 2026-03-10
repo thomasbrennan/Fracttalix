@@ -1,0 +1,3 @@
+# SentinelConfig
+
+::: fracttalix.config.SentinelConfig

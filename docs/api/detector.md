@@ -1,0 +1,3 @@
+# SentinelDetector
+
+::: fracttalix.detector.SentinelDetector
