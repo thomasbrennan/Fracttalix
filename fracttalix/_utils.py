@@ -56,4 +56,7 @@ def _phase_randomize_worker(args):
         fft_r[i] *= math.cos(phases[i - 1]) + 1j * math.sin(phases[i - 1])
         if n - i != i:
             fft_r[n - i] = fft_r[i].conjugate()
-    return _np_ifft(fft_r).real.tolist()
+    result = _np_ifft(fft_r)
+    if isinstance(result, list):
+        return [x.real if isinstance(x, complex) else x for x in result]
+    return result.real.tolist()
