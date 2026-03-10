@@ -1,5 +1,11 @@
 # Fracttalix Sentinel v12.1
 
+[![Tests](https://github.com/thomasbrennan/Fracttalix/actions/workflows/tests.yml/badge.svg)](https://github.com/thomasbrennan/Fracttalix/actions/workflows/tests.yml)
+[![Python 3.9–3.12](https://img.shields.io/badge/python-3.9%E2%80%933.12-blue.svg)](https://www.python.org/)
+[![License: CC0-1.0](https://img.shields.io/badge/license-CC0--1.0-brightgreen.svg)](https://creativecommons.org/publicdomain/zero/1.0/)
+[![PyPI version](https://img.shields.io/pypi/v/fracttalix.svg)](https://pypi.org/project/fracttalix/)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.18859299.svg)](https://doi.org/10.5281/zenodo.18859299)
+
 **Streaming anomaly detection grounded in the Three-Channel Model of Dissipative Network Information Transmission — extended with four physics-derived capabilities from Session 36.**
 
 Sentinel ingests one scalar (or multivariate) observation at a time and emits a rich result dictionary on every call — no batching, no retraining, no warmup gap once past the configurable warmup window.
@@ -7,6 +13,8 @@ Sentinel ingests one scalar (or multivariate) observation at a time and emits a 
 > **Theoretical foundation:** Fractal Rhythm Model Papers 1–6
 > DOI: [10.5281/zenodo.18859299](https://doi.org/10.5281/zenodo.18859299)
 > License: **CC0** — public domain
+
+**[Full documentation](https://thomasbrennan.github.io/Fracttalix)** | **[Examples](examples/)** | **[CHANGELOG](CHANGELOG.md)**
 
 ---
 
@@ -165,7 +173,9 @@ if result.is_reversed_sequence():
 ## Installation
 
 ```bash
-pip install fracttalix
+pip install fracttalix            # zero dependencies — pure stdlib core
+pip install fracttalix[fast]      # + numpy, scipy
+pip install fracttalix[full]      # + numpy, scipy, numba, matplotlib, tqdm
 ```
 
 **Optional accelerators (install any or none):**
@@ -178,9 +188,10 @@ pip install matplotlib     # plot_history() dashboard
 pip install tqdm           # progress bars in benchmark
 ```
 
-**Run tests (374 tests, all expected to pass):**
+**Run tests (405 tests, all expected to pass):**
 
 ```bash
+pip install fracttalix[dev]       # pytest, ruff, mypy, mkdocs
 pytest
 ```
 

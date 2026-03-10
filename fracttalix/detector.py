@@ -21,7 +21,7 @@ from fracttalix.window import StepContext, WindowBank
 try:
     from fracttalix import __version__
 except ImportError:
-    __version__ = "12.0.0"
+    __version__ = "12.1.0"
 
 
 def _legacy_kwargs_to_config(kw: dict) -> SentinelConfig:
@@ -262,7 +262,7 @@ class SentinelDetector:
         try:
             from fracttalix import __version__ as _ver
         except ImportError:
-            _ver = "12.0.0"
+            _ver = "12.1.0"
         sd: Dict[str, Any] = {
             "version": _ver,
             "n": self._n,
@@ -399,7 +399,7 @@ class SentinelDetector:
         try:
             from fracttalix import __version__ as _ver
         except ImportError:
-            _ver = "12.0.0"
+            _ver = "12.1.0"
         return (f"SentinelDetector(v{_ver}, n={self._n}, "
                 f"alpha={self.config.alpha}, warmup={self.config.warmup_periods}, "
                 f"three_channel=True)")
