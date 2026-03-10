@@ -676,6 +676,19 @@ det2.load_state(json_str)
 
 ---
 
+## Channel 2 — AI Layers
+
+Machine-readable falsification layers for the Fracttalix corpus. All layers conform to `ai-layers/ai-layer-schema.json` (v2-S42, Dual Reader Standard).
+
+| ID    | Paper                        | Status      | File                             |
+|-------|------------------------------|-------------|----------------------------------|
+| P1    | Fractal Rhythm Model (Paper 1) | PHASE-READY | ai-layers/P1-ai-layer.json       |
+| MK-P1 | Meta-Kaizen Paper 1          | PHASE-READY | ai-layers/MK-P1-ai-layer.json    |
+| DRP-1 | Dependency Resolution Process | PHASE-READY | ai-layers/DRP1-ai-layer.json     |
+| SFW-1 | Sentinel v12                 | PHASE-READY | ai-layers/SFW1-ai-layer.json     |
+
+---
+
 ## Authors & License
 
 **Authors:** Thomas Brennan & Claude (Anthropic) & Grok (xAI)
