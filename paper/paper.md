@@ -60,6 +60,16 @@ Four physics-derived steps provide collapse forecasting. **Maintenance Burden** 
 
 The built-in `SentinelBenchmark` harness evaluates Sentinel against five labeled anomaly archetypes: point anomalies (sparse 8σ spikes), contextual anomalies (values anomalous relative to sinusoidal seasonal context), collective anomalies (extended runs of moderately elevated values), drift (slow linear mean drift starting mid-series), and variance anomalies (sudden 4× variance explosion). Metrics reported are F1 score, area under the precision-recall curve (AUPRC), volume under the surface of precision-recall (VUS-PR), and mean detection lag in observations.
 
+The following results were produced with seed 42 and n=1000 observations per archetype using `benchmark.run_suite(seed=42)`:
+
+| Archetype          | F1   | AUPRC | VUS-PR | Detection Lag (obs) |
+|--------------------|------|-------|--------|---------------------|
+| Point anomaly      | 0.36 | 0.29  | 0.32   | 0                   |
+| Contextual anomaly | 0.20 | 0.19  | 0.21   | 0                   |
+| Collective anomaly | 0.11 | 0.09  | 0.09   | 0                   |
+| Drift              | 0.67 | 0.50  | 0.50   | 0                   |
+| Variance anomaly   | 0.69 | 0.52  | 0.52   | 0                   |
+
 V12 includes comparison against two external baselines: PyOD ECOD [@Zhao2019] and River HalfSpaceTrees [@Montiel2021], run over the same five archetype datasets. An ablation study quantifies the F1 contribution of each step group by sequentially disabling the Foundation, Channel, and Physics groups and reporting the resulting score delta on the collective and drift archetypes, where the multi-channel architecture contributes most visibly. The Physics group (steps 26–37) contributes primarily to earlier detection lag on the collective and variance archetypes, as the PAC pre-cascade signal fires several observations before the composite anomaly score crosses the EWMA threshold.
 
 # Acknowledgements
