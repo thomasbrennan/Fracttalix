@@ -1,18 +1,17 @@
 # tests/test_steps_foundation.py
 # Tests for Steps 1-7: foundation steps
 
-import pytest
 from fracttalix import SentinelConfig
-from fracttalix.steps.base import RegimeBoostState
 from fracttalix.steps import (
     CoreEWMAStep,
-    StructuralSnapshotStep,
-    FrequencyDecompositionStep,
     CUSUMStep,
-    RegimeStep,
-    VarCUSUMStep,
+    FrequencyDecompositionStep,
     PageHinkleyStep,
+    RegimeStep,
+    StructuralSnapshotStep,
+    VarCUSUMStep,
 )
+from fracttalix.steps.base import RegimeBoostState
 from fracttalix.window import StepContext, WindowBank
 
 

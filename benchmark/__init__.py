@@ -2,10 +2,10 @@
 # Fracttalix V12 — benchmark subpackage
 # Unified evaluation harness for anomaly detection benchmarks.
 
-from benchmark.archetypes import BenchmarkArchetype, generate
-from benchmark.metrics import evaluate, run_suite
-from benchmark.comparison import compare_baselines
 from benchmark.ablation import ablation_study
+from benchmark.archetypes import BenchmarkArchetype, generate
+from benchmark.comparison import compare_baselines
+from benchmark.metrics import evaluate, run_suite
 
 __all__ = [
     "BenchmarkArchetype",

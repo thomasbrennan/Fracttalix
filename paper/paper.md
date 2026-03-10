@@ -13,7 +13,7 @@ authors:
     orcid: 0009-0002-6353-7115
     affiliation: 1
 affiliations:
-  - name: Entwood Hollow Research Station, Trinity County, California, USA
+  - name: Independent Researcher
     index: 1
 date: 2026-03-09
 bibliography: paper.bib

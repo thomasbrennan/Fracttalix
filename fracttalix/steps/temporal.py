@@ -10,7 +10,6 @@ from fracttalix.config import SentinelConfig
 from fracttalix.steps.base import DetectorStep
 from fracttalix.window import StepContext
 
-
 # ---------------------------------------------------------------------------
 # Step 8: STIStep — Shear-Turbulence Index
 # ---------------------------------------------------------------------------
@@ -117,7 +116,6 @@ class OscDampStep(DetectorStep):
         self._amp_ewma = 0.0
 
     def update(self, ctx: StepContext) -> None:
-        v = ctx.current
         # Phase 2: use osc_damp_window slice, not full bank
         w_all = ctx.bank.get("scalar")
         w = list(w_all)[-self.cfg.osc_damp_window:] if len(w_all) > 0 else []

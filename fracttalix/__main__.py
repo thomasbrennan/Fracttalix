@@ -3,7 +3,6 @@
 
 import argparse
 import csv
-import sys
 
 from fracttalix import __version__
 from fracttalix.config import SentinelConfig

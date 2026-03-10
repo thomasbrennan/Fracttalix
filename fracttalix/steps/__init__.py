@@ -2,57 +2,57 @@
 # Imports and exports PIPELINE list (ordered list of all 37 step classes)
 # and all step classes.
 
+from fracttalix.config import SentinelConfig
 from fracttalix.steps.base import DetectorStep, RegimeBoostState
-from fracttalix.steps.foundation import (
-    CoreEWMAStep,
-    StructuralSnapshotStep,
-    FrequencyDecompositionStep,
-    CUSUMStep,
-    RegimeStep,
-    VarCUSUMStep,
-    PageHinkleyStep,
-)
-from fracttalix.steps.temporal import (
-    STIStep,
-    TPSStep,
-    OscDampStep,
-    CPDStep,
-)
-from fracttalix.steps.frequency import (
-    RPIStep,
-    RFIStep,
-    SSIStep,
-    PEStep,
-)
-from fracttalix.steps.complexity import (
-    EWSStep,
-    AQBStep,
-    SeasonalStep,
-    MahalStep,
-    RRSStep,
-)
 from fracttalix.steps.channels import (
     BandAnomalyStep,
-    CrossFrequencyCouplingStep,
-    ChannelCoherenceStep,
     CascadePrecursorStep,
+    ChannelCoherenceStep,
+    CrossFrequencyCouplingStep,
     DegradationSequenceStep,
 )
+from fracttalix.steps.complexity import (
+    AQBStep,
+    EWSStep,
+    MahalStep,
+    RRSStep,
+    SeasonalStep,
+)
+from fracttalix.steps.foundation import (
+    CoreEWMAStep,
+    CUSUMStep,
+    FrequencyDecompositionStep,
+    PageHinkleyStep,
+    RegimeStep,
+    StructuralSnapshotStep,
+    VarCUSUMStep,
+)
+from fracttalix.steps.frequency import (
+    PEStep,
+    RFIStep,
+    RPIStep,
+    SSIStep,
+)
 from fracttalix.steps.physics import (
-    ThroughputEstimationStep,
-    MaintenanceBurdenStep,
-    PhaseExtractionStep,
-    PACCoefficientStep,
-    PACDegradationStep,
-    CriticalCouplingEstimationStep,
+    AlertReasonsStep,
     CouplingRateStep,
+    CriticalCouplingEstimationStep,
     DiagnosticWindowStep,
     KuramotoOrderStep,
-    SequenceOrderingStep,
+    MaintenanceBurdenStep,
+    PACCoefficientStep,
+    PACDegradationStep,
+    PhaseExtractionStep,
     ReversedSequenceStep,
-    AlertReasonsStep,
+    SequenceOrderingStep,
+    ThroughputEstimationStep,
 )
-from fracttalix.config import SentinelConfig
+from fracttalix.steps.temporal import (
+    CPDStep,
+    OscDampStep,
+    STIStep,
+    TPSStep,
+)
 
 
 def _build_default_pipeline(config: SentinelConfig):

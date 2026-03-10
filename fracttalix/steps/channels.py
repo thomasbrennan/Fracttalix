@@ -10,9 +10,13 @@ from fracttalix._compat import _mean
 from fracttalix.config import SentinelConfig
 from fracttalix.steps.base import DetectorStep
 from fracttalix.types import (
-    Alert, AlertSeverity, AlertType,
-    ChannelCoherence, CouplingMatrix, DegradationSequence,
-    StructuralSnapshot, _build_sequence_narrative,
+    Alert,
+    AlertSeverity,
+    AlertType,
+    ChannelCoherence,
+    CouplingMatrix,
+    DegradationSequence,
+    _build_sequence_narrative,
 )
 from fracttalix.window import StepContext
 

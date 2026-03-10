@@ -3,16 +3,14 @@
 #                        ChannelCoherenceStep, CascadePrecursorStep,
 #                        DegradationSequenceStep
 
-import pytest
 from fracttalix import SentinelConfig
 from fracttalix.steps import (
     BandAnomalyStep,
-    CrossFrequencyCouplingStep,
-    ChannelCoherenceStep,
     CascadePrecursorStep,
+    ChannelCoherenceStep,
+    CrossFrequencyCouplingStep,
     DegradationSequenceStep,
 )
-from fracttalix.types import FrequencyBands
 from fracttalix.window import StepContext, WindowBank
 
 
