@@ -1,4 +1,4 @@
-# Fracttalix Sentinel v12.0
+# Fracttalix Sentinel v12.1
 
 https://doi.org/10.5281/zenodo.18859299
 
@@ -112,7 +112,7 @@ SentinelConfig.realtime()      # quantile-adaptive thresholds
 18. **RRSStep** — Relative Rhythmic Strength (harmonic power)
 19. **AlertReasonsStep** — Aggregates alert reasons into human-readable descriptions
 
-### v12.0 three-channel extension (steps 20-26)
+### v12.1 three-channel extension (steps 20-26)
 
 20. **StructuralSnapshotStep** — Channel 1 structural properties
 21. **FrequencyDecompositionStep** — Channel 2 five-band FFT decomposition
@@ -174,7 +174,8 @@ python3 fracttalix_sentinel_v1200.py --version
 
 | Version | Date | Description |
 |---|---|---|
-| **v12.0** | 2026-03-10 | Current release |
+| **v12.1** | 2026-03-10 | Current release |
+| **v12.0** | 2026-03-10 | JOSS infrastructure, CI, docs overhaul |
 | **v11.0** | 2026-03-08 | Incremental pipeline and channel refinements |
 | **v10.0** | 2026-03-06 | Incremental pipeline and metric improvements |
 | **v9.0** | 2026-03-03 | Three-channel extension: structural, rhythmic, temporal information channels |

@@ -1,7 +1,7 @@
 # fracttalix_sentinel_v1200.py
-# Fracttalix Sentinel v12.0 — Three-Channel Extension
+# Fracttalix Sentinel v12.1 — Three-Channel Extension
 #
-# V12.0 extends the v8.0 detection architecture to implement the
+# V12.1 extends the v8.0 detection architecture to implement the
 # three-channel model of dissipative network information transmission
 # derived in the Meta-Kaizen Paper 6 theoretical framework.
 #
@@ -33,14 +33,14 @@
 #   ε: SSI replaces RSI naming (T0-05); rsi alias preserved
 #
 # Governing principle: The v8.0 19-step pipeline is the foundation.
-# V12.0 extends it. No existing step is removed. No existing behavior changed.
+# V12.1 extends it. No existing step is removed. No existing behavior changed.
 # All extensions are additive. Full backward compatibility with v8.0 and v7.x.
 #
 # Theoretical foundation: Fractal Rhythm Model Papers 1-6
 # DOI: 10.5281/zenodo.18859299
 # GitHub: https://github.com/thomasbrennan/Fracttalix
 
-__version__ = "12.0.0"
+__version__ = "12.1.0"
 __author__ = "Thomas Brennan & Claude (Anthropic) & Grok (xAI)"
 __license__ = "CC0"
 
@@ -3521,7 +3521,7 @@ class SentinelServer:
 def _cli_main(argv=None):
     parser = argparse.ArgumentParser(
         prog="fracttalix_sentinel_v1200",
-        description="Fracttalix Sentinel v12.0 streaming anomaly detector",
+        description="Fracttalix Sentinel v12.1 streaming anomaly detector",
     )
     parser.add_argument("--file", "-f", help="CSV file path (reads first column)")
     parser.add_argument("--alpha", type=float, default=0.1)
@@ -3597,7 +3597,7 @@ def _run_tests():
             fail(name, f"{type(e).__name__}: {e}")
 
     print(f"\n{'='*60}")
-    print(f"  Fracttalix Sentinel v12.0 — 65-test Smoke Suite")
+    print(f"  Fracttalix Sentinel v12.1 — 65-test Smoke Suite")
     print(f"{'='*60}\n")
 
     # ------------------------------------------------------------------

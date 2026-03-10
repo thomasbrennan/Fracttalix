@@ -225,10 +225,10 @@ A separate 5-paper series documenting the verification process itself. MK-P1 der
 
 ## SECTION 8 — THE SENTINEL (SOFTWARE)
 
-**Fracttalix Sentinel v12.0** — three-channel streaming anomaly detector grounded in the FRM.
+**Fracttalix Sentinel v12.1** — three-channel streaming anomaly detector grounded in the FRM.
 
 - Single-file Python, zero required dependencies
-- 26-step pipeline (19 v8.0 foundation + 7 v12.0 three-channel extension)
+- 26-step pipeline (19 v8.0 foundation + 7 v12.1 three-channel extension)
 - Three information channels: structural, rhythmic, temporal
 - Alert types: BAND_ANOMALY, COUPLING_DEGRADATION, STRUCTURAL_RHYTHMIC_DECOUPLING, CASCADE_PRECURSOR
 - 65/65 tests passing
@@ -303,7 +303,7 @@ Fracttalix/
 │   ├── session_36_notes.md
 │   ├── session_36_theoretical_advance.md
 │   └── session_36_complete.md
-├── fracttalix_sentinel_v1200.py       ← Sentinel v12.0
+├── fracttalix_sentinel_v1200.py       ← Sentinel v12.1
 ├── README.md
 ├── LICENSE                           ← CC0
 ├── .gitignore
