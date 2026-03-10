@@ -16,6 +16,9 @@ from fracttalix.types import (
 )
 from fracttalix.window import StepContext
 
+# Phase-amplitude coupling bin count for modulation index computation.
+PAC_PHASE_BINS = 8
+
 
 # ---------------------------------------------------------------------------
 # Step 21: BandAnomalyStep
@@ -124,13 +127,13 @@ class CrossFrequencyCouplingStep(DetectorStep):
         n = len(low_phases)
         if n < 2:
             return 0.0
-        bins: List[List[float]] = [[] for _ in range(8)]
+        bins: List[List[float]] = [[] for _ in range(PAC_PHASE_BINS)]
         for ph, pw in zip(low_phases, high_powers):
-            bin_idx = int((ph + math.pi) / (2 * math.pi) * 8) % 8
+            bin_idx = int((ph + math.pi) / (2 * math.pi) * PAC_PHASE_BINS) % PAC_PHASE_BINS
             bins[bin_idx].append(pw)
         bin_means = [sum(b) / len(b) if b else 0.0 for b in bins]
-        overall_mean = sum(bin_means) / 8.0
-        variance = sum((m - overall_mean) ** 2 for m in bin_means) / 8.0
+        overall_mean = sum(bin_means) / float(PAC_PHASE_BINS)
+        variance = sum((m - overall_mean) ** 2 for m in bin_means) / float(PAC_PHASE_BINS)
         best_dev = max(bin_means) - overall_mean
         max_variance = best_dev ** 2 if best_dev > 0 else 1e-10
         return variance / (max_variance + 1e-10)

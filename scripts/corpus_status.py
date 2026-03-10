@@ -11,8 +11,12 @@ Usage:
 """
 
 import json
+import logging
 import sys
 from pathlib import Path
+
+logger = logging.getLogger(__name__)
+logging.basicConfig(level=logging.INFO, format="%(levelname)s: %(message)s")
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
 AI_LAYERS_DIR = REPO_ROOT / "ai-layers"
@@ -165,10 +169,10 @@ def main():
     elif check_only:
         if issues:
             for issue in issues:
-                print(f"ISSUE: {issue}")
+                logger.error(issue)
             sys.exit(1)
         else:
-            print("All integrity checks passed.")
+            logger.info("All integrity checks passed.")
             sys.exit(0)
     else:
         print_report(layers, process_graph, issues)
