@@ -10,6 +10,7 @@ type: software
 authors:
   - family-names: Brennan
     given-names: Thomas
+    orcid: "https://orcid.org/0009-0002-6353-7115"
 keywords:
   - anomaly-detection
   - streaming
