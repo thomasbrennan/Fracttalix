@@ -99,7 +99,7 @@ For maximum fidelity, also attach these live files from GitHub:
 - **Citation format**: [Fracttalix Paper N, AI-Layer, Claim ID]
 - **Session numbering**: S1–S44 (current)
 - **Build Table**: tracks all 13 papers, milestones, dependencies
-- **Sentinel**: Python script (v9.0) — corpus integrity checker
+- **Sentinel**: Python script (v12.0) — corpus integrity checker
 - **Meta-Kaizen (MK)**: AI layer documenting the verification process itself
 
 ## Key files in repo
@@ -121,7 +121,7 @@ Fracttalix/
 │   ├── session_36_notes.md
 │   ├── session_36_theoretical_advance.md
 │   └── session_36_complete.md
-├── fracttalix_sentinel_v900.py   ← Sentinel v9.0
+├── fracttalix_sentinel_v1200.py  ← Sentinel v12.0
 ├── README.md
 ├── LICENSE
 └── Legal Notice/

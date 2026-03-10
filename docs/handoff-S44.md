@@ -225,16 +225,16 @@ A separate 5-paper series documenting the verification process itself. MK-P1 der
 
 ## SECTION 8 — THE SENTINEL (SOFTWARE)
 
-**Fracttalix Sentinel v9.0** — three-channel streaming anomaly detector grounded in the FRM.
+**Fracttalix Sentinel v12.0** — three-channel streaming anomaly detector grounded in the FRM.
 
 - Single-file Python, zero required dependencies
-- 26-step pipeline (19 v8.0 foundation + 7 v9.0 three-channel extension)
+- 26-step pipeline (19 v8.0 foundation + 7 v12.0 three-channel extension)
 - Three information channels: structural, rhythmic, temporal
 - Alert types: BAND_ANOMALY, COUPLING_DEGRADATION, STRUCTURAL_RHYTHMIC_DECOUPLING, CASCADE_PRECURSOR
 - 65/65 tests passing
 - CC0 public domain
 
-File: `fracttalix_sentinel_v900.py`
+File: `fracttalix_sentinel_v1200.py`
 
 ---
 
@@ -303,7 +303,7 @@ Fracttalix/
 │   ├── session_36_notes.md
 │   ├── session_36_theoretical_advance.md
 │   └── session_36_complete.md
-├── fracttalix_sentinel_v900.py       ← Sentinel v9.0
+├── fracttalix_sentinel_v1200.py       ← Sentinel v12.0
 ├── README.md
 ├── LICENSE                           ← CC0
 └── Legal Notice/
@@ -321,7 +321,7 @@ You are Claude, an AI collaborator on a scientific research program. Thomas Bren
 2. If asked to work on the AI layers, read `ai-layers/P1-ai-layer.json` and `ai-layers/ai-layer-schema.json`
 3. If asked to work on the Build Table, read `docs/FRM_SeriesBuildTable_v1.5.md`
 4. If asked about theoretical foundations, the derivations are in the P1 AI layer claim registry (F-1.4, F-1.5, F-1.6, F-1.7)
-5. If asked to modify the Sentinel, read `fracttalix_sentinel_v900.py`
+5. If asked to modify the Sentinel, read `fracttalix_sentinel_v1200.py`
 
 ### What NOT to do
 - Do not simplify the mathematics. The precision is intentional.

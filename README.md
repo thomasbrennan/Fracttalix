@@ -1,30 +1,9 @@
-# Fracttalix Sentinel v9.0
+# Fracttalix Sentinel v12.0
 
 https://doi.org/10.5281/zenodo.18859299
 
 **Three-channel streaming anomaly detector grounded in the Fractal Rhythm Model**
 Single-file Python | Zero required dependencies | CC0 public domain
-
----
-
-## What changed in v9.0
-
-v9.0 extends the v8.0 pipeline architecture to implement the **three-channel model of dissipative network information transmission** derived in the Meta-Kaizen Paper 6 theoretical framework.
-
-The v8.0 pipeline treated the input signal as a single composite stream. v9.0 decomposes it into three independent information channels — structural, rhythmic, and temporal — and monitors cross-channel coherence as a first-class detection signal. This produces earlier warnings and richer diagnostics without breaking any existing behavior.
-
-| | v8.0 | v9.0 |
-|---|---|---|
-| Pipeline steps | 19 | 26 (19 preserved + 7 new) |
-| Information channels | 1 (composite) | 3 (structural, rhythmic, temporal) |
-| Frequency analysis | Composite RPI/RFI | 5-band carrier wave decomposition |
-| Coupling detection | None | Cross-frequency phase-amplitude coupling |
-| Channel coherence | None | Structural-rhythmic coherence monitoring |
-| Cascade warning | None | CASCADE_PRECURSOR (CRITICAL severity) |
-| Alert structure | Dict with string reasons | Structured `Alert` objects with severity levels |
-| Degradation logging | None | Temporal sequence logging with diagnostic narratives |
-
-All v8.0 and v7.x APIs remain fully backward compatible. No existing step is removed. No existing behavior changed. All extensions are additive.
 
 ---
 
@@ -38,9 +17,7 @@ All v8.0 and v7.x APIs remain fully backward compatible. No existing step is rem
 
 ---
 
-## New in v9.0
-
-### New alert classes
+## Alert classes
 
 | Alert type | Severity | Description |
 |---|---|---|
@@ -49,35 +26,12 @@ All v8.0 and v7.x APIs remain fully backward compatible. No existing step is rem
 | `STRUCTURAL_RHYTHMIC_DECOUPLING` | ALERT | Channel 1-2 coherence loss |
 | `CASCADE_PRECURSOR` | CRITICAL | Tipping cascade precursor — scale-level reversion risk |
 
-### New pipeline steps (7)
-
-| Step | Channel | Purpose |
-|---|---|---|
-| `StructuralSnapshotStep` | 1 | Computes structural properties (mean, variance, skewness, kurtosis, autocorrelation, stationarity) |
-| `FrequencyDecompositionStep` | 2 | FFT decomposition into 5 frequency band carrier waves with power and phase |
-| `BandAnomalyStep` | 2 | Per-band anomaly detection invisible to composite detectors |
-| `CrossFrequencyCouplingStep` | 2 | Phase-amplitude coupling between adjacent frequency bands |
-| `ChannelCoherenceStep` | 1+2 | Structural-rhythmic coherence measurement and decoupling detection |
-| `CascadePrecursorStep` | 1+2+3 | Tipping cascade detection requiring convergence of multiple degradation signals |
-| `DegradationSequenceStep` | 3 | Temporal ordering and narrative logging of channel degradation events |
-
-### New data structures
-
-- **`FrequencyBands`** — Five-band power/phase decomposition snapshot
-- **`StructuralSnapshot`** — Channel 1 structural properties at current timestep
-- **`CouplingMatrix`** — Cross-frequency coupling coefficients with composite score and trend
-- **`ChannelCoherence`** — Structural-rhythmic coherence measurement
-- **`DegradationSequence`** — Temporal ordering of degradation events with diagnostic narrative
-- **`Alert`** — Structured alert with `AlertType`, `AlertSeverity`, score, and message
-- **`AlertSeverity`** — INFO, WARNING, ALERT, CRITICAL
-- **`AlertType`** — Enumeration of all v8.0 + v9.0 alert classifications
-
 ---
 
 ## Quick start
 
 ```python
-from fracttalix_sentinel_v900 import SentinelDetector
+from fracttalix_sentinel_v1200 import SentinelDetector
 
 det = SentinelDetector()
 for value in your_time_series:
@@ -86,12 +40,12 @@ for value in your_time_series:
         print(result["step"], result["alert_reasons"])
 ```
 
-v9.0 three-channel features are enabled by default. All new config fields have sensible defaults and can be toggled:
+Three-channel features are enabled by default. All config fields have sensible defaults and can be toggled:
 
 ```python
-from fracttalix_sentinel_v900 import SentinelDetector, SentinelConfig
+from fracttalix_sentinel_v1200 import SentinelDetector, SentinelConfig
 
-# Disable specific v9.0 channels
+# Disable specific channels
 cfg = SentinelConfig(
     enable_frequency_decomposition=False,
     enable_coupling_detection=False,
@@ -115,7 +69,7 @@ SentinelConfig.realtime()      # quantile-adaptive thresholds
 
 ---
 
-## v9.0 configuration parameters
+## Three-channel configuration parameters
 
 | Parameter | Default | Description |
 |---|---|---|
@@ -158,7 +112,7 @@ SentinelConfig.realtime()      # quantile-adaptive thresholds
 18. **RRSStep** — Relative Rhythmic Strength (harmonic power)
 19. **AlertReasonsStep** — Aggregates alert reasons into human-readable descriptions
 
-### v9.0 three-channel extension (steps 20-26)
+### v12.0 three-channel extension (steps 20-26)
 
 20. **StructuralSnapshotStep** — Channel 1 structural properties
 21. **FrequencyDecompositionStep** — Channel 2 five-band FFT decomposition
@@ -174,16 +128,16 @@ SentinelConfig.realtime()      # quantile-adaptive thresholds
 
 ```bash
 # Process a CSV file
-python3 fracttalix_sentinel_v900.py --file data.csv --alpha 0.1 --multiplier 3.0
+python3 fracttalix_sentinel_v1200.py --file data.csv --alpha 0.1 --multiplier 3.0
 
 # Start HTTP server
-python3 fracttalix_sentinel_v900.py --serve --host 0.0.0.0 --port 8765
+python3 fracttalix_sentinel_v1200.py --serve --host 0.0.0.0 --port 8765
 
 # Run benchmark suite
-python3 fracttalix_sentinel_v900.py --benchmark
+python3 fracttalix_sentinel_v1200.py --benchmark
 
 # Show version
-python3 fracttalix_sentinel_v900.py --version
+python3 fracttalix_sentinel_v1200.py --version
 ```
 
 ---
@@ -216,22 +170,11 @@ python3 fracttalix_sentinel_v900.py --version
 
 ---
 
-## v8.0 root-cause fixes (preserved)
-
-| ID | Fix |
-|---|---|
-| **alpha** | `SentinelConfig` frozen dataclass — immutable, picklable, inspectable |
-| **beta** | `WindowBank` — named independent deques; each consumer owns its slot |
-| **gamma** | Pipeline decomposition — `DetectorStep` subclasses (19 in v8.0, 26 in v9.0) |
-| **delta** | Soft regime boost (T0-02) — replaces hard alpha reset with multiplicative boost |
-| **epsilon** | SSI replaces RSI naming (T0-05); `rsi` alias preserved for backward compatibility |
-
----
-
 ## Version history
 
 | Version | Date | Description |
 |---|---|---|
+| **v12.0** | 2026-03-10 | Current release |
 | **v9.0** | 2026-03-03 | Three-channel extension: structural, rhythmic, temporal information channels |
 | **v8.0** | 2026-02-19 | Ground-up rewrite: frozen config, WindowBank, 19-step pipeline |
 | v7.6 | 2026-02-09 | Last monolithic version (scaling and consistency fixes) |
@@ -245,7 +188,7 @@ python3 fracttalix_sentinel_v900.py --version
 - All v7.x kwargs work via `_legacy_kwargs_to_config()`
 - `Detector_7_10` is an alias for `SentinelDetector`
 - All 19 v8.0 pipeline steps preserved with identical behavior
-- v9.0 features are additive and enabled by default — disable individually via config
+- Three-channel features are additive and enabled by default — disable individually via config
 
 ---
 
