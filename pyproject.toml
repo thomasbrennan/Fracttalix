@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "fracttalix"
-version = "12.0.0"
+version = "12.1.0"
 description = "Real-time streaming anomaly detection via a Three-Channel Dissipative Network Model"
 readme = "README.md"
 license = { text = "CC0-1.0" }

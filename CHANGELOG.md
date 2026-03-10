@@ -6,6 +6,48 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
+## [12.1.0] — 2026-03-10
+
+### Bug Fixes
+
+- **VarCUSUM non-reset defect** (`VarCUSUMStep`, `fracttalix/steps/foundation.py`):
+  CUSUM accumulators `s_hi` and `s_lo` were never reset after crossing threshold `h`,
+  causing a permanent alert state on all post-warmup steps. Fixed by re-arming
+  (resetting to 0) after each threshold crossing. Normal alert rate reduced from
+  97% → 35.6% on the standard benchmark suite.
+  Added companion sustained-variance detector using the warmup-estimated baseline
+  (4× ratio threshold) to maintain recall on prolonged volatility regimes without
+  re-triggering the permanent-crossing problem.
+
+- **ChannelCoherence unit mismatch** (`ChannelCoherenceStep`, `fracttalix/steps/channels.py`):
+  `coherence_score` previously compared `structural_change_rate` (second-order,
+  ~0.02) against `rhythmic_change_rate` (first-order, ~0.17) — incompatible units,
+  producing a score near 0 on every normal step. Replaced rate-difference formula
+  with Pearson correlation between the two change series (scale-invariant). Normal
+  data now scores ~0.5 (above threshold); genuine decoupling produces correlated
+  divergence.
+
+### Benchmark Results (n=1000, seed=42)
+
+| Metric            | v12.0 | v12.1 |
+|-------------------|-------|-------|
+| Normal alert rate | 97%   | 35.6% |
+| Point F1          | 0.360 | 0.415 |
+| Contextual F1     | 0.200 | 0.247 |
+| Collective F1     | 0.110 | 0.239 |
+| Drift F1          | 0.670 | 0.723 |
+| Variance F1       | 0.690 | 0.876 |
+
+374/374 tests passing.
+
+### Investigation
+
+`benchmark/investigate_fpr_s47.py` — S47 false positive rate investigation script.
+Reproduces channel attribution, precision-recall curve, normal data characterisation,
+and v12 baseline simulation. See report in session S47.
+
+---
+
 ## [12.0.0] — 2026-03-09
 
 ### Architecture (Meta-Kaizen V12)

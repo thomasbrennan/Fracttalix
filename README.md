@@ -1,4 +1,4 @@
-# Fracttalix Sentinel v10.0
+# Fracttalix Sentinel v12.1
 
 **Streaming anomaly detection grounded in the Three-Channel Model of Dissipative Network Information Transmission — extended with four physics-derived capabilities from Session 36.**
 
@@ -14,12 +14,12 @@ Sentinel ingests one scalar (or multivariate) observation at a time and emits a 
 
 1. [Overview](#overview)
 2. [Three-Channel Model](#three-channel-model)
-3. [V10.0 New Capabilities](#v100-new-capabilities)
+3. [V12.1 Changes](#v121-changes)
 4. [Installation](#installation)
 5. [Quick Start](#quick-start)
 6. [SentinelConfig — Configuration](#sentinelconfig--configuration)
 7. [Pipeline Architecture — 37 Steps](#pipeline-architecture--37-steps)
-8. [V9.0 Alert Types and Data Structures](#v90-alert-types-and-data-structures)
+8. [Alert Types and Data Structures](#alert-types-and-data-structures)
 9. [SentinelResult API](#sentinelresult-api)
 10. [MultiStreamSentinel](#multistreamssentinel)
 11. [SentinelBenchmark](#sentinelbenchmark)
@@ -33,14 +33,14 @@ Sentinel ingests one scalar (or multivariate) observation at a time and emits a 
 
 ## Overview
 
-Fracttalix Sentinel is a single-file Python library (`fracttalix_sentinel_v900.py`) for real-time streaming anomaly detection. Its design priorities are:
+Fracttalix Sentinel is a Python package (`pip install fracttalix`) for real-time streaming anomaly detection. Its design priorities are:
 
 - **Zero external dependencies for core operation** — works on the Python standard library alone; numpy, scipy, numba, matplotlib, and tqdm are optional accelerators.
 - **Immutable, inspectable configuration** — `SentinelConfig` is a frozen dataclass; every parameter is readable and picklable.
-- **Composable pipeline** — 37 `DetectorStep` subclasses execute in sequence; custom steps can be inserted via `register_step`.
+- **Composable pipeline** — 37 `DetectorStep` subclasses execute in sequence.
 - **Three-channel anomaly model** — monitors structural properties, broadband rhythmicity, and temporal degradation sequences as independent information channels.
-- **Physics-derived collapse dynamics** — v10.0 adds maintenance burden, PAC pre-cascade detection, diagnostic window estimation, and reversed sequence detection derived from the Kuramoto synchronization framework.
-- **Full backward compatibility** — all v7.x, v8.0, and v9.0 call patterns continue to work unchanged.
+- **Physics-derived collapse dynamics** — maintenance burden, PAC pre-cascade detection, diagnostic window estimation, and reversed sequence detection derived from the Kuramoto synchronization framework.
+- **Full backward compatibility** — all v7.x, v8.0, v9.0, and v10.0 call patterns continue to work unchanged.
 
 ---
 
@@ -70,9 +70,32 @@ PAC pre-cascade detected  →  Δt window opens  →  Maintenance burden μ → 
 
 ---
 
-## V10.0 New Capabilities
+## V12.1 Changes
 
-Four physics-derived capabilities added in v10.0 (Session 36 physics program):
+### Bug Fixes
+
+- **VarCUSUM non-reset** (`VarCUSUMStep`): accumulators `s_hi`/`s_lo` now re-arm
+  after each threshold crossing. Normal alert rate: 97% → 35.6%.
+- **ChannelCoherence unit mismatch** (`ChannelCoherenceStep`): replaced
+  rate-difference formula with Pearson correlation (scale-invariant). Normal data
+  now scores ~0.5 above threshold.
+
+### v12.1 Benchmark (n=1000, seed=42)
+
+| Archetype   |  F1   | Normal alert rate |
+|-------------|-------|-------------------|
+| point       | 0.415 | —                 |
+| contextual  | 0.247 | —                 |
+| collective  | 0.239 | —                 |
+| drift       | 0.723 | —                 |
+| variance    | 0.876 | —                 |
+| **normal**  | —     | **35.6%**         |
+
+---
+
+## Physics-Derived Capabilities
+
+Four capabilities derived from the Kuramoto synchronization framework (added v10.0):
 
 ### 1. Maintenance Burden μ (Tainter Regime Detection)
 
@@ -141,10 +164,8 @@ if result.is_reversed_sequence():
 
 ## Installation
 
-No package installation required — copy the single file into your project:
-
 ```bash
-cp fracttalix_sentinel_v900.py myproject/
+pip install fracttalix
 ```
 
 **Optional accelerators (install any or none):**
@@ -157,12 +178,10 @@ pip install matplotlib     # plot_history() dashboard
 pip install tqdm           # progress bars in benchmark
 ```
 
-**Self-test (98 tests, all expected to pass):**
+**Run tests (374 tests, all expected to pass):**
 
 ```bash
-python fracttalix_sentinel_v900.py
-# or
-python fracttalix_sentinel_v900.py --test
+pytest
 ```
 
 ---
@@ -172,7 +191,7 @@ python fracttalix_sentinel_v900.py --test
 ### Basic scalar stream
 
 ```python
-from fracttalix_sentinel_v900 import SentinelDetector, SentinelConfig
+from fracttalix import SentinelDetector, SentinelConfig
 
 det = SentinelDetector(SentinelConfig.production())
 
@@ -182,7 +201,7 @@ for value in my_data_stream:
         print(f"Step {result['step']}: {result['alert_reasons']}")
 ```
 
-### V10.0 collapse dynamics
+### Collapse dynamics
 
 ```python
 result = det.update_and_check(value)
@@ -420,7 +439,7 @@ Every call to `update_and_check()` runs all 37 steps in order. Steps read from a
 ### Custom steps
 
 ```python
-from fracttalix_sentinel_v900 import DetectorStep, StepContext, register_step
+from fracttalix import DetectorStep, StepContext, register_step
 
 @register_step
 class MyStep(DetectorStep):
@@ -537,7 +556,7 @@ result.get_intervention_signature() -> dict
 Thread-safe manager for multiple independent named streams.
 
 ```python
-from fracttalix_sentinel_v900 import MultiStreamSentinel, SentinelConfig
+from fracttalix import MultiStreamSentinel, SentinelConfig
 
 mss = MultiStreamSentinel(config=SentinelConfig.production())
 
@@ -569,7 +588,7 @@ Built-in evaluation harness with five labeled anomaly archetypes.
 | `variance` | Sudden 4× variance explosion in second half |
 
 ```python
-from fracttalix_sentinel_v900 import SentinelBenchmark, SentinelConfig
+from fracttalix import SentinelBenchmark, SentinelConfig
 
 bench = SentinelBenchmark(n=500, config=SentinelConfig.sensitive())
 bench.run_suite()   # reports F1, AUPRC, VUS-PR, mean lag, 3σ baseline
@@ -585,7 +604,7 @@ metrics = bench.evaluate(data, labels)
 Asyncio HTTP server wrapping a `MultiStreamSentinel`. No framework dependencies.
 
 ```bash
-python fracttalix_sentinel_v900.py --serve --host 0.0.0.0 --port 8765
+python -m fracttalix --serve --host 0.0.0.0 --port 8765
 ```
 
 | Method | Path | Description |
@@ -608,7 +627,8 @@ curl -X POST http://localhost:8765/update/my_sensor \
 ## CLI Reference
 
 ```
-python fracttalix_sentinel_v900.py [OPTIONS]
+fracttalix [OPTIONS]
+# or: python -m fracttalix [OPTIONS]
 ```
 
 | Flag | Default | Description |
@@ -622,13 +642,13 @@ python fracttalix_sentinel_v900.py [OPTIONS]
 | `--host` | `0.0.0.0` | Server host |
 | `--port` | `8765` | Server port |
 | `--version` | — | Print version and exit |
-| `--test` | — | Run 98-test smoke suite and exit |
+| `--test` | — | Run smoke suite and exit |
 
 ---
 
 ## Backward Compatibility
 
-V10.0 is a strict superset of v9.0, v8.0, and v7.x. No step is removed. No result key is removed.
+v12.1 is a strict superset of all prior versions. No step is removed. No result key is removed.
 
 ### V8.0 root-cause fixes (all preserved)
 
@@ -643,8 +663,8 @@ V10.0 is a strict superset of v9.0, v8.0, and v7.x. No step is removed. No resul
 ### V7.x compatibility
 
 ```python
-from fracttalix_sentinel_v900 import Detector_7_10
-det = Detector_7_10(alpha=0.1, multiplier=3.0, warmup_periods=30)
+from fracttalix import SentinelDetector
+det = SentinelDetector(alpha=0.1, multiplier=3.0, warmup_periods=30)  # v7.x kwargs accepted
 ```
 
 ### State persistence
