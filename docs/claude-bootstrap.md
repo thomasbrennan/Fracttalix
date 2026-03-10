@@ -109,19 +109,22 @@ Fracttalix/
 ├── ai-layers/
 │   ├── P1-ai-layer.json          ← Paper 1 claim registry
 │   ├── MK-P1-ai-layer.json       ← Meta-Kaizen layer
+│   ├── DRP1-ai-layer.json        ← Dual-Reader Publishing layer
 │   ├── ai-layer-schema.json       ← Schema definition
 │   └── process-graph.json         ← Process dependency graph
 ├── docs/
 │   ├── FRM_SeriesBuildTable_v1.5.md
-│   └── archive/
+│   ├── claude-bootstrap.md
+│   └── handoff-S44.md
 ├── journal/
+│   ├── journal_index.md
 │   ├── session_36_notes.md
 │   ├── session_36_theoretical_advance.md
 │   └── session_36_complete.md
-├── Fracttalix Sentinel V 9.0     ← Integrity checker
-├── fracttalix_sentinel_v800.py
+├── fracttalix_sentinel_v900.py   ← Sentinel v9.0
 ├── README.md
-└── LICENSE
+├── LICENSE
+└── Legal Notice/
 ```
 
 ---

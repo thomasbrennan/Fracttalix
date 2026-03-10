@@ -253,7 +253,9 @@ python3 fracttalix_sentinel_v900.py --version
 
 | ID | Paper | Status | File |
 |---|---|---|---|
+| P1 | FRM Paper 1 | PHASE-READY | [ai-layers/P1-ai-layer.json](ai-layers/P1-ai-layer.json) |
 | MK-P1 | Meta-Kaizen Paper 1 | PHASE-READY | [ai-layers/MK-P1-ai-layer.json](ai-layers/MK-P1-ai-layer.json) |
+| DRP-1 | Dual-Reader Publishing | PHASE-READY | [ai-layers/DRP1-ai-layer.json](ai-layers/DRP1-ai-layer.json) |
 
 ---
 

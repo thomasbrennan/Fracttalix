@@ -234,7 +234,7 @@ A separate 5-paper series documenting the verification process itself. MK-P1 der
 - 65/65 tests passing
 - CC0 public domain
 
-Files: `Fracttalix Sentinel V 9.0` (main), `fracttalix_sentinel_v800.py` (legacy)
+File: `fracttalix_sentinel_v900.py`
 
 ---
 
@@ -291,20 +291,19 @@ Fracttalix/
 ├── ai-layers/
 │   ├── P1-ai-layer.json              ← Paper 1 claim registry (S44)
 │   ├── MK-P1-ai-layer.json           ← Meta-Kaizen layer (S43)
+│   ├── DRP1-ai-layer.json            ← Dual-Reader Publishing layer (S47)
 │   ├── ai-layer-schema.json          ← Schema v2-S42
 │   └── process-graph.json            ← Corpus dependency graph
 ├── docs/
 │   ├── FRM_SeriesBuildTable_v1.5.md  ← 13-paper build table
 │   ├── claude-bootstrap.md           ← Quick bootstrap for Claude.ai
-│   ├── handoff-S44.md                ← THIS FILE
-│   └── archive/
-│       └── FRM_SeriesBuildTable_v1.3.md
+│   └── handoff-S44.md                ← THIS FILE
 ├── journal/
+│   ├── journal_index.md
 │   ├── session_36_notes.md
 │   ├── session_36_theoretical_advance.md
 │   └── session_36_complete.md
-├── Fracttalix Sentinel V 9.0        ← Sentinel v9.0 (Python)
-├── fracttalix_sentinel_v800.py       ← Legacy Sentinel v8.0
+├── fracttalix_sentinel_v900.py       ← Sentinel v9.0
 ├── README.md
 ├── LICENSE                           ← CC0
 └── Legal Notice/
@@ -322,7 +321,7 @@ You are Claude, an AI collaborator on a scientific research program. Thomas Bren
 2. If asked to work on the AI layers, read `ai-layers/P1-ai-layer.json` and `ai-layers/ai-layer-schema.json`
 3. If asked to work on the Build Table, read `docs/FRM_SeriesBuildTable_v1.5.md`
 4. If asked about theoretical foundations, the derivations are in the P1 AI layer claim registry (F-1.4, F-1.5, F-1.6, F-1.7)
-5. If asked to modify the Sentinel, read `Fracttalix Sentinel V 9.0`
+5. If asked to modify the Sentinel, read `fracttalix_sentinel_v900.py`
 
 ### What NOT to do
 - Do not simplify the mathematics. The precision is intentional.
