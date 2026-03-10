@@ -4,29 +4,33 @@ Thank you for your interest in contributing to Fracttalix Sentinel.
 
 ## Reporting bugs
 
-Open a GitHub issue with:
+Open a [bug report](https://github.com/thomasbrennan/Fracttalix/issues/new?template=bug_report.md) with:
 
 - Python version (`python3 --version`)
-- Sentinel version (`python3 fracttalix_sentinel_v1200.py --version`)
+- Fracttalix version (`python3 -c "import fracttalix; print(fracttalix.__version__)"`)
 - Minimal reproducing code or data
 - Expected vs. actual behavior
 
 ## Suggesting enhancements
 
-Open a GitHub issue describing the use case and proposed behavior. For changes to the detection pipeline or theoretical model, reference the relevant FRM paper or axiom.
+Open a [feature request](https://github.com/thomasbrennan/Fracttalix/issues/new?template=feature_request.md) describing the use case and proposed behavior. For changes to the detection pipeline or theoretical model, reference the relevant FRM paper or axiom.
 
 ## Development setup
 
 ```bash
 git clone https://github.com/thomasbrennan/Fracttalix.git
 cd Fracttalix
-pip install -e ".[full]"
+pip install -e ".[dev]"    # pytest, ruff, mypy, mkdocs
+pip install -e ".[full]"   # optional: numpy, scipy, numba, matplotlib, tqdm
 
 # Run the test suite
-python3 fracttalix_sentinel_v1200.py --test
+pytest
+
+# Lint
+ruff check fracttalix/ tests/
 ```
 
-No required dependencies beyond Python 3.8+. The optional `[full]` extras (numpy, matplotlib, numba, tqdm) enable FFT-based features and visualization.
+No required dependencies beyond Python 3.9+. The optional `[full]` extras enable FFT-based features and visualization.
 
 ## Pull request process
 
@@ -38,8 +42,8 @@ No required dependencies beyond Python 3.8+. The optional `[full]` extras (numpy
 
 ## Code style
 
-- Follow existing patterns in `fracttalix_sentinel_v1200.py`.
-- New pipeline steps subclass `DetectorStep` and implement `execute()`.
+- Follow existing patterns in `fracttalix/`.
+- New pipeline steps subclass `DetectorStep` and implement `update()`.
 - Configuration additions go into `SentinelConfig` as frozen dataclass fields with sensible defaults.
 - All new features should be additive — do not remove or alter existing step behavior.
 
