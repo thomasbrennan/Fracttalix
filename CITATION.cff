@@ -1,0 +1,27 @@
+cff-version: 1.2.0
+title: "Fracttalix Sentinel"
+message: "If you use this software, please cite it as below."
+type: software
+authors:
+  - family-names: Brennan
+    given-names: Thomas
+    orcid: "https://orcid.org/0009-0002-6353-7115"
+    affiliation: "Entwood Hollow Research Station, Trinity County, California, USA"
+doi: 10.5281/zenodo.18859299
+url: "https://github.com/thomasbrennan/Fracttalix"
+repository-code: "https://github.com/thomasbrennan/Fracttalix"
+license: MIT
+version: "12.0.0"
+date-released: "2026-03-10"
+keywords:
+  - anomaly-detection
+  - streaming
+  - time-series
+  - fractal-rhythm-model
+abstract: >-
+  Three-channel streaming anomaly detector grounded in the
+  Fractal Rhythm Model. Single-file Python with zero required
+  dependencies. Implements a 26-step pipeline with structural,
+  rhythmic, and temporal information channels for real-time
+  detection of regime changes, coupling degradation, and
+  cascade precursors in time-series data.

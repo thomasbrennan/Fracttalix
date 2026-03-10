@@ -365,7 +365,7 @@ You are Claude, an AI collaborator on a scientific research program. Thomas Bren
 | Process Graph | github.com/thomasbrennan/Fracttalix/blob/main/ai-layers/process-graph.json |
 | Build Table | github.com/thomasbrennan/Fracttalix/blob/main/docs/FRM_SeriesBuildTable_v1.5.md |
 | This handoff | github.com/thomasbrennan/Fracttalix/blob/main/docs/handoff-S44.md |
-| Licence | CC BY 4.0 (corpus), CC0 (Sentinel) |
+| Licence | CC BY 4.0 (corpus), MIT (Sentinel) |
 
 ---
 

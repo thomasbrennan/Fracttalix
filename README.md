@@ -1,9 +1,76 @@
 # Fracttalix Sentinel v12.0
 
-https://doi.org/10.5281/zenodo.18859299
+[![CI](https://github.com/thomasbrennan/Fracttalix/actions/workflows/ci.yml/badge.svg)](https://github.com/thomasbrennan/Fracttalix/actions/workflows/ci.yml)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.18859299.svg)](https://doi.org/10.5281/zenodo.18859299)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Python 3.8+](https://img.shields.io/badge/python-3.8%2B-blue.svg)](https://www.python.org/downloads/)
 
 **Three-channel streaming anomaly detector grounded in the Fractal Rhythm Model**
-Single-file Python | Zero required dependencies | CC0 public domain
+Single-file Python | Zero required dependencies | MIT License
+
+---
+
+## Statement of need
+
+Most anomaly detectors treat a time series as a single signal and fire alerts when a threshold is crossed. This misses the structure of how real systems fail — coupling between subsystems degrades before individual metrics go out of range. A server's response time may look normal while the correlation between CPU and memory usage has already broken down.
+
+Fracttalix Sentinel addresses this by decomposing the input stream into three independent information channels — structural, rhythmic, and temporal — and monitoring not just each channel but the *coupling between them*. This provides earlier warning signals (coupling degradation and coherence loss precede individual channel anomalies) and richer diagnostic information (the temporal ordering of degradation events identifies the type of regime change).
+
+**Target audience:** Researchers in time-series analysis, anomaly detection, and complex systems monitoring. Practitioners who need streaming detection without external dependencies, cloud lock-in, or batch processing constraints.
+
+**Key differentiators:**
+- Three-channel architecture with cross-channel coupling analysis
+- Zero required dependencies — runs on the Python 3.8+ standard library alone
+- Single-file deployment — copy one `.py` file, no package installation needed
+- Bounded memory — O(W) per observation regardless of stream length
+- Built-in HTTP server for real-time streaming applications
+
+---
+
+## State of the field
+
+| Tool | Approach | Dependencies | Streaming | Coupling detection |
+|------|----------|-------------|-----------|-------------------|
+| **Fracttalix Sentinel** | 26-step pipeline, three-channel decomposition | None required | Native | Cross-frequency + structural-rhythmic |
+| [River](https://riverml.xyz) | Online ML (incremental learning) | River + deps | Native | No |
+| [PyOD](https://pyod.readthedocs.io) | 40+ batch outlier detection algorithms | NumPy, scikit-learn | No (batch) | No |
+| [ADTK](https://adtk.readthedocs.io) | Rule-based anomaly detection toolkit | pandas, NumPy | No (batch) | No |
+| [Alibi Detect](https://docs.seldon.io/projects/alibi-detect) | Drift + outlier detection, deep learning | TensorFlow/PyTorch | Partial | No |
+| [Luminaire](https://zillow.github.io/luminaire) | Time-series monitoring with forecasting | statsmodels, pandas | Partial | No |
+
+Fracttalix Sentinel occupies a distinct niche: it is the only streaming anomaly detector that monitors cross-frequency coupling between decomposed frequency bands and structural-rhythmic coherence as first-class alert channels. Existing tools either operate in batch mode (PyOD, ADTK), require heavy ML dependencies (Alibi Detect, Luminaire), or lack multi-channel coupling analysis (River). The zero-dependency design makes Sentinel deployable in constrained environments where installing NumPy or scikit-learn is not possible.
+
+---
+
+## Installation
+
+### From source (recommended)
+
+```bash
+git clone https://github.com/thomasbrennan/Fracttalix.git
+cd Fracttalix
+pip install .
+```
+
+### Single-file deployment
+
+Copy `fracttalix_sentinel_v1200.py` into your project. No installation required — the core detector uses only the Python 3 standard library.
+
+### With optional dependencies
+
+```bash
+pip install ".[full]"
+```
+
+This installs NumPy (faster FFT), Matplotlib (dashboard), Numba (JIT), and tqdm (progress bars).
+
+### Verify installation
+
+```bash
+python fracttalix_sentinel_v1200.py --test
+```
+
+All 75 tests should pass.
 
 ---
 
@@ -234,13 +301,57 @@ Introduced by Thomas Brennan and Grok 4.
 
 ---
 
+## Examples
+
+See the [`examples/`](examples/) directory:
+
+- [`basic_detection.py`](examples/basic_detection.py) — Simple anomaly detection on a synthetic signal
+- [`three_channel_monitoring.py`](examples/three_channel_monitoring.py) — Full three-channel architecture with coupling and coherence
+- [`multi_stream.py`](examples/multi_stream.py) — Monitoring multiple independent streams simultaneously
+
+---
+
+## AI usage disclosure
+
+This software was developed collaboratively by Thomas Brennan (human architect) with Claude (Anthropic) and Grok (xAI) as AI collaborators. AI contributions include:
+
+- **Code generation:** Pipeline steps, test suite, benchmark harness, HTTP server — authored by Claude under architect direction
+- **Documentation:** README, handoff documents, AI layer JSON files — drafted by Claude, reviewed by architect
+- **Theoretical development:** FRM derivations developed collaboratively between Thomas Brennan, Claude, and Grok
+
+All AI-generated code and documentation has been reviewed, tested (75/75 tests passing), and validated by the human architect. The architectural decisions, theoretical claims, and scientific direction are the responsibility of Thomas Brennan.
+
+---
+
 ## Authors
 
 Thomas Brennan, Claude (Anthropic), Grok (xAI)
 
+## Citing
+
+If you use Fracttalix Sentinel in your research, please cite:
+
+```bibtex
+@software{brennan2026fracttalix,
+  author    = {Brennan, Thomas},
+  title     = {Fracttalix Sentinel},
+  version   = {12.0.0},
+  year      = {2026},
+  doi       = {10.5281/zenodo.18859299},
+  url       = {https://github.com/thomasbrennan/Fracttalix},
+  license   = {MIT}
+}
+```
+
+Or see [`CITATION.cff`](CITATION.cff) for automated citation via GitHub.
+
 ## License
 
-CC0 — public domain. No rights reserved.
+MIT License. See [LICENSE](LICENSE).
+
+## Contributing
+
+See [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines. Please read our [Code of Conduct](CODE_OF_CONDUCT.md).
 
 ## Repository
 

@@ -1,6 +1,6 @@
 **Legal Disclaimer**
 
-Fracttalix is an open-source (CC0 public domain) exploratory tool provided "as is" with no warranties of any kind, express or implied, including but not limited to warranties of merchantability, fitness for a particular purpose, accuracy, or non-infringement.
+Fracttalix is an open-source (MIT License) exploratory tool provided "as is" with no warranties of any kind, express or implied, including but not limited to warranties of merchantability, fitness for a particular purpose, accuracy, or non-infringement.
 
 The software, metrics, and any associated mathematical formulations are for research, educational, and non-commercial exploratory use only. They are not intended for operational, diagnostic, medical, financial, safety-critical, or production decision-making purposes.
 

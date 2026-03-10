@@ -42,7 +42,7 @@
 
 __version__ = "12.0.0"
 __author__ = "Thomas Brennan & Claude (Anthropic) & Grok (xAI)"
-__license__ = "CC0"
+__license__ = "MIT"
 
 __all__ = [
     "SentinelConfig", "WindowBank", "StepContext", "DetectorStep",
