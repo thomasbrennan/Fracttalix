@@ -1,25 +1,25 @@
-# fracttalix_sentinel_v900.py
-# Fracttalix Sentinel v9.0 — Three-Channel Extension
+# fracttalix_sentinel_v1200.py
+# Fracttalix Sentinel v12.0 — Three-Channel Extension
 #
-# V9.0 extends the v8.0 detection architecture to implement the
+# V12.0 extends the v8.0 detection architecture to implement the
 # three-channel model of dissipative network information transmission
 # derived in the Meta-Kaizen Paper 6 theoretical framework.
 #
 # Three-channel model:
 #   Channel 1 (Structural): Network topology as active transmitter.
-#     V9.0 monitors structural properties of the input data stream
+#     Monitors structural properties of the input data stream
 #     as an independent information channel.
 #
 #   Channel 2 (Rhythmic): Broadband multiplexed oscillatory transmission.
-#     V9.0 decomposes the composite rhythmicity signal into independent
+#     Decomposes the composite rhythmicity signal into independent
 #     frequency band carrier waves and monitors cross-frequency coupling
 #     between bands as a higher-order information channel.
 #
 #   Channel 3 (Temporal): One-way irreversible carrier wave.
-#     V9.0 logs the temporal sequence of channel degradation events
+#     Logs the temporal sequence of channel degradation events
 #     as diagnostic information about regime change type and severity.
 #
-# New alert classes:
+# Alert classes:
 #   BAND_ANOMALY: Per-carrier-wave anomaly invisible to composite detection
 #   COUPLING_DEGRADATION: Cross-frequency coupling breakdown (earlier warning)
 #   STRUCTURAL_RHYTHMIC_DECOUPLING: Channel 1-2 coherence loss
@@ -28,19 +28,19 @@
 # V8.0 root-cause fixes (α-ε) preserved:
 #   α: SentinelConfig frozen dataclass — immutable, picklable, inspectable
 #   β: WindowBank — named independent deques; each consumer owns its window slot
-#   γ: Pipeline decomposition — 26 DetectorStep subclasses (19 v8 + 7 new v9)
+#   γ: Pipeline decomposition — 26 DetectorStep subclasses (19 v8 + 7 v12)
 #   δ: Soft regime boost (T0-02) — replaces hard alpha reset with multiplicative boost
 #   ε: SSI replaces RSI naming (T0-05); rsi alias preserved
 #
 # Governing principle: The v8.0 19-step pipeline is the foundation.
-# V9.0 extends it. No existing step is removed. No existing behavior changed.
+# V12.0 extends it. No existing step is removed. No existing behavior changed.
 # All extensions are additive. Full backward compatibility with v8.0 and v7.x.
 #
 # Theoretical foundation: Fractal Rhythm Model Papers 1-6
 # DOI: 10.5281/zenodo.18859299
 # GitHub: https://github.com/thomasbrennan/Fracttalix
 
-__version__ = "9.0.0"
+__version__ = "12.0.0"
 __author__ = "Thomas Brennan & Claude (Anthropic) & Grok (xAI)"
 __license__ = "CC0"
 
@@ -49,7 +49,7 @@ __all__ = [
     "SentinelDetector", "SentinelResult", "MultiStreamSentinel",
     "SentinelBenchmark", "SentinelServer",
     "Detector_7_10", "register_step",
-    # V9.0 data structures
+    # V12.0 data structures
     "FrequencyBands", "StructuralSnapshot", "CouplingMatrix",
     "ChannelCoherence", "DegradationSequence",
     "AlertSeverity", "AlertType", "Alert",
@@ -169,7 +169,7 @@ def _np_ifft(arr):
 
 
 # ===========================================================================
-# V9.0 DATA STRUCTURES — Three-Channel Model
+# V12.0 DATA STRUCTURES — Three-Channel Model
 # ===========================================================================
 
 
@@ -267,7 +267,7 @@ class DegradationSequence:
 
 
 class AlertSeverity(Enum):
-    """Severity levels for v9.0 structured alerts."""
+    """Severity levels for v12.0 structured alerts."""
     INFO = 1
     WARNING = 2
     ALERT = 3
@@ -275,7 +275,7 @@ class AlertSeverity(Enum):
 
 
 class AlertType(Enum):
-    """Alert type classification for v9.0 structured alerts."""
+    """Alert type classification for v12.0 structured alerts."""
     # v8.0 alert type identifiers (as string labels)
     POINT_ANOMALY = "point_anomaly"
     CONTEXTUAL_ANOMALY = "contextual_anomaly"
@@ -284,7 +284,7 @@ class AlertType(Enum):
     VARIANCE_ANOMALY = "variance_anomaly"
     REGIME_CHANGE = "regime_change"
     EWS_WARNING = "ews_warning"
-    # V9.0 alert types
+    # V12.0 alert types
     BAND_ANOMALY = "band_anomaly"
     COUPLING_DEGRADATION = "coupling_degradation"
     STRUCTURAL_RHYTHMIC_DECOUPLING = "sr_decoupling"
@@ -293,7 +293,7 @@ class AlertType(Enum):
 
 @dataclasses.dataclass(frozen=True)
 class Alert:
-    """Structured alert object for v9.0 three-channel detection."""
+    """Structured alert object for v12.0 three-channel detection."""
     alert_type: AlertType
     severity: AlertSeverity
     score: float
@@ -465,7 +465,7 @@ class SentinelConfig:
     """Python logging level name."""
 
     # ------------------------------------------------------------------
-    # V9.0 — Channel 2 frequency decomposition
+    # V12.0 — Channel 2 frequency decomposition
     # ------------------------------------------------------------------
     enable_frequency_decomposition: bool = True
     """Enable FFT decomposition of signal into five frequency band carrier waves."""
@@ -474,7 +474,7 @@ class SentinelConfig:
     """Minimum window length required before FFT decomposition runs."""
 
     # ------------------------------------------------------------------
-    # V9.0 — Cross-frequency coupling detection
+    # V12.0 — Cross-frequency coupling detection
     # ------------------------------------------------------------------
     enable_coupling_detection: bool = True
     """Enable cross-frequency phase-amplitude coupling measurement."""
@@ -486,7 +486,7 @@ class SentinelConfig:
     """Number of FrequencyBands snapshots used for coupling measurement."""
 
     # ------------------------------------------------------------------
-    # V9.0 — Structural-rhythmic coherence
+    # V12.0 — Structural-rhythmic coherence
     # ------------------------------------------------------------------
     enable_channel_coherence: bool = True
     """Enable structural-rhythmic channel coherence measurement."""
@@ -498,7 +498,7 @@ class SentinelConfig:
     """Rolling window length for coherence computation."""
 
     # ------------------------------------------------------------------
-    # V9.0 — Cascade precursor
+    # V12.0 — Cascade precursor
     # ------------------------------------------------------------------
     enable_cascade_detection: bool = True
     """Enable CASCADE_PRECURSOR detection (requires all three conditions)."""
@@ -507,7 +507,7 @@ class SentinelConfig:
     """Minimum number of EWS indicators elevated for cascade precursor."""
 
     # ------------------------------------------------------------------
-    # V9.0 — Degradation sequence logging
+    # V12.0 — Degradation sequence logging
     # ------------------------------------------------------------------
     enable_sequence_logging: bool = True
     """Enable temporal logging of channel degradation sequences."""
@@ -1881,11 +1881,11 @@ class AlertReasonsStep(DetectorStep):
                 reasons.append("high_entropy_chaotic")
         if s.get("mahal_dist", 0) > self.cfg.multiplier * math.sqrt(self.cfg.n_channels):
             reasons.append("mahalanobis_multivariate")
-        # V9.0 — include structured alert types in reasons list
+        # V12.0 — include structured alert types in reasons list
         for alert in s.get("v9_active_alerts", []):
             if alert.alert_type.value not in reasons:
                 reasons.append(alert.alert_type.value)
-        # V9.0 — compute channel summary string
+        # V12.0 — compute channel summary string
         channel_parts: List[str] = []
         if s.get("structural_snapshot") is not None:
             channel_parts.append("structural:active")
@@ -1913,11 +1913,11 @@ class AlertReasonsStep(DetectorStep):
 
 
 # ===========================================================================
-# V9.0 PIPELINE STEPS — Three-Channel Extension
+# V12.0 PIPELINE STEPS — Three-Channel Extension
 # ===========================================================================
 
 # ---------------------------------------------------------------------------
-# V9 Step 4a: StructuralSnapshotStep — Channel 1
+# V12 Step 4a: StructuralSnapshotStep — Channel 1
 # ---------------------------------------------------------------------------
 
 @register_step
@@ -1997,7 +1997,7 @@ class StructuralSnapshotStep(DetectorStep):
 
 
 # ---------------------------------------------------------------------------
-# V9 Step 4b: FrequencyDecompositionStep — Channel 2
+# V12 Step 4b: FrequencyDecompositionStep — Channel 2
 # ---------------------------------------------------------------------------
 
 @register_step
@@ -2105,7 +2105,7 @@ class FrequencyDecompositionStep(DetectorStep):
 
 
 # ---------------------------------------------------------------------------
-# V9 Step 15a: BandAnomalyStep
+# V12 Step 15a: BandAnomalyStep
 # ---------------------------------------------------------------------------
 
 @register_step
@@ -2188,7 +2188,7 @@ class BandAnomalyStep(DetectorStep):
 
 
 # ---------------------------------------------------------------------------
-# V9 Steps 15b+15c: CrossFrequencyCouplingStep
+# V12 Steps 15b+15c: CrossFrequencyCouplingStep
 # ---------------------------------------------------------------------------
 
 @register_step
@@ -2318,7 +2318,7 @@ class CrossFrequencyCouplingStep(DetectorStep):
 
 
 # ---------------------------------------------------------------------------
-# V9 Steps 15d+15e: ChannelCoherenceStep
+# V12 Steps 15d+15e: ChannelCoherenceStep
 # ---------------------------------------------------------------------------
 
 @register_step
@@ -2445,7 +2445,7 @@ class ChannelCoherenceStep(DetectorStep):
 
 
 # ---------------------------------------------------------------------------
-# V9 Step 19a: CascadePrecursorStep
+# V12 Step 19a: CascadePrecursorStep
 # ---------------------------------------------------------------------------
 
 @register_step
@@ -2520,7 +2520,7 @@ class CascadePrecursorStep(DetectorStep):
 
 
 # ---------------------------------------------------------------------------
-# V9 Step 19b: DegradationSequenceStep
+# V12 Step 19b: DegradationSequenceStep
 # ---------------------------------------------------------------------------
 
 @register_step
@@ -2613,15 +2613,15 @@ class DegradationSequenceStep(DetectorStep):
 def _build_default_pipeline(config: SentinelConfig) -> List[DetectorStep]:
     """Return ordered list of DetectorStep instances for a SentinelDetector.
 
-    V9.0: 26 steps (19 v8 foundation + 7 new v9 three-channel extension).
-    V8.0 steps are UNCHANGED — v9.0 steps are inserted at defined positions.
+    V12.0: 26 steps (19 v8 foundation + 7 three-channel extension).
+    V8.0 steps are UNCHANGED — v12.0 steps are inserted at defined positions.
     """
     regime = RegimeStep(config)
     rrs = RRSStep(config, regime)
     return [
         CoreEWMAStep(config),               # Step 1  — MUST be first (populates bank)
-        StructuralSnapshotStep(config),     # Step 4a — NEW v9.0 Channel 1
-        FrequencyDecompositionStep(config), # Step 4b — NEW v9.0 Channel 2
+        StructuralSnapshotStep(config),     # Step 4a — V12.0 Channel 1
+        FrequencyDecompositionStep(config), # Step 4b — V12.0 Channel 2
         CUSUMStep(config),                  # Steps 2-19: existing v8.0 (UNCHANGED)
         regime,
         VarCUSUMStep(config),
@@ -2639,11 +2639,11 @@ def _build_default_pipeline(config: SentinelConfig) -> List[DetectorStep]:
         SeasonalStep(config),
         MahalStep(config),
         rrs,
-        BandAnomalyStep(config),            # Step 15a — NEW v9.0
-        CrossFrequencyCouplingStep(config), # Step 15b+15c — NEW v9.0
-        ChannelCoherenceStep(config),       # Step 15d+15e — NEW v9.0
-        CascadePrecursorStep(config),       # Step 19a — NEW v9.0
-        DegradationSequenceStep(config),    # Step 19b — NEW v9.0
+        BandAnomalyStep(config),            # Step 15a — V12.0
+        CrossFrequencyCouplingStep(config), # Step 15b+15c — V12.0
+        ChannelCoherenceStep(config),       # Step 15d+15e — V12.0
+        CascadePrecursorStep(config),       # Step 19a — V12.0
+        DegradationSequenceStep(config),    # Step 19b — V12.0
         AlertReasonsStep(config),           # MUST be last
     ]
 
@@ -2698,19 +2698,19 @@ def _legacy_kwargs_to_config(kw: dict) -> SentinelConfig:
 
 
 # ===========================================================================
-# V9.0 SentinelResult — dict subclass with Three-Channel convenience methods
+# V12.0 SentinelResult — dict subclass with Three-Channel convenience methods
 # ===========================================================================
 
 
 class SentinelResult(dict):
-    """V9.0 result object — dict subclass with Three-Channel convenience methods.
+    """V12.0 result object — dict subclass with Three-Channel convenience methods.
 
     All existing dict access patterns preserved for backward compatibility::
 
         result = det.update_and_check(value)
         if result["alert"]:          # v8.0 pattern — still works
             ...
-        if result.is_cascade_precursor():  # v9.0 pattern
+        if result.is_cascade_precursor():  # v12.0 pattern
             ...
 
     """
@@ -2865,7 +2865,7 @@ class SentinelDetector:
         result.setdefault("z_score", 0.0)
         result.setdefault("anomaly_score", 0.0)
         result.setdefault("alert_reasons", [])
-        # V9.0 defaults
+        # V12.0 defaults
         result.setdefault("frequency_bands", None)
         result.setdefault("structural_snapshot", None)
         result.setdefault("coupling_matrix", None)
@@ -3520,8 +3520,8 @@ class SentinelServer:
 
 def _cli_main(argv=None):
     parser = argparse.ArgumentParser(
-        prog="fracttalix_sentinel_v800",
-        description="Fracttalix Sentinel v8.0 streaming anomaly detector",
+        prog="fracttalix_sentinel_v1200",
+        description="Fracttalix Sentinel v12.0 streaming anomaly detector",
     )
     parser.add_argument("--file", "-f", help="CSV file path (reads first column)")
     parser.add_argument("--alpha", type=float, default=0.1)
@@ -3597,7 +3597,7 @@ def _run_tests():
             fail(name, f"{type(e).__name__}: {e}")
 
     print(f"\n{'='*60}")
-    print(f"  Fracttalix Sentinel v{__version__} — 65-test Smoke Suite")
+    print(f"  Fracttalix Sentinel v12.0 — 65-test Smoke Suite")
     print(f"{'='*60}\n")
 
     # ------------------------------------------------------------------
