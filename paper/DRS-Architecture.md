@@ -269,8 +269,14 @@ The DRS governs the entire Fracttalix corpus (22 objects, two tracks):
 
 ```
 AI Layers:          18/18 (MK-P6 + SFW-1 v2 added S51)
-Phase-Ready:         5/18 (P1, MK-P1, MK-P5, DRP-1, SFW-1)
+Phase-Ready:         7/18 (P1, P2, P3, MK-P1, MK-P5, DRP-1, SFW-1)
+Act I Complete:      3/3 (P1, P2, P3 all PHASE-READY)
+NOT-Phase-Ready:     4/18 (P4, P5, MK-P6, SFW-1 v2)
+Scaffold:            7/18 (P6–P12)
 Total Claims:      121 (A:25  D:39  F:57)
+Open Placeholders:  19 (13 base + 4 SFW-1 v2 + 2 MK-P6)
+Cross-references:  118+ derivation_source entries
+Cross-paper errors:  0
 
 Verification Tiers:
   axiom:             25 claims
@@ -285,7 +291,7 @@ verified_against:    95f59d8
 Schema:              v3-S51
 ```
 
-Note: The per-tier breakdown covers fully audited layers. Twenty Type F claims from recently added or scaffold layers have not yet been assigned to a verification tier in this breakdown. The type totals (A:25 D:39 F:57 = 121) are accurate.
+Note: The per-tier breakdown covers fully audited layers. Twenty Type F claims from recently added or scaffold layers have not yet been assigned to a verification tier in this breakdown. The type totals (A:25 D:39 F:57 = 121) are accurate. Source: Canonical Build Table v2.2 (Session 51), with Phase-Ready count corrected to include P2 and P3 per the CBT's own build table entries.
 
 ---
 
