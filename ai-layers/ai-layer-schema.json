@@ -2,8 +2,8 @@
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "https://github.com/thomasbrennan/Fracttalix/blob/main/ai-layers/ai-layer-schema.json",
   "title": "Fracttalix AI Layer Schema v2",
-  "description": "Schema for machine-readable falsification layers in the Fracttalix corpus. Implements the Dual Reader Standard (DRS). Version 2, Session 42.",
-  "version": "v2-S42",
+  "description": "Schema for machine-readable falsification layers in the Fracttalix corpus. Implements the Dual Reader Standard (DRS). Version 2, Session 50.",
+  "version": "v2-S50",
   "type": "object",
   "required": ["_meta","paper_id","paper_title","paper_type","version","session","phase_ready","claim_registry","placeholder_register"],
   "properties": {
@@ -14,6 +14,7 @@
         "document_type": {"type": "string", "enum": ["AI_LAYER"]},
         "schema_version": {"type": "string"},
         "schema_url": {"type": "string"},
+        "semantic_spec_url": {"type": "string", "description": "URL to the falsification-kernel.md semantic specification (Layer 0). Defines predicate grammar and evaluation rules for all Type F claims."},
         "produced_session": {"type": "string"},
         "produced_by": {"type": "string"},
         "licence": {"type": "string"}
