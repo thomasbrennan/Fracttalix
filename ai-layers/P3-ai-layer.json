@@ -19,7 +19,17 @@
   "paper_type": "methodology_D",
   "version": "v2",
   "session": "S48",
-  "phase_ready": true,
+  "phase_ready": {
+    "verdict": "PHASE-READY",
+    "c1": "SATISFIED",
+    "c2": "SATISFIED",
+    "c3": "SATISFIED",
+    "c4_mode": "PHASE-READY-TRACKING",
+    "c5": "SATISFIED",
+    "c6": "SATISFIED",
+    "placeholder_count": 0,
+    "note": "CBT I-9 all 7 steps PASS. Session S48. Phase 5 CBT PHASE-READY. All protocol steps IR-12 compliant. All thresholds IR-13 anchored. 5 upstream placeholders resolved."
+  },
   "principle_10_compliant": true,
   "principle_10_audit": [
     {
@@ -400,9 +410,9 @@
     ]
   },
   "summary": {
-    "total_claims": 7,
+    "total_claims": 6,
     "type_D": 2,
-    "type_F": 5,
+    "type_F": 4,
     "placeholder_count": 0,
     "phase_ready": true,
     "session_produced": "S48",
