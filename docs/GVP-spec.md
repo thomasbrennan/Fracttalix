@@ -1,7 +1,7 @@
 # Grounded Verification Protocol (GVP) v1.0
 
 > Portable specification. Paste into any Claude instance to establish the standard.
-> Origin: Fracttalix corpus, Session 49. Schema v3-S49.
+> Origin: Fracttalix corpus, Session 51. Schema v3-S51.
 > Author: Thomas Brennan. AI collaborator: Claude (Anthropic).
 
 ---
@@ -227,7 +227,8 @@ Cross-paper errors:  0
 
 | Standard | What it does | GVP relationship |
 |----------|-------------|-----------------|
-| **DRS** (Dual Reader Standard) | Two-channel paper format (JSON + prose) | GVP extends DRS with Reader 3 |
+| **DRS** (Dual Reader Standard) | The standard: every claim gets two channels (JSON + prose) | GVP extends DRS with Reader 3 |
+| **DRP** (Dual Reader Protocol) | The protocol paper (P14/DRP-1) that defines and enforces the DRS | GVP is the analogous protocol for Reader 3 |
 | **CBT** (Canonical Build Table) | Corpus architecture and scheduling | GVP tier data feeds CBT status |
 | **KVS** (Knowledge Validation Score) | Corpus quality metric | GVP tier coverage is a KVS input |
 | **CBP** (Canonical Build Process, P0) | Governance process | GVP operates under CBP governance |
