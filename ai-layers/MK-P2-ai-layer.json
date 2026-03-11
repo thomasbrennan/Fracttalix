@@ -1,0 +1,202 @@
+{
+  "_meta": {
+    "document_type": "AI_LAYER",
+    "schema_version": "v2-S50",
+    "schema_url": "https://github.com/thomasbrennan/Fracttalix/blob/main/ai-layers/ai-layer-schema.json",
+    "semantic_spec_url": "github.com/thomasbrennan/Fracttalix/ai-layers/falsification-kernel.md",
+    "produced_session": "S50",
+    "produced_by": "Claude (Anthropic) — MK Series AI layer build from DRS papers",
+    "licence": "CC BY 4.0"
+  },
+  "paper_id": "MK-P2",
+  "corpus_id": "Meta-Kaizen",
+  "series": "Meta-Kaizen Series",
+  "series_position": "Paper 2 of 5",
+  "paper_title": "Meta-Kaizen in Networked Organizations: Governance Closure, Privacy Amplification, and Bayesian Calibration Under a Federated Architecture",
+  "paper_type": "derivation_B",
+  "version": "v1",
+  "session": "S50",
+  "ai_layer_url": "https://github.com/thomasbrennan/Fracttalix/blob/main/ai-layers/MK-P2-ai-layer.json",
+  "citation_format": "[MK Paper 2, AI-Layer, Claim C-MK2.X]",
+  "phase_ready": {
+    "verdict": "PHASE-READY",
+    "c1": "SATISFIED",
+    "c2": "SATISFIED",
+    "c3": "SATISFIED",
+    "c4_mode": "PHASE-READY-TRACKING",
+    "c5": "SATISFIED",
+    "c6": "SATISFIED",
+    "placeholder_count": 2,
+    "note": "PH-MK2.1: Exact constant C in Theorem 3.1 requires numerical evaluation. PH-MK2.2: No MKN has been implemented — all network demonstrations are structural simulations."
+  },
+  "verification_protocol": "Fracttalix Phase 1-2 Merged, S42, Stage 2.1",
+  "falsification_syntax": "I-2 5-part (FALSIFIED IF / WHERE / EVALUATION / BOUNDARY / CONTEXT)",
+  "inference_rule_inventory": "IR-1 through IR-8 — Fracttalix P2 Build Plan S48",
+  "principle_10_compliant": true,
+  "principle_10_audit": [
+    { "constant_or_condition": "epsilon_local = 3.0 (local DP parameter)", "derivation_path": "Standard DP parameter choice — trade-off between privacy and utility. Not derived; operational default per Erlingsson et al. (2019)." },
+    { "constant_or_condition": "delta = 10^-5 (DP failure probability)", "derivation_path": "Standard cryptographic convention for negligible failure probability. Not derived; operational default." },
+    { "constant_or_condition": "n* approximately 100-200 (minimum network size)", "derivation_path": "Derived from Theorem 3.1: substituting epsilon_local=3.0, delta=10^-5 into shuffle model amplification bound (Erlingsson et al. 2019; Feldman et al. 2021)." }
+  ],
+  "claim_registry": [
+    {
+      "claim_id": "A-MK2.1",
+      "type": "A",
+      "label": "[TYPE:A]",
+      "name": "Shuffle model privacy amplification",
+      "statement": "The shuffle model (Erlingsson et al. 2019) provides central DP guarantees from local DP mechanisms: each participant applies local epsilon_local-DP randomizer, then submissions are uniformly permuted before delivery to the Aggregator. The central guarantee epsilon_central is strictly stronger than epsilon_local for sufficiently large n.",
+      "derivation_source": ["Erlingsson et al. 2019", "Feldman et al. 2021"],
+      "falsification_predicate": null
+    },
+    {
+      "claim_id": "A-MK2.2",
+      "type": "A",
+      "label": "[TYPE:A]",
+      "name": "Club goods governance mechanism",
+      "statement": "Ostrom (1990) club goods mechanism creates symmetric incentives for honest participation in common-pool resource governance. Buchanan (1965) establishes the economic theory of clubs with excludable, non-rival membership benefits.",
+      "derivation_source": ["Ostrom 1990", "Buchanan 1965"],
+      "falsification_predicate": null
+    },
+    {
+      "claim_id": "A-MK2.3",
+      "type": "A",
+      "label": "[TYPE:A]",
+      "name": "Beta-Binomial conjugacy",
+      "statement": "The Beta distribution is conjugate to the Binomial likelihood: Beta(alpha, beta) prior with Binomial(n, p) likelihood yields Beta(alpha + successes, beta + failures) posterior. De Finetti (1937) exchangeability theorem justifies i.i.d. assumption under appropriate conditions.",
+      "derivation_source": ["De Finetti 1937"],
+      "falsification_predicate": null
+    },
+    {
+      "claim_id": "D-MK2.1",
+      "type": "D",
+      "label": "[TYPE:D]",
+      "name": "Meta-Kaizen Network (MKN) architecture",
+      "statement": "An MKN consists of: (1) Participant Organizations (POs) each running local Meta-Kaizen; (2) a Shuffle Proxy that permutes submissions; (3) an Aggregator that maintains the shared Knowledge Record Store; (4) a Master Decision Log for governance transparency.",
+      "derivation_source": [],
+      "falsification_predicate": null
+    },
+    {
+      "claim_id": "C-MK2.1",
+      "type": "F",
+      "label": "[TYPE:F]",
+      "name": "Theorem 3.1 — Minimum Network Size",
+      "statement": "Under the shuffle model with epsilon_local=3.0 and delta=10^-5, the central DP guarantee satisfies epsilon_central = O((1 - e^(-epsilon_local)) * sqrt(e^(epsilon_local) * log(1/delta) / n)). Substituting parameters yields n >= C^2 * 208.8. At n=100, epsilon_central approximately 1.45; meaningful privacy (epsilon_central < 1.0) requires n approximately 200.",
+      "derivation_source": ["A-MK2.1"],
+      "inference_rule_steps": [
+        { "step": "1", "input": ["A-MK2.1"], "operation": "IR-1: Cited theorem application — Erlingsson et al. (2019) shuffle model amplification bound.", "output": "epsilon_central = O((1-e^(-epsilon_local)) * sqrt(e^(epsilon_local) * log(1/delta) / n))" },
+        { "step": "2", "input": ["Step 1"], "operation": "IR-5: Algebraic manipulation — substitute epsilon_local=3.0, delta=10^-5: (1-e^-3)=0.950; e^3=20.09; log(10^5)=11.51.", "output": "n >= C^2 * 0.950^2 * 20.09 * 11.51 = C^2 * 208.8" },
+        { "step": "3", "input": ["Step 2"], "operation": "IR-5: Algebraic manipulation — evaluate at n=100 and n=200.", "output": "n=100: epsilon_central approx 1.45; n=200: epsilon_central approx 1.02. Meaningful privacy requires n approx 200." }
+      ],
+      "placeholder": true,
+      "placeholder_id": "PH-MK2.1",
+      "falsification_predicate": {
+        "FALSIFIED_IF": "epsilon_central_at_n200 < 0.50 OR epsilon_central_at_n200 > 2.0",
+        "WHERE": {
+          "epsilon_central_at_n200": "scalar · dimensionless · central DP guarantee computed via Feldman et al. (2021) Theorem 3.2 with epsilon_local=3.0, delta=10^-5, n=200"
+        },
+        "EVALUATION": "Compute epsilon_central using exact Feldman et al. (2021) formula (not asymptotic approximation) for n=200, epsilon_local=3.0, delta=10^-5; check result lies in [0.50, 2.0]; finite",
+        "BOUNDARY": "epsilon_central = 1.0 → NOT FALSIFIED (target threshold); epsilon_central = 2.0 → FALSIFIED (claimed 'meaningful' privacy not achieved at n=200)",
+        "CONTEXT": "The asymptotic approximation is used in the paper. Exact constant C requires numerical evaluation (PH-MK2.1). Feldman et al. (2021) formally requires n > 3923 for strict validity at epsilon_local=3.0."
+      },
+      "sample_falsification_observation": "O = {Feldman exact computation yields epsilon_central = 3.5 at n=200} → privacy not meaningful → FALSIFIED."
+    },
+    {
+      "claim_id": "C-MK2.2",
+      "type": "F",
+      "label": "[TYPE:F]",
+      "name": "Theorem 7.1 — Temporal Consistency",
+      "statement": "The governance protocol is temporally isolated from improvements it governs through a cryptographic audit log. The framework cannot be retroactively modified to ratify previously evaluated improvements. Temporal separation holds if and only if the Master Decision Log is append-only and hash-chained.",
+      "derivation_source": ["D-MK2.1"],
+      "inference_rule_steps": [
+        { "step": "1", "input": ["D-MK2.1"], "operation": "IR-4: Definition Expansion — Master Decision Log defined as append-only, hash-chained ledger.", "output": "Log entries are immutable once committed." },
+        { "step": "2", "input": ["Step 1"], "operation": "IR-1: Modus Ponens — if log is append-only and hash-chained, then any retroactive modification breaks the hash chain, which is detectable.", "output": "Retroactive modification is detectable → temporal isolation holds." }
+      ],
+      "falsification_predicate": {
+        "FALSIFIED_IF": "retroactive_modification_undetectable = true",
+        "WHERE": {
+          "retroactive_modification_undetectable": "boolean · true if an adversary can modify a prior log entry without breaking the hash chain or producing a detectable inconsistency, given SHA-256 or equivalent collision-resistant hash"
+        },
+        "EVALUATION": "Attempt to modify a prior log entry in a hash-chained append-only log; verify whether the modification breaks the chain; finite",
+        "BOUNDARY": "Hash collision found → FALSIFIED (but computationally infeasible for SHA-256)",
+        "CONTEXT": "Temporal consistency relies on collision resistance of the hash function, a standard cryptographic assumption. The theorem is conditional on this assumption, not unconditional."
+      },
+      "sample_falsification_observation": "O = {SHA-256 collision found allowing undetectable log modification} → temporal consistency broken → FALSIFIED."
+    },
+    {
+      "claim_id": "C-MK2.3",
+      "type": "F",
+      "label": "[TYPE:F]",
+      "name": "Theorem 7.2 — Governance Process-Equivalence",
+      "statement": "The network governance protocol G and object-level improvement mechanism M share the same scoring function (KVS), threshold (kappa), and logging structure (Master Decision Log). The three institutional differences — principal set, ratification threshold, and review period — are parameterizations of the shared mechanism, not structural departures.",
+      "derivation_source": ["D-MK2.1", "MK-P1 AI-Layer D-MK1.2"],
+      "inference_rule_steps": [
+        { "step": "1", "input": ["D-MK2.1", "MK-P1 AI-Layer D-MK1.2"], "operation": "IR-4: Definition Expansion — governance protocol G uses KVS for scoring governance proposals; mechanism M uses KVS for scoring improvement candidates.", "output": "Both use KVS, kappa, and MDL." },
+        { "step": "2", "input": ["Step 1"], "operation": "IR-6: Logical Equivalence — structural identity of scoring, thresholding, and logging implies process-equivalence up to parameterization.", "output": "G and M are process-equivalent. Three differences are parameter choices." }
+      ],
+      "falsification_predicate": {
+        "FALSIFIED_IF": "structural_departure_found = true",
+        "WHERE": {
+          "structural_departure_found": "boolean · true if the governance protocol G uses a scoring function, threshold rule, or logging structure that is not a parameterization of the object-level mechanism M"
+        },
+        "EVALUATION": "Compare G and M on three dimensions: (1) scoring function identity; (2) threshold rule identity; (3) logging structure identity. If any dimension shows a structural (not parametric) difference, structural_departure_found = true; finite",
+        "BOUNDARY": "Parametric differences (different principal set, different kappa value, different review period) → NOT FALSIFIED. Structural difference (e.g., G uses a voting mechanism instead of KVS) → FALSIFIED.",
+        "CONTEXT": "Process-equivalence is weaker than process-identity. The paper explicitly characterizes three institutional differences as parameterizations. Claim is falsified only by a structural departure."
+      },
+      "sample_falsification_observation": "O = {Governance protocol uses majority vote instead of KVS scoring} → structural departure → FALSIFIED."
+    },
+    {
+      "claim_id": "C-MK2.4",
+      "type": "F",
+      "label": "[TYPE:F]",
+      "name": "Bayesian calibration convergence",
+      "statement": "Under the Beta-Binomial conjugate model with honest majority (C1), retrospective validation (C2), and bounded strategic benefit (C3), the network's calibrated threshold kappa_t converges to the true optimal threshold kappa* as the number of improvement cycles increases.",
+      "derivation_source": ["A-MK2.3", "MK-P1 AI-Layer C-MK1.3"],
+      "inference_rule_steps": [
+        { "step": "1", "input": ["A-MK2.3"], "operation": "IR-1: Cited theorem application — Beta-Binomial conjugacy guarantees posterior concentration around true p as n increases (Bernstein-von Mises theorem).", "output": "Posterior concentrates under exchangeability." },
+        { "step": "2", "input": ["Step 1"], "operation": "IR-1: Modus Ponens — conditions C1-C3 jointly ensure exchangeability holds approximately.", "output": "kappa_t → kappa* as improvement cycles accumulate." }
+      ],
+      "falsification_predicate": {
+        "FALSIFIED_IF": "calibration_diverges = true",
+        "WHERE": {
+          "calibration_diverges": "boolean · true if, under conditions C1-C3, the sequence kappa_t does not converge: |kappa_{t+1} - kappa_t| fails to decrease monotonically after t > 20 cycles"
+        },
+        "EVALUATION": "Simulate Beta-Binomial updating under C1-C3 for 100 improvement cycles; compute |kappa_{t+1} - kappa_t| for t > 20; check for convergence (decreasing differences); finite",
+        "BOUNDARY": "Non-monotonic oscillation that still converges in L2 → NOT FALSIFIED (convergence does not require monotone approach)",
+        "CONTEXT": "Convergence is conditional on C1-C3. Violation of exchangeability (e.g., correlated outcomes across substrates) can cause divergence. Three failure modes documented in MK-P2 Section 5.1."
+      },
+      "sample_falsification_observation": "O = {Coordinated strategic behavior by coalition of POs introduces systematic bias, causing kappa_t to oscillate without converging after 50 cycles} → C1 violated → conditional claim not falsified (condition violated, not conclusion)."
+    }
+  ],
+  "placeholder_register": [
+    {
+      "placeholder_id": "PH-MK2.1",
+      "source_claim": "C-MK2.1",
+      "description": "Exact constant C in Theorem 3.1 requires numerical evaluation from Feldman et al. (2021). Asymptotic approximation used in paper.",
+      "resolved": false,
+      "blocks_phase_ready": false,
+      "target_session": "OPEN — resolves with numerical computation of exact Feldman bound"
+    },
+    {
+      "placeholder_id": "PH-MK2.2",
+      "source_claim": "C-MK2.4",
+      "description": "No MKN has been implemented. All network demonstrations are structural simulations. Empirical confirmation awaits actual network data.",
+      "resolved": false,
+      "blocks_phase_ready": false,
+      "target_session": "OPEN — resolves with first MKN deployment"
+    }
+  ],
+  "cross_references": [
+    { "from": "C-MK2.1", "to": "MK-P1 AI-Layer D-MK1.3", "relation": "Novelty measurement requires shared Knowledge Record Store — privacy-preserving sharing is the contribution of MK-P2." },
+    { "from": "C-MK2.3", "to": "MK-P1 AI-Layer C-MK1.3", "relation": "Process-equivalence ensures governance changes pass through same KVS evaluation as object-level improvements." },
+    { "from": "C-MK2.4", "to": "MK-P1 AI-Layer F-MK1.4", "relation": "Bayesian calibration provides the mechanism for threshold adaptation deferred in MK-P1." }
+  ],
+  "summary": {
+    "total_claims": 8,
+    "type_A": 3,
+    "type_D": 1,
+    "type_F": 4,
+    "placeholder_count": 2,
+    "phase_ready": true,
+    "session_produced": "S50"
+  }
+}

@@ -1,0 +1,81 @@
+{
+  "title": "The Dual Reader Standard: Architecture Specification",
+  "description": "The Dual Reader Standard (DRS) is a verification architecture for knowledge systems comprising two protocols: the Dual Reader Protocol (DRP) for text and the Grounded Verification Protocol (GVP) for software. Both share a substrate-independent Falsification Kernel K = (P, O, M, B) that reduces every claim to embedded binary logic — a deterministic predicate with a single-bit verdict. The standard classifies claims into three types (axiom, definition, falsifiable) and six verification tiers, enforces correctness through a six-condition phase gate, and functions as a machine lingua franca: any AI system in any country can evaluate any claim without translation. This paper specifies the complete architecture, derives the DRS as an instance of the Fractal Rhythm Model, and analyses the structural properties required for self-spreading adoption.",
+  "upload_type": "publication",
+  "publication_type": "workingpaper",
+  "license": {
+    "id": "CC-BY-4.0"
+  },
+  "creators": [
+    {
+      "name": "Brennan, Thomas",
+      "orcid": "0009-0002-6353-7115",
+      "affiliation": "Independent Researcher"
+    }
+  ],
+  "contributors": [
+    {
+      "name": "Claude (Anthropic)",
+      "type": "Other",
+      "affiliation": "Anthropic"
+    }
+  ],
+  "keywords": [
+    "dual reader standard",
+    "falsification",
+    "verification",
+    "machine-evaluable claims",
+    "knowledge architecture",
+    "grounded verification protocol",
+    "dual reader protocol",
+    "AI layer",
+    "falsification kernel",
+    "binary logic",
+    "lingua franca",
+    "fractal rhythm model",
+    "three-channel model",
+    "JSON schema"
+  ],
+  "subjects": [
+    {
+      "term": "Knowledge management",
+      "identifier": "https://id.loc.gov/authorities/subjects/sh99001059",
+      "scheme": "url"
+    },
+    {
+      "term": "Software verification",
+      "identifier": "https://id.loc.gov/authorities/subjects/sh88004459",
+      "scheme": "url"
+    }
+  ],
+  "related_identifiers": [
+    {
+      "identifier": "10.5281/zenodo.18859299",
+      "relation": "isPartOf",
+      "resource_type": "software",
+      "scheme": "doi"
+    },
+    {
+      "identifier": "https://github.com/thomasbrennan/Fracttalix",
+      "relation": "isSupplementTo",
+      "resource_type": "software",
+      "scheme": "url"
+    },
+    {
+      "identifier": "https://github.com/thomasbrennan/Fracttalix/blob/main/ai-layers/falsification-kernel.md",
+      "relation": "references",
+      "resource_type": "other",
+      "scheme": "url"
+    },
+    {
+      "identifier": "https://github.com/thomasbrennan/Fracttalix/blob/main/docs/GVP-spec.md",
+      "relation": "references",
+      "resource_type": "other",
+      "scheme": "url"
+    }
+  ],
+  "version": "1.0",
+  "language": "eng",
+  "access_right": "open",
+  "notes": "Part of the Fracttalix corpus (22-object unified corpus on the Fractal Rhythm Model). The DRS is the verification standard governing the corpus. This paper is the canonical architecture specification. AI collaborator Claude (Anthropic) provided architectural formalisation, protocol naming (GVP), tier taxonomy design, and manuscript drafting — all contributions contributed to the public domain."
+}
