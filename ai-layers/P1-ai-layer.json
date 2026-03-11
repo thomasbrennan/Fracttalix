@@ -270,7 +270,7 @@
         },
         "EVALUATION": "For each class compute mean_β; compare to 0.5 ± 2·pooled_σ; finite",
         "BOUNDARY": "exact equality → NOT FALSIFIED (measure zero for continuous β)",
-        "CONTEXT": "[PLACEHOLDER: pending P2, AI-Layer, Claim C-2.1, Phase 1] — class-level 2σ test"
+        "CONTEXT": "[PLACEHOLDER: pending P2, AI-Layer, Claim F-2.1, Phase 1] — class-level 2σ test"
       }
     },
     {
@@ -484,7 +484,7 @@
       "resolved": false,
       "blocks_phase_ready": false,
       "target_paper": "P2",
-      "target_claim": "C-2.1",
+      "target_claim": "F-2.1",
       "target_session": "OPEN — resolves with P2 completion"
     }
   ],

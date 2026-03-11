@@ -213,7 +213,7 @@
         "BOUNDARY": "KVS_j = 0 or KVS_j = 1 → NOT FALSIFIED (boundary values are permitted)",
         "CONTEXT": "This property follows immediately from D-MK1.2: the product of four numbers each in [0,1] is in [0,1]. It is a Property rather than a Theorem because it requires no non-trivial inference. Stated for architectural significance: ensures cross-substrate comparability without renormalization."
       },
-      "derivation_source": []
+      "derivation_source": ["D-MK1.2", "D-MK1.3", "D-MK1.4", "D-MK1.5", "D-MK1.6"]
     },
     {
       "claim_id": "F-MK1.2",
@@ -254,7 +254,7 @@
         "BOUNDARY": "KVS_j′ = KVS_j when the improved component starts at or contributes zero product — NOT FALSIFIED (non-decreasing, not strictly increasing)",
         "CONTEXT": "Significance is normative: correct incentive structure. An improvement candidate that scores higher on any dimension should never score lower overall."
       },
-      "derivation_source": []
+      "derivation_source": ["D-MK1.2", "D-MK1.3", "D-MK1.4", "D-MK1.5", "D-MK1.6"]
     },
     {
       "claim_id": "F-MK1.3",
@@ -431,7 +431,7 @@
           "CONTEXT": "Part (c) is a canonical modeling choice. The paper's Correction 2 explicitly states: 'α = 1 is the canonical modeling choice under proportional normalization, not a uniquely forced mathematical conclusion.' This claim has weaker epistemic status than parts (a) and (b) and should be read accordingly."
         }
       },
-      "derivation_source": []
+      "derivation_source": ["A-MK1.1", "A-MK1.2", "A-MK1.3", "A-MK1.4", "A-MK1.5", "A-MK1.6", "D-MK1.3", "D-MK1.4", "D-MK1.5", "D-MK1.6"]
     },
     {
       "claim_id": "F-MK1.4",
@@ -482,7 +482,7 @@
         "BOUNDARY": "Theorem establishes well-definedness only, not convergence or optimality — convergence is addressed in Paper 2 (Governance Closure Theorem). A demonstration that KVS does not converge to an optimal formula does NOT falsify this theorem.",
         "CONTEXT": "Self-referentiality is the mechanism that permits Meta-Kaizen to improve itself. The principal gate (human review required for all adoptions including meta-level ones) prevents runaway self-modification."
       },
-      "derivation_source": []
+      "derivation_source": ["D-MK1.1", "D-MK1.2", "D-MK1.3", "D-MK1.4", "D-MK1.5", "D-MK1.6"]
     },
     {
       "claim_id": "F-MK1.5",
@@ -546,7 +546,7 @@
         "BOUNDARY": "Asymmetric case (L_FP ≠ L_FN) uses approximation formula requiring distributional assumptions — asymmetric formula is NOT part of this predicate and is presented in the paper as an approximation, not a derivation",
         "CONTEXT": "Symmetric special case is a complete derivation. Asymmetric formula requires distributional assumptions (uniform score distributions, uniform quality prior) stated explicitly in the paper. Practitioners using asymmetric thresholds must derive κ* from their specific loss ratio."
       },
-      "derivation_source": []
+      "derivation_source": ["A-MK1.1", "D-MK1.2"]
     },
     {
       "claim_id": "F-MK1.6",
@@ -580,7 +580,7 @@
         "BOUNDARY": "Recall = 71.2 or 76.2 → NOT FALSIFIED (CI bounds are inclusive). Result outside CI with numpy seed=42 indicates implementation error, not model falsification — this is a reproducibility claim.",
         "CONTEXT": "This is a structural simulation result, not an empirical validation. The 73.8% figure is earned (not circular: Q_mult_noisy uses log-normal noise, not KVS.copy()). Comparison: ADD achieves 68.4% [66.0, 70.8] — non-overlapping CIs establish meaningful structural advantage. Random selector achieves 5% by construction."
       },
-      "derivation_source": []
+      "derivation_source": ["D-MK1.2"]
     },
     {
       "claim_id": "F-MK1.7",
@@ -609,7 +609,7 @@
         "BOUNDARY": "KVS = ADD for any variant → FALSIFIED (claim requires strict advantage)",
         "CONTEXT": "Q_threshold is the most practically informative outcome function: it formalizes that real improvements require minimum thresholds across ALL dimensions. KVS's structural advantage under Q_threshold is the primary simulation-based argument for the multiplicative form over additive alternatives."
       },
-      "derivation_source": []
+      "derivation_source": ["D-MK1.2", "A-MK1.5"]
     },
     {
       "claim_id": "F-MK1.8",
@@ -630,7 +630,7 @@
         "BOUNDARY": "ρ_T = 0.730 → NOT FALSIFIED (CI lower bound is inclusive)",
         "CONTEXT": "Operational remedy: filter T=0 candidates before scoring. Equal-weight property holds for candidates with T > 0. This artifact is a structural consequence of the distributional specification, not a model failure."
       },
-      "derivation_source": []
+      "derivation_source": ["D-MK1.2", "D-MK1.6"]
     },
     {
       "claim_id": "F-MK1.9",
@@ -656,7 +656,7 @@
         "BOUNDARY": "ρ = 0 or p = 0.05 → FALSIFIED (requires strictly greater than zero with significance)",
         "CONTEXT": "If H₁ is not supported, the paper commits to recharacterizing KVS as a governance tool (transparent, auditable, consistent) rather than a scientific measurement instrument. This is explicitly stated in Section 5.4. Non-confirmation does not invalidate the axiomatic derivation — it bounds the empirical claim."
       },
-      "derivation_source": []
+      "derivation_source": ["F-MK1.3", "D-MK1.2"]
     }
   ],
   "placeholder_register": [

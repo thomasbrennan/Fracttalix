@@ -33,7 +33,7 @@
       "label": "[TYPE:A]",
       "name": "Neural substrate is a network",
       "statement": "The neural system is a network in the precise sense of P1 A-1.3: neurons are nodes, synaptic connections are directed edges, and coupling κ is measurable as the ratio of active to possible synaptic connections.",
-      "derivation_source": ["A-1.3", "A-1.5"],
+      "derivation_source": ["A-1.3", "A-1.5", "A-2.1"],
       "falsification_predicate": null
     },
     {
