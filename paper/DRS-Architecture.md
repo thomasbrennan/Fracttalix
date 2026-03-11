@@ -406,17 +406,114 @@ This is not circular. The FRM is derived from physics (Hopf bifurcation, Stuart-
 
 ---
 
-## 16. Future-Proofing
+## 16. Three-Axis Compatibility
 
-### 16.1 The kernel is the invariant
+A standard that cannot survive contact with the past, the present, and the future is not a standard. It is a snapshot. The DRS is designed for compatibility across all three axes simultaneously.
 
-The Falsification Kernel K = (P, O, M, B) is substrate-independent. It does not know whether it is evaluating a scientific theorem, a software behavioral guarantee, a legal contract, or a regulatory requirement. This is by design.
+### 16.1 The invariant at the centre
 
-Future-proofing strategy: **never modify the kernel**. Add new protocols to the DRS instead.
+The Falsification Kernel K = (P, O, M, B) is the fixed point. It does not know whether it is evaluating a scientific theorem, a software behavioral guarantee, a legal contract, or a regulatory requirement. It does not know whether the year is 2026 or 2046. It does not know whether the serialisation format is JSON, YAML, or something that hasn't been invented yet.
 
-### 16.2 Protocol extensibility
+The kernel is permanent. Everything else is extensible.
 
-The DRS currently has two protocols (DRP for text, GVP for software). Future domains can add their own:
+---
+
+### Axis 1: Past-Proofing (Backwards Compatibility)
+
+The DRS must never invalidate work already done under it.
+
+**16.2 Schema versioning.** Every AI layer records which schema version it was produced against (`v3-S51`). This means:
+
+- An AI layer produced under schema v2 remains valid under schema v2 forever
+- A v3 validator can read a v2 layer (new fields are optional; old fields are preserved)
+- Migration is additive: v2 → v3 added `tier`, `test_bindings`, `verified_against`. No v2 fields were removed or renamed
+- Validators can be version-aware: if `schema_version` is `v2-S50`, do not require v3 fields
+
+**16.3 Predicate permanence.** A falsification predicate written in 2026 must be evaluable in 2036. This is guaranteed by:
+
+- The kernel grammar (Section 3 of the Falsification Kernel) uses only mathematical and logical operators that are permanently defined
+- The `WHERE` field defines every variable inline — no external dependency on a moving target
+- The `EVALUATION` field specifies a self-contained procedure, not a reference to a tool that may not exist later
+- The `CONTEXT` field justifies thresholds by citing derivations, not conventions that may change
+
+**16.4 Inference rule stability.** The inference rule inventory (IR-1 through IR-8) is append-only. New rules can be added. Existing rules are never modified or removed. Derivation traces cite rules by ID, so an old derivation citing IR-3 will always mean "Substitution of Equals."
+
+**16.5 Tier stability.** The six verification tiers are append-only. New tiers can be added to the schema's `enum` array. Existing tiers are never removed or redefined. A claim classified as `software_tested` in 2026 means the same thing in 2036.
+
+**16.6 The backwards compatibility contract.** The DRS makes this promise: **any AI layer that was valid when it was created will remain valid forever**. New versions of the standard add capabilities. They never break existing artifacts.
+
+This is the same contract that HTML makes (old pages still render), that JSON makes (old documents still parse), and that git makes (old commits still exist). The DRS inherits this property by design.
+
+---
+
+### Axis 2: Lateral-Proofing (Cross-Domain Compatibility)
+
+The DRS must work across domains, languages, tools, AI systems, and serialisation formats — simultaneously, not sequentially.
+
+**16.7 Domain independence.** The kernel K = (P, O, M, B) does not reference any specific domain. The three claim types (A, D, F) are epistemological categories that apply to any knowledge system:
+
+| Domain | Type A (Axiom/Assumption) | Type D (Definition) | Type F (Falsifiable) |
+|--------|--------------------------|--------------------|--------------------|
+| Science | Literature premises | Stipulative terms | Theorems, predictions |
+| Software | Platform requirements, dependency contracts | Type signatures, schemas | Behavioral guarantees, invariants |
+| Legal | Statutory authority, jurisdictional assumptions | Defined terms | Legal conclusions, compliance claims |
+| Regulatory | Regulatory framework assumptions | Standard definitions | Conformity assertions |
+| Policy | Political assumptions, value premises | Policy term definitions | Impact predictions, outcome claims |
+| Education | Pedagogical axioms | Learning objective definitions | Assessment claims, competency predictions |
+
+The DRS currently has two protocols (DRP for text, GVP for software). Future domains add their own protocols — not by modifying the kernel, but by defining:
+
+1. Who the readers are (human + machine pair)
+2. What the tier taxonomy looks like for that domain
+3. What the binding mechanism is (test bindings for software, case citations for legal, etc.)
+
+**16.8 Language independence.** The GVP currently references pytest node IDs, but the `test_bindings` field is defined as an array of strings. Any test framework in any language can be referenced:
+
+- Python: `tests/test_sort.py::TestSort::test_ascending`
+- JavaScript: `__tests__/sort.test.js::ascending order`
+- Rust: `tests::sort::test_ascending`
+- Go: `TestSort/ascending`
+- Java: `com.example.SortTest#testAscending`
+
+The format is a convention, not a constraint. The field accepts any string that uniquely identifies a test.
+
+**16.9 AI system independence.** The AI layer is a JSON document. Any AI system — Claude, GPT, Gemini, Llama, or systems that don't exist yet — can read it. The DRS does not depend on any specific AI system's capabilities. The `semantic_spec_url` field points to the kernel specification, which is written in plain prose. Any system that can read English and parse JSON can evaluate the standard.
+
+**16.10 Serialisation independence.** The Falsification Kernel (Layer 0) is defined in prose (`falsification-kernel.md`), not in JSON Schema. The current implementation uses JSON, but the kernel's semantics are independent of encoding. A future implementation could use:
+
+- YAML (for human readability)
+- Protocol Buffers (for performance)
+- CBOR (for embedded systems)
+- A format that hasn't been invented yet
+
+The `semantic_spec_url` field in every AI layer points to the kernel specification. This decouples *what a predicate means* from *how it's serialised*.
+
+**16.11 Tool independence.** The DRS embeds in existing workflows rather than replacing them:
+
+| Tool category | DRS uses | Does not require |
+|---------------|----------|-----------------|
+| Version control | git SHAs (any hosting) | Specific git platform |
+| Testing | Any test runner (pytest, Jest, cargo test, go test) | Specific test framework |
+| Validation | Any JSON Schema validator | Specific validator implementation |
+| CI/CD | Any pipeline (GitHub Actions, GitLab CI, Jenkins) | Specific CI platform |
+| Serialisation | Any format that can represent the kernel | JSON specifically |
+
+**16.12 The lateral compatibility contract.** The DRS makes this promise: **adopting the DRS in one domain, one language, one tool, or one AI system does not lock you in**. The kernel is the invariant. Everything else is a binding that can be swapped.
+
+---
+
+### Axis 3: Future-Proofing (Forward Compatibility)
+
+The DRS must accept innovations that don't exist yet without requiring a redesign.
+
+**16.13 Protocol extensibility.** New domains add new protocols. The DRS currently has:
+
+| Protocol | Domain | Readers |
+|----------|--------|---------|
+| DRP | Text | Human + AI |
+| GVP | Software | Coder + Machine |
+
+Future protocols follow the same pattern:
 
 | Domain | Potential protocol | Reader A | Reader B |
 |--------|-------------------|----------|----------|
@@ -425,34 +522,53 @@ The DRS currently has two protocols (DRP for text, GVP for software). Future dom
 | Policy | Policy Verification Protocol (PVP) | Analyst | Impact model |
 | Education | Educational Verification Protocol (EVP) | Student | Assessment engine |
 
-Each protocol would define its own readers, its own tier taxonomy, and its own binding mechanism — but all would share the kernel and the AI layer schema.
+Each protocol defines its own readers, its own tier taxonomy, and its own binding mechanism — but all share the kernel, the claim types, and the AI layer schema.
 
-### 16.3 Schema versioning
+**16.14 Tier extensibility.** The six current tiers are not exhaustive. Future domains may need:
 
-The AI layer schema is versioned (`v3-S51`). Every AI layer records which schema version it was produced against. This means:
+- `regulatory_certified` — verified by a regulatory body
+- `peer_reviewed` — verified by external peer review
+- `formally_verified` — verified by a proof assistant (Coq, Lean, Isabelle)
+- `field_tested` — verified by deployment in production
+- `community_validated` — verified by community replication
 
-- Old layers remain valid against old schemas
-- New fields can be added without breaking existing layers
-- Validators can be version-aware
-- Migration paths are defined by the version history
+New tiers are added to the schema's `enum` array. Existing tiers remain valid. The taxonomy grows; it never shrinks.
 
-### 16.4 Serialisation independence
+**16.15 Inference rule extensibility.** The inference rule inventory is a living list. IR-1 through IR-8 exist now. IR-9, IR-10, and beyond can be added as new derivation patterns emerge. Each rule has an ID, a name, and a description. Old derivations remain valid because they cite rules by stable ID.
 
-The Falsification Kernel (Layer 0) is defined independently of JSON. The current implementation uses JSON, but the kernel's semantics are specified in prose (`falsification-kernel.md`). A future implementation could use YAML, Protocol Buffers, or any other serialisation format without changing the kernel.
+**16.16 Schema extensibility.** The JSON Schema allows additional properties by default. Future versions can add new fields without invalidating existing layers. The progression:
 
-The `semantic_spec_url` field in every AI layer points to the kernel specification. This decouples evaluation semantics from serialisation format.
+- v1: Basic claim registry and placeholder register
+- v2: Added `semantic_spec_url` (Layer 0 reference)
+- v3: Added `tier`, `test_bindings`, `verified_against` (GVP fields)
+- v4+: Will add whatever the next protocol requires
 
-### 16.5 Inference rule extensibility
+Each version adds. None removes.
 
-The inference rule inventory (IR-1 through IR-8) is a living list. New rules can be added as new derivation patterns emerge. Each rule has an ID, a name, and a description. Derivation traces cite rules by ID, so adding a new rule does not invalidate existing traces.
+**16.17 Unknown future reader types.** The DRS is designed for readers that don't exist yet. The AI layer is a structured document that any sufficiently capable system can parse. Future reader types might include:
 
-### 16.6 Tier extensibility
+- Autonomous verification agents that run evaluation procedures without human oversight
+- Cross-corpus consistency checkers that traverse AI layers across independent projects
+- Regulatory compliance engines that read AI layers as formal evidence
+- Package manager integrations that surface verification status at install time
 
-The six verification tiers are defined in the schema's `enum` array. If a future domain requires a new tier (e.g., `regulatory_certified` for claims verified by a regulatory body), the enum can be extended. Existing tiers remain valid. The tier taxonomy is designed to be extended, not replaced.
+The DRS does not need to anticipate these readers. It only needs to ensure that the AI layer contains enough structured information for any reader to operate. The kernel guarantees this — every Type F claim has a deterministic predicate with defined variables, a finite evaluation procedure, and documented boundaries.
 
-### 16.7 The versioning contract
+**16.18 The forward compatibility contract.** The DRS makes this promise: **any future innovation can be added as a new protocol, a new tier, a new inference rule, or a new schema field — without modifying anything that already exists**. The architecture is additive by construction.
 
-The DRS makes one promise about future versions: **no breaking changes to the kernel**. The 4-tuple K = (P, O, M, B) and the three claim types (A, D, F) are permanent. Everything else — protocols, tiers, schema fields, inference rules — can be added to but not removed.
+---
+
+### 16.19 The three-axis guarantee
+
+| Axis | Promise | Mechanism |
+|------|---------|-----------|
+| **Past** | Nothing already done breaks | Schema versioning, append-only enums, permanent kernel |
+| **Lateral** | Works across all current domains, languages, tools, AI systems | Substrate-independent kernel, string-typed bindings, prose-defined semantics |
+| **Future** | Anything new can be added without redesign | Protocol extensibility, tier extensibility, additive schema evolution |
+
+If all three hold simultaneously, the standard can survive indefinitely. The kernel K = (P, O, M, B) is the invariant that makes all three possible. It is simple enough to be permanent, expressive enough to be universal, and structured enough to be machine-evaluable.
+
+Game on.
 
 ---
 
