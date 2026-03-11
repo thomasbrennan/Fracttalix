@@ -380,8 +380,8 @@ Verification Tiers (v3):
   formal_proof:      18 claims (P1 ×2, P2 ×5, P3 ×4, MK-P1 ×5, DRP-1 ×3)
   analytic:           4 claims (P1 ×3, P4 ×1)
   empirical_pending:  8 claims (P1 ×1, P4 ×1, P5 ×3, MK-P1 ×3)
-  axiom:             14 claims
-  definition:        25 claims
+  axiom:             29 claims
+  definition:        46 claims
 ```
 
 ---
