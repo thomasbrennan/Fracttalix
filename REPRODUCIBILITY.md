@@ -19,11 +19,11 @@ Python 3.9+ required. Zero external runtime dependencies.
 ### 1. Run the full test suite
 
 ```bash
-pytest tests/ -v                # 374 tests
+pytest tests/ -v                # 405 tests
 python fracttalix/detector.py   # 65 built-in smoke tests
 ```
 
-Expected: 439/439 pass.
+Expected: 470/470 pass.
 
 ### 2. Validate AI layers
 
@@ -85,7 +85,7 @@ Each Type F claim in the AI layers maps to specific executable tests:
 | Claim | Test coverage | File |
 |-------|--------------|------|
 | F-SFW.1 (Three-channel completeness) | Channel integration tests | tests/test_steps_channels.py |
-| F-SFW.2 (Test suite coverage) | 374 tests covering all 37 steps | tests/*.py |
+| F-SFW.2 (Test suite coverage) | 405 tests covering all 37 steps | tests/*.py |
 | F-SFW.3 (Backward compat v7.x) | Legacy kwargs, aliases | tests/test_backward_compat.py |
 | F-SFW.4 (Cascade precursor) | Conjunction requirement test | tests/test_steps_channels.py |
 | F-SFW.5 (Config validation) | Frozen dataclass, presets, bounds | tests/test_config.py |
@@ -105,7 +105,7 @@ Each Type F claim in the AI layers maps to specific executable tests:
 ## Verification pipeline
 
 ```
-Source code → pytest (374 tests)
+Source code → pytest (405 tests)
                 ↓
 AI layers  → validate_ai_layers.py (schema compliance)
                 ↓
@@ -128,7 +128,7 @@ CI         → .github/workflows/ (automated on push/PR)
 | `scripts/validate_ai_layers.py` | Schema validator |
 | `scripts/cross_paper_checker.py` | Cross-paper consistency checker |
 | `scripts/corpus_status.py` | Corpus status report generator |
-| `tests/` | 374 pytest tests |
+| `tests/` | 405 pytest tests |
 | `benchmark/` | Anomaly archetype benchmarks (seed 42) |
 
 ---
