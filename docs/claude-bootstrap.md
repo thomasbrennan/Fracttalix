@@ -1,7 +1,7 @@
 # Fracttalix Session Bootstrap
 
 > Paste this file into a new Claude.ai conversation to restore full project context.
-> Last updated: Session 48, 2026-03-10.
+> Last updated: Session 49, 2026-03-11.
 
 ---
 
@@ -23,7 +23,7 @@ For maximum fidelity, also attach these live files from GitHub:
 
 ## Project Identity
 
-- **Corpus**: Fracttalix — 12-paper series on the Fractal Rhythm Model (FRM)
+- **Corpus**: Fracttalix — 21-object unified corpus on the Fractal Rhythm Model (FRM)
 - **Author**: Thomas Brennan
 - **AI collaborators**: Claude (Anthropic), Grok (xAI)
 - **Licence**: CC0 public domain
@@ -71,22 +71,36 @@ For maximum fidelity, also attach these live files from GitHub:
 - **Phase 1**: Merged sentinel branch, fixed 35 schema errors, added CI, corpus status script, process graph v2, journal entries, bootstrap reconciliation
 - **Phase 2**: AI layers for all 12 papers (P2-P5 retroactive, P6-P12 scaffolds), MK-P1 schema fixes (phase_ready fields, derivation_source nulls), cross-paper consistency checker, reproducibility manifest, P1 series_position fix (13→12), process graph updated to 15 live assets
 
-### 12-Paper Corpus
+### Fracttalix Track (16 objects)
 
-| # | Title | Scale | Act | Status |
-|---|-------|-------|-----|--------|
-| 1 | General Theory & KVS | Organization | I | PHASE-READY |
-| 2 | Networked Implementation | Network | I | PUBLISHED |
-| 3 | The Reasoning Network | Cognitive | I | PUBLISHED |
-| 4 | The Fractal Rhythm Model | Dynamic | I | PUBLISHED |
-| 5 | On the Decision to Act | Civilizational | II | PUBLISHED |
-| 6 | What Is A Network? | All scales | III | IN PROGRESS |
-| 7 | The Temporal Channel | Irreversibility | III | QUEUED |
-| 8 | The Exhaustiveness Proof | Mathematical | III | QUEUED |
-| 9 | The Measurement Problem | Instrumentation | III | QUEUED (sync point: P7+P8) |
-| 10 | The Design Paper | Applied | III | QUEUED |
-| 11 | The Thermodynamic Bridge | Physics | III | QUEUED (CRITICAL — physicist co-author required) |
-| 12 | What Is The Second Foundation? | Civilizational | III | QUEUED |
+| # | Title | Type | Act | Status |
+|---|-------|------|-----|--------|
+| P0 | Canonical Build Process Standard | methodology_D | GOV | COMPLETE |
+| P1 | The Fractal Rhythm Model: A Universal Law | law_A | I | PHASE-READY |
+| P2 | Derivation and Universality: β=1/2 Critical Exponent | derivation_B | I | PHASE-READY |
+| P3 | FRM Measurement and Diagnostics | methodology_D | I | PHASE-READY |
+| P4 | Biological Systems | application_C | II | QUEUED |
+| P5 | Neural and Pharmacological Systems | application_C | II | QUEUED |
+| P6 | The Central Paper | derivation_B | II | QUEUED |
+| P7 | Climate and Earth Systems | application_C | III | QUEUED |
+| P8 | Software and Engineered Systems | application_C | III | QUEUED |
+| P9 | Corpus Health and Endogenous Scheduling | synthesis | III | QUEUED |
+| P10 | MetaKaizen General Theory | synthesis | III | QUEUED |
+| P11 | Civilisational Dataset Fitting | application_C | III | QUEUED |
+| P12 | Civilisational Sentinel | synthesis | III | QUEUED |
+| P13 | Corpus Completeness Instrument | synthesis | III | QUEUED |
+| P14 | Dual Reader Standard (DRP-1) | methodology_D | PARALLEL | v0.3 |
+| SFW-1 | Sentinel v12 | software | SOFTWARE | JOSS SUBMITTED |
+
+### Meta-Kaizen Track (5 objects — all PUBLISHED)
+
+| # | Title | Series |
+|---|-------|--------|
+| MK-P1 | General Theory and Algorithmic Framework | MK 1/5 |
+| MK-P2 | Networked Implementation and Governance Closure | MK 2/5 |
+| MK-P3 | Reasoning Propagation and Institutional Memory | MK 3/5 |
+| MK-P4 | Closed-Loop Governance: FRM Integration | MK 4/5 |
+| MK-P5 | On the Decision to Act: Rational Action at Tipping Points | MK 5/5 |
 
 ## Verification Architecture
 
@@ -112,8 +126,8 @@ For maximum fidelity, also attach these live files from GitHub:
 ## Conventions
 
 - **Citation format**: [Fracttalix Paper N, AI-Layer, Claim ID]
-- **Session numbering**: S1–S48 (current)
-- **Build Table**: tracks all 12 papers, milestones, dependencies
+- **Session numbering**: S1–S49 (current)
+- **Build Table**: tracks all 21 corpus objects, milestones, dependencies (CorpusArch v9)
 - **Sentinel**: Python package (v12.1) — streaming anomaly detector implementing the three-channel model
 - **Meta-Kaizen (MK)**: Parallel 5-paper verification corpus
 

@@ -36,3 +36,15 @@ credentials.*
 .coverage
 htmlcov/
 .pytest_cache/
+
+# Mypy
+.mypy_cache/
+
+# Documentation build output
+site/
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Ruff
+.ruff_cache/

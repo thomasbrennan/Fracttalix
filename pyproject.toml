@@ -53,6 +53,7 @@ Homepage = "https://github.com/thomasbrennan/Fracttalix"
 Repository = "https://github.com/thomasbrennan/Fracttalix"
 "Bug Tracker" = "https://github.com/thomasbrennan/Fracttalix/issues"
 Documentation = "https://thomasbrennan.github.io/Fracttalix"
+Changelog = "https://github.com/thomasbrennan/Fracttalix/blob/main/CHANGELOG.md"
 DOI = "https://doi.org/10.5281/zenodo.18859299"
 
 [project.scripts]

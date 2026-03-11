@@ -1,262 +1,303 @@
 {
   "_meta": {
     "document_type": "PROCESS_GRAPH",
-    "version": "v2-S48",
+    "version": "v9-S48",
+    "corpus_architecture": "CorpusArch v9 (S48)",
     "produced_session": "S48",
-    "licence": "CC BY 4.0"
+    "licence": "CC BY 4.0",
+    "note": "First version to declare unified corpus identity. One corpus, two parallel tracks, single governing process (P0). FRM is the root. 21 objects: P0 + P1–P14 + MK-P1–MK-P5 + SFW-1."
   },
-  "corpora": [
-    {
-      "corpus_id": "Fracttalix",
-      "papers": [
-        {
-          "paper_id": "P1",
-          "title": "General Theory & KVS",
-          "paper_type": "law_A",
-          "scale": "Organization",
-          "act": "I",
-          "status": "PHASE-READY",
-          "ai_layer_url": "https://github.com/thomasbrennan/Fracttalix/blob/main/ai-layers/P1-ai-layer.json",
-          "prose_doi": "10.5281/zenodo.18859299",
-          "placeholder_count": 1
-        },
-        {
-          "paper_id": "P2",
-          "title": "Networked Implementation",
-          "paper_type": "law_A",
-          "scale": "Network",
-          "act": "I",
-          "status": "PUBLISHED",
-          "ai_layer_url": "https://github.com/thomasbrennan/Fracttalix/blob/main/ai-layers/P2-ai-layer.json",
-          "placeholder_count": null
-        },
-        {
-          "paper_id": "P3",
-          "title": "The Reasoning Network",
-          "paper_type": "law_A",
-          "scale": "Cognitive",
-          "act": "I",
-          "status": "PUBLISHED",
-          "ai_layer_url": "https://github.com/thomasbrennan/Fracttalix/blob/main/ai-layers/P3-ai-layer.json",
-          "placeholder_count": null
-        },
-        {
-          "paper_id": "P4",
-          "title": "The Fractal Rhythm Model",
-          "paper_type": "derivation_B",
-          "scale": "Dynamic",
-          "act": "I",
-          "status": "PUBLISHED",
-          "ai_layer_url": "https://github.com/thomasbrennan/Fracttalix/blob/main/ai-layers/P4-ai-layer.json",
-          "placeholder_count": null
-        },
-        {
-          "paper_id": "P5",
-          "title": "On the Decision to Act",
-          "paper_type": "application_C",
-          "scale": "Civilizational",
-          "act": "II",
-          "status": "PUBLISHED",
-          "ai_layer_url": "https://github.com/thomasbrennan/Fracttalix/blob/main/ai-layers/P5-ai-layer.json",
-          "placeholder_count": null
-        },
-        {
-          "paper_id": "P6",
-          "title": "What Is A Network?",
-          "paper_type": "law_A",
-          "scale": "All scales",
-          "act": "III",
-          "status": "IN_PROGRESS",
-          "ai_layer_url": "https://github.com/thomasbrennan/Fracttalix/blob/main/ai-layers/P6-ai-layer.json",
-          "placeholder_count": null
-        },
-        {
-          "paper_id": "P7",
-          "title": "The Temporal Channel",
-          "paper_type": "derivation_B",
-          "scale": "Irreversibility",
-          "act": "III",
-          "status": "QUEUED",
-          "ai_layer_url": "https://github.com/thomasbrennan/Fracttalix/blob/main/ai-layers/P7-ai-layer.json",
-          "placeholder_count": null
-        },
-        {
-          "paper_id": "P8",
-          "title": "The Exhaustiveness Proof",
-          "paper_type": "derivation_B",
-          "scale": "Mathematical",
-          "act": "III",
-          "status": "QUEUED",
-          "ai_layer_url": "https://github.com/thomasbrennan/Fracttalix/blob/main/ai-layers/P8-ai-layer.json",
-          "placeholder_count": null
-        },
-        {
-          "paper_id": "P9",
-          "title": "The Measurement Problem",
-          "paper_type": "methodology_D",
-          "scale": "Instrumentation",
-          "act": "III",
-          "status": "QUEUED",
-          "ai_layer_url": "https://github.com/thomasbrennan/Fracttalix/blob/main/ai-layers/P9-ai-layer.json",
-          "placeholder_count": null,
-          "sync_point": true,
-          "sync_note": "Requires both P7 AND P8"
-        },
-        {
-          "paper_id": "P10",
-          "title": "The Design Paper",
-          "paper_type": "application_C",
-          "scale": "Applied",
-          "act": "III",
-          "status": "QUEUED",
-          "ai_layer_url": "https://github.com/thomasbrennan/Fracttalix/blob/main/ai-layers/P10-ai-layer.json",
-          "placeholder_count": null
-        },
-        {
-          "paper_id": "P11",
-          "title": "The Thermodynamic Bridge",
-          "paper_type": "derivation_B",
-          "scale": "Physics",
-          "act": "III",
-          "status": "QUEUED",
-          "ai_layer_url": "https://github.com/thomasbrennan/Fracttalix/blob/main/ai-layers/P11-ai-layer.json",
-          "placeholder_count": null,
-          "risk_level": "CRITICAL",
-          "risk_note": "Physicist co-author non-negotiable"
-        },
-        {
-          "paper_id": "P12",
-          "title": "What Is The Second Foundation?",
-          "paper_type": "application_C",
-          "scale": "Civilizational",
-          "act": "III",
-          "status": "QUEUED",
-          "ai_layer_url": "https://github.com/thomasbrennan/Fracttalix/blob/main/ai-layers/P12-ai-layer.json",
-          "placeholder_count": null
-        }
+  "corpus": {
+    "corpus_id": "Fracttalix",
+    "root": "f(t) = B + A·exp(−λt)·cos(ωt+φ)",
+    "governing_process": "P0",
+    "total_objects": 21,
+    "kappa_corpus": 0.91,
+    "zenodo_doi": "10.5281/zenodo.18859299",
+    "tracks": {
+      "fracttalix": {
+        "object_ids": ["P0", "P1", "P2", "P3", "P4", "P5", "P6", "P7", "P8", "P9", "P10", "P11", "P12", "P13", "P14", "SFW-1"],
+        "count": 16
+      },
+      "meta_kaizen": {
+        "object_ids": ["MK-P1", "MK-P2", "MK-P3", "MK-P4", "MK-P5"],
+        "count": 5,
+        "note": "ALL PUBLISHED (Zenodo DOIs). Governed by P0. DRP revision pending post-P14 v1.0."
+      }
+    },
+    "papers": [
+      {
+        "paper_id": "P0",
+        "title": "Canonical Build Process Standard",
+        "paper_type": "methodology_D",
+        "act": "GOV",
+        "track": "fracttalix",
+        "status": "COMPLETE",
+        "status_session": "S39",
+        "note": "Governing process for the entire corpus. CBT v2. Endogenous scheduling T_MK. Governs BOTH tracks (S48). T15/T20 open.",
+        "ai_layer_url": null
+      },
+      {
+        "paper_id": "P1",
+        "title": "The Fractal Rhythm Model: A Universal Law of Network Information Transmission",
+        "paper_type": "law_A",
+        "act": "I",
+        "track": "fracttalix",
+        "status": "PHASE-READY",
+        "ai_layer_version": "v13",
+        "ai_layer_url": "https://github.com/thomasbrennan/Fracttalix/blob/main/ai-layers/P1-ai-layer.json",
+        "prose_doi": "10.5281/zenodo.18859299",
+        "biorxiv_id": "BIORXIV/2026/710918",
+        "placeholder_count": 3,
+        "note": "β=1/2 proved (Hopf quarter-wave, F-1.4). λ=|α|/(Γ·τ_gen) derived. Γ=1+π²/4. 36-substrate adversarial battery. PH-1.1 resolved S48 via P2 C-2.4. PH-1.2, PH-1.3 resolved S48 via P3 C-3.REG."
+      },
+      {
+        "paper_id": "P2",
+        "title": "Derivation and Universality: The β=1/2 Critical Exponent as a Universal Law",
+        "paper_type": "derivation_B",
+        "act": "I",
+        "track": "fracttalix",
+        "status": "PHASE-READY",
+        "ai_layer_version": "v4",
+        "ai_layer_url": "https://github.com/thomasbrennan/Fracttalix/blob/main/ai-layers/P2-ai-layer.json",
+        "placeholder_count": 3,
+        "note": "β=1/2 proved from RG fixed-point, DDE-independent. 10-step derivation, n_invalid=0. 3 substrate classes. TRF-P2-1 (S3), TRF-P2-2 (S10) pre-submission flags. PH-2.3, PH-2.4-EMPIRICAL resolved S48. P10-GAP-2.5 CLOSED S48."
+      },
+      {
+        "paper_id": "P3",
+        "title": "FRM Measurement and Diagnostics",
+        "paper_type": "methodology_D",
+        "act": "I",
+        "track": "fracttalix",
+        "status": "PHASE-READY",
+        "status_session": "S48",
+        "ai_layer_version": "v2",
+        "ai_layer_url": "https://github.com/thomasbrennan/Fracttalix/blob/main/ai-layers/P3-ai-layer.json",
+        "placeholder_count": 0,
+        "note": "Standard protocol R1–R9. Zero-free-parameter constraint. Resolves PH-1.2, PH-1.3, PH-2.3, PH-2.4-EMPIRICAL, P10-GAP-2.5. Formal ancestor of P9. IR-12, IR-13."
+      },
+      {
+        "paper_id": "P4",
+        "title": "Biological Systems",
+        "paper_type": "application_C",
+        "act": "II",
+        "track": "fracttalix",
+        "status": "QUEUED",
+        "gate": "P3 PHASE-READY",
+        "ai_layer_url": "https://github.com/thomasbrennan/Fracttalix/blob/main/ai-layers/P4-ai-layer.json",
+        "note": "FRM applied to biological oscillators. Full dataset fitting. Receives C-3.REG as measurement standard."
+      },
+      {
+        "paper_id": "P5",
+        "title": "Neural and Pharmacological Systems",
+        "paper_type": "application_C",
+        "act": "II",
+        "track": "fracttalix",
+        "status": "QUEUED",
+        "gate": "P3 PHASE-READY",
+        "ai_layer_url": "https://github.com/thomasbrennan/Fracttalix/blob/main/ai-layers/P5-ai-layer.json",
+        "note": "Neural circuits with delayed inhibition. Drug response kinetics. P5↔MK-P4 isomorphism."
+      },
+      {
+        "paper_id": "P6",
+        "title": "The Central Paper",
+        "paper_type": "derivation_B",
+        "act": "II",
+        "track": "fracttalix",
+        "status": "QUEUED",
+        "gate": "P3 PHASE-READY",
+        "ai_layer_url": "https://github.com/thomasbrennan/Fracttalix/blob/main/ai-layers/P6-ai-layer.json",
+        "note": "Integration consistency table for all Act I and Act II claims. Receives C-2.2 as live edge."
+      },
+      {
+        "paper_id": "P7",
+        "title": "Climate and Earth Systems",
+        "paper_type": "application_C",
+        "act": "III",
+        "track": "fracttalix",
+        "status": "QUEUED",
+        "gate": "P3 PHASE-READY",
+        "ai_layer_url": "https://github.com/thomasbrennan/Fracttalix/blob/main/ai-layers/P7-ai-layer.json",
+        "note": "Long-timescale delayed feedback networks. ω=π/(2τ_gen) at climate scale. AMOC candidate dataset."
+      },
+      {
+        "paper_id": "P8",
+        "title": "Software and Engineered Systems",
+        "paper_type": "application_C",
+        "act": "III",
+        "track": "fracttalix",
+        "status": "QUEUED",
+        "gate": "P3 PHASE-READY",
+        "ai_layer_url": "https://github.com/thomasbrennan/Fracttalix/blob/main/ai-layers/P8-ai-layer.json",
+        "note": "Software deployment feedback cycles. Engineered delayed feedback networks. KVS from MK-P1 governs DORA metrics."
+      },
+      {
+        "paper_id": "P9",
+        "title": "Corpus Health and Endogenous Scheduling",
+        "paper_type": "synthesis",
+        "act": "III",
+        "track": "fracttalix",
+        "status": "QUEUED",
+        "gate": "P3 PHASE-READY",
+        "ai_layer_url": "https://github.com/thomasbrennan/Fracttalix/blob/main/ai-layers/P9-ai-layer.json",
+        "note": "κ_corpus rubric, Δt_corpus triple, ρ*_corpus. KVS weights from measurement axioms. Endogenous T_MK."
+      },
+      {
+        "paper_id": "P10",
+        "title": "MetaKaizen General Theory (Fracttalix context)",
+        "paper_type": "synthesis",
+        "act": "III",
+        "track": "fracttalix",
+        "status": "QUEUED",
+        "gate": "P9 Phase 1/3",
+        "ai_layer_url": "https://github.com/thomasbrennan/Fracttalix/blob/main/ai-layers/P10-ai-layer.json",
+        "note": "Theoretical underpinning of what CBT demonstrates operationally. P5↔P10 isomorphism formalised. Bidirectional bridge with MK-P4."
+      },
+      {
+        "paper_id": "P11",
+        "title": "Civilisational Dataset Fitting",
+        "paper_type": "application_C",
+        "act": "III",
+        "track": "fracttalix",
+        "status": "QUEUED",
+        "gate": "P9/P3",
+        "ai_layer_url": "https://github.com/thomasbrennan/Fracttalix/blob/main/ai-layers/P11-ai-layer.json",
+        "note": "Rome, Han China, Abbasid, British Empire. ω=π/(2·τ_generation) at civilisational scale."
+      },
+      {
+        "paper_id": "P12",
+        "title": "Civilisational Sentinel",
+        "paper_type": "synthesis",
+        "act": "III",
+        "track": "fracttalix",
+        "status": "QUEUED",
+        "gate": "P9/P11",
+        "ai_layer_url": "https://github.com/thomasbrennan/Fracttalix/blob/main/ai-layers/P12-ai-layer.json",
+        "note": "κ_corpus applied to civilisational knowledge networks. Endogenous scheduling at civilisational scale."
+      },
+      {
+        "paper_id": "P13",
+        "title": "Corpus Completeness Instrument",
+        "paper_type": "synthesis",
+        "act": "III",
+        "track": "fracttalix",
+        "status": "QUEUED",
+        "note": "CORPUS-COMPLETE fires at P13 PHASE-READY. W13 (S36–S39 events → JSON) is on the critical path."
+      },
+      {
+        "paper_id": "P14",
+        "title": "Dual Reader Standard (DRP-1)",
+        "paper_type": "methodology_D",
+        "act": "PARALLEL",
+        "track": "fracttalix",
+        "status": "v0.3",
+        "ai_layer_url": "https://github.com/thomasbrennan/Fracttalix/blob/main/ai-layers/DRP1-ai-layer.json",
+        "prose_doi": "Zenodo",
+        "note": "Channel 1 (JSON) / Channel 2 (prose). v1.0 gated on P1 arXiv DOI confirmed."
+      },
+      {
+        "paper_id": "SFW-1",
+        "title": "Sentinel v12",
+        "paper_type": "software",
+        "act": "SOFTWARE",
+        "track": "fracttalix",
+        "status": "JOSS SUBMITTED",
+        "ai_layer_url": "https://github.com/thomasbrennan/Fracttalix/blob/main/ai-layers/SFW1-ai-layer.json",
+        "note": "Corpus health monitoring software. JOSS submission active. 6-month archive risk registered. Implements KVS scoring from MK-P1."
+      },
+      {
+        "paper_id": "MK-P1",
+        "title": "Meta-Kaizen: A General Theory and Algorithmic Framework for the Mathematical Formalization of Self-Evolving Continuous Improvement Across Arbitrary Governance Substrates",
+        "paper_type": "derivation_B",
+        "series": "MK 1/5",
+        "track": "meta_kaizen",
+        "status": "PUBLISHED",
+        "ai_layer_url": "https://github.com/thomasbrennan/Fracttalix/blob/main/ai-layers/MK-P1-ai-layer.json",
+        "note": "KVS scoring function derived axiomatically from 6 measurement-theoretic axioms. κ=0.50 from Bayesian decision theory."
+      },
+      {
+        "paper_id": "MK-P2",
+        "title": "Networked Implementation and Governance Closure Theorems",
+        "paper_type": "derivation_B",
+        "series": "MK 2/5",
+        "track": "meta_kaizen",
+        "status": "PUBLISHED",
+        "note": "Governance closure for networked KVS. Implementation theorems for distributed knowledge substrates."
+      },
+      {
+        "paper_id": "MK-P3",
+        "title": "Reasoning Propagation and Institutional Memory",
+        "paper_type": "derivation_B",
+        "series": "MK 3/5",
+        "track": "meta_kaizen",
+        "status": "PUBLISHED",
+        "note": "Reasoning propagation across networks. Formal treatment of institutional memory."
+      },
+      {
+        "paper_id": "MK-P4",
+        "title": "Closed-Loop Governance: FRM Integration for Regime-Aware Adaptive Governance",
+        "paper_type": "application_C",
+        "series": "MK 4/5",
+        "track": "meta_kaizen",
+        "status": "PUBLISHED",
+        "note": "PRIMARY BRIDGE BETWEEN TRACKS. FRM as regime-detection instrument. T_MK derived from FRM τ_gen via T_char = 4·τ_gen."
+      },
+      {
+        "paper_id": "MK-P5",
+        "title": "On the Decision to Act: Formal Framework for Rational Action at System Tipping Points",
+        "paper_type": "derivation_B",
+        "series": "MK 5/5",
+        "track": "meta_kaizen",
+        "status": "PUBLISHED",
+        "note": "Decision-theoretic capstone. κ=0.50 under asymmetric losses. Framework for when to act at FRM tipping point."
+      }
+    ],
+    "dependencies": {
+      "intra_track_fracttalix": [
+        {"from": "P0", "to": "P1", "type": "governs"},
+        {"from": "P1", "to": "P2", "type": "live_edge"},
+        {"from": "P1", "to": "P3", "type": "live_edge"},
+        {"from": "P2", "to": "P3", "type": "live_edge"},
+        {"from": "P3", "to": "P4", "type": "gate"},
+        {"from": "P3", "to": "P5", "type": "gate"},
+        {"from": "P3", "to": "P6", "type": "gate"},
+        {"from": "P3", "to": "P7", "type": "gate"},
+        {"from": "P3", "to": "P8", "type": "gate"},
+        {"from": "P3", "to": "P9", "type": "gate"},
+        {"from": "P2", "to": "P6", "type": "live_edge", "claim": "C-2.2"},
+        {"from": "P9", "to": "P10", "type": "gate"},
+        {"from": "P9", "to": "P11", "type": "gate"},
+        {"from": "P3", "to": "P11", "type": "gate"},
+        {"from": "P9", "to": "P12", "type": "gate"},
+        {"from": "P11", "to": "P12", "type": "gate"}
       ],
-      "dependencies": [
-        {
-          "from": "P1",
-          "to": "P2"
-        },
-        {
-          "from": "P2",
-          "to": "P3"
-        },
-        {
-          "from": "P3",
-          "to": "P4"
-        },
-        {
-          "from": "P4",
-          "to": "P5"
-        },
-        {
-          "from": "P5",
-          "to": "P6"
-        },
-        {
-          "from": "P6",
-          "to": "P7"
-        },
-        {
-          "from": "P6",
-          "to": "P8"
-        },
-        {
-          "from": "P7",
-          "to": "P9"
-        },
-        {
-          "from": "P8",
-          "to": "P9"
-        },
-        {
-          "from": "P9",
-          "to": "P10"
-        },
-        {
-          "from": "P7",
-          "to": "P11"
-        },
-        {
-          "from": "P10",
-          "to": "P12"
-        },
-        {
-          "from": "P11",
-          "to": "P12"
-        }
-      ]
-    },
-    {
-      "corpus_id": "Meta-Kaizen",
-      "papers": [
-        {
-          "paper_id": "MK-P1",
-          "title": "KVS Functional Form",
-          "paper_type": "derivation_B",
-          "status": "PHASE-READY",
-          "ai_layer_url": "https://github.com/thomasbrennan/Fracttalix/blob/main/ai-layers/MK-P1-ai-layer.json",
-          "prose_doi": "pending",
-          "placeholder_count": 1
-        },
-        {
-          "paper_id": "MK-P2",
-          "paper_type": "derivation_B",
-          "status": "QUEUED",
-          "ai_layer_url": null,
-          "placeholder_count": null
-        },
-        {
-          "paper_id": "MK-P3",
-          "paper_type": "derivation_B",
-          "status": "QUEUED",
-          "ai_layer_url": null,
-          "placeholder_count": null
-        },
-        {
-          "paper_id": "MK-P4",
-          "paper_type": "application_C",
-          "status": "QUEUED",
-          "ai_layer_url": null,
-          "placeholder_count": null
-        },
-        {
-          "paper_id": "MK-P5",
-          "paper_type": "methodology_D",
-          "status": "QUEUED",
-          "ai_layer_url": null,
-          "placeholder_count": null
-        }
-      ]
-    },
-    {
-      "corpus_id": "Supporting",
-      "papers": [
-        {
-          "paper_id": "DRP-1",
-          "title": "Dual-Reader Publishing",
-          "paper_type": "methodology_D",
-          "status": "PHASE-READY",
-          "ai_layer_url": "https://github.com/thomasbrennan/Fracttalix/blob/main/ai-layers/DRP1-ai-layer.json",
-          "placeholder_count": 0
-        },
-        {
-          "paper_id": "SFW-1",
-          "title": "Sentinel Software Paper",
-          "paper_type": "application_C",
-          "status": "PHASE-READY",
-          "ai_layer_url": "https://github.com/thomasbrennan/Fracttalix/blob/main/ai-layers/SFW1-ai-layer.json",
-          "placeholder_count": 1
-        }
+      "cross_track_frm_to_mk": [
+        {"from": "P1", "to": "MK-P4", "note": "FRM functional form is regime-detection instrument"},
+        {"from": "P1", "to": "MK-P5", "note": "T_char = 4·τ_gen is physical tipping-point timer"},
+        {"from": "P2", "to": "MK-P4", "note": "D-2.1 class criteria define substrate boundary for regime detection"},
+        {"from": "P3", "to": "MK-P4", "note": "C-3.REG provides τ_gen extraction for governance substrates"}
+      ],
+      "cross_track_mk_to_frm": [
+        {"from": "MK-P1", "to": "P0", "note": "KVS is formal basis for CBT improvement prioritisation"},
+        {"from": "MK-P1", "to": "P9", "note": "κ_corpus is FRM-derived extension of KVS to knowledge networks"},
+        {"from": "MK-P1", "to": "P10", "note": "P10 is Fracttalix formalisation of MK general theory"},
+        {"from": "MK-P2", "to": "P6", "note": "Governance closure theorems → integration consistency"},
+        {"from": "MK-P2", "to": "P9", "note": "Networked KVS → κ_corpus at network level"},
+        {"from": "MK-P3", "to": "P9", "note": "Institutional memory → confirmation event register component"},
+        {"from": "MK-P3", "to": "P13", "note": "Confirmation events S36–S39 are MK-P3 memory instances"},
+        {"from": "MK-P5", "to": "P9", "note": "Asymmetric loss derivation of κ=0.50 threshold"},
+        {"from": "MK-P5", "to": "P11", "note": "Civilisational tipping-point timing framework"}
+      ],
+      "bridge_edges": [
+        {"between": ["P5", "MK-P4"], "note": "Neural τ_gen ↔ governance τ_gen. Same FRM, different substrate."},
+        {"between": ["P10", "MK-P4"], "note": "Fracttalix MetaKaizen theory ↔ MK FRM governance integration."},
+        {"between": ["SFW-1", "MK-P1"], "note": "Sentinel implements KVS; KVS provides formal scoring basis."}
       ]
     }
-  ],
+  },
   "channel_2_status": {
     "live": true,
-    "live_assets": 15,
+    "live_assets": 16,
     "assets": [
       "https://github.com/thomasbrennan/Fracttalix/blob/main/ai-layers/P1-ai-layer.json",
       "https://github.com/thomasbrennan/Fracttalix/blob/main/ai-layers/P2-ai-layer.json",
@@ -272,7 +313,8 @@
       "https://github.com/thomasbrennan/Fracttalix/blob/main/ai-layers/P12-ai-layer.json",
       "https://github.com/thomasbrennan/Fracttalix/blob/main/ai-layers/MK-P1-ai-layer.json",
       "https://github.com/thomasbrennan/Fracttalix/blob/main/ai-layers/DRP1-ai-layer.json",
-      "https://github.com/thomasbrennan/Fracttalix/blob/main/ai-layers/SFW1-ai-layer.json"
+      "https://github.com/thomasbrennan/Fracttalix/blob/main/ai-layers/SFW1-ai-layer.json",
+      "https://github.com/thomasbrennan/Fracttalix/blob/main/ai-layers/ai-layer-schema.json"
     ],
     "schema_url": "https://github.com/thomasbrennan/Fracttalix/blob/main/ai-layers/ai-layer-schema.json"
   }

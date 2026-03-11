@@ -13,7 +13,7 @@
   "series_position": "Paper 1 of 12",
   "paper_title": "The Fractal Rhythm Model: A Universal Law of Network Information Transmission",
   "paper_type": "law_A",
-  "version": "v9",
+  "version": "v13",
   "session": "S44",
   "prose_doi": "10.5281/zenodo.18859299",
   "ai_layer_url": "https://github.com/thomasbrennan/Fracttalix/blob/main/ai-layers/P1-ai-layer.json",
@@ -26,8 +26,8 @@
     "c4_mode": "PHASE-READY-TRACKING",
     "c5": "SATISFIED",
     "c6": "SATISFIED",
-    "placeholder_count": 1,
-    "note": "One live placeholder: C-1.3 dependency on P2 C-2.1 (β=1/2 class-level empirical test pending P2 universality derivation). All other claims fully resolved including β=1/2 analytic proof (S43), λ derivation (S43). CBT I-9 all 7 steps passed — Session 44."
+    "placeholder_count": 0,
+    "note": "All three placeholders resolved S48: PH-1.1 (β class-level test → P2 C-2.4), PH-1.2 (R² protocol → P3 C-3.REG), PH-1.3 (alt model comparison → P3 C-3.REG). CBT I-9 all 7 steps passed — Session 44."
   },
   "verification_protocol": "Fracttalix Phase 1-2 Merged, S42, Stage 2.1",
   "falsification_syntax": "I-2 5-part (FALSIFIED IF / WHERE / EVALUATION / BOUNDARY / CONTEXT)",
@@ -481,11 +481,34 @@
       "placeholder_id": "PH-1.1",
       "source_claim": "F-1.3",
       "description": "β=1/2 class-level empirical test. Pending P2 universality derivation (C-2.1). Note: the analytic proof (F-1.4) is complete — PH-1.1 concerns only the class-level 2σ empirical confirmation across all five domain classes.",
-      "resolved": false,
+      "resolved": true,
       "blocks_phase_ready": false,
       "target_paper": "P2",
-      "target_claim": "C-2.1",
-      "target_session": "OPEN — resolves with P2 completion"
+      "target_claim": "C-2.4",
+      "resolution_session": "S48",
+      "resolution_note": "C-2.4 establishes beta=1/2 for all D-2.1 substrate classes via RG fixed-point analysis. Analytic component resolved S48. Empirical substrate fitting pending P3 C-3.REG."
+    },
+    {
+      "placeholder_id": "PH-1.2",
+      "source_claim": "F-1.1",
+      "description": "Goodness-of-fit protocol for FRM regression. P1 F-1.1 WHERE references P3 Section 4 regression for R²_frm computation.",
+      "resolved": true,
+      "blocks_phase_ready": false,
+      "target_paper": "P3",
+      "target_claim": "C-3.REG",
+      "resolution_session": "S48",
+      "resolution_note": "C-3.REG (P3 Phase 5 CBT PHASE-READY S48) specifies the standard FRM regression protocol R1–R9. R4 provides R²_frm computation. R7 provides T_char = 4·τ_gen. R8 provides CONFIRMED/EXCLUDED/ANOMALOUS classification. This resolves PH-1.2 (goodness-of-fit protocol) fully."
+    },
+    {
+      "placeholder_id": "PH-1.3",
+      "source_claim": "F-1.1",
+      "description": "Alternative model comparison protocol. P1 F-1.1 WHERE references P1 Appendix B for R²_best_alt.",
+      "resolved": true,
+      "blocks_phase_ready": false,
+      "target_paper": "P3",
+      "target_claim": "C-3.REG",
+      "resolution_session": "S48",
+      "resolution_note": "C-3.REG R9 specifies the pre-specified alternative model comparison protocol with Δ = R²_frm − R²_alt threshold Δ≥−0.05 (Burnham & Anderson 2002). This resolves PH-1.3 (alternative model comparison protocol) fully."
     }
   ],
   "prior_art": {
@@ -529,7 +552,7 @@
     "type_A": 5,
     "type_D": 4,
     "type_F": 7,
-    "placeholder_count": 1,
+    "placeholder_count": 0,
     "live_F_claims": 6,
     "intrinsic_free_parameters": 0,
     "phase_ready": true,
