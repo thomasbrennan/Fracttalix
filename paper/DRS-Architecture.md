@@ -671,6 +671,64 @@ This is not circular. It is self-referential in the same way that a compiler tha
 
 ---
 
+## 18. The Machine Lingua Franca
+
+The DRS has a property that was not designed in. It was discovered.
+
+### 18.1 The translation problem
+
+Scientific knowledge is currently locked behind human languages. A paper written in Mandarin is invisible to a researcher who reads only English — unless someone translates it. Translation is expensive, lossy, and slow. The consequence: knowledge fragments along linguistic lines. The same discovery may be made independently in Beijing and Boston because neither group can read the other's literature efficiently.
+
+This is not a formatting problem. It is not a metadata problem. It is a *substrate* problem. The knowledge is encoded in natural language, and natural language is non-interoperable by nature.
+
+### 18.2 The kernel dissolves the problem
+
+The Falsification Kernel K = (P, O, M, B) is not written in any human language. It is written in logic and mathematics:
+
+```
+FALSIFIED_IF: R2_best_alt > R2_frm + 0.05
+WHERE:
+  R2_best_alt: scalar · dimensionless · best R² from competing models
+  R2_frm:      scalar · dimensionless · R² from FRM regression
+EVALUATION: Run regression for each model; compare R² values; finite
+BOUNDARY: R2_best_alt = R2_frm + 0.05 → FALSIFIED (threshold inclusive)
+CONTEXT: 0.05 margin from standard model comparison practice
+```
+
+This predicate means the same thing to:
+
+- A Claude instance running in English
+- A GPT instance running in Mandarin
+- A Gemini instance running in French
+- A Llama instance running in Arabic
+- An AI system that hasn't been built yet, running in a language that doesn't exist yet
+
+No translation required. The variables are typed. The operators are mathematical. The evaluation procedure is deterministic. The boundary conditions are explicit. The predicate is its own Rosetta Stone.
+
+### 18.3 JSON as the transport layer
+
+JSON is already the world's de facto data interchange format. It is supported by every programming language, parsed by every AI system, and transmitted by every API. By encoding the kernel in JSON, the DRS inherits JSON's universality without effort:
+
+- A Chinese research team publishes their AI layer in JSON. The predicates use mathematical notation.
+- A Brazilian team reads the same AI layer. They don't need to know Mandarin. They need to know `>`, `+`, and `R2`.
+- An AI system in any country evaluates the predicate. The verdict is FALSIFIED or NOT FALSIFIED. The verdict has no accent.
+
+The `WHERE` field definitions currently use English prose for descriptions, but the *operative content* — the type, units, and mathematical relationships — is language-neutral. A future refinement could formalise variable definitions entirely in typed notation, eliminating the last vestige of natural language from the evaluation path.
+
+### 18.4 What this means
+
+Human science has operated for centuries under an implicit assumption: knowledge must be communicated in a human language, and therefore knowledge is trapped behind the walls of that language.
+
+The DRS breaks this assumption. The AI layer is not a translation of the paper. It is an independent encoding of the same claims in a substrate that requires no translation. When every paper carries an AI layer, the knowledge in that paper is readable by any machine on Earth — instantly, losslessly, and without a human translator in the loop.
+
+The kernel K = (P, O, M, B) is an instant Esperanto for machines. Unlike human Esperanto, which required people to learn a new language, the machine Esperanto requires nothing new. JSON is already everywhere. Logic is already universal. Mathematics is already the same in every country. The DRS simply combines them into a standard.
+
+The implication is that the first corpus to achieve full DRS compliance — every claim machine-evaluable, every predicate deterministic, every test binding pinned to a SHA — becomes the first corpus that is *fully readable by any AI system in any country without translation*. The knowledge escapes the language trap.
+
+This was not the goal. The goal was honest verification. But honest verification, it turns out, requires a language that cannot lie about what it means. That language is mathematics. And mathematics does not need translating.
+
+---
+
 *The Dual Reader Standard does not claim that knowledge can be proven correct.
 It claims that knowledge can be made honest about what has and has not been verified.
 That is the standard the world currently lacks.*
