@@ -29,7 +29,7 @@
   "series_position": "Paper 2 of 13",
   "paper_title": "Derivation and Universality: The β=1/2 Critical Exponent as a Universal Law",
   "paper_type": "derivation_B",
-  "version": "v3",
+  "version": "v4",
   "session": "S48",
   "phase_ready": {
     "verdict": "PHASE-READY",
@@ -54,7 +54,7 @@
     }
   },
   "principle_10_compliant": true,
-  "principle_10_compliant_note": "Set true at Phase 5 CBT Step 4. 4 of 5 gaps closed with derivation_path values anchored at published live edges or IR axioms. P10-GAP-2.5 (C-2.4 threshold derivation) remains open but is a C4-tracking item (non-blocking at PHASE-READY) — its resolution is dependent on P3 C-3.REG, consistent with PHASE-READY-TRACKING convention. Full compliance (all 5 closed) is a CORPUS-COMPLETE condition.",
+  "principle_10_compliant_note": "All 5 gaps closed. P10-GAP-2.5 closed S48 via P3 C-3.σ Step R6 (bootstrap residuals, Bevington & Robinson 2003). Full Principle 10 compliance achieved.",
   "principle_10_audit": [
     {
       "constant_or_condition": "β = 1/2",
@@ -92,10 +92,10 @@
     },
     {
       "constant_or_condition": "C-2.4 threshold — 2σ comparability with P1 F-1.3",
-      "status": "OPEN_C4_TRACKING",
-      "derivation_path": null,
+      "status": "CLOSED",
+      "derivation_path": "C-3.σ Step R6: σ_β computed from bootstrap residuals (B=1000 resamples, τ_gen fixed at structural value). 2σ = 95% CI of normal distribution. Anchored at Bevington & Robinson (2003) §3.2 standard error propagation. Universal statistical constant, not free parameter. IR-13 satisfied. Closes P10-GAP-2.5 carried from P2 CBT S48.",
       "gap_id": "P10-GAP-2.5",
-      "gap_description": "2σ threshold inherited from P1 F-1.3 for comparability. Substrate-specific σ derivation deferred to P3. Non-blocking at PHASE-READY (C4-tracking). Will resolve at P3 CBT."
+      "closure_session": "S48"
     }
   ],
   "inference_rule_inventory": {
@@ -232,28 +232,36 @@
       "placeholder_id": "PH-2.3",
       "source_claim": "C-2.3",
       "description": "C-2.3 WHERE field references P3 C-3.REG (functional form universality empirical component).",
-      "resolved": false,
+      "resolved": true,
       "blocks_phase_ready": false,
       "target_paper": "P3",
-      "target_claim": "C-3.REG"
+      "target_claim": "C-3.REG",
+      "resolution_session": "S48",
+      "resolution_note": "C-3.REG provides the measurement protocol confirming functional form universality: R1–R9 extract λ and ω from each substrate class and compare against derived expressions. PH-2.3 resolved."
     },
     {
       "placeholder_id": "PH-2.4-EMPIRICAL",
       "source_claim": "C-2.4",
       "description": "Empirical β fitting across substrate classes. Pending P3 C-3.REG regression protocol.",
-      "resolved": false,
+      "resolved": true,
       "blocks_phase_ready": false,
       "target_paper": "P3",
-      "target_claim": "C-3.REG"
+      "target_claim": "C-3.REG",
+      "resolution_session": "S48",
+      "resolution_note": "C-3.REG R5 extracts β_measured per substrate. R6 computes σ_β from bootstrap residuals (B=1000, τ_gen fixed). R8 classifies each substrate CONFIRMED/EXCLUDED/ANOMALOUS. Empirical β fitting protocol fully specified. PH-2.4-EMPIRICAL resolved."
     },
     {
       "placeholder_id": "P10-GAP-2.5",
       "source_claim": "C-2.4",
       "description": "2σ threshold substrate-specific derivation. Deferred to P3 C-3.σ.",
-      "resolved": false,
+      "resolved": true,
       "blocks_phase_ready": false,
       "target_paper": "P3",
-      "target_claim": "C-3.sigma"
+      "target_claim": "C-3.sigma",
+      "resolution_session": "S48",
+      "status": "CLOSED",
+      "derivation_path": "C-3.σ Step R6: σ_β computed from bootstrap residuals (B=1000 resamples, τ_gen fixed at structural value). 2σ = 95% CI of normal distribution. Anchored at Bevington & Robinson (2003) §3.2 standard error propagation. Universal statistical constant, not free parameter. IR-13 satisfied. Closes P10-GAP-2.5 carried from P2 CBT S48.",
+      "closure_session": "S48"
     }
   ],
   "outbound_edges_register": [
@@ -287,8 +295,8 @@
     "derivation_steps": 10,
     "n_invalid_steps": 0,
     "principle_10_audit_entries": 6,
-    "principle_10_gaps_closed": 4,
-    "principle_10_gaps_open_c4": 1,
+    "principle_10_gaps_closed": 5,
+    "principle_10_gaps_open_c4": 0,
     "thomas_review_flags": 2,
     "substrate_classes_verified": 3,
     "hr_challenges_total": 18,
