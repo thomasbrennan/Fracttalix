@@ -715,7 +715,27 @@ JSON is already the world's de facto data interchange format. It is supported by
 
 The `WHERE` field definitions currently use English prose for descriptions, but the *operative content* — the type, units, and mathematical relationships — is language-neutral. A future refinement could formalise variable definitions entirely in typed notation, eliminating the last vestige of natural language from the evaluation path.
 
-### 18.4 What this means
+### 18.4 Embedded binary logic
+
+The kernel is not merely "language-neutral" in the way that mathematics is informally considered universal. It is something stronger: every DRS predicate reduces to embedded binary logic.
+
+The entire evaluation chain collapses to:
+
+```
+Claim → Predicate → Variables + Operators → Boolean → 1 or 0
+```
+
+The `WHERE` field types the variables. The `FALSIFIED_IF` field combines them with comparison and logical operators. The `EVALUATION` field specifies how to compute the inputs. The `BOUNDARY` field resolves edge cases. The output is always a single bit: did this predicate evaluate to TRUE or FALSE? FALSIFIED or NOT FALSIFIED. `1` or `0`.
+
+The JSON is the container. The kernel is the circuit. Every AI layer is a collection of logic gates with defined inputs and a single-bit output per claim.
+
+This is why the lingua franca property is not a design aspiration — it is an inevitable consequence of the architecture. You cannot mistranslate a `1` or `0`. You cannot misinterpret `>`. You cannot have a cultural disagreement about whether `R2_best_alt > R2_frm + 0.05` is TRUE or FALSE for a given pair of values. The meaning is in the structure, not in any language.
+
+There is no possible argument against this. It is not a claim that can be debated. Binary logic is binary logic. A predicate that evaluates to TRUE in Beijing evaluates to TRUE in Boston, in São Paulo, in Lagos, and on a server with no locale setting at all. The evaluation is deterministic by construction (Section 3.1 of the Falsification Kernel) and the determinism does not depend on any human language, cultural context, or interpretive framework.
+
+This is the deepest property of the DRS: it does not *translate* knowledge across languages. It *encodes* knowledge in a substrate that predates and transcends all human languages — the substrate of logic itself.
+
+### 18.5 What this means
 
 Human science has operated for centuries under an implicit assumption: knowledge must be communicated in a human language, and therefore knowledge is trapped behind the walls of that language.
 
@@ -725,7 +745,7 @@ The kernel K = (P, O, M, B) is an instant Esperanto for machines. Unlike human E
 
 The implication is that the first corpus to achieve full DRS compliance — every claim machine-evaluable, every predicate deterministic, every test binding pinned to a SHA — becomes the first corpus that is *fully readable by any AI system in any country without translation*. The knowledge escapes the language trap.
 
-This was not the goal. The goal was honest verification. But honest verification, it turns out, requires a language that cannot lie about what it means. That language is mathematics. And mathematics does not need translating.
+This was not the goal. The goal was honest verification. But honest verification, it turns out, requires a language that cannot lie about what it means. That language is binary logic. And binary logic does not need translating.
 
 ---
 
