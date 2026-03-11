@@ -79,10 +79,10 @@ Comparison against PyOD ECOD [@Zhao2019] and River HalfSpaceTrees [@Montiel2021]
 
 # AI Usage Disclosure
 
-Development of Fracttalix Sentinel was assisted by Claude (Anthropic) and Grok (xAI) AI coding tools. AI was used for code generation, test writing, documentation drafting, and paper authoring assistance. All AI-generated code was reviewed, tested, and verified by the author. The theoretical framework (Three-Channel Dissipative Network Model and Fractal Rhythm Model) was designed by the author; AI tools assisted with implementation and refinement. The 37-step pipeline architecture, channel decomposition strategy, and collapse physics formulations represent the author's original research contributions.
+Development of Fracttalix Sentinel was assisted by Claude (Anthropic, Claude 3.5/4 Sonnet and Opus models) and Grok (xAI, Grok 3/4 models). AI tools were used for: (1) code generation and refactoring of pipeline step implementations, (2) test suite authoring, (3) documentation and docstring drafting, and (4) paper text drafting and editing. All AI-generated outputs were reviewed, tested against the 405-test automated suite, and verified by the author. The core scientific contributions—the Three-Channel Dissipative Network Model, the 37-step pipeline architecture, channel decomposition strategy, collapse physics formulations, and the Fractal Rhythm Model theoretical framework—were designed by the author. AI tools assisted with implementation, refinement, and iteration on the author's designs.
 
 # Acknowledgements
 
-The theoretical framework underlying the Three-Channel Model is documented in the Fractal Rhythm Model working papers [@FRM2026].
+The theoretical framework underlying the Three-Channel Model is documented in the Fractal Rhythm Model working papers [@FRM2026]. This work received no external funding. The author declares no conflicts of interest.
 
 # References
