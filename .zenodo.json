@@ -1,6 +1,6 @@
 {
   "title": "Fracttalix Sentinel: Three-Channel Streaming Anomaly Detector",
-  "description": "Fracttalix: a research corpus comprising the Fractal Rhythm Model (FRM) and Meta-Kaizen series. The FRM describes association dynamics via f(t) = B + A·exp(−λt)·cos(ωt+φ) across scales from quantum decoherence to cosmological structure. The Meta-Kaizen series (5 papers) derives a measurement-theoretic governance framework from six axioms. Includes Fracttalix Sentinel, a three-channel streaming anomaly detector implementing the FRM in a 26-step pipeline (zero dependencies). 21 papers, machine-readable AI layers with falsification predicates, and Dual Reader Standard (DRS) compliance.",
+  "description": "Fracttalix: a research corpus comprising the Fractal Rhythm Model (FRM), Meta-Kaizen series, and the Dual Reader Standard (DRS). The FRM describes association dynamics via f(t) = B + A·exp(−λt)·cos(ωt+φ) across scales from quantum decoherence to cosmological structure. The Meta-Kaizen series (6 papers) derives a measurement-theoretic governance framework from six axioms. The DRS is a verification architecture comprising two protocols: the Dual Reader Protocol (DRP) for text and the Grounded Verification Protocol (GVP) for software. Every claim carries a machine-evaluable falsification predicate (Kernel K = P, O, M, B) that reduces to embedded binary logic — a deterministic single-bit verdict independent of human language. Includes Fracttalix Sentinel, a three-channel streaming anomaly detector implementing the FRM (zero dependencies). 22 corpus objects, 121 machine-readable claims with falsification predicates, 18 AI layers, and full DRS compliance.",
   "upload_type": "software",
   "license": {
     "id": "CC0-1.0"
@@ -39,7 +39,13 @@
     "governance",
     "continuous improvement",
     "falsification",
-    "dual reader standard"
+    "dual reader standard",
+    "dual reader protocol",
+    "grounded verification protocol",
+    "falsification kernel",
+    "machine-evaluable claims",
+    "verification architecture",
+    "binary logic"
   ],
   "subjects": [
     {
@@ -59,5 +65,5 @@
   "version": "12.1.0",
   "language": "eng",
   "access_right": "open",
-  "notes": "Theoretical foundation: Fractal Rhythm Model (FRM) — 11 axioms. Meta-Kaizen series — 5 papers deriving KVS from measurement-theoretic axioms. 21 corpus objects across two tracks. Introduced by Thomas Brennan with AI collaborators Claude (Anthropic) and Grok (xAI)."
+  "notes": "Theoretical foundation: Fractal Rhythm Model (FRM) — 11 axioms. Meta-Kaizen series — 6 papers deriving KVS from measurement-theoretic axioms and extending the DRS to software. Dual Reader Standard (DRS) — verification architecture with DRP (text protocol) and GVP (software protocol). Falsification Kernel K=(P,O,M,B) reduces every claim to embedded binary logic. 22 corpus objects across two tracks. 121 claims, 18 AI layers, schema v3-S51. Introduced by Thomas Brennan with AI collaborators Claude (Anthropic) and Grok (xAI)."
 }

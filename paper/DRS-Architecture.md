@@ -217,33 +217,35 @@ These rules are used in `formal_proof` tier claims. Each step in a step-indexed 
 ## 9. Architecture Summary
 
 ```
-                    ┌─────────────────────────┐
-                    │   Dual Reader Standard   │
-                    │         (DRS)            │
-                    └────────────┬────────────┘
-                                 │
-                 ┌───────────────┴───────────────┐
-                 │                               │
-        ┌────────┴────────┐            ┌─────────┴─────────┐
-        │      DRP        │            │       GVP         │
-        │  (Text Protocol)│            │(Software Protocol)│
-        └────────┬────────┘            └─────────┬─────────┘
-                 │                               │
-     ┌───────────┴───────────┐       ┌───────────┴───────────┐
-     │                       │       │                       │
-  Reader 1              Reader 2   Reader 3A            Reader 3B
-  (Human)               (AI)       (Coder)              (Machine)
-     │                       │       │                       │
-  reads prose          reads JSON   reads tier +         runs pytest
-                                    bindings             stamps SHA
-                 │                               │
-                 └───────────────┬───────────────┘
-                                 │
-                    ┌────────────┴────────────┐
-                    │   Falsification Kernel  │
-                    │    K = (P, O, M, B)     │
-                    │       (Layer 0)         │
-                    └─────────────────────────┘
+                     ┌─────────────────────────┐
+                     │   Dual Reader Standard   │
+                     │         (DRS)            │
+                     └────────────┬────────────┘
+                                  │
+                  ┌───────────────┴───────────────┐
+                  │                               │
+         ┌────────┴────────┐            ┌─────────┴─────────┐
+         │      DRP        │            │       GVP         │
+         │ (Text Protocol) │            │(Software Protocol)│
+         └────────┬────────┘            └─────────┬─────────┘
+                  │                               │
+      ┌───────────┴──────────┐       ┌────────────┴───────────┐
+      │                      │       │                        │
+   Reader 1             Reader 2   Reader 3A             Reader 3B
+   (Human)              (AI)       (Coder)               (Machine)
+      │                      │       │                        │
+   reads prose         reads JSON   reads tier +          runs pytest
+                                    bindings              stamps SHA
+      │                      │       │                        │
+      └──────────┬───────────┘       └────────────┬───────────┘
+                 │                                │
+                 └────────────────┬────────────────┘
+                                  │
+                     ┌────────────┴────────────┐
+                     │   Falsification Kernel  │
+                     │    K = (P, O, M, B)     │
+                     │       (Layer 0)         │
+                     └─────────────────────────┘
 ```
 
 The kernel is the shared foundation. The DRP creates predicates from prose. The GVP binds predicates to executable evidence. The AI layer is the artifact that carries both.
@@ -266,20 +268,24 @@ The DRS governs the entire Fracttalix corpus (22 objects, two tracks):
 ### Current verification status
 
 ```
-AI Layers:           18/18
-Phase-Ready:          5/18 (P1, MK-P1, MK-P5, DRP-1, SFW-1)
-Total Claims:       121 (A:25  D:39  F:57)
+AI Layers:          18/18 (MK-P6 + SFW-1 v2 added S51)
+Phase-Ready:         5/18 (P1, MK-P1, MK-P5, DRP-1, SFW-1)
+Total Claims:      121 (A:25  D:39  F:57)
 
 Verification Tiers:
   axiom:             25 claims
   definition:        39 claims
-  software_tested:    7 claims (385 test bindings)
-  formal_proof:      18 claims
-  analytic:           4 claims
-  empirical_pending:  8 claims
+  software_tested:    7 claims (SFW-1 ×6, P1 ×1) — 385 test bindings
+  formal_proof:      18 claims (P1 ×2, P2 ×5, P3 ×4, MK-P1 ×5, DRP-1 ×3)
+  analytic:           4 claims (P1 ×3, P4 ×1)
+  empirical_pending:  8 claims (P1 ×1, P4 ×1, P5 ×3, MK-P1 ×3)
+  unaudited:         20 F claims (MK-P5, MK-P6, SFW-1 v2, scaffolds)
 
 verified_against:    95f59d8
+Schema:              v3-S51
 ```
+
+Note: The per-tier breakdown covers fully audited layers. Twenty Type F claims from recently added or scaffold layers have not yet been assigned to a verification tier in this breakdown. The type totals (A:25 D:39 F:57 = 121) are accurate.
 
 ---
 
@@ -346,11 +352,11 @@ The AI layer is the same artifact. The schema is the same. The kernel is the sam
 This specification is released under CC BY 4.0, consistent with the Fracttalix corpus licence.
 
 **Corpus:** Fracttalix (22-object unified corpus)
-**Corpus DOI:** [10.5281/zenodo.18859299](https://doi.org/10.5281/zenodo.18859299)
-**Paper DOI:** *Standalone DOI to be minted on Zenodo upload — see `paper/zenodo-drs-architecture.json` for metadata*
+**DOI:** [10.5281/zenodo.18859299](https://doi.org/10.5281/zenodo.18859299)
 **Repository:** [github.com/thomasbrennan/Fracttalix](https://github.com/thomasbrennan/Fracttalix)
 **ORCID:** [0009-0002-6353-7115](https://orcid.org/0009-0002-6353-7115)
-**Zenodo metadata:** `paper/zenodo-drs-architecture.json`
+
+This paper is archived as part of the Fracttalix corpus on Zenodo. The DOI above is the corpus concept DOI; each release mints a version-specific DOI automatically. The timestamp of the release containing this paper constitutes the priority date.
 
 ---
 
@@ -747,7 +753,7 @@ The JSON is the container. The kernel is the circuit. Every AI layer is a collec
 
 This is why the lingua franca property is not a design aspiration — it is an inevitable consequence of the architecture. You cannot mistranslate a `1` or `0`. You cannot misinterpret `>`. You cannot have a cultural disagreement about whether `R2_best_alt > R2_frm + 0.05` is TRUE or FALSE for a given pair of values. The meaning is in the structure, not in any language.
 
-There is no possible argument against this. It is not a claim that can be debated. Binary logic is binary logic. A predicate that evaluates to TRUE in Beijing evaluates to TRUE in Boston, in São Paulo, in Lagos, and on a server with no locale setting at all. The evaluation is deterministic by construction (Section 3.1 of the Falsification Kernel) and the determinism does not depend on any human language, cultural context, or interpretive framework.
+There is no possible argument against this. It is not a claim that can be debated. Binary logic is binary logic. A predicate that evaluates to TRUE in Beijing evaluates to TRUE in Boston, in São Paulo, in Lagos, and on a server with no locale setting at all. The evaluation is deterministic by construction (Falsification Kernel, Section 3.2, constraint 1: Determinism) and the determinism does not depend on any human language, cultural context, or interpretive framework.
 
 This is the deepest property of the DRS: it does not *translate* knowledge across languages. It *encodes* knowledge in a substrate that predates and transcends all human languages — the substrate of logic itself.
 
