@@ -1,10 +1,23 @@
 # The Dual Reader Standard: Architecture Specification
 
-Thomas Brennan · with AI collaborator Claude (Anthropic)
+**Author:** Thomas Brennan
+**ORCID:** [0009-0002-6353-7115](https://orcid.org/0009-0002-6353-7115)
+**AI collaborator:** Claude (Anthropic)
+**Date:** March 2026
+**Version:** v1.0
+**Licence:** CC BY 4.0
+**Corpus:** Fracttalix — [github.com/thomasbrennan/Fracttalix](https://github.com/thomasbrennan/Fracttalix)
+**Corpus DOI:** [10.5281/zenodo.18859299](https://doi.org/10.5281/zenodo.18859299)
 
-March 2026
+AI contributions: Claude (Anthropic) provided architectural formalisation, protocol naming (GVP), tier taxonomy design, and manuscript drafting. All AI contributions are contributed to the public domain.
 
-AI contributions: Claude (Anthropic) provided architectural formalisation, protocol naming (GVP), tier taxonomy design, and manuscript drafting. All contributions are contributed to the public domain.
+---
+
+## Abstract
+
+The Dual Reader Standard (DRS) is a verification architecture for knowledge systems that requires every claim to be readable by two independent reader classes — human and machine — each operating through a defined protocol. The DRS comprises two protocols: the Dual Reader Protocol (DRP) for text, which makes claims machine-evaluable via the 5-part falsification predicate syntax, and the Grounded Verification Protocol (GVP) for software, which makes claims machine-verified via verification tiers, executable test bindings, and commit-pinned evidence. Both protocols share a substrate-independent foundation — the Falsification Kernel K = (P, O, M, B) — which defines predicate grammar, evaluation semantics, and validity constraints independently of any serialisation format or human language. The standard classifies claims into three types (axiom, definition, falsifiable) and six verification tiers, enforces correctness through a six-condition phase gate, and is designed for three-axis compatibility: backwards, lateral, and forward. Because the kernel reduces every claim to embedded binary logic — a deterministic predicate with a single-bit verdict — the DRS functions as a machine lingua franca: any AI system in any country can evaluate any claim without translation. This paper specifies the complete architecture, derives the DRS as an instance of the Fractal Rhythm Model, and analyses the structural properties required for self-spreading adoption.
+
+**Keywords:** dual reader standard, falsification, verification, machine-evaluable claims, knowledge architecture, grounded verification protocol, AI layer, falsification kernel, binary logic, lingua franca
 
 ---
 
@@ -328,13 +341,16 @@ The AI layer is the same artifact. The schema is the same. The kernel is the sam
 
 ---
 
-## 14. Licence
+## 14. Licence and Citation
 
 This specification is released under CC BY 4.0, consistent with the Fracttalix corpus licence.
 
 **Corpus:** Fracttalix (22-object unified corpus)
-**DOI:** 10.5281/zenodo.18859299
-**Repository:** github.com/thomasbrennan/Fracttalix
+**Corpus DOI:** [10.5281/zenodo.18859299](https://doi.org/10.5281/zenodo.18859299)
+**Paper DOI:** *Standalone DOI to be minted on Zenodo upload — see `paper/zenodo-drs-architecture.json` for metadata*
+**Repository:** [github.com/thomasbrennan/Fracttalix](https://github.com/thomasbrennan/Fracttalix)
+**ORCID:** [0009-0002-6353-7115](https://orcid.org/0009-0002-6353-7115)
+**Zenodo metadata:** `paper/zenodo-drs-architecture.json`
 
 ---
 
