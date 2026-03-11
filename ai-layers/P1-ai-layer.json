@@ -1,7 +1,7 @@
 {
   "_meta": {
     "document_type": "AI_LAYER",
-    "schema_version": "v2-S42",
+    "schema_version": "v3-S49",
     "schema_url": "https://github.com/thomasbrennan/Fracttalix/blob/main/ai-layers/ai-layer-schema.json",
     "produced_session": "S44",
     "produced_by": "Claude (Anthropic) — Session 43 theoretical foundations build",
@@ -98,7 +98,10 @@
       "derivation_source": [
         "First Principle FP-1"
       ],
-      "falsification_predicate": null
+      "falsification_predicate": null,
+      "tier": "axiom",
+      "test_bindings": [],
+      "verified_against": null
     },
     {
       "claim_id": "A-1.2",
@@ -109,7 +112,10 @@
       "derivation_source": [
         "First Principle FP-2"
       ],
-      "falsification_predicate": null
+      "falsification_predicate": null,
+      "tier": "axiom",
+      "test_bindings": [],
+      "verified_against": null
     },
     {
       "claim_id": "A-1.3",
@@ -120,7 +126,10 @@
       "derivation_source": [
         "First Principle FP-3"
       ],
-      "falsification_predicate": null
+      "falsification_predicate": null,
+      "tier": "axiom",
+      "test_bindings": [],
+      "verified_against": null
     },
     {
       "claim_id": "A-1.4",
@@ -131,7 +140,10 @@
       "derivation_source": [
         "First Principle FP-4"
       ],
-      "falsification_predicate": null
+      "falsification_predicate": null,
+      "tier": "axiom",
+      "test_bindings": [],
+      "verified_against": null
     },
     {
       "claim_id": "A-1.5",
@@ -142,7 +154,10 @@
       "derivation_source": [
         "First Principle FP-6"
       ],
-      "falsification_predicate": null
+      "falsification_predicate": null,
+      "tier": "axiom",
+      "test_bindings": [],
+      "verified_against": null
     },
     {
       "claim_id": "D-1.1",
@@ -156,7 +171,10 @@
         "A-1.3",
         "A-1.4"
       ],
-      "falsification_predicate": null
+      "falsification_predicate": null,
+      "tier": "definition",
+      "test_bindings": [],
+      "verified_against": null
     },
     {
       "claim_id": "D-1.2",
@@ -169,7 +187,10 @@
         "A-1.1",
         "F-1.4"
       ],
-      "falsification_predicate": null
+      "falsification_predicate": null,
+      "tier": "definition",
+      "test_bindings": [],
+      "verified_against": null
     },
     {
       "claim_id": "D-1.3",
@@ -181,7 +202,10 @@
         "D-1.1",
         "F-1.5"
       ],
-      "falsification_predicate": null
+      "falsification_predicate": null,
+      "tier": "definition",
+      "test_bindings": [],
+      "verified_against": null
     },
     {
       "claim_id": "D-1.4",
@@ -190,7 +214,10 @@
       "name": "Validation set P1",
       "statement": "36 substrates spanning biological, physical, social, cognitive, and civilisational domains. Full list: P1 Appendix A. Characteristic timescales span from ~10^−35 s (Planck) to ~10^1 s (neural).",
       "derivation_source": [],
-      "falsification_predicate": null
+      "falsification_predicate": null,
+      "tier": "definition",
+      "test_bindings": [],
+      "verified_against": null
     },
     {
       "claim_id": "F-1.1",
@@ -218,7 +245,28 @@
         "EVALUATION": "Run P3 regression for each substrate; compare R² values; finite",
         "BOUNDARY": "R2_best_alt = R2_frm + 0.05 → FALSIFIED (threshold inclusive)",
         "CONTEXT": "threshold 0.05 accounts for overfitting in higher-parameter alternatives (conservative); threshold 0.85 is minimum fit criterion per P3 protocol"
-      }
+      },
+      "tier": "software_tested",
+      "test_bindings": [
+        "test_benchmark.py::TestEvaluate::test_evaluate_returns_dict",
+        "test_benchmark.py::TestEvaluate::test_evaluate_has_f1_key",
+        "test_benchmark.py::TestEvaluate::test_evaluate_has_auprc_key",
+        "test_benchmark.py::TestEvaluate::test_evaluate_has_vus_pr_key",
+        "test_benchmark.py::TestEvaluate::test_evaluate_has_mean_lag_key",
+        "test_benchmark.py::TestEvaluate::test_evaluate_f1_in_range",
+        "test_benchmark.py::TestEvaluate::test_evaluate_auprc_in_range",
+        "test_benchmark.py::TestEvaluate::test_evaluate_vus_pr_in_range",
+        "test_benchmark.py::TestEvaluate::test_evaluate_mean_lag_nonnegative",
+        "test_benchmark.py::TestEvaluate::test_evaluate_has_n_anomalies",
+        "test_benchmark.py::TestEvaluate::test_evaluate_has_n_detections",
+        "test_benchmark.py::TestEvaluate::test_evaluate_accepts_custom_config",
+        "test_benchmark.py::TestEvaluate::test_evaluate_all_archetypes",
+        "test_benchmark.py::TestGenerateAllArchetypes::test_all_archetypes_generate_without_error",
+        "test_benchmark.py::TestGenerateAllArchetypes::test_all_archetypes_have_some_anomalies",
+        "test_benchmark.py::TestGenerateAllArchetypes::test_all_archetypes_data_is_float",
+        "test_benchmark.py::TestGenerateAllArchetypes::test_all_archetypes_labels_are_binary"
+      ],
+      "verified_against": "95f59d8"
     },
     {
       "claim_id": "F-1.2",
@@ -244,7 +292,10 @@
         "EVALUATION": "Compute log10(T_char) per substrate; find max/min; count passing; finite",
         "BOUNDARY": "T_max/T_min span exactly 36 orders → FALSIFIED (condition ≥ 36, not >)",
         "CONTEXT": "threshold 30/36 permits up to 6 failures — conservative margin for edge cases"
-      }
+      },
+      "tier": "analytic",
+      "test_bindings": [],
+      "verified_against": null
     },
     {
       "claim_id": "F-1.3",
@@ -271,7 +322,10 @@
         "EVALUATION": "For each class compute mean_β; compare to 0.5 ± 2·pooled_σ; finite",
         "BOUNDARY": "exact equality → NOT FALSIFIED (measure zero for continuous β)",
         "CONTEXT": "[PLACEHOLDER: pending P2, AI-Layer, Claim C-2.1, Phase 1] — class-level 2σ test"
-      }
+      },
+      "tier": "empirical_pending",
+      "test_bindings": [],
+      "verified_against": null
     },
     {
       "claim_id": "F-1.4",
@@ -339,7 +393,10 @@
         "EVALUATION": "Trace proof step-by-step: (1) normalized DDE dx/ds = α·x(s) − k·x(s−1); (2) substitute λ=iΩ at criticality α=0; (3) real part: k·cos(Ω)=0 → Ω*=π/2; (4) ω*=Ω*/τ_gen=π/(2τ_gen) → β=1/2; verify each step named inference rule; finite",
         "BOUNDARY": "numerical confirmation within 1% of analytic → NOT FALSIFIED (0.46% Euler discretization error is expected)",
         "CONTEXT": "Prior art: Hayes (1950) and Kuang (1993) establish ωτ=π/2 in individual domains. Novelty: identification as universal source of empirical β=1/2 across 36 orders of magnitude."
-      }
+      },
+      "tier": "formal_proof",
+      "test_bindings": [],
+      "verified_against": null
     },
     {
       "claim_id": "F-1.5",
@@ -397,7 +454,10 @@
         "EVALUATION": "Trace perturbation derivation step-by-step; compute λ_theory = |α|/Γ for each α; fit FRM to DDE simulation; compute ratio; average; finite",
         "BOUNDARY": "ratio > 1.15 or < 0.85 → FALSIFIED. Note: leading-order expression is valid near criticality; deviation expected to grow with |α|.",
         "CONTEXT": "Mean ratio observed: 1.036 ± 0.089 across stable regime. Γ = |dh/dλ|* = |1+iπ/2| = 1+π²/4 falls out of the quarter-wave geometry. Second-order correction reduces mean error to 0.06%."
-      }
+      },
+      "tier": "formal_proof",
+      "test_bindings": [],
+      "verified_against": null
     },
     {
       "claim_id": "F-1.6",
@@ -422,7 +482,10 @@
         "EVALUATION": "Verify τ_gen from at least 3 independent sources; compute T=4·τ_gen; compare to observed T=24 hr; finite and parameter-free",
         "BOUNDARY": "T=20 or T=28 hr → FALSIFIED (bounds are inclusive). Sensitivity: τ_gen range 5.5–6.5 hr gives T=22–26 hr — all within biological variance.",
         "CONTEXT": "Sources: Kim & Forger 2012 (5.9 hr, direct measurement); Hardin et al. 1990 (~6 hr); Lee et al. 2001 (~6 hr sub-step); Takahashi 2017 (~6 hr). No free parameters. First derivation of circadian period from a universal delayed feedback principle."
-      }
+      },
+      "tier": "analytic",
+      "test_bindings": [],
+      "verified_against": null
     },
     {
       "claim_id": "F-1.7",
@@ -473,7 +536,10 @@
         "EVALUATION": "Simulate Stuart-Landau ODE for each μ; fit FRM; compute R² and λ_fit vs |μ|; check R²≥0.99; finite",
         "BOUNDARY": "R²=0.99 → NOT FALSIFIED (boundary inclusive)",
         "CONTEXT": "Confirmed numerically: R²>0.99 for μ∈{−3.0,−1.0}. λ_fit tracks |μ| with slope k=1.10, R²=0.965 across stable regime. At μ=0: FRM degenerates (λ→0) as predicted."
-      }
+      },
+      "tier": "analytic",
+      "test_bindings": [],
+      "verified_against": null
     }
   ],
   "placeholder_register": [

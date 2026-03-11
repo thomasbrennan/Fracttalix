@@ -1,9 +1,9 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "https://github.com/thomasbrennan/Fracttalix/blob/main/ai-layers/ai-layer-schema.json",
-  "title": "Fracttalix AI Layer Schema v2",
-  "description": "Schema for machine-readable falsification layers in the Fracttalix corpus. Implements the Dual Reader Standard (DRS). Version 2, Session 42.",
-  "version": "v2-S42",
+  "title": "Fracttalix AI Layer Schema v3",
+  "description": "Schema for machine-readable falsification layers in the Fracttalix corpus. Implements the Dual Reader Standard (DRS). Version 3, Session 49. Adds per-claim verification tier, test bindings, and verified_against SHA.",
+  "version": "v3-S49",
   "type": "object",
   "required": ["_meta","paper_id","paper_title","paper_type","version","session","phase_ready","claim_registry","placeholder_register"],
   "properties": {
@@ -71,7 +71,24 @@
               }
             ]
           },
-          "sample_falsification_observation": {"type": "string"}
+          "sample_falsification_observation": {"type": "string"},
+          "tier": {
+            "type": "string",
+            "enum": ["axiom", "definition", "software_tested", "analytic", "empirical_pending", "formal_proof"],
+            "description": "Verification tier. axiom: foundational (Type A), unfalsifiable by design. definition: definitional (Type D), no predicate. software_tested: Type F claim with passing test bindings in this codebase. analytic: Type F verified by formal derivation trace only. empirical_pending: Type F with active placeholder or pending external data. formal_proof: Type F verified by step-indexed derivation table with n_invalid_steps=0."
+          },
+          "test_bindings": {
+            "type": "array",
+            "items": {"type": "string"},
+            "description": "Fully qualified pytest node IDs (file::Class::method) that exercise this claim. Empty array if no software tests."
+          },
+          "verified_against": {
+            "oneOf": [
+              {"type": "string", "pattern": "^[0-9a-f]{7,40}$"},
+              {"type": "null"}
+            ],
+            "description": "Git commit SHA at which test_bindings were last verified passing. Null if no software tests."
+          }
         }
       }
     },

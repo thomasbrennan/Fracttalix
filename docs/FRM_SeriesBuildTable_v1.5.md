@@ -368,7 +368,16 @@ Total Claims:       80 (A:14 D:25 F:41)
 Cross-references:   118 derivation_source entries
 Cross-paper errors: 0
 Open Placeholders:  10
-Schema:             v2-S42
+Schema:             v3-S49
+
+Verification Tiers (v3):
+  software_tested:    7 claims (SFW-1 ×6, P1 ×1) — 385 test bindings
+  formal_proof:      18 claims (P1 ×2, P2 ×5, P3 ×4, MK-P1 ×5, DRP-1 ×3)
+  analytic:           4 claims (P1 ×3, P4 ×1)
+  empirical_pending:  8 claims (P1 ×1, P4 ×1, P5 ×3, MK-P1 ×3)
+  axiom:             14 claims
+  definition:        25 claims
+  verified_against:   95f59d8
 ```
 
 ---

@@ -1,7 +1,7 @@
 {
   "_meta": {
     "document_type": "AI_LAYER",
-    "schema_version": "v2-S42+S48",
+    "schema_version": "v3-S49",
     "schema_amendments": [
       "S48-A1: principle_10_audit array",
       "S48-A2: I-9 Step 4 circularity detection"
@@ -164,7 +164,10 @@
       ],
       "principle_10_note": "No new parameters. All conditions derive from P1 D-1.1 scope requirements.",
       "falsification_predicate": null,
-      "vacuity_witness": "PH-3.VAC-1 — Xenopus laevis cell cycle (candidate). τ_gen=30min structural, T_window=120min, scalar observable O(t)=cyclin B concentration. To be formalised Phase 3."
+      "vacuity_witness": "PH-3.VAC-1 — Xenopus laevis cell cycle (candidate). τ_gen=30min structural, T_window=120min, scalar observable O(t)=cyclin B concentration. To be formalised Phase 3.",
+      "tier": "definition",
+      "test_bindings": [],
+      "verified_against": null
     },
     {
       "claim_id": "D-3.2",
@@ -176,7 +179,10 @@
         "IR-8 parsimony — P10-GAP-3.3 CLOSED"
       ],
       "principle_10_note": "τ_gen not fitted. Hierarchy justified by IR-8. P10-GAP-3.3 CLOSED.",
-      "falsification_predicate": null
+      "falsification_predicate": null,
+      "tier": "definition",
+      "test_bindings": [],
+      "verified_against": null
     },
     {
       "claim_id": "C-3.REG",
@@ -274,7 +280,10 @@
         "BOUNDARY": "All four conditions false → NOT FALSIFIED. Satisfied by zero-free-parameter protocol with explicit formulae for R², β, T_char.",
         "CONTEXT": "C-3.REG. FRM has zero free parameters (P1 I-7). Measurement protocol must preserve this property. A protocol fitting τ_gen to data introduces a free parameter equivalent to a 5-parameter model. HR-3.1 resolution: β_measured is always 1/2 analytically; empirical content is T_obs vs T_char ratio across substrates."
       },
-      "section_4_note": "T_char = 4·τ_gen is the FRM-predicted period. T_obs is the empirically observed period. These are distinct quantities. Agreement T_obs ≈ T_char is the empirical content of P2 C-2.4 substrate independence; it is NOT part of the C-3.REG protocol consistency check. Per HR-2.1 and HR-3.1 resolution."
+      "section_4_note": "T_char = 4·τ_gen is the FRM-predicted period. T_obs is the empirically observed period. These are distinct quantities. Agreement T_obs ≈ T_char is the empirical content of P2 C-2.4 substrate independence; it is NOT part of the C-3.REG protocol consistency check. Per HR-2.1 and HR-3.1 resolution.",
+      "tier": "formal_proof",
+      "test_bindings": [],
+      "verified_against": null
     },
     {
       "claim_id": "C-3.ALT",
@@ -287,7 +296,10 @@
         "EVALUATION": "Step 1: confirm mapping table exists in Section 5 and was written before data analysis. Step 2: confirm Δ≥−0.05 stated as threshold. 2 steps.",
         "BOUNDARY": "Both false → NOT FALSIFIED.",
         "CONTEXT": "C-3.ALT. Post-hoc model selection violates C6 (falsifiability). Δ≥−0.05 anchored at Burnham & Anderson 2002. P10-GAP-3.2 CLOSED."
-      }
+      },
+      "tier": "formal_proof",
+      "test_bindings": [],
+      "verified_against": null
     },
     {
       "claim_id": "C-3.DIAG",
@@ -301,7 +313,10 @@
         "EVALUATION": "Step 1: read R8 decision rule — is it fully computable? Step 2: confirm ANOMALOUS = D-2.1 satisfied AND R²<0.85 is stated. 2 steps.",
         "BOUNDARY": "Both false → NOT FALSIFIED.",
         "CONTEXT": "C-3.DIAG. IR-12 enforcement. ANOMALOUS cases are the most scientifically significant output — potential P2 C-2.2 falsification events. HR-3.2 resolution: propagation procedure specified above."
-      }
+      },
+      "tier": "formal_proof",
+      "test_bindings": [],
+      "verified_against": null
     },
     {
       "claim_id": "C-3.sigma",
@@ -317,7 +332,10 @@
         "EVALUATION": "Step 1: check R6 — is τ_gen fixed (not fitted) in bootstrap? Step 2: confirm Bevington & Robinson 2003 §3.2 cited as anchor. 2 steps.",
         "BOUNDARY": "Both false → NOT FALSIFIED.",
         "CONTEXT": "C-3.σ. Closes P10-GAP-2.5 carried from P2. 2σ = 95% CI is a universal statistical constant. IR-13 satisfied."
-      }
+      },
+      "tier": "formal_proof",
+      "test_bindings": [],
+      "verified_against": null
     }
   ],
   "placeholder_register": [
@@ -430,7 +448,12 @@
     "cbt_steps_pass": 7,
     "hr_challenges_total": 8,
     "hr_challenges_resolved": 8,
-    "phases_complete": ["Phase 1","Phase 2","Phase 3","Phase 5"]
+    "phases_complete": [
+      "Phase 1",
+      "Phase 2",
+      "Phase 3",
+      "Phase 5"
+    ]
   },
   "phase_ready_detail": {
     "verdict": "PHASE-READY",
