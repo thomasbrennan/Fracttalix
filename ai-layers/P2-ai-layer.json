@@ -1,7 +1,7 @@
 {
   "_meta": {
     "document_type": "AI_LAYER",
-    "schema_version": "v2-S42+S48",
+    "schema_version": "v3-S49",
     "schema_url": "https://github.com/thomasbrennan/Fracttalix/blob/main/ai-layers/ai-layer-schema.json",
     "schema_amendments": [
       {
@@ -101,17 +101,64 @@
   "inference_rule_inventory": {
     "source": "CANONICAL_ai-layer-schema.json IR-1–IR-8 + P2 extensions IR-9–IR-11",
     "rules": [
-      {"id": "IR-1", "name": "Modus Ponens", "logical_form": "If P and (P → Q), then Q."},
-      {"id": "IR-2", "name": "Universal Instantiation", "logical_form": "If ∀x P(x), then P(a) for any specific a."},
-      {"id": "IR-3", "name": "Substitution of Equals", "logical_form": "If a=b, then any expression containing a may replace a with b."},
-      {"id": "IR-4", "name": "Definition Expansion", "logical_form": "Replace a defined term with its definition."},
-      {"id": "IR-5", "name": "Algebraic Manipulation", "logical_form": "Valid algebraic transformation preserving equality or inequality."},
-      {"id": "IR-6", "name": "Logical Equivalence", "logical_form": "Replace an expression with a logically equivalent one."},
-      {"id": "IR-7", "name": "Statistical Inference", "logical_form": "Apply a named statistical test or estimation procedure to data."},
-      {"id": "IR-8", "name": "Parsimony / Modeling Principle Selection", "logical_form": "Select a canonical value from a family of axiom-consistent options based on a named parsimony principle."},
-      {"id": "IR-9", "name": "RG Fixed-Point Identification", "logical_form": "A fixed point of the RG transformation T is a point x* such that T(x*) = x*. The critical exponent β is determined by the eigenvalue spectrum of dT/dx at x*.", "justification": "IR-9 added because IR-1–IR-8 do not contain a rule for fixed-point identification in a dynamical system. The fixed-point identification is a named mathematical procedure from renormalization group theory (Wilson 1971)."},
-      {"id": "IR-10", "name": "Universality Class Identification", "logical_form": "Two systems belong to the same universality class if and only if they share the same RG fixed point structure (same fixed point and same eigenvalue spectrum at that fixed point).", "justification": "IR-10 added because universality class membership requires a specific logical structure (shared RG fixed point) that cannot be reduced to IR-2 without circularity. Standard RG definition (Kadanoff 1966, Wilson 1971)."},
-      {"id": "IR-11", "name": "Perturbation Stability Argument", "logical_form": "A fixed point x* is stable under perturbation ε if all eigenvalues of dT/dx at x* have magnitude < 1 in the RG flow sense.", "justification": "IR-11 added because stability of the fixed point is a distinct logical step from identifying it (IR-9). Stability requires showing the eigenvalue magnitude condition separately."}
+      {
+        "id": "IR-1",
+        "name": "Modus Ponens",
+        "logical_form": "If P and (P → Q), then Q."
+      },
+      {
+        "id": "IR-2",
+        "name": "Universal Instantiation",
+        "logical_form": "If ∀x P(x), then P(a) for any specific a."
+      },
+      {
+        "id": "IR-3",
+        "name": "Substitution of Equals",
+        "logical_form": "If a=b, then any expression containing a may replace a with b."
+      },
+      {
+        "id": "IR-4",
+        "name": "Definition Expansion",
+        "logical_form": "Replace a defined term with its definition."
+      },
+      {
+        "id": "IR-5",
+        "name": "Algebraic Manipulation",
+        "logical_form": "Valid algebraic transformation preserving equality or inequality."
+      },
+      {
+        "id": "IR-6",
+        "name": "Logical Equivalence",
+        "logical_form": "Replace an expression with a logically equivalent one."
+      },
+      {
+        "id": "IR-7",
+        "name": "Statistical Inference",
+        "logical_form": "Apply a named statistical test or estimation procedure to data."
+      },
+      {
+        "id": "IR-8",
+        "name": "Parsimony / Modeling Principle Selection",
+        "logical_form": "Select a canonical value from a family of axiom-consistent options based on a named parsimony principle."
+      },
+      {
+        "id": "IR-9",
+        "name": "RG Fixed-Point Identification",
+        "logical_form": "A fixed point of the RG transformation T is a point x* such that T(x*) = x*. The critical exponent β is determined by the eigenvalue spectrum of dT/dx at x*.",
+        "justification": "IR-9 added because IR-1–IR-8 do not contain a rule for fixed-point identification in a dynamical system. The fixed-point identification is a named mathematical procedure from renormalization group theory (Wilson 1971)."
+      },
+      {
+        "id": "IR-10",
+        "name": "Universality Class Identification",
+        "logical_form": "Two systems belong to the same universality class if and only if they share the same RG fixed point structure (same fixed point and same eigenvalue spectrum at that fixed point).",
+        "justification": "IR-10 added because universality class membership requires a specific logical structure (shared RG fixed point) that cannot be reduced to IR-2 without circularity. Standard RG definition (Kadanoff 1966, Wilson 1971)."
+      },
+      {
+        "id": "IR-11",
+        "name": "Perturbation Stability Argument",
+        "logical_form": "A fixed point x* is stable under perturbation ε if all eigenvalues of dT/dx at x* have magnitude < 1 in the RG flow sense.",
+        "justification": "IR-11 added because stability of the fixed point is a distinct logical step from identifying it (IR-9). Stability requires showing the eigenvalue magnitude condition separately."
+      }
     ]
   },
   "inbound_dependencies": [
@@ -137,7 +184,10 @@
         "Measurement axiom (criterion c): upstream measurement principle"
       ],
       "principle_10_note": "Criteria (a)–(c) are structural properties derivable from network topology and bifurcation theory. None of the criteria presuppose β=1/2.",
-      "falsification_predicate": null
+      "falsification_predicate": null,
+      "tier": "definition",
+      "test_bindings": [],
+      "verified_against": null
     },
     {
       "claim_id": "C-2.1",
@@ -151,7 +201,10 @@
         "EVALUATION": "Trace P2 Section 3 step by step. For each step: verify output follows from inputs by named IR rule. Record n_invalid_steps. Record final output as rg_fixed_point_exponent. Scan principle_10_audit for null derivation_path entries in D-2.1 constants.",
         "BOUNDARY": "A step is invalid IFF output does not follow from inputs under named rule as stated. Invalid per se: (1) circular steps assuming beta=1/2; (2) steps introducing undefined variables; (3) steps appealing to unlisted rules. rg_fixed_point_exponent != 0.5 falsifies independently of n_invalid_steps.",
         "CONTEXT": "C-2.1. Type B-1 derivation validity. Threshold: n_invalid_steps = 0 is the only passing value — logical necessity, not statistical threshold. DDE-independence mandate: Ω*=π/2 must follow from D-2.1 without P1 F-1.4 (HR-3.1 mandate). Vacuity witness: derivation table S1 output."
-      }
+      },
+      "tier": "formal_proof",
+      "test_bindings": [],
+      "verified_against": null
     },
     {
       "claim_id": "C-2.2",
@@ -165,7 +218,10 @@
         "EVALUATION": "Steps 1-3: verify D-2.1(a)(b)(c) against P1 AI layer v12. Step 4: scan D-2.1 text for beta/1/2/exponent in definitional role. Step 5: check C-2.1 verdict. Step 6: evaluate FALSIFIED IF.",
         "BOUNDARY": "All three criteria jointly necessary. Circular IFF beta=1/2 appears as a defining property. Correct form: structural properties (a)-(c) stated; beta=1/2 derived from them by IR-9/IR-10.",
         "CONTEXT": "C-2.2. Type B-2 membership. Two conditions: (i) FRM satisfies criteria; (ii) criteria are non-circular. Both required. Vacuity witness LIVE."
-      }
+      },
+      "tier": "formal_proof",
+      "test_bindings": [],
+      "verified_against": null
     },
     {
       "claim_id": "C-2.3",
@@ -178,7 +234,10 @@
         "EVALUATION": "For each verified substrate class, apply P3 C-3.REG to extract lambda and omega. Compare against derived expressions. Verify expressions appear in C-2.1 derivation table as corollaries.",
         "BOUNDARY": "Gamma = 1+pi^2/4 DERIVED (P1 live edge). tau independently measured (D-2.1(c)). alpha = bifurcation distance (P1 scope_boundary). No stipulated constants.",
         "CONTEXT": "C-2.3. Extends P1 functional form to all class members. Downstream of C-2.1 and P3 C-3.REG. PH-2.3 non-blocking at PHASE-READY."
-      }
+      },
+      "tier": "formal_proof",
+      "test_bindings": [],
+      "verified_against": null
     },
     {
       "claim_id": "C-2.4",
@@ -192,7 +251,10 @@
         "EVALUATION": "Step 1: verify D-2.1(a)-(c) for each substrate class. Step 2: apply C-3.REG to extract beta per system. Step 3: compute mean and sigma per class. Step 4: check 2*sigma bound.",
         "BOUNDARY": "2-sigma threshold: inherited from P1 F-1.3 for comparability. Limitation registered as P10-GAP-2.5. A system failing D-2.1 is not a counterexample.",
         "CONTEXT": "C-2.4 resolves PH-1.1 in P1 AI layer v12. Analytic component established by C-2.1+C-2.2; empirical pending P3 C-3.REG."
-      }
+      },
+      "tier": "formal_proof",
+      "test_bindings": [],
+      "verified_against": null
     },
     {
       "claim_id": "C-2.5",
@@ -205,7 +267,10 @@
         "EVALUATION": "From derivation table S10: amplitude direction eigenvalue = exp(−λ·τ_RG). Verify λ>0 from P1 scope_boundary. Perturb D-2.1 by epsilon, compute beta(epsilon), evaluate Δβ/ε as ε->0.",
         "BOUNDARY": "ALL amplitude-direction eigenvalues must be < 1. Single eigenvalue >= 1 falsifies. Stability is of the amplitude envelope, not the phase angle.",
         "CONTEXT": "C-2.5. Standard RG stability criterion (IR-11). Without stability, β=1/2 holds only for fine-tuned systems."
-      }
+      },
+      "tier": "formal_proof",
+      "test_bindings": [],
+      "verified_against": null
     }
   ],
   "derivation_table": {
@@ -213,18 +278,71 @@
     "step_count": 10,
     "n_invalid_steps": 0,
     "dde_independent": true,
-    "thomas_review_flags": ["TRF-P2-1 (S3 — RG flow argument)", "TRF-P2-2 (S10 — eigenvalue normalisation)"],
+    "thomas_review_flags": [
+      "TRF-P2-1 (S3 — RG flow argument)",
+      "TRF-P2-2 (S10 — eigenvalue normalisation)"
+    ],
     "steps_summary": [
-      {"step": "S1", "rule": "IR-4", "output": "Expanded class definition (a)(b)(c)", "dde_free": true},
-      {"step": "S2", "rule": "IR-5", "output": "iΩ + G(iΩ,τ) = 0 (substrate-general characteristic equation)", "dde_free": true},
-      {"step": "S3", "rule": "IR-9", "output": "RG fixed-point: iΩ*τ + k_c·exp(−iΩ*τ) = 0", "dde_free": true},
-      {"step": "S4", "rule": "IR-5", "output": "k_c·cosθ=0 and θ−k_c·sinθ=0", "dde_free": true},
-      {"step": "S5", "rule": "IR-5", "output": "cosθ=0 → θ=π/2+nπ (k_c≠0 from D-2.1(a))", "dde_free": true},
-      {"step": "S6", "rule": "IR-8", "output": "θ*=π/2 (fundamental mode n=0, canonical choice documented)", "dde_free": true},
-      {"step": "S7", "rule": "IR-6", "output": "Ω*=π/(2τ) — DDE-independence result", "dde_free": true},
-      {"step": "S8", "rule": "IR-3", "output": "β=1/2", "dde_free": true},
-      {"step": "S9", "rule": "IR-10", "output": "All D-2.1 systems share FRM universality class with β=1/2", "dde_free": true},
-      {"step": "S10", "rule": "IR-11", "output": "Fixed point stable: amplitude direction eigenvalue = exp(−λ·τ_RG) < 1", "dde_free": true}
+      {
+        "step": "S1",
+        "rule": "IR-4",
+        "output": "Expanded class definition (a)(b)(c)",
+        "dde_free": true
+      },
+      {
+        "step": "S2",
+        "rule": "IR-5",
+        "output": "iΩ + G(iΩ,τ) = 0 (substrate-general characteristic equation)",
+        "dde_free": true
+      },
+      {
+        "step": "S3",
+        "rule": "IR-9",
+        "output": "RG fixed-point: iΩ*τ + k_c·exp(−iΩ*τ) = 0",
+        "dde_free": true
+      },
+      {
+        "step": "S4",
+        "rule": "IR-5",
+        "output": "k_c·cosθ=0 and θ−k_c·sinθ=0",
+        "dde_free": true
+      },
+      {
+        "step": "S5",
+        "rule": "IR-5",
+        "output": "cosθ=0 → θ=π/2+nπ (k_c≠0 from D-2.1(a))",
+        "dde_free": true
+      },
+      {
+        "step": "S6",
+        "rule": "IR-8",
+        "output": "θ*=π/2 (fundamental mode n=0, canonical choice documented)",
+        "dde_free": true
+      },
+      {
+        "step": "S7",
+        "rule": "IR-6",
+        "output": "Ω*=π/(2τ) — DDE-independence result",
+        "dde_free": true
+      },
+      {
+        "step": "S8",
+        "rule": "IR-3",
+        "output": "β=1/2",
+        "dde_free": true
+      },
+      {
+        "step": "S9",
+        "rule": "IR-10",
+        "output": "All D-2.1 systems share FRM universality class with β=1/2",
+        "dde_free": true
+      },
+      {
+        "step": "S10",
+        "rule": "IR-11",
+        "output": "Fixed point stable: amplitude direction eigenvalue = exp(−λ·τ_RG) < 1",
+        "dde_free": true
+      }
     ]
   },
   "placeholder_register": [
@@ -265,10 +383,32 @@
     }
   ],
   "outbound_edges_register": [
-    {"edge_id": "C-2.4→P1-PH-1.1", "source_claim": "C-2.4", "target_paper": "P1", "target_placeholder": "PH-1.1", "status": "RESOLVED — P1 AI layer v12 updated S48"},
-    {"edge_id": "C-2.1→P4", "source_claim": "C-2.1", "target_paper": "P4", "status": "REGISTERED — live after PR-3"},
-    {"edge_id": "C-2.2→P6", "source_claim": "C-2.2", "target_paper": "P6", "status": "REGISTERED — live after PR-3"},
-    {"edge_id": "C-2.3→P3-C-3.REG", "source_claim": "C-2.3", "target_paper": "P3", "target_claim": "C-3.REG", "status": "REGISTERED — Step 5b compliant"}
+    {
+      "edge_id": "C-2.4→P1-PH-1.1",
+      "source_claim": "C-2.4",
+      "target_paper": "P1",
+      "target_placeholder": "PH-1.1",
+      "status": "RESOLVED — P1 AI layer v12 updated S48"
+    },
+    {
+      "edge_id": "C-2.1→P4",
+      "source_claim": "C-2.1",
+      "target_paper": "P4",
+      "status": "REGISTERED — live after PR-3"
+    },
+    {
+      "edge_id": "C-2.2→P6",
+      "source_claim": "C-2.2",
+      "target_paper": "P6",
+      "status": "REGISTERED — live after PR-3"
+    },
+    {
+      "edge_id": "C-2.3→P3-C-3.REG",
+      "source_claim": "C-2.3",
+      "target_paper": "P3",
+      "target_claim": "C-3.REG",
+      "status": "REGISTERED — Step 5b compliant"
+    }
   ],
   "thomas_review_flags": [
     {

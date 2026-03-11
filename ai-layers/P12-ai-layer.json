@@ -1,7 +1,7 @@
 {
   "_meta": {
     "document_type": "AI_LAYER",
-    "schema_version": "v2-S42",
+    "schema_version": "v3-S49",
     "schema_url": "https://github.com/thomasbrennan/Fracttalix/blob/main/ai-layers/ai-layer-schema.json",
     "produced_session": "S48",
     "produced_by": "Claude (Anthropic) — Session 48 Phase 2 scaffold",
