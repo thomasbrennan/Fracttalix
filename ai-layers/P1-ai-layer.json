@@ -13,7 +13,7 @@
   "series_position": "Paper 1 of 12",
   "paper_title": "The Fractal Rhythm Model: A Universal Law of Network Information Transmission",
   "paper_type": "law_A",
-  "version": "v12",
+  "version": "v13",
   "session": "S44",
   "prose_doi": "10.5281/zenodo.18859299",
   "ai_layer_url": "https://github.com/thomasbrennan/Fracttalix/blob/main/ai-layers/P1-ai-layer.json",
@@ -487,6 +487,28 @@
       "target_claim": "C-2.4",
       "resolution_session": "S48",
       "resolution_note": "C-2.4 establishes beta=1/2 for all D-2.1 substrate classes via RG fixed-point analysis. Analytic component resolved S48. Empirical substrate fitting pending P3 C-3.REG."
+    },
+    {
+      "placeholder_id": "PH-1.2",
+      "source_claim": "F-1.1",
+      "description": "Goodness-of-fit protocol for FRM regression. P1 F-1.1 WHERE references P3 Section 4 regression for R²_frm computation.",
+      "resolved": true,
+      "blocks_phase_ready": false,
+      "target_paper": "P3",
+      "target_claim": "C-3.REG",
+      "resolution_session": "S48",
+      "resolution_note": "C-3.REG (P3 Phase 5 CBT PHASE-READY S48) specifies the standard FRM regression protocol R1–R9. R4 provides R²_frm computation. R7 provides T_char = 4·τ_gen. R8 provides CONFIRMED/EXCLUDED/ANOMALOUS classification. This resolves PH-1.2 (goodness-of-fit protocol) fully."
+    },
+    {
+      "placeholder_id": "PH-1.3",
+      "source_claim": "F-1.1",
+      "description": "Alternative model comparison protocol. P1 F-1.1 WHERE references P1 Appendix B for R²_best_alt.",
+      "resolved": true,
+      "blocks_phase_ready": false,
+      "target_paper": "P3",
+      "target_claim": "C-3.REG",
+      "resolution_session": "S48",
+      "resolution_note": "C-3.REG R9 specifies the pre-specified alternative model comparison protocol with Δ = R²_frm − R²_alt threshold Δ≥−0.05 (Burnham & Anderson 2002). This resolves PH-1.3 (alternative model comparison protocol) fully."
     }
   ],
   "prior_art": {
