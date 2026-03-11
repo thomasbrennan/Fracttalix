@@ -1,7 +1,7 @@
 {
   "_meta": {
     "document_type": "PROCESS_GRAPH",
-    "version": "v9-S48",
+    "version": "v9-S49",
     "corpus_architecture": "CorpusArch v9 (S48)",
     "produced_session": "S48",
     "licence": "CC BY 4.0",
@@ -244,12 +244,15 @@
       },
       {
         "paper_id": "MK-P5",
-        "title": "On the Decision to Act: Formal Framework for Rational Action at System Tipping Points",
+        "title": "On the Decision to Act: Strategic Convergence and the Mathematics of Intervention Timing at System Tipping Points",
         "paper_type": "derivation_B",
         "series": "MK 5/5",
         "track": "meta_kaizen",
         "status": "PUBLISHED",
-        "note": "Decision-theoretic capstone. κ=0.50 under asymmetric losses. Framework for when to act at FRM tipping point."
+        "ai_layer_version": "v10",
+        "ai_layer_url": "https://github.com/thomasbrennan/Fracttalix/blob/main/ai-layers/MK-P5-ai-layer.json",
+        "placeholder_count": 3,
+        "note": "Decision-theoretic capstone. Fortuna Process, Virtù Window. 4 theorems. κ=0.50 recovered under asymmetric losses. PHASE-READY."
       }
     ],
     "dependencies": {
@@ -297,7 +300,7 @@
   },
   "channel_2_status": {
     "live": true,
-    "live_assets": 16,
+    "live_assets": 17,
     "assets": [
       "https://github.com/thomasbrennan/Fracttalix/blob/main/ai-layers/P1-ai-layer.json",
       "https://github.com/thomasbrennan/Fracttalix/blob/main/ai-layers/P2-ai-layer.json",
@@ -312,6 +315,7 @@
       "https://github.com/thomasbrennan/Fracttalix/blob/main/ai-layers/P11-ai-layer.json",
       "https://github.com/thomasbrennan/Fracttalix/blob/main/ai-layers/P12-ai-layer.json",
       "https://github.com/thomasbrennan/Fracttalix/blob/main/ai-layers/MK-P1-ai-layer.json",
+      "https://github.com/thomasbrennan/Fracttalix/blob/main/ai-layers/MK-P5-ai-layer.json",
       "https://github.com/thomasbrennan/Fracttalix/blob/main/ai-layers/DRP1-ai-layer.json",
       "https://github.com/thomasbrennan/Fracttalix/blob/main/ai-layers/SFW1-ai-layer.json",
       "https://github.com/thomasbrennan/Fracttalix/blob/main/ai-layers/ai-layer-schema.json"

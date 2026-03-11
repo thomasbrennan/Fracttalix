@@ -2,8 +2,8 @@
 *Fractal Rhythm Model — Unified Corpus*
 *Living document. Updated by Claude (Anthropic) as
 architect revises plans during construction.*
-*Last revised: Session 49 — architectural reconciliation
-with CorpusArch v9*
+*Last revised: Session 49 — MK-P5 AI layer deployed,
+CorpusArch v9 reconciliation*
 *KVS Score: 0.832 (threshold κ = 0.75)*
 *κ_corpus: 0.91*
 
@@ -295,13 +295,13 @@ submitted. Implements KVS from MK-P1.
 
 ## Build Table — Meta-Kaizen Track
 
-| # | Title | Type | Series | Status | Notes |
-|---|-------|------|--------|--------|-------|
-| MK-P1 | Meta-Kaizen: General Theory and Algorithmic Framework | derivation_B | MK 1/5 | PUBLISHED | KVS scoring function derived axiomatically from 6 measurement-theoretic axioms. κ=0.50 from Bayesian decision theory. |
-| MK-P2 | Networked Implementation and Governance Closure Theorems | derivation_B | MK 2/5 | PUBLISHED | Governance closure for networked KVS. Implementation theorems for distributed knowledge substrates. |
-| MK-P3 | Reasoning Propagation and Institutional Memory | derivation_B | MK 3/5 | PUBLISHED | Reasoning propagation across networks. Formal treatment of institutional memory. |
-| MK-P4 | Closed-Loop Governance: FRM Integration for Regime-Aware Adaptive Governance | application_C | MK 4/5 | PUBLISHED | PRIMARY BRIDGE BETWEEN TRACKS. FRM as regime-detection instrument. T_MK derived from FRM τ_gen via T_char = 4·τ_gen. |
-| MK-P5 | On the Decision to Act: Formal Framework for Rational Action at System Tipping Points | derivation_B | MK 5/5 | PUBLISHED | Decision-theoretic capstone. κ=0.50 under asymmetric losses. Framework for when to act at FRM tipping point. |
+| # | Title | Type | Series | Status | AI Layer | Notes |
+|---|-------|------|--------|--------|----------|-------|
+| MK-P1 | Meta-Kaizen: General Theory and Algorithmic Framework | derivation_B | MK 1/5 | PUBLISHED | v13 | KVS scoring function derived axiomatically from 6 measurement-theoretic axioms. κ=0.50 from Bayesian decision theory. |
+| MK-P2 | Networked Implementation and Governance Closure Theorems | derivation_B | MK 2/5 | PUBLISHED | — | Governance closure for networked KVS. Implementation theorems for distributed knowledge substrates. |
+| MK-P3 | Reasoning Propagation and Institutional Memory | derivation_B | MK 3/5 | PUBLISHED | — | Reasoning propagation across networks. Formal treatment of institutional memory. |
+| MK-P4 | Closed-Loop Governance: FRM Integration for Regime-Aware Adaptive Governance | application_C | MK 4/5 | PUBLISHED | — | PRIMARY BRIDGE BETWEEN TRACKS. FRM as regime-detection instrument. T_MK derived from FRM τ_gen via T_char = 4·τ_gen. |
+| MK-P5 | On the Decision to Act: Strategic Convergence and the Mathematics of Intervention Timing at System Tipping Points | derivation_B | MK 5/5 | PUBLISHED | v10 | Decision-theoretic capstone. Fortuna Process, Virtù Window. 4 theorems: window rationality, asymmetric loss (κ=0.50 recovered), distributed detection, t_trap existence. 9 claims (3A, 2D, 4F). 3 placeholders (AMOC test, Kramers bound, convergence analysis). PHASE-READY. |
 
 ---
 
@@ -358,17 +358,17 @@ PHASE-READY as of Session 48.
 ## Verification Status
 
 ```
-AI Layers:          15/15 PASS (0 errors)
-Phase-Ready:        4/15 (P1, MK-P1, DRP-1, SFW-1)
+AI Layers:          16/16 PASS (0 errors)
+Phase-Ready:        5/16 (P1, MK-P1, MK-P5, DRP-1, SFW-1)
 Act I Complete:     3/3 (P1, P2, P3 all PHASE-READY)
-NOT-Phase-Ready:    4/15 (P4, P5 — AI layers pending update)
-Scaffold:           7/15 (P6–P12)
-Meta-Kaizen:        5/5 PUBLISHED
-Total Claims:       80 (A:14 D:25 F:41)
-Cross-references:   118 derivation_source entries
+NOT-Phase-Ready:    4/16 (P4, P5 — AI layers pending update)
+Scaffold:           7/16 (P6–P12)
+Meta-Kaizen:        5/5 PUBLISHED (MK-P1, MK-P5 with AI layers)
+Total Claims:       89 (A:17 D:27 F:45)
+Cross-references:   118+ derivation_source entries
 Cross-paper errors: 0
-Open Placeholders:  10
-Schema:             v2-S42
+Open Placeholders:  13
+Schema:             v2-S48
 ```
 
 ---
@@ -536,6 +536,7 @@ framework.
 | v1.5 | Session 36 | Consolidation version. Referee analysis complete. All seven objections addressed. Circular definition resolved via information-theoretic foundation. Measurement decoupling threshold named precisely. 13-month release schedule. Meta-Kaizen analysis. KVS 0.832. Synchronization point identified and mitigated. Paper 11b flagged. Internal consistency action item. |
 | v1.6 | Session 48 | Infrastructure and corpus completion. AI layers created for P2–P5 (retroactive) and P6–P12 (scaffolds). 15/15 layers passing schema validation. Cross-paper consistency checker built — 0 errors, 118 derivation_source entries validated. Process graph updated to CorpusArch v9. REPRODUCIBILITY.md created. Bootstrap doc reconciled. Total claims: 80 (A:14 D:25 F:41). Corpus referee-ready at structural level. |
 | v2.0 | Session 49 | Build Table reconciled with CorpusArch v9. Major update: 12-paper corpus → 21-object, two-track architecture. Fracttalix track (P0–P14, SFW-1) and Meta-Kaizen track (MK-P1–MK-P5, all published). Paper titles, types, acts, and statuses aligned to process graph. Three-act architecture updated (I: P1–P3 law/derivation/measurement; II: P4–P6 empirical validation; III: P7–P12 complete statement). Dependency structure rewritten from process graph edges. Cross-track dependencies documented. Meta-Kaizen track table added. Verification status section added. Universal constants table added to Mathematical Form. Risk register updated — R-1 resolved (P3 gate open), R-4/R-5 added for AI layer/scaffold updates. Referee analysis updated — β=1/2 objection now resolved via P2 derivation. Theoretical relationship sections preserved — corpus placement references removed (paper content reorganized in v9). |
+| v2.1 | Session 49 | MK-P5 AI layer deployed (v10, PHASE-READY). Full claim registry: 9 claims (3A, 2D, 4F) with 4 Theorems (Window Rationality, Asymmetric Loss, Distributed Detection, t_trap Existence). 3 placeholders (PH-MK5.1 AMOC test, PH-MK5.2 Kramers bound, PH-MK5.3 convergence analysis). Deferred resolutions from MK-P1 through MK-P4 documented. MK track table gains AI Layer column. Corpus totals: 89 claims (A:17 D:27 F:45), 13 open placeholders. Schema v2-S48. MK-P5 title updated to full published version. |
 
 ---
 
