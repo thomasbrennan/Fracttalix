@@ -201,7 +201,7 @@ is complete.
 
 ---
 
-## Corpus Architecture — CorpusArch v9
+## Corpus Architecture — CorpusArch v10
 
 **Total objects:** 23
 **Tracks:** 2 (Fracttalix + Meta-Kaizen)
@@ -275,14 +275,28 @@ submitted. Implements KVS from MK-P1.
 
 ---
 
+## Protocol Amendment Log
+
+Initiated v8 (S47). All amendments are permanent
+and load-bearing. Future Claude instances must
+receive this record.
+
+| ID | Session | Scope | Amendment |
+|----|---------|-------|-----------|
+| S48-A1 | S48 | AI layer schema v2 | `principle_10_audit` array field added. Required in all papers P2 onwards. Each entry: `{constant_or_condition, derivation_path_or_gap_id}`. `principle_10_compliant` = true only when ALL entries have `derivation_path` values anchored at published live edges or IR axioms. Source: HR-1.2 of P2 Build Plan. |
+| S48-A2 | S48 | I-9 Step 4 | Circularity detection added. Derivation paths must terminate at (a) a live edge from a published paper AI layer, or (b) an IR rule applied to a mathematical axiom. Paths that loop or terminate only at same-paper claims cause `principle_10_compliant` to remain false. Source: HR-5.2 of P2 Build Plan. |
+| S49-A3 | S49 | IR inventory (Type B papers) | Type B derivation papers must declare their own inference rule inventory in the `ir_inventory` field. Schema IR-1–IR-8 designed for Type A/C papers — not fit for RG derivation or other Type B content. Each Type B paper must: (1) declare full IR inventory, (2) note schema alignment or replacement, (3) document new rules per HR-1.1 procedure. P2 instantiates IR-1–IR-9 (IR-9 = Algebraic Manipulation). Source: HR-1.1 of P2 Phase 1 (S49). |
+
+---
+
 ## Build Table — Fracttalix Track
 
 | # | Title | Type | Act | Status | AI Layer | Notes |
 |---|-------|------|-----|--------|----------|-------|
 | P0 | Canonical Build Process Standard | methodology_D | GOV | COMPLETE | — | Governing process for entire corpus. CBT v2. Endogenous scheduling T_MK. Governs BOTH tracks. T15/T20 open. |
-| P1 | The Fractal Rhythm Model: A Universal Law of Network Information Transmission | law_A | I | PHASE-READY | v13 | β=1/2 proved (Hopf quarter-wave, F-1.4). λ=\|α\|/(Γ·τ_gen) derived. Γ=1+π²/4. 36-substrate adversarial battery. PH-1.1 resolved S48 via P2 C-2.4. PH-1.2, PH-1.3 resolved S48 via P3 C-3.REG. bioRxiv: BIORXIV/2026/710918. |
-| P2 | Derivation and Universality: The β=1/2 Critical Exponent as a Universal Law | derivation_B | I | PHASE-READY | v4 | β=1/2 proved from RG fixed-point, DDE-independent. 10-step derivation, n_invalid=0. 3 substrate classes. PH-2.3, PH-2.4-EMPIRICAL resolved S48. P10-GAP-2.5 CLOSED S48. |
-| P3 | FRM Measurement and Diagnostics | methodology_D | I | PHASE-READY | v2 | Standard protocol R1–R9. Zero-free-parameter constraint. Resolves PH-1.2, PH-1.3, PH-2.3, PH-2.4-EMPIRICAL, P10-GAP-2.5. Formal ancestor of P9. IR-12, IR-13. |
+| P1 | The Fractal Rhythm Model: A Universal Law of Network Information Transmission | law_A | I | PHASE-READY | v13 | β=1/2 proved (Hopf quarter-wave, F-1.4). λ=\|α\|/(Γ·τ_gen) derived. Γ=1+π²/4. 36-substrate adversarial battery. PH-1.1 resolved S48 via P2 C-2.4. PH-1.2, PH-1.3 resolved S48 via P3 C-3.REG. bioRxiv REJECTED (S49, scope mismatch). arXiv route: cs.DL → nlin.AO endorsement. |
+| P2 | Derivation and Universality: The β=1/2 Critical Exponent as a Universal Law | derivation_B | I | Phase 1 PHASE-READY (S49) | v1 | Phase 1 PHASE-READY (S49). AI layer v1 produced. IR inventory IR-1–IR-9 instantiated (S49-A3). Phases 2–5 not yet executed. v9 "PHASE-READY v4 S48" was speculative — corrected v10. Unblocks: PH-1.1 (P1), C-2.1 (P4), C-2.2 (P6). |
+| P3 | FRM Measurement and Diagnostics | methodology_D | I | QUEUED | — | Gated on P2 PHASE-READY (NOT YET SATISFIED). Build plan not yet produced. v9 "BUILD PLAN COMPLETE S48" was speculative — corrected v10. |
 | P4 | Biological Systems | application_C | II | QUEUED | v1 | FRM applied to biological oscillators. Full dataset fitting. Receives C-3.REG as measurement standard. Gate: P3 PHASE-READY. |
 | P5 | Neural and Pharmacological Systems | application_C | II | QUEUED | v1 | Neural circuits with delayed inhibition. Drug response kinetics. P5↔MK-P4 isomorphism. Gate: P3 PHASE-READY. |
 | P6 | The Central Paper | derivation_B | II | QUEUED | scaffold | Integration consistency table for all Act I and Act II claims. Receives C-2.2 as live edge. Gate: P3 PHASE-READY. |
@@ -366,7 +380,7 @@ PHASE-READY as of Session 48.
 ```
 AI Layers:          21/21 PASS (0 errors)
 Phase-Ready:        10/21
-Act I Complete:     3/3 (P1, P2, P3 all PHASE-READY)
+Act I:              P1 PHASE-READY, P2 Phase 1 PHASE-READY (S49), P3 QUEUED
 Meta-Kaizen:        6/6 PUBLISHED (MK-P1–MK-P6, all with AI layers)
 DRS:                DRP-1 + DRS-ARCH (Architecture Specification)
 Total Claims:       138 (A:29 D:46 F:63)
@@ -551,6 +565,8 @@ framework.
 | v2.0 | Session 49 | Build Table reconciled with CorpusArch v9. Major update: 12-paper corpus → 21-object, two-track architecture. Fracttalix track (P0–P14, SFW-1) and Meta-Kaizen track (MK-P1–MK-P5, all published). Paper titles, types, acts, and statuses aligned to process graph. Three-act architecture updated (I: P1–P3 law/derivation/measurement; II: P4–P6 empirical validation; III: P7–P12 complete statement). Dependency structure rewritten from process graph edges. Cross-track dependencies documented. Meta-Kaizen track table added. Verification status section added. Universal constants table added to Mathematical Form. Risk register updated — R-1 resolved (P3 gate open), R-4/R-5 added for AI layer/scaffold updates. Referee analysis updated — β=1/2 objection now resolved via P2 derivation. Theoretical relationship sections preserved — corpus placement references removed (paper content reorganized in v9). |
 | v2.1 | Session 49 | MK-P5 AI layer deployed (v10, PHASE-READY). Full claim registry: 9 claims (3A, 2D, 4F) with 4 Theorems (Window Rationality, Asymmetric Loss, Distributed Detection, t_trap Existence). 3 placeholders (PH-MK5.1 AMOC test, PH-MK5.2 Kramers bound, PH-MK5.3 convergence analysis). Deferred resolutions from MK-P1 through MK-P4 documented. MK track table gains AI Layer column. Corpus totals: 89 claims (A:17 D:27 F:45), 13 open placeholders. Schema v2-S48. MK-P5 title updated to full published version. |
 | v2.2 | Session 51 | MK-P6 "The Dual Reader Standard for Software" — extends DRS from scientific papers to executable software. Canonical build process: First Build Plan, Hostile Review (10 objections), Second Meta-Kaizen (all addressed), Final Build Plan. MK-P6 AI layer (12 claims: 3A, 4D, 5F, 2 placeholders). SFW-1 v2 AI layer (20 claims: 5A, 8D, 7F, 4 placeholders) — first DRS-for-Software application. Meta-Kaizen track expanded 5→6 papers. Corpus totals: 22 objects, 121 claims (A:25 D:39 F:57), 19 open placeholders. Prior art survey across 11 cultural/linguistic traditions. Schema v2-S50. |
+| v2.3 | Session 51 | DRS Architecture paper written and deployed with AI layer (DRS-ARCH, 11 claims). GVP v1.0 portable spec added. Falsification Kernel v1.1 (Layer 0) deployed. Auto-PR workflow added. Corpus totals: 23 objects, 138 claims (A:29 D:46 F:63), 21 AI layers, 17 open placeholders. Schema v3-S51. |
+| v3.0 (v10) | Session 52 | CorpusArch v10 reconciliation. P2 status corrected: Phase 1 PHASE-READY (S49), not full PHASE-READY — v9 entry was speculative forward projection. P3 status corrected: QUEUED, no build plan — v9 "BUILD PLAN COMPLETE S48" was speculative. P1 bioRxiv REJECTED (S49, scope mismatch) — arXiv cs.DL route active. Protocol Amendment Log added (S48-A1, S48-A2, S49-A3). S49-A3: Type B papers must declare own IR inventory. Act I status updated: P1 PHASE-READY, P2 Phase 1 only, P3 QUEUED. |
 
 ---
 
