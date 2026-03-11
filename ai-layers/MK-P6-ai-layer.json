@@ -1,0 +1,244 @@
+{
+  "_meta": {
+    "document_type": "AI_LAYER",
+    "schema_version": "v2-S50",
+    "schema_url": "https://github.com/thomasbrennan/Fracttalix/blob/main/ai-layers/ai-layer-schema.json",
+    "semantic_spec_url": "https://github.com/thomasbrennan/Fracttalix/blob/main/ai-layers/falsification-kernel.md",
+    "produced_session": "S51",
+    "produced_by": "Claude Code — Thomas Brennan (Architect)",
+    "licence": "CC BY 4.0"
+  },
+  "paper_id": "MK-P6",
+  "corpus_id": "Meta-Kaizen",
+  "series": "Meta-Kaizen Series",
+  "series_position": "Paper 6 of 6",
+  "paper_title": "The Dual Reader Standard for Software: Measurement-Theoretic Falsification Applied to Executable Systems",
+  "paper_type": "methodology_D",
+  "version": "v1",
+  "ai_layer_version": "v1.0",
+  "session": "S51",
+  "ai_layer_url": "https://github.com/thomasbrennan/Fracttalix/blob/main/ai-layers/MK-P6-ai-layer.json",
+  "citation_format": "[MK Paper 6, AI-Layer, Claim C-MK6.X]",
+  "phase_ready": {
+    "verdict": "NOT-PHASE-READY",
+    "c1": "SATISFIED",
+    "c2": "SATISFIED",
+    "c3": "SATISFIED",
+    "c4_mode": "PHASE-READY-TRACKING",
+    "c5": "SATISFIED",
+    "c6": "SATISFIED",
+    "placeholder_count": 2,
+    "note": "MK-P6 AI layer. 2 placeholders: PH-MK6.1 (independent empirical validation pending), PH-MK6.2 (formal proof of Property 7.1 pending). NOT-PHASE-READY: empirical validation is blocking."
+  },
+  "claim_registry": [
+    {
+      "claim_id": "A-MK6.1",
+      "type": "A",
+      "label": "[TYPE:A]",
+      "name": "Popperian epistemological foundation",
+      "statement": "Falsificationism (Popper, 1959) as the epistemological basis for software verification: we can falsify behavioral claims but not verify them with certainty. This is deliberately weaker than formal verification and deliberately more tractable.",
+      "source": "MK-P6 Section 6",
+      "axiomatic_basis": "Popper, K. R. (1959). The Logic of Scientific Discovery.",
+      "falsification_predicate": null,
+      "derivation_source": []
+    },
+    {
+      "claim_id": "A-MK6.2",
+      "type": "A",
+      "label": "[TYPE:A]",
+      "name": "DRS Layer 0 kernel applicability",
+      "statement": "The falsification kernel K = (P, O, M, B) as defined in falsification-kernel.md v1.1 is applicable to software behavioral claims. The grammar (Section 3), operand specification (Section 4), mechanism requirements (Section 5), and bounds specification (Section 6) of the kernel all apply to executable systems.",
+      "source": "MK-P6 Section 5.4; falsification-kernel.md v1.1",
+      "axiomatic_basis": "Brennan, T. (2026). Falsification Kernel v1.1.",
+      "falsification_predicate": null,
+      "derivation_source": ["DRP-1"]
+    },
+    {
+      "claim_id": "A-MK6.3",
+      "type": "A",
+      "label": "[TYPE:A]",
+      "name": "Design by Contract foundation",
+      "statement": "Design by Contract (Meyer, 1992) established preconditions, postconditions, and invariants as executable specifications. The DRS for Software extends, not replaces, DbC.",
+      "source": "MK-P6 Section 5.5",
+      "axiomatic_basis": "Meyer, B. (1992). Applying Design by Contract. IEEE Computer, 25(10).",
+      "falsification_predicate": null,
+      "derivation_source": []
+    },
+    {
+      "claim_id": "D-MK6.1",
+      "type": "D",
+      "label": "[TYPE:D]",
+      "name": "Software Claim Taxonomy",
+      "statement": "Software claims are classified into three types: Type A (Assumptions — platform requirements, dependency contracts, environmental preconditions), Type D (Definitions — type signatures, data structures, configuration schemas), Type F (Behavioral Claims — correctness guarantees, invariants, performance bounds, API contracts).",
+      "source": "MK-P6 Section 5.1",
+      "falsification_predicate": null,
+      "derivation_source": ["DRP-1"]
+    },
+    {
+      "claim_id": "D-MK6.2",
+      "type": "D",
+      "label": "[TYPE:D]",
+      "name": "Falsification Completeness",
+      "statement": "A software system S with claim registry R is falsification-complete iff: (1) every publicly documented behavior corresponds to at least one Type F claim, (2) every Type F claim has a well-formed K predicate, (3) every Type F claim evaluates to NOT FALSIFIED, (4) every unverified claim is registered as a placeholder.",
+      "source": "MK-P6 Definition 7.2",
+      "falsification_predicate": null,
+      "derivation_source": []
+    },
+    {
+      "claim_id": "D-MK6.3",
+      "type": "D",
+      "label": "[TYPE:D]",
+      "name": "Software Phase-Ready Verdict",
+      "statement": "A software release is PHASE-READY iff c1 (public API coverage), c2 (well-formed predicates), c3 (all evaluations pass), c4 (dependencies resolved or placeholdered), c5 (placeholder documentation), c6 (schema validity) are all SATISFIED.",
+      "source": "MK-P6 Section 7.3",
+      "falsification_predicate": null,
+      "derivation_source": ["DRP-1"]
+    },
+    {
+      "claim_id": "D-MK6.4",
+      "type": "D",
+      "label": "[TYPE:D]",
+      "name": "Three gap categories",
+      "statement": "Applying DRS to existing software reveals three categories of gap: Category 1 (tested but unbounded — BOUNDARY gaps), Category 2 (documented but untested — placeholder gaps), Category 3 (assumed but unregistered — Type A gaps).",
+      "source": "MK-P6 Section 8.1",
+      "falsification_predicate": null,
+      "derivation_source": []
+    },
+    {
+      "claim_id": "F-MK6.1",
+      "type": "F",
+      "label": "[TYPE:F]",
+      "name": "Kernel universality — K applies to software without modification",
+      "statement": "The falsification kernel K = (P, O, M, B) as defined in falsification-kernel.md v1.1 applies to software behavioral claims without modification. The same grammar, evaluation semantics, and validity constraints that govern scientific Type F claims govern software Type F claims.",
+      "source": "MK-P6 Section 5.4",
+      "falsification_predicate": {
+        "FALSIFIED_IF": "EXISTS software_claim C SUCH THAT is_falsifiable(C) = TRUE AND is_expressible_as_K(C) = FALSE",
+        "WHERE": {
+          "C": "string · a behavioral claim about software that is empirically falsifiable by testing",
+          "is_falsifiable": "binary · TRUE if C can be contradicted by an observable test outcome",
+          "is_expressible_as_K": "binary · TRUE if C can be expressed as a well-formed (FALSIFIED_IF, WHERE, EVALUATION, BOUNDARY, CONTEXT) 4-tuple satisfying all constraints in falsification-kernel.md Sections 3–6"
+        },
+        "EVALUATION": "Attempt to express each of the 7 Type F claims in SFW-1 v2 as K 4-tuples; verify all are well-formed; if any cannot be expressed, identify the kernel constraint that prevents expression; finite",
+        "BOUNDARY": "any software claim that is falsifiable but inexpressible as K → FALSIFIED; all 7 expressible → NOT FALSIFIED for the demonstration scope",
+        "CONTEXT": "The kernel constraints (determinism, finiteness, no self-reference, completeness of operands) are general enough to accommodate any finite test procedure. The claim is that no software-specific extension to the kernel grammar is needed."
+      },
+      "sample_falsification_observation": "A software claim 'this function is elegant' is falsifiable (subjective judgment could disagree) but cannot be expressed as K because elegance has no deterministic predicate → BUT this claim fails the is_falsifiable test (subjective claims are not empirically falsifiable) → does not FALSIFY. A genuine counterexample would be: 'this function handles 10,000 concurrent requests' is falsifiable but cannot be expressed in K grammar → would FALSIFY if K grammar cannot express concurrency load tests."
+    },
+    {
+      "claim_id": "F-MK6.2",
+      "type": "F",
+      "label": "[TYPE:F]",
+      "name": "Falsification completeness implies coverage",
+      "statement": "If a software system S is falsification-complete with respect to claim registry R, then there exists a test suite T derived from evaluation procedures in R such that L(S, T) >= L(S, T') for any T' achieving the same behavioral verification.",
+      "source": "MK-P6 Property 7.1",
+      "falsification_predicate": {
+        "FALSIFIED_IF": "EXISTS system S AND registry R SUCH THAT falsification_complete(S, R) = TRUE AND coverage(T_R) < coverage(T_alt) WHERE behavioral_verification(T_alt) = behavioral_verification(T_R)",
+        "WHERE": {
+          "S": "object · a software system",
+          "R": "set · claim registry for S satisfying Definition 7.2",
+          "T_R": "set · test suite derived from EVALUATION procedures in R",
+          "T_alt": "set · any alternative test suite with same behavioral verification",
+          "coverage": "function · line coverage L(S, T)",
+          "behavioral_verification": "function · set of behavioral claims verified by T"
+        },
+        "EVALUATION": "Construct a falsification-complete system with registry; derive test suite from evaluations; measure coverage; compare against alternative suites; finite for bounded systems",
+        "BOUNDARY": "coverage(T_R) < coverage(T_alt) with same verification → FALSIFIED",
+        "CONTEXT": "This formalizes the intuition that testing every claimed behavior covers more code than testing arbitrary paths. The property is about the relationship between claim-driven and path-driven testing."
+      },
+      "placeholder": true,
+      "placeholder_id": "PH-MK6.1",
+      "sample_falsification_observation": "A system where claim-derived tests cover 80% of lines but a random test suite with same behavioral verification covers 95% → FALSIFIED"
+    },
+    {
+      "claim_id": "F-MK6.3",
+      "type": "F",
+      "label": "[TYPE:F]",
+      "name": "Coverage does not imply falsification completeness",
+      "statement": "There exist software systems with L(S, T) = 1.0 (100% line coverage) that are not falsification-complete.",
+      "source": "MK-P6 Property 7.2",
+      "falsification_predicate": {
+        "FALSIFIED_IF": "FOR ALL systems S WITH L(S, T) = 1.0, falsification_complete(S, R_derived) = TRUE",
+        "WHERE": {
+          "S": "object · any software system",
+          "T": "set · test suite achieving 100% line coverage",
+          "R_derived": "set · claim registry derivable from T"
+        },
+        "EVALUATION": "Construct the counterexample from Property 7.2: f(x)=x+1 with test assert f(2)==3. Verify 100% coverage. Verify behavioral claim 'f(x)=x+1 for all x' is not falsification-complete because test checks only one input; finite",
+        "BOUNDARY": "if every 100%-coverage system is automatically falsification-complete → FALSIFIED; one counterexample suffices → NOT FALSIFIED",
+        "CONTEXT": "The counterexample is constructive. The distinction between 'code runs' and 'code does what it claims' is the core insight."
+      },
+      "sample_falsification_observation": "If no system with 100% coverage can fail to be falsification-complete, the property is falsified. But f(x)=x+1 with test f(2)==3 is a concrete counterexample."
+    },
+    {
+      "claim_id": "F-MK6.4",
+      "type": "F",
+      "label": "[TYPE:F]",
+      "name": "Gap detection — DRS reveals gaps invisible to coverage",
+      "statement": "Applying the DRS to Fracttalix Sentinel v12.1 reveals at least one claim in each of the three gap categories (tested-but-unbounded, documented-but-untested, assumed-but-unregistered) that is invisible to conventional line/branch coverage metrics.",
+      "source": "MK-P6 Section 9.2",
+      "falsification_predicate": {
+        "FALSIFIED_IF": "category_1_gaps = 0 OR category_2_gaps = 0 OR category_3_gaps = 0",
+        "WHERE": {
+          "category_1_gaps": "integer · count of claims with passing tests but incomplete BOUNDARY documentation in SFW-1 v2",
+          "category_2_gaps": "integer · count of README/docstring promises with no corresponding Type F claim in SFW-1 v2",
+          "category_3_gaps": "integer · count of dependency behavioral assumptions not registered as Type A in SFW-1 v1 (pre-DRS)"
+        },
+        "EVALUATION": "Audit SFW-1 v2 claim registry; count placeholder claims (Category 2); count new Type A claims not in v1 (Category 3); count Type F claims with BOUNDARY notes indicating untested edges (Category 1); finite",
+        "BOUNDARY": "zero gaps in any category → FALSIFIED; at least one in each category → NOT FALSIFIED",
+        "CONTEXT": "SFW-1 v1 had 10 claims. SFW-1 v2 has 20 claims including 5 Type A (all new — Category 3 confirmed), 4 placeholders (Category 2 confirmed). Category 1 requires boundary audit of existing tests."
+      },
+      "sample_falsification_observation": "SFW-1 v2 has zero new Type A claims → category_3_gaps = 0 → FALSIFIED. Actual: 5 new Type A claims → NOT FALSIFIED."
+    },
+    {
+      "claim_id": "F-MK6.5",
+      "type": "F",
+      "label": "[TYPE:F]",
+      "name": "Feasibility — DRS applicable in one session",
+      "statement": "The DRS for Software can be applied to a 37-step, 374-test streaming pipeline to produce a valid software AI layer within a single working session, without specialized formal methods tooling.",
+      "source": "MK-P6 Section 9",
+      "falsification_predicate": {
+        "FALSIFIED_IF": "session_count > 1 OR specialized_tools_required = TRUE OR schema_validation_fails = TRUE",
+        "WHERE": {
+          "session_count": "integer · number of sessions required to produce SFW-1 v2",
+          "specialized_tools_required": "binary · TRUE if any tool beyond standard editor, git, Python, and JSON validator was needed",
+          "schema_validation_fails": "binary · TRUE if SFW-1 v2 fails validation against ai-layer-schema.json"
+        },
+        "EVALUATION": "Verify SFW-1 v2 was produced in Session 51; verify only standard tools used; validate against schema; finite",
+        "BOUNDARY": "multiple sessions → FALSIFIED; any specialized formal methods tool required → FALSIFIED; schema failure → FALSIFIED",
+        "CONTEXT": "Tractability is the key DRS positioning claim. If applying DRS requires the same expertise as formal verification, the tractability gap argument fails."
+      },
+      "sample_falsification_observation": "SFW-1 v2 required Coq proof assistant to formalize claims → specialized_tools_required = TRUE → FALSIFIED"
+    }
+  ],
+  "placeholder_register": [
+    {
+      "placeholder_id": "PH-MK6.1",
+      "source_claim": "F-MK6.2",
+      "description": "Property 7.1 (falsification completeness implies coverage) is stated as a formal property but proven only by argument sketch, not formal proof. Independent empirical validation on multiple codebases required.",
+      "resolved": false,
+      "blocks_phase_ready": true,
+      "target_paper": "MK-P6",
+      "target_claim": "F-MK6.2",
+      "target_session": "OPEN — requires empirical validation per Section 11"
+    },
+    {
+      "placeholder_id": "PH-MK6.2",
+      "source_claim": "F-MK6.4",
+      "description": "Gap detection claim verified only on authors' own software (Sentinel). Independent application to 3+ external projects required per empirical agenda.",
+      "resolved": false,
+      "blocks_phase_ready": false,
+      "target_paper": "MK-P6",
+      "target_claim": "F-MK6.4",
+      "target_session": "OPEN — requires independent application"
+    }
+  ],
+  "summary": {
+    "total_claims": 12,
+    "type_A": 3,
+    "type_D": 4,
+    "type_F": 5,
+    "placeholder_count": 2,
+    "phase_ready": false,
+    "session_produced": "S51"
+  }
+}

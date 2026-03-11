@@ -1,0 +1,469 @@
+{
+  "_meta": {
+    "document_type": "AI_LAYER",
+    "schema_version": "v2-S50",
+    "schema_url": "https://github.com/thomasbrennan/Fracttalix/blob/main/ai-layers/ai-layer-schema.json",
+    "semantic_spec_url": "https://github.com/thomasbrennan/Fracttalix/blob/main/ai-layers/falsification-kernel.md",
+    "produced_session": "S51",
+    "produced_by": "Claude Code — Thomas Brennan (Architect). First application of MK-P6 DRS for Software.",
+    "licence": "CC BY 4.0"
+  },
+  "paper_id": "SFW-1",
+  "paper_title": "Fracttalix Sentinel v12.1: Software AI Layer — DRS for Software Feasibility Demonstration",
+  "paper_type": "methodology_D",
+  "version": "v2",
+  "session": "S51",
+  "ai_layer_url": "https://github.com/thomasbrennan/Fracttalix/blob/main/ai-layers/SFW1-ai-layer-v2.json",
+  "verification_protocol": "MK-P6 DRS for Software, Section 7.3 Phase-Ready Verdict",
+  "falsification_syntax": "I-2 5-part (FALSIFIED_IF / WHERE / EVALUATION / BOUNDARY / CONTEXT)",
+  "inference_rule_inventory": "IR-1 through IR-8 — Fracttalix Phase 1-2 Merged, S42",
+  "phase_ready": {
+    "verdict": "NOT-PHASE-READY",
+    "c1": "SATISFIED",
+    "c2": "SATISFIED",
+    "c3": "SATISFIED",
+    "c4_mode": "PHASE-READY-TRACKING",
+    "c5": "SATISFIED",
+    "c6": "SATISFIED",
+    "placeholder_count": 4,
+    "note": "Comprehensive DRS-for-Software layer. 4 placeholder claims: PH-SFW.1 (P1 FRM physics), PH-SFW.2 (auto_tune optimality), PH-SFW.3 (multi-stream correlation accuracy), PH-SFW.4 (CLI output format). NOT-PHASE-READY due to placeholder claims that block. 374 tests passing on main."
+  },
+  "claim_registry": [
+    {
+      "claim_id": "A-SFW.1",
+      "type": "A",
+      "label": "[TYPE:A]",
+      "name": "Python platform requirement",
+      "statement": "Sentinel requires Python >= 3.9. The software does not verify the interpreter version at runtime; it assumes the platform satisfies this requirement.",
+      "source": "pyproject.toml requires-python field",
+      "falsification_predicate": null,
+      "note": "Type A: platform assumption. Violation manifests as syntax errors or import failures, not graceful error messages."
+    },
+    {
+      "claim_id": "A-SFW.2",
+      "type": "A",
+      "label": "[TYPE:A]",
+      "name": "Zero required dependencies",
+      "statement": "Sentinel has no required external dependencies. All core functionality uses Python standard library only. numpy, scipy, matplotlib, numba, and tqdm are optional enhancements.",
+      "source": "pyproject.toml dependencies = []; fracttalix/_compat.py optional import guards",
+      "falsification_predicate": null,
+      "note": "Type A: architectural assumption. Optional dependencies degrade gracefully with ImportWarning."
+    },
+    {
+      "claim_id": "A-SFW.3",
+      "type": "A",
+      "label": "[TYPE:A]",
+      "name": "numpy FFT correctness",
+      "statement": "When numpy is available, Sentinel trusts that numpy.fft.rfft returns the correct discrete Fourier transform of a real sequence. The oscillatory channel (Channel 2) depends on this.",
+      "source": "fracttalix/steps/frequency.py FrequencyDecompositionStep",
+      "falsification_predicate": null,
+      "note": "Type A: dependency contract. If numpy changes FFT behavior, all Channel 2 claims must be re-evaluated."
+    },
+    {
+      "claim_id": "A-SFW.4",
+      "type": "A",
+      "label": "[TYPE:A]",
+      "name": "IEEE 754 floating-point arithmetic",
+      "statement": "Sentinel assumes input values are finite IEEE 754 float64 values. Behavior on NaN, Inf, or non-numeric input is undefined.",
+      "source": "fracttalix/detector.py update_and_check() — no input validation on value parameter",
+      "falsification_predicate": null,
+      "note": "Type A: environmental precondition."
+    },
+    {
+      "claim_id": "A-SFW.5",
+      "type": "A",
+      "label": "[TYPE:A]",
+      "name": "FRM physics foundation",
+      "statement": "Sentinel v12.1 implements the Fractal Rhythm Model f(t) = B + A·e^(−λt)·cos(ωt+φ) as its theoretical foundation. Parameters ω = π/(2·τ_gen) and λ ≈ |α|/(Γ·τ_gen) are derived from Hopf bifurcation physics (P1 Sections 3–4, Session 43). Zero free parameters.",
+      "source": "fracttalix/__init__.py import chain; fracttalix/steps/frequency.py; fracttalix/steps/foundation.py RegimeStep",
+      "derivation_source": ["P1:F-1.4", "P1:F-1.5"],
+      "placeholder": true,
+      "placeholder_id": "PH-SFW.1",
+      "falsification_predicate": null,
+      "note": "Type A: inherits P1 dependency chain. P1 is PHASE-READY; PH-SFW.1 does not block."
+    },
+    {
+      "claim_id": "D-SFW.1",
+      "type": "D",
+      "label": "[TYPE:D]",
+      "name": "Package version",
+      "statement": "This AI layer describes Fracttalix Sentinel v12.1.0 as defined by __version__ = '12.1.0' in fracttalix/__init__.py.",
+      "source": "fracttalix/__init__.py lines 4–11",
+      "falsification_predicate": null
+    },
+    {
+      "claim_id": "D-SFW.2",
+      "type": "D",
+      "label": "[TYPE:D]",
+      "name": "SentinelResult structure",
+      "statement": "SentinelResult is a dict subclass containing at minimum: score, alert, anomaly, warmup, z_score, anomaly_score, alert_reasons, step, value. Additional fields include frequency_bands, structural_snapshot, coupling_matrix, channel_coherence, degradation_sequence, cascade_precursor_active, maintenance_burden, tainter_regime, kuramoto_order, phi_kappa_separation, diagnostic_window_steps.",
+      "source": "fracttalix/types.py SentinelResult; fracttalix/detector.py update_and_check() result defaults lines 132–182",
+      "falsification_predicate": null
+    },
+    {
+      "claim_id": "D-SFW.3",
+      "type": "D",
+      "label": "[TYPE:D]",
+      "name": "AlertType enumeration",
+      "statement": "AlertType enum has values: POINT_ANOMALY, CONTEXTUAL_ANOMALY, COLLECTIVE_ANOMALY, DRIFT_ANOMALY, VARIANCE_ANOMALY, REGIME_CHANGE, EWS_WARNING, BAND_ANOMALY, COUPLING_DEGRADATION, STRUCTURAL_RHYTHMIC_DECOUPLING, CASCADE_PRECURSOR. 11 alert types total.",
+      "source": "fracttalix/types.py AlertType enum",
+      "falsification_predicate": null
+    },
+    {
+      "claim_id": "D-SFW.4",
+      "type": "D",
+      "label": "[TYPE:D]",
+      "name": "SentinelConfig defaults",
+      "statement": "SentinelConfig is a frozen dataclass with 30+ configurable parameters. Key defaults: alpha=0.1, dev_alpha=0.1, multiplier=3.0, warmup_periods=30, window_size=50.",
+      "source": "fracttalix/config.py SentinelConfig dataclass",
+      "falsification_predicate": null
+    },
+    {
+      "claim_id": "D-SFW.5",
+      "type": "D",
+      "label": "[TYPE:D]",
+      "name": "37-step pipeline architecture",
+      "statement": "The default pipeline consists of exactly 37 DetectorStep instances constructed by _build_default_pipeline(config). Steps are numbered 1–37 and execute sequentially via a shared StepContext.",
+      "source": "fracttalix/steps/__init__.py _build_default_pipeline; fracttalix/steps/base.py DetectorStep",
+      "falsification_predicate": null
+    },
+    {
+      "claim_id": "D-SFW.6",
+      "type": "D",
+      "label": "[TYPE:D]",
+      "name": "Three-channel model architecture",
+      "statement": "Pipeline steps are organized into three channels: Channel 1 (Structural) — statistical moments, stationarity, EWMA, CUSUM; Channel 2 (Rhythmic) — FFT decomposition, frequency bands, phase-amplitude coupling; Channel 3 (Temporal) — degradation sequence ordering, cascade precursor detection.",
+      "source": "fracttalix/steps/__init__.py _build_default_pipeline channel comments",
+      "falsification_predicate": null
+    },
+    {
+      "claim_id": "D-SFW.7",
+      "type": "D",
+      "label": "[TYPE:D]",
+      "name": "Maintenance burden definition",
+      "statement": "μ = 1 − κ̄ where κ̄ is the mean cross-frequency coupling score. Engineering heuristic, not derived from Tainter's socioeconomic model. Regime thresholds: TAINTER_CRITICAL (μ ≥ 0.9), TAINTER_WARNING (μ ≥ 0.75), REDUCED_RESERVE (μ ≥ 0.5), HEALTHY (μ < 0.5).",
+      "source": "fracttalix/steps/physics.py MaintenanceBurdenStep",
+      "falsification_predicate": null
+    },
+    {
+      "claim_id": "D-SFW.8",
+      "type": "D",
+      "label": "[TYPE:D]",
+      "name": "Phi-kappa separation metric",
+      "statement": "phi_kappa_separation = Φ − κ̄. Interpretation: > 0.05 → COHERENCE_LED; < −0.05 → COUPLING_LED; |separation| ≤ 0.05 → BALANCED. Definitional signal classification, not a causal claim.",
+      "source": "fracttalix/detector.py lines 169–171; fracttalix/types.py SentinelResult.get_phi_kappa_separation()",
+      "falsification_predicate": null
+    },
+    {
+      "claim_id": "F-SFW.1",
+      "type": "F",
+      "label": "[TYPE:F]",
+      "name": "Streaming single-observation API",
+      "statement": "update_and_check(value) accepts exactly one scalar observation and returns exactly one SentinelResult. The method is stateful (increments internal step counter) and deterministic given the same sequence of inputs.",
+      "source": "fracttalix/detector.py update_and_check() lines 119–189",
+      "falsification_predicate": {
+        "FALSIFIED_IF": "EXISTS input_sequence S SUCH THAT (len(outputs) != len(S) OR type(output_i) != SentinelResult FOR ANY i)",
+        "WHERE": {
+          "S": "list · dimensionless · any finite sequence of float64 values",
+          "outputs": "list · SentinelResult instances · one per call to update_and_check",
+          "output_i": "object · return value of det.update_and_check(S[i])"
+        },
+        "EVALUATION": "Create SentinelDetector(); iterate S calling update_and_check(v) for each v; verify output count equals input count and each output is SentinelResult; finite",
+        "BOUNDARY": "empty sequence (len=0) → zero outputs → NOT FALSIFIED; single element → one output → NOT FALSIFIED",
+        "CONTEXT": "Streaming architecture: one observation in, one result out. No batching, no buffering of outputs. Each call updates internal state and returns immediately."
+      },
+      "sample_falsification_observation": "det.update_and_check(1.0) returns None → type != SentinelResult → FALSIFIED"
+    },
+    {
+      "claim_id": "F-SFW.2",
+      "type": "F",
+      "label": "[TYPE:F]",
+      "name": "Three-channel detection completeness",
+      "statement": "The three-channel pipeline (statistical Channel 1, oscillatory Channel 2, regime Channel 3) jointly detects all alert conditions that any single-channel sub-pipeline would detect. No alert type is exclusive to a channel subset that the combined 37-step pipeline misses.",
+      "source": "fracttalix/steps/__init__.py _build_default_pipeline lines 58–108; fracttalix/types.py AlertType enum",
+      "falsification_predicate": {
+        "FALSIFIED_IF": "EXISTS alert_class A IN alert_type_universe SUCH THAT single_channel_detectable(A) = TRUE AND combined_pipeline_detectable(A) = FALSE",
+        "WHERE": {
+          "alert_type_universe": "set · all 11 AlertType enum values · fracttalix/types.py",
+          "single_channel_detectable": "binary · TRUE if alert_class A is fired by at least one channel sub-pipeline on a synthetic test stream",
+          "combined_pipeline_detectable": "binary · TRUE if alert_class A is fired by the full 37-step pipeline on the same stream"
+        },
+        "EVALUATION": "For each AlertType, verify reachability in combined pipeline; enumerate alert_type → step mapping in test files; finite enumeration over 11 values",
+        "BOUNDARY": "combined_pipeline_detectable = FALSE for any A where single_channel_detectable = TRUE → FALSIFIED; all 11 reachable → NOT FALSIFIED",
+        "CONTEXT": "Combined pipeline is superset of each channel's steps. By construction, any alert fired by a channel sub-pipeline is firable by the full pipeline."
+      },
+      "sample_falsification_observation": "BAND_ANOMALY fired by Channel 2 but not by combined pipeline → FALSIFIED"
+    },
+    {
+      "claim_id": "F-SFW.3",
+      "type": "F",
+      "label": "[TYPE:F]",
+      "name": "Test suite passes",
+      "statement": "All 374 tests pass on Python 3.9–3.12 with zero required dependencies.",
+      "source": "tests/ directory; .github/workflows/",
+      "falsification_predicate": {
+        "FALSIFIED_IF": "test_failures > 0 OR test_errors > 0",
+        "WHERE": {
+          "test_failures": "integer · count of FAILED tests reported by pytest",
+          "test_errors": "integer · count of ERROR tests reported by pytest"
+        },
+        "EVALUATION": "Run: pip install -e '.[test]' && python -m pytest tests/ -v; count failures and errors; finite",
+        "BOUNDARY": "1 failure → FALSIFIED (zero tolerance)",
+        "CONTEXT": "374 tests across 12 test files as of v12.1.0. CI matrix: Python 3.9, 3.10, 3.11, 3.12."
+      },
+      "sample_falsification_observation": "pytest reports 1 FAILED in test_steps_foundation.py → FALSIFIED"
+    },
+    {
+      "claim_id": "F-SFW.4",
+      "type": "F",
+      "label": "[TYPE:F]",
+      "name": "Backward compatibility — v7.x kwargs",
+      "statement": "All 35 v7.x kwargs accepted by SentinelDetector() are correctly mapped to SentinelConfig equivalents via _legacy_kwargs_to_config. No exception raised; correct config field populated.",
+      "source": "fracttalix/detector.py _legacy_kwargs_to_config() lines 26–72; tests/test_backward_compat.py",
+      "falsification_predicate": {
+        "FALSIFIED_IF": "EXISTS kwarg K IN legacy_mapping_keys SUCH THAT (raises_exception(K) = TRUE OR config_value_matches(K) = FALSE)",
+        "WHERE": {
+          "legacy_mapping_keys": "set · 35 keys including rsi_window alias · fracttalix/detector.py lines 28–64",
+          "raises_exception": "binary · TRUE if SentinelDetector(**{K: valid_value}) raises exception",
+          "config_value_matches": "binary · TRUE if resulting config field equals provided value"
+        },
+        "EVALUATION": "For each key K, construct SentinelDetector(**{K: valid_value}); verify no exception; verify config field; finite over 35 keys",
+        "BOUNDARY": "any exception or mismatch for any key → FALSIFIED",
+        "CONTEXT": "34 direct mappings + rsi_window alias = 35 keys. Tested in tests/test_backward_compat.py."
+      },
+      "sample_falsification_observation": "SentinelDetector(alpha=0.2) raises TypeError → FALSIFIED"
+    },
+    {
+      "claim_id": "F-SFW.5",
+      "type": "F",
+      "label": "[TYPE:F]",
+      "name": "Cascade precursor conjunction requirement",
+      "statement": "CASCADE_PRECURSOR alert fires if and only if all three conditions simultaneously true: (1) coupling degradation active, (2) structural-rhythmic decoupling active, (3) at least cascade_ews_threshold EWS indicators elevated.",
+      "source": "fracttalix/steps/channels.py CascadePrecursorStep.update()",
+      "falsification_predicate": {
+        "FALSIFIED_IF": "cascade_fires = TRUE AND (coupling_active = FALSE OR decoupling_active = FALSE OR elevated_ews < cascade_ews_threshold)",
+        "WHERE": {
+          "cascade_fires": "binary · ctx.scratch['cascade_precursor_active'] after CascadePrecursorStep.update(ctx)",
+          "coupling_active": "binary · ctx.scratch['coupling_degradation_active']",
+          "decoupling_active": "binary · ctx.scratch['sr_decoupling_active']",
+          "elevated_ews": "integer · count of {ews_score, anomaly_score, rfi} exceeding config.ews_threshold",
+          "cascade_ews_threshold": "integer · config.cascade_ews_threshold · default 2"
+        },
+        "EVALUATION": "Test all 8 Boolean combinations of (coupling, decoupling, ews≥threshold); verify cascade fires only when all three true; finite 8-case enumeration",
+        "BOUNDARY": "fires when any condition false → FALSIFIED; does not fire when all true → also FALSIFIED",
+        "CONTEXT": "Safety design gate: CASCADE_PRECURSOR carries CRITICAL severity. Single-channel anomaly must not escalate alone."
+      },
+      "sample_falsification_observation": "coupling=TRUE, decoupling=FALSE, ews=3, cascade fires → FALSIFIED"
+    },
+    {
+      "claim_id": "F-SFW.6",
+      "type": "F",
+      "label": "[TYPE:F]",
+      "name": "Config parameter validation",
+      "statement": "SentinelConfig raises ValueError in __post_init__ for any out-of-range parameter: alpha∉(0,1], dev_alpha∉(0,1], multiplier≤0, warmup_periods<1, n_channels<1, aqb_q_low≥aqb_q_high.",
+      "source": "fracttalix/config.py SentinelConfig.__post_init__(); tests/test_config.py",
+      "falsification_predicate": {
+        "FALSIFIED_IF": "EXISTS P IN invalid_params SUCH THAT raises_ValueError(P) = FALSE",
+        "WHERE": {
+          "invalid_params": "set · parameter dicts violating any of the 6 rules",
+          "raises_ValueError": "binary · TRUE if SentinelConfig(**P) raises ValueError"
+        },
+        "EVALUATION": "For each of 6 rules, construct one invalid param dict; verify ValueError raised; finite",
+        "BOUNDARY": "no ValueError for any invalid set → FALSIFIED; ValueError for valid set → also FALSIFIED",
+        "CONTEXT": "6 validation rules enforced at construction time via __post_init__. Frozen dataclass."
+      },
+      "sample_falsification_observation": "SentinelConfig(alpha=0.0) raises no exception → FALSIFIED"
+    },
+    {
+      "claim_id": "F-SFW.7",
+      "type": "F",
+      "label": "[TYPE:F]",
+      "name": "State persistence round-trip",
+      "statement": "save_state() serializes detector state to JSON; load_state() restores it. Step counter _n is preserved; subsequent results are reproducible.",
+      "source": "fracttalix/detector.py save_state(), load_state(); tests/test_detector.py",
+      "falsification_predicate": {
+        "FALSIFIED_IF": "post_load_n != pre_save_n OR post_load_result != pre_continuation_result",
+        "WHERE": {
+          "pre_save_n": "integer · detector._n after warmup, before save",
+          "post_load_n": "integer · fresh detector._n after load_state()",
+          "post_load_result": "dict · result of update_and_check(test_value) after load",
+          "pre_continuation_result": "dict · result of update_and_check(same test_value) on original detector"
+        },
+        "EVALUATION": "Warm detector T=50 steps; save; create fresh detector; load; compare _n and result of next update; finite",
+        "BOUNDARY": "any mismatch in _n or result keys → FALSIFIED",
+        "CONTEXT": "save_state includes config, bank, per-step state_dict, and step counter. JSON round-trip."
+      },
+      "sample_falsification_observation": "post_load _n=0 when pre_save _n=50 → FALSIFIED"
+    },
+    {
+      "claim_id": "F-SFW.8",
+      "type": "F",
+      "label": "[TYPE:F]",
+      "name": "Warmup period behavior",
+      "statement": "During the first warmup_periods observations (default 30), result['warmup'] is True and no alerts fire. After warmup_periods, warmup is False and alerts can fire.",
+      "source": "fracttalix/window.py StepContext.is_warmup; fracttalix/detector.py update_and_check()",
+      "falsification_predicate": {
+        "FALSIFIED_IF": "(step < warmup_periods AND result['warmup'] = FALSE) OR (step < warmup_periods AND result['alert'] = TRUE) OR (step >= warmup_periods AND result['warmup'] = TRUE)",
+        "WHERE": {
+          "step": "integer · current step counter (0-indexed)",
+          "warmup_periods": "integer · config.warmup_periods · default 30",
+          "result": "SentinelResult · return value of update_and_check()"
+        },
+        "EVALUATION": "Create detector with default config; feed 60 values; verify warmup=True for steps 0–29 and warmup=False for steps 30–59; verify no alerts during warmup; finite",
+        "BOUNDARY": "step = warmup_periods - 1 → warmup=True (inclusive); step = warmup_periods → warmup=False (exclusive threshold)",
+        "CONTEXT": "Warmup allows EWMA and window statistics to stabilize. Alerting during warmup would produce false positives from insufficient data."
+      },
+      "sample_falsification_observation": "step=15, warmup=False → FALSIFIED"
+    },
+    {
+      "claim_id": "F-SFW.9",
+      "type": "F",
+      "label": "[TYPE:F]",
+      "name": "auto_tune returns valid detector",
+      "statement": "auto_tune() returns a SentinelDetector with a valid SentinelConfig regardless of input data. If labeled_data provided, selects config maximizing F1. If no labels, selects config minimizing false positive rate.",
+      "source": "fracttalix/detector.py auto_tune() lines 206–255",
+      "falsification_predicate": {
+        "FALSIFIED_IF": "auto_tune(data) raises exception OR type(auto_tune(data)) != SentinelDetector",
+        "WHERE": {
+          "data": "list · dimensionless · any non-empty sequence of finite float64 values"
+        },
+        "EVALUATION": "Call auto_tune(data) with representative data; verify return type; verify config is valid SentinelConfig; finite",
+        "BOUNDARY": "any exception → FALSIFIED; return type not SentinelDetector → FALSIFIED",
+        "CONTEXT": "Grid search over alphas=[0.05, 0.1, 0.2, 0.3] and multipliers=[2.0, 2.5, 3.0, 3.5, 4.0]. 20 combinations evaluated."
+      },
+      "placeholder": true,
+      "placeholder_id": "PH-SFW.2",
+      "sample_falsification_observation": "auto_tune([1.0]*100) raises ValueError → FALSIFIED"
+    },
+    {
+      "claim_id": "F-SFW.10",
+      "type": "F",
+      "label": "[TYPE:F]",
+      "name": "MultiStreamSentinel cross-stream correlation",
+      "statement": "MultiStreamSentinel.cross_stream_correlations() returns pairwise z-score Pearson correlation coefficients between streams.",
+      "source": "fracttalix/multistream.py MultiStreamSentinel.cross_stream_correlations()",
+      "falsification_predicate": {
+        "FALSIFIED_IF": "correlation_matrix_shape != (n_streams, n_streams) OR diagonal_values != 1.0 OR values_outside_range = TRUE",
+        "WHERE": {
+          "n_streams": "integer · number of streams in MultiStreamSentinel",
+          "correlation_matrix_shape": "tuple · shape of returned correlation matrix",
+          "diagonal_values": "float · values on diagonal of correlation matrix",
+          "values_outside_range": "binary · TRUE if any value < -1.0 or > 1.0"
+        },
+        "EVALUATION": "Create MultiStreamSentinel with 3 streams; feed correlated data; call cross_stream_correlations(); verify shape, diagonal, and range; finite",
+        "BOUNDARY": "shape mismatch → FALSIFIED; diagonal != 1.0 → FALSIFIED; any value outside [-1, 1] → FALSIFIED",
+        "CONTEXT": "Pearson correlation is bounded [-1, 1] by definition. Diagonal is self-correlation = 1.0."
+      },
+      "placeholder": true,
+      "placeholder_id": "PH-SFW.3",
+      "sample_falsification_observation": "3-stream sentinel returns 2x2 matrix → shape mismatch → FALSIFIED"
+    },
+    {
+      "claim_id": "F-SFW.11",
+      "type": "F",
+      "label": "[TYPE:F]",
+      "name": "Detector reset clears state",
+      "statement": "reset() restores detector to initial state: step counter to 0, history cleared, all pipeline step states reset, window bank cleared.",
+      "source": "fracttalix/detector.py reset() method",
+      "falsification_predicate": {
+        "FALSIFIED_IF": "post_reset_n != 0 OR len(post_reset_history) != 0",
+        "WHERE": {
+          "post_reset_n": "integer · detector._n after reset()",
+          "post_reset_history": "deque · detector._history after reset()"
+        },
+        "EVALUATION": "Create detector; feed 50 values; call reset(); verify _n=0 and history empty; finite",
+        "BOUNDARY": "_n != 0 after reset → FALSIFIED; history non-empty after reset → FALSIFIED",
+        "CONTEXT": "reset() is used for restarting analysis on new data streams without creating a new detector instance."
+      },
+      "sample_falsification_observation": "After reset(), _n=50 (not cleared) → FALSIFIED"
+    },
+    {
+      "claim_id": "F-SFW.12",
+      "type": "F",
+      "label": "[TYPE:F]",
+      "name": "numpy fallback warning",
+      "statement": "When numpy is not available, Sentinel emits an ImportWarning on first use if config.warn_on_numpy_fallback is True (default). All functionality continues with stdlib-only math fallbacks.",
+      "source": "fracttalix/_compat.py; fracttalix/config.py warn_on_numpy_fallback",
+      "falsification_predicate": {
+        "FALSIFIED_IF": "(numpy_absent AND warn_on_numpy_fallback = TRUE AND warning_emitted = FALSE) OR (numpy_absent AND functionality_fails = TRUE)",
+        "WHERE": {
+          "numpy_absent": "binary · TRUE if numpy import fails",
+          "warn_on_numpy_fallback": "binary · config.warn_on_numpy_fallback (default True)",
+          "warning_emitted": "binary · TRUE if ImportWarning is issued",
+          "functionality_fails": "binary · TRUE if any pipeline step raises exception due to missing numpy"
+        },
+        "EVALUATION": "Run pytest in environment without numpy installed; verify ImportWarning emitted; verify all tests pass; finite",
+        "BOUNDARY": "no warning when numpy absent and warn=True → FALSIFIED; any step exception when numpy absent → FALSIFIED",
+        "CONTEXT": "Zero-dependency architecture: numpy improves performance but is not required. CI matrix includes zero-dep run."
+      },
+      "sample_falsification_observation": "numpy absent, no ImportWarning emitted, warn_on_numpy_fallback=True → FALSIFIED"
+    }
+  ],
+  "placeholder_register": [
+    {
+      "placeholder_id": "PH-SFW.1",
+      "source_claim": "A-SFW.5",
+      "description": "FRM physics foundation dependency. Sentinel oscillatory and regime channels grounded in P1 Hopf bifurcation physics. P1 is PHASE-READY; does not block.",
+      "resolved": false,
+      "blocks_phase_ready": false,
+      "target_paper": "P1",
+      "target_claim": "F-1.4",
+      "target_session": "OPEN"
+    },
+    {
+      "placeholder_id": "PH-SFW.2",
+      "source_claim": "F-SFW.9",
+      "description": "auto_tune optimality claim. Grid search returns best config but optimality relative to full parameter space is not tested. Needs labeled-data test with known optimal.",
+      "resolved": false,
+      "blocks_phase_ready": true,
+      "target_paper": "SFW-1",
+      "target_claim": "F-SFW.9",
+      "target_session": "OPEN — requires labeled test dataset"
+    },
+    {
+      "placeholder_id": "PH-SFW.3",
+      "source_claim": "F-SFW.10",
+      "description": "MultiStreamSentinel cross_stream_correlations accuracy. Correlation computation claimed but not verified against known correlated streams.",
+      "resolved": false,
+      "blocks_phase_ready": true,
+      "target_paper": "SFW-1",
+      "target_claim": "F-SFW.10",
+      "target_session": "OPEN — requires multi-stream test fixture"
+    },
+    {
+      "placeholder_id": "PH-SFW.4",
+      "source_claim": null,
+      "description": "CLI output format. README claims fracttalix CLI command produces human-readable output. No test verifies CLI output format or content.",
+      "resolved": false,
+      "blocks_phase_ready": false,
+      "target_paper": "SFW-1",
+      "target_claim": null,
+      "target_session": "OPEN — Category 2 gap (documented but untested)"
+    }
+  ],
+  "software_metadata": {
+    "package_name": "fracttalix",
+    "version": "12.1.0",
+    "language": "Python 3",
+    "test_count": 374,
+    "test_framework": "pytest",
+    "pipeline_steps": 37,
+    "alert_types": 11,
+    "legacy_compat_kwargs": 35,
+    "dependencies_required": "none (stdlib only)",
+    "dependencies_optional": ["numpy", "scipy", "matplotlib", "numba", "tqdm"],
+    "install": "pip install fracttalix",
+    "drs_version": "MK-P6 v1 (DRS for Software)",
+    "claim_methodology": "MK-P6 Section 5 (Software Claim Taxonomy)"
+  },
+  "summary": {
+    "total_claims": 20,
+    "type_A": 5,
+    "type_D": 8,
+    "type_F": 7,
+    "placeholder_count": 4,
+    "phase_ready": false,
+    "session_produced": "S51",
+    "note": "First application of MK-P6 DRS for Software. Expanded from SFW-1 v1 (10 claims) to v2 (20 claims). 4 placeholders identified — 2 blocking, 2 non-blocking. NOT-PHASE-READY: honest accounting of gaps invisible to conventional coverage metrics."
+  }
+}
