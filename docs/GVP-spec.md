@@ -8,15 +8,18 @@
 
 ## What this is
 
-The **Dual Reader Standard (DRS)** requires every claim in a paper to carry a machine-evaluable falsification predicate alongside the human-readable prose. Two channels: JSON for AI, prose for humans.
+The **Dual Reader Standard (DRS)** has two protocols:
 
-The **Grounded Verification Protocol (GVP)** extends the DRS by requiring every claim to also declare:
+- **DRP** (Dual Reader Protocol) — the protocol for **text**. Defines how prose claims become machine-evaluable via the 5-part falsification predicate, AI layers, and phase gates. Paper P14/DRP-1.
+- **GVP** (Grounded Verification Protocol) — the protocol for **software**. Defines how machine-evaluable claims become machine-verified via verification tiers, executable test bindings, and commit-pinned evidence.
+
+The DRP makes claims *machine-evaluable*. The GVP makes them *machine-verified*.
+
+The GVP requires every claim to declare:
 
 1. **What kind of evidence grounds it** (verification tier)
 2. **Which executable tests exercise it** (test bindings)
 3. **At which commit those tests last passed** (verified-against SHA)
-
-The DRS makes claims *machine-evaluable*. The GVP makes them *machine-verified*.
 
 ---
 
@@ -28,7 +31,7 @@ The DRS makes claims *machine-evaluable*. The GVP makes them *machine-verified*.
 | **AI** | JSON | The AI layer | Structured claim registry |
 | **CI / test runner** | Executable | Test bindings | pytest node IDs + commit SHA |
 
-The DRS defines Readers 1 and 2. The GVP adds Reader 3.
+The DRP defines Readers 1 and 2 (text). The GVP adds Reader 3 (software).
 
 ---
 
@@ -227,8 +230,8 @@ Cross-paper errors:  0
 
 | Standard | What it does | GVP relationship |
 |----------|-------------|-----------------|
-| **DRS** (Dual Reader Standard) | The standard: every claim gets two channels (JSON + prose) | GVP extends DRS with Reader 3 |
-| **DRP** (Dual Reader Protocol) | The protocol paper (P14/DRP-1) that defines and enforces the DRS | GVP is the analogous protocol for Reader 3 |
+| **DRS** (Dual Reader Standard) | The standard. Contains both protocols. | GVP is the software half of the DRS |
+| **DRP** (Dual Reader Protocol) | The text protocol: predicates, AI layers, phase gates (P14/DRP-1) | GVP is the software protocol; DRP is the text protocol. Together they are the DRS. |
 | **CBT** (Canonical Build Table) | Corpus architecture and scheduling | GVP tier data feeds CBT status |
 | **KVS** (Knowledge Validation Score) | Corpus quality metric | GVP tier coverage is a KVS input |
 | **CBP** (Canonical Build Process, P0) | Governance process | GVP operates under CBP governance |
