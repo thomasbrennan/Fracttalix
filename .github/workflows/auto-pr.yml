@@ -1,0 +1,58 @@
+name: Auto-create PR for Claude branches
+
+on:
+  push:
+    branches:
+      - "claude/**"
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  create-pr:
+    name: Create PR if none exists
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Create Pull Request
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          BRANCH="${GITHUB_REF#refs/heads/}"
+
+          # Check if a PR already exists for this branch
+          EXISTING=$(gh pr list --head "$BRANCH" --state open --json number --jq '.[0].number' 2>/dev/null || true)
+
+          if [ -n "$EXISTING" ]; then
+            echo "PR #$EXISTING already exists for $BRANCH — skipping."
+            exit 0
+          fi
+
+          # Build title from branch name:
+          #   claude/update-build-table-notes-ECQQ3 → "Update build table notes"
+          SLUG=$(echo "$BRANCH" | sed 's|^claude/||' | sed 's|-[A-Z0-9]\{4,\}$||' | tr '-' ' ')
+          TITLE=$(echo "$SLUG" | sed 's/^\(.\)/\U\1/')
+
+          # Get commit log for the body
+          COMMITS=$(git log --oneline origin/main..HEAD 2>/dev/null | head -20)
+
+          gh pr create \
+            --title "$TITLE" \
+            --base main \
+            --head "$BRANCH" \
+            --body "$(cat <<EOF
+          ## Summary
+
+          Auto-created PR for \`$BRANCH\`.
+
+          ## Commits
+
+          \`\`\`
+          $COMMITS
+          \`\`\`
+          EOF
+          )"
+
+          echo "PR created for $BRANCH"
