@@ -83,18 +83,86 @@ Let S be a delayed feedback network with characteristic delay τ > 0. The signal
 
 **Placement:** This conjecture bridges DRP-1 (where UMP is proved) and P1/P2 (where the FRM network conditions are defined). If proved, it should be registered as a claim in whichever paper formalizes it — likely P2 (as a corollary of universality) or a new DRP-3.
 
-**Open questions:**
-- Does the proof require continuous-time DDE specifically, or does it hold for any discrete-delay feedback architecture?
-- What is the precise relationship between τ and the size of the "measurement window"? Is the window exactly τ, or is there a fraction (e.g., τ/4 from the quarter-wave)?
-- Does UMP-FRM have implications for the measurement decoupling threshold (P11)? The threshold may be the boundary where the upstream window becomes too narrow for practical observation.
+**Open questions (resolved — see below):**
+
+---
+
+### OQ Resolution via CBT Hostile Review (S52, continued)
+
+Each open question was subjected to hostile review (3–4 objections each), with resolutions categorized per Meta-Kaizen protocol.
+
+#### OQ1: Continuous-time DDE vs discrete-delay architecture
+
+**Question:** Does the proof require continuous-time DDE specifically, or does it hold for any discrete-delay feedback architecture?
+
+**Hostile objections and resolutions:**
+
+1. *"Discrete systems use x[n−k], not x(t−τ). Causal independence may not transfer because discrete clocking introduces synchronization."*
+   — **Strengthened.** Causal independence depends on one fact: at step n, the value x[n−k] was determined k steps ago without knowledge of x[n]. Whether the index space is ℝ or ℤ is irrelevant to the causal structure. The signal flow graph has the same topology. In fact, discrete time makes the argument *more* robust because the delay is exact (integer steps), eliminating boundary ambiguity.
+
+2. *"Hopf bifurcation is continuous-time. Discrete systems have Neimark-Sacker bifurcations. The quarter-wave argument doesn't transfer without proving the discrete analogue."*
+   — **Resolved stronger.** The quarter-wave resonance (π/2 phase shift → β = 1/2) depends on the *phase relationship* in the characteristic equation, not on the specific bifurcation mechanism. Both Hopf and Neimark-Sacker produce oscillatory instability via complex eigenvalues; the delay introduces the same phase structure. **Implication for D-2.1:** Criterion (b) should be generalized from "Hopf-capable" to "oscillatory-bifurcation-capable" when the conjecture is extended beyond continuous-time systems.
+
+3. *"What about event-driven or asynchronous systems with variable delay?"*
+   — **Discipline enforced.** Variable delay does not eliminate the upstream window — it makes it variable. At each event, a most-recent-prior-state exists that was determined before current feedback. Causal independence holds event-by-event. Variable window size affects practical measurability (P3/P11 concern) but not structural existence (conjecture-level concern).
+
+**Resolution:** The proof does NOT require continuous-time DDE. It holds for any feedback architecture with delay > 0, including discrete-time, event-driven, and variable-delay systems. The causal independence argument is **topological** (signal flow graph) not **analytical** (DDE theory).
+
+**Action:** If conjecture is formalized in P2, generalize D-2.1(b) from "Hopf-capable" to "oscillatory-bifurcation-capable."
+
+---
+
+#### OQ2: Measurement window size (τ vs τ/4)
+
+**Question:** Is the measurement window exactly τ, or is there a fraction (e.g., τ/4 from the quarter-wave)?
+
+**Hostile objections and resolutions:**
+
+1. *"You're conflating two things. The UMP measurement window is a causal independence property — binary, not sized. The quarter-wave τ/4 is a resonance condition, not a measurement property."*
+   — **Question dissolved.** This objection is correct. UMP requires a binary condition: does a causally independent observation point exist? The delay τ guarantees *existence*. The signal is causally independent of current-cycle feedback throughout the full interval [t−τ, t). The π/2 phase shift determines where the bifurcation occurs in parameter space, not the size of the observation window. These are two *distinct* structural consequences of the same delay.
+
+2. *"Practically, you can't observe at every point in [t−τ, t). Noise, finite bandwidth, etc. The effective window could be smaller."*
+   — **Scope refined.** UMP-FRM addresses structural existence. Practical measurability is a P3/P11 concern. The conjecture guarantees the *existence* of an upstream point; the *usability* of that point is downstream.
+
+3. *"If the window is τ and not τ/4, what determines the minimum τ needed for practical measurement?"*
+   — **Redirected to P11.** This is exactly P11's domain (measurement decoupling threshold). See OQ3.
+
+**Resolution:** The measurement window is **τ** (the full delay), not τ/4. The quarter-wave governs resonance; the full delay governs causal independence. The question was malformed — it conflated two distinct consequences of the same delay.
+
+---
+
+#### OQ3: Relationship to measurement decoupling threshold (P11)
+
+**Question:** Does UMP-FRM have implications for the measurement decoupling threshold (P11)?
+
+**Hostile objections and resolutions:**
+
+1. *"P11 is QUEUED and gated on P3. You're speculating about a paper with no build plan. This is exactly the premature claiming that CorpusArch v10 corrected."*
+   — **Discipline enforced.** Correct. Resolution framed as *constraints on P11's scope*, not claims about P11's content.
+
+2. *"UMP-FRM is itself a conjecture. You're building implications on unproved foundations."*
+   — **Strengthened.** All implications stated conditionally: "IF UMP-FRM holds, THEN..." Dependency chain made explicit.
+
+3. *"What exactly IS the measurement decoupling threshold? You keep referencing it without defining it."*
+   — **Resolved stronger.** From corpus architecture, P11 addresses boundary conditions under which the FRM measurement protocol (P3) fails — where τ_gen is too small, too noisy, or too coupled to extract reliably. UMP-FRM gives this a structural interpretation: the threshold is the value of τ below which the upstream observation window, while theoretically existent (any τ > 0), is practically indistinguishable from τ = 0 for a given instrument. This is an instrument-relative boundary, not an absolute one. **UMP-FRM transforms P11's core question** from "when does the protocol fail?" (empirical) to "when does the structurally guaranteed window become sub-resolution?" (structural + instrumental). This is a sharper question.
+
+4. *"If the threshold is instrument-relative, then UMP-FRM doesn't constrain P11 much. Any instrument has finite resolution. This is trivial."*
+   — **Strengthened.** Not trivial, because UMP-FRM provides bounds. The threshold lives in the interval [instrument_resolution, τ]. UMP-FRM proves: (a) the threshold cannot exceed τ (the full window is available), and (b) improving the instrument always helps (no fundamental barrier within the FRM scope other than τ → 0). This means the FRM is always measurable *in principle* for any system in its scope. Measurement difficulty is **instrumental**, not **fundamental**. This is a falsifiable claim for P11.
+
+**Resolution (conditional on UMP-FRM proof):**
+- P11's measurement decoupling threshold is the instrument-relative boundary where the structurally guaranteed upstream window (width τ) becomes sub-resolution
+- The threshold is bounded: threshold ∈ [instrument_resolution, τ]
+- No fundamental barrier to FRM measurement exists within the FRM scope — measurement difficulty is purely instrumental
+- P11's core question sharpens from "when does the protocol fail?" to "when does the window become sub-resolution?"
 
 ---
 
 ## Artifacts Produced
 - `docs/FRM_SeriesBuildTable_v1.5.md` — updated to CorpusArch v10
-- `journal/session_52_notes.md` — this file
+- `journal/session_52_notes.md` — this file (updated with OQ resolutions)
 
 ## Next Steps
 - P2 Phase 2 (hostile review) — in progress on claude.ai
 - DRP-2 AI layer and build table entry — pending deposit from claude.ai
 - UMP-FRM conjecture — formal proof needed; placement decision pending
+- P2 D-2.1(b) generalization — "Hopf-capable" → "oscillatory-bifurcation-capable" (when conjecture formalized)
