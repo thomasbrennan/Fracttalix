@@ -1,0 +1,235 @@
+{
+  "_meta": {
+    "document_type": "AI_LAYER",
+    "schema_version": "v3-S51",
+    "schema_url": "https://github.com/thomasbrennan/Fracttalix/blob/main/ai-layers/ai-layer-schema.json",
+    "semantic_spec_url": "https://github.com/thomasbrennan/Fracttalix/blob/main/ai-layers/falsification-kernel.md",
+    "produced_session": "S51",
+    "produced_by": "Build — Thomas Brennan (Architect) + Claude (Anthropic)",
+    "licence": "CC BY 4.0"
+  },
+  "paper_id": "DRS-ARCH",
+  "paper_title": "The Dual Reader Standard: Architecture Specification",
+  "paper_type": "methodology_D",
+  "version": "v1",
+  "session": "S51",
+  "phase_ready": {
+    "verdict": "NOT-PHASE-READY",
+    "c1": "SATISFIED",
+    "c2": "SATISFIED",
+    "c3": "SATISFIED",
+    "c4_mode": "PHASE-READY-TRACKING",
+    "c5": "SATISFIED",
+    "c6": "SATISFIED",
+    "placeholder_count": 1,
+    "note": "CBT build process applied S51. Hostile review: 10 objections raised, all resolved. Phase-ready blocked by PH-DRSARCH.1 (independent implementation test). All claims registered with predicates. Schema-valid."
+  },
+  "claim_registry": [
+    {
+      "claim_id": "A-DRSARCH.1",
+      "type": "A",
+      "label": "Popperian Epistemological Foundation",
+      "statement": "Falsificationism (Popper 1959) provides the epistemological basis for the DRS: we can falsify but not verify. A claim that survives all falsification attempts is not proven — it has survived.",
+      "derivation_source": [
+        "DRS-ARCH Section 12",
+        "DRP-1 Section 2"
+      ],
+      "falsification_predicate": null,
+      "tier": "axiom",
+      "test_bindings": [],
+      "verified_against": null
+    },
+    {
+      "claim_id": "A-DRSARCH.2",
+      "type": "A",
+      "label": "FRM as Interpretive Lens",
+      "statement": "The DRS can be viewed as an FRM instance — claim registry as structure, verification cycle as rhythmicity, version history as temporal channel. This is an interpretive framework (Type A), not a falsifiable claim.",
+      "derivation_source": [
+        "DRS-ARCH Section 15",
+        "P1 (FRM functional form)"
+      ],
+      "falsification_predicate": null,
+      "tier": "axiom",
+      "test_bindings": [],
+      "verified_against": null
+    },
+    {
+      "claim_id": "D-DRSARCH.1",
+      "type": "D",
+      "label": "DRS Definition",
+      "statement": "The Dual Reader Standard (DRS) is the verification architecture containing two protocols: DRP (Dual Reader Protocol, for text) and GVP (Grounded Verification Protocol, for software). Neither is complete without the other. Together they are the DRS.",
+      "derivation_source": [
+        "DRS-ARCH Section 1"
+      ],
+      "falsification_predicate": null,
+      "tier": "definition",
+      "test_bindings": [],
+      "verified_against": null
+    },
+    {
+      "claim_id": "D-DRSARCH.2",
+      "type": "D",
+      "label": "DRP Definition",
+      "statement": "The Dual Reader Protocol (DRP) governs how prose claims become machine-evaluable. It defines Reader 1 (Human) and Reader 2 (AI), requires claim classification (A/D/F), falsification predicates for Type F claims, phase gates (c1-c6), and placeholder tracking.",
+      "derivation_source": [
+        "DRS-ARCH Section 2.1",
+        "DRP-1"
+      ],
+      "falsification_predicate": null,
+      "tier": "definition",
+      "test_bindings": [],
+      "verified_against": null
+    },
+    {
+      "claim_id": "D-DRSARCH.3",
+      "type": "D",
+      "label": "GVP Definition",
+      "statement": "The Grounded Verification Protocol (GVP) governs how machine-evaluable claims become machine-verified. It defines Reader 3A (Coder) and Reader 3B (Machine), and requires three fields per claim: tier, test_bindings, verified_against.",
+      "derivation_source": [
+        "DRS-ARCH Section 2.2",
+        "GVP-spec.md"
+      ],
+      "falsification_predicate": null,
+      "tier": "definition",
+      "test_bindings": [],
+      "verified_against": null
+    },
+    {
+      "claim_id": "D-DRSARCH.4",
+      "type": "D",
+      "label": "Falsification Kernel Definition",
+      "statement": "The Falsification Kernel K = (P, O, M, B) is the shared foundation of both protocols. P = Predicate (FALSIFIED_IF), O = Operands (WHERE), M = Mechanism (EVALUATION), B = Bounds (BOUNDARY + CONTEXT).",
+      "derivation_source": [
+        "DRS-ARCH Section 3",
+        "falsification-kernel.md"
+      ],
+      "falsification_predicate": null,
+      "tier": "definition",
+      "test_bindings": [],
+      "verified_against": null
+    },
+    {
+      "claim_id": "D-DRSARCH.5",
+      "type": "D",
+      "label": "Six Verification Tiers",
+      "statement": "The GVP defines six verification tiers: axiom (Type A), definition (Type D), software_tested (Type F, tests exist), formal_proof (Type F, step-indexed derivation), analytic (Type F, formal argument), empirical_pending (Type F, gap declared).",
+      "derivation_source": [
+        "DRS-ARCH Section 4",
+        "GVP-spec.md"
+      ],
+      "falsification_predicate": null,
+      "tier": "definition",
+      "test_bindings": [],
+      "verified_against": null
+    },
+    {
+      "claim_id": "D-DRSARCH.6",
+      "type": "D",
+      "label": "Three Claim Types",
+      "statement": "The DRS recognises three claim types: A (axiom/assumption, predicate null), D (definition, predicate null), F (falsifiable, full K = (P, O, M, B)).",
+      "derivation_source": [
+        "DRS-ARCH Section 5"
+      ],
+      "falsification_predicate": null,
+      "tier": "definition",
+      "test_bindings": [],
+      "verified_against": null
+    },
+    {
+      "claim_id": "F-DRSARCH.1",
+      "type": "F",
+      "label": "Implementation Sufficiency",
+      "statement": "This architecture specification is sufficient for an independent implementer to produce a conforming AI layer for their own system, using only this document and the referenced schema.",
+      "derivation_source": [
+        "DRS-ARCH Section 11",
+        "DRS-ARCH Section 6"
+      ],
+      "falsification_predicate": {
+        "FALSIFIED_IF": "n_independent_failures > 0",
+        "WHERE": {
+          "n_independent_failures": "integer · dimensionless · count of independent implementers who, given only DRS-ARCH and ai-layer-schema.json, fail to produce an AI layer that passes schema validation"
+        },
+        "EVALUATION": "Recruit N >= 3 independent implementers. Provide them with DRS-ARCH.md and ai-layer-schema.json only. Each attempts to create an AI layer for their own system. Run JSON Schema validation on each output. Count failures (n_independent_failures). Finite deterministic procedure.",
+        "BOUNDARY": "n_independent_failures = 0 → NOT FALSIFIED (threshold inclusive). Any failure falsifies.",
+        "CONTEXT": "F-DRSARCH.1 · threshold 0 · sufficiency claim: a single implementation failure falsifies the claim that the specification is sufficient · this is the primary value proposition of the paper"
+      },
+      "sample_falsification_observation": "An independent implementer reads DRS-ARCH.md and ai-layer-schema.json, attempts to create an AI layer for their project, and produces output that fails schema validation due to ambiguity in the specification.",
+      "placeholder": true,
+      "placeholder_id": "PH-DRSARCH.1",
+      "tier": "empirical_pending",
+      "test_bindings": [],
+      "verified_against": null
+    },
+    {
+      "claim_id": "F-DRSARCH.2",
+      "type": "F",
+      "label": "Backwards Compatibility",
+      "statement": "The DRS backward compatibility contract holds: any AI layer valid under schema version N remains valid under schema version N+1. New versions add fields; no version removes or renames existing required fields.",
+      "derivation_source": [
+        "DRS-ARCH Section 16.2",
+        "DRS-ARCH Section 16.6"
+      ],
+      "falsification_predicate": {
+        "FALSIFIED_IF": "EXISTS layer IN corpus_layers, EXISTS v_old IN schema_versions, EXISTS v_new IN schema_versions SUCH THAT v_new > v_old AND validates(layer, v_old) = TRUE AND validates(layer, v_new) = FALSE",
+        "WHERE": {
+          "corpus_layers": "set · dimensionless · all AI layer JSON files in the Fracttalix corpus",
+          "schema_versions": "set · dimensionless · all published versions of ai-layer-schema.json (v1, v2-S48, v2-S50, v3-S49, v3-S51)",
+          "validates": "function · boolean · returns TRUE iff the layer passes JSON Schema validation against the specified schema version"
+        },
+        "EVALUATION": "For each AI layer in the corpus: validate against every schema version from its produced version through the latest. If any layer passes its original schema but fails a newer schema, the claim is falsified. Finite deterministic procedure bounded by layer count × schema version count.",
+        "BOUNDARY": "Zero failures → NOT FALSIFIED (inclusive). Any single failure falsifies.",
+        "CONTEXT": "F-DRSARCH.2 · threshold 0 · backward compatibility is the strongest contract in Section 16 because it is machine-testable, unlike lateral and forward compatibility which are governance commitments"
+      },
+      "sample_falsification_observation": "A v2-S48 AI layer passes validation against ai-layer-schema v2 but fails against v3-S51 because a field was renamed.",
+      "tier": "analytic",
+      "test_bindings": [],
+      "verified_against": null
+    },
+    {
+      "claim_id": "F-DRSARCH.3",
+      "type": "F",
+      "label": "Predicate Binary Determinism",
+      "statement": "Every well-formed falsification predicate in the corpus evaluates to exactly one of {TRUE, FALSE} for any valid assignment of its variables. The evaluation is deterministic and language-independent at the logical structure level.",
+      "derivation_source": [
+        "DRS-ARCH Section 18.4",
+        "Falsification Kernel Section 3.2 constraint 1"
+      ],
+      "falsification_predicate": {
+        "FALSIFIED_IF": "EXISTS claim IN type_F_claims SUCH THAT EXISTS assignment IN valid_assignments(claim) SUCH THAT evaluate(claim.FALSIFIED_IF, assignment) NOT IN {TRUE, FALSE}",
+        "WHERE": {
+          "type_F_claims": "set · dimensionless · all Type F claims across all corpus AI layers with non-null falsification predicates",
+          "valid_assignments": "function · set · returns the set of all valid variable assignments for a claim's WHERE definitions",
+          "evaluate": "function · {TRUE, FALSE, UNDEFINED} · evaluates the FALSIFIED_IF expression given a variable assignment per the kernel grammar (Falsification Kernel Section 3.1)"
+        },
+        "EVALUATION": "For each Type F claim: parse FALSIFIED_IF against kernel grammar. Verify all variables defined in WHERE. Verify EVALUATION terminates in finite steps. Check for undefined operations (division by zero, etc.) in predicate. If any predicate could return UNDEFINED for a valid assignment, claim is falsified. Finite deterministic procedure.",
+        "BOUNDARY": "Zero UNDEFINED evaluations → NOT FALSIFIED (inclusive). Any UNDEFINED falsifies.",
+        "CONTEXT": "F-DRSARCH.3 · threshold 0 · binary determinism is the foundation of the lingua franca property (Section 18) — if predicates are not deterministic, the single-bit verdict guarantee fails"
+      },
+      "sample_falsification_observation": "A Type F claim in the corpus contains FALSIFIED_IF: x / y > 0.5 where y is defined as a scalar that could be zero, making the predicate undefined for y=0.",
+      "tier": "formal_proof",
+      "test_bindings": [],
+      "verified_against": null
+    }
+  ],
+  "placeholder_register": [
+    {
+      "placeholder_id": "PH-DRSARCH.1",
+      "source_claim": "F-DRSARCH.1",
+      "description": "Independent implementation test — requires 3+ independent implementers to attempt AI layer creation from this specification alone",
+      "resolved": false,
+      "blocks_phase_ready": true,
+      "target_paper": "DRS-ARCH",
+      "target_claim": "F-DRSARCH.1 implementation sufficiency",
+      "target_session": "TBD"
+    }
+  ],
+  "summary": {
+    "total_claims": 11,
+    "type_A": 2,
+    "type_D": 6,
+    "type_F": 3,
+    "placeholder_count": 1,
+    "phase_ready": false,
+    "session_produced": "S51"
+  }
+}

@@ -15,13 +15,21 @@ AI contributions: Claude (Anthropic) provided architectural formalisation, proto
 
 ## Abstract
 
-The Dual Reader Standard (DRS) is a verification architecture for knowledge systems that requires every claim to be readable by two independent reader classes — human and machine — each operating through a defined protocol. The DRS comprises two protocols: the Dual Reader Protocol (DRP) for text, which makes claims machine-evaluable via the 5-part falsification predicate syntax, and the Grounded Verification Protocol (GVP) for software, which makes claims machine-verified via verification tiers, executable test bindings, and commit-pinned evidence. Both protocols share a substrate-independent foundation — the Falsification Kernel K = (P, O, M, B) — which defines predicate grammar, evaluation semantics, and validity constraints independently of any serialisation format or human language. The standard classifies claims into three types (axiom, definition, falsifiable) and six verification tiers, enforces correctness through a six-condition phase gate, and is designed for three-axis compatibility: backwards, lateral, and forward. Because the kernel reduces every claim to embedded binary logic — a deterministic predicate with a single-bit verdict — the DRS functions as a machine lingua franca: any AI system in any country can evaluate any claim without translation. This paper specifies the complete architecture, derives the DRS as an instance of the Fractal Rhythm Model, and analyses the structural properties required for self-spreading adoption.
+The Dual Reader Standard (DRS) is a verification architecture for knowledge systems that requires every claim to be readable by two independent reader classes — human and machine — each operating through a defined protocol.
+
+The DRS comprises two protocols. The Dual Reader Protocol (DRP) makes text claims machine-evaluable via the 5-part falsification predicate syntax. The Grounded Verification Protocol (GVP) makes software claims machine-verified via verification tiers, executable test bindings, and commit-pinned evidence. Both share a substrate-independent foundation — the Falsification Kernel K = (P, O, M, B) — which defines predicate grammar, evaluation semantics, and validity constraints independently of any serialisation format.
+
+The standard classifies claims into three types (axiom, definition, falsifiable) and six verification tiers, enforces correctness through a six-condition phase gate, and is designed for three-axis compatibility: backwards, lateral, and forward. Because the kernel reduces every claim to embedded binary logic — a deterministic predicate with a single-bit verdict — the DRS functions as a machine lingua franca: any AI system can evaluate any predicate without translation.
+
+This specification covers the complete architecture, interprets the DRS through the Fractal Rhythm Model, and analyses the structural properties enabling adoption.
 
 **Keywords:** dual reader standard, falsification, verification, machine-evaluable claims, knowledge architecture, grounded verification protocol, AI layer, falsification kernel, binary logic, lingua franca
 
 ---
 
 ## 1. What the Dual Reader Standard Is
+
+This document is an architecture specification with accompanying analysis. Sections 1–14 specify the standard. Sections 15–18 provide architectural analysis: FRM interpretation, compatibility design, adoption structure, and the lingua franca property.
 
 The Dual Reader Standard (DRS) is a verification architecture for knowledge systems. It requires every claim — whether written in prose or implemented in code — to be readable by two independent reader classes, each operating through a defined protocol.
 
@@ -241,6 +249,13 @@ These rules are used in `formal_proof` tier claims. Each step in a step-indexed 
                  │                                │
                  └────────────────┬────────────────┘
                                   │
+                  ┌───────────────┴───────────────┐
+                  │          AI Layer             │
+                  │  (*-ai-layer.json)            │
+                  │  claims + predicates + tiers  │
+                  │  + bindings + SHAs            │
+                  └───────────────┬───────────────┘
+                                  │
                      ┌────────────┴────────────┐
                      │   Falsification Kernel  │
                      │    K = (P, O, M, B)     │
@@ -259,13 +274,15 @@ The DRS governs the entire Fracttalix corpus (22 objects, two tracks):
 | Standard/Protocol | Corpus paper | Status |
 |-------------------|-------------|--------|
 | DRS | The umbrella standard | Operational since S43 |
-| DRP | P14 / DRP-1 | PHASE-READY (AI layer deployed S47) |
+| DRP | P14 / DRP-1 | CBT status: PARALLEL; AI layer verdict: PHASE-READY (deployed S47) |
 | GVP | docs/GVP-spec.md | v1.0 (schema v3-S51) |
 | Falsification Kernel | ai-layers/falsification-kernel.md | v1.1 (S50) |
 | AI Layer Schema | ai-layers/ai-layer-schema.json | v3-S51 |
 | DRS for Software | MK-P6 | DRAFT (NOT-PHASE-READY) |
 
-### Current verification status
+### Current verification status (as of Session 51, March 2026)
+
+*The canonical source for these numbers is the Canonical Build Table (`docs/FRM_SeriesBuildTable_v1.5.md`). The following is a snapshot.*
 
 ```
 AI Layers:          18/18 (MK-P6 + SFW-1 v2 added S51)
@@ -366,9 +383,11 @@ This paper is archived as part of the Fracttalix corpus on Zenodo. The DOI above
 
 ---
 
-## 15. Derivation from the Fractal Rhythm Model
+## 15. The DRS Viewed Through the Fractal Rhythm Model
 
-The DRS is not merely compatible with the FRM. It is an instance of it.
+*This section is interpretive (Type A). The FRM mapping provides a structural lens for understanding the DRS, not an empirical claim to be falsified. No observation would disprove the mapping — it is a choice of analytical framework, not a testable prediction.*
+
+The DRS exhibits the properties the FRM predicts for information-transmitting networks.
 
 ### 15.1 The FRM states
 
@@ -469,6 +488,8 @@ The DRS must never invalidate work already done under it.
 **16.5 Tier stability.** The six verification tiers are append-only. New tiers can be added to the schema's `enum` array. Existing tiers are never removed or redefined. A claim classified as `software_tested` in 2026 means the same thing in 2036.
 
 **16.6 The backwards compatibility contract.** The DRS makes this promise: **any AI layer that was valid when it was created will remain valid forever**. New versions of the standard add capabilities. They never break existing artifacts.
+
+This contract is machine-testable: a CI validator can verify that no schema version removes required fields from a prior version. This distinguishes it from the lateral and forward compatibility commitments (Sections 16.12 and 16.18), which are governance commitments maintained by the Canonical Build Process (P0), not by automated checks.
 
 This is the same contract that HTML makes (old pages still render), that JSON makes (old documents still parse), and that git makes (old commits still exist). The DRS inherits this property by design.
 
@@ -618,6 +639,8 @@ The AI layer is a side effect of a process that improves your own understanding 
 
 ### 17.2 The network effect
 
+*The following describes structural properties that enable network effects. The predictions about adoption dynamics are speculative — no empirical evidence exists for DRS adoption beyond the Fracttalix corpus itself.*
+
 The DRS becomes more valuable as more systems adopt it:
 
 - **Dependency chains become claim-aware.** If library A publishes an AI layer and library B depends on A, then B can programmatically determine which of its claims depend on which of A's assumptions. When A releases a breaking change, B knows exactly which claims are at risk. This is a behavioral dependency graph — strictly more informative than a version dependency graph.
@@ -741,7 +764,7 @@ JSON is already the world's de facto data interchange format. It is supported by
 - A Brazilian team reads the same AI layer. They don't need to know Mandarin. They need to know `>`, `+`, and `R2`.
 - An AI system in any country evaluates the predicate. The verdict is FALSIFIED or NOT FALSIFIED. The verdict has no accent.
 
-The `WHERE` field definitions currently use English prose for descriptions, but the *operative content* — the type, units, and mathematical relationships — is language-neutral. A future refinement could formalise variable definitions entirely in typed notation, eliminating the last vestige of natural language from the evaluation path.
+**Important qualification.** The `WHERE` field definitions currently contain English prose descriptions (e.g., `"best R² from competing models"`). This means the full evaluation chain is not yet entirely language-independent — a reader must understand English to interpret the variable definitions. However, the *operative content* — variable types, units, mathematical operators, comparison logic, and threshold values — is language-neutral. The English descriptions provide context for human readers but are not required for the mechanical evaluation: given grounded numeric values for the named variables, any system can evaluate the predicate regardless of whether it reads the descriptions. A future refinement could formalise variable definitions entirely in typed notation, eliminating the last vestige of natural language from the evaluation path.
 
 ### 18.4 Embedded binary logic
 
@@ -759,7 +782,7 @@ The JSON is the container. The kernel is the circuit. Every AI layer is a collec
 
 This is why the lingua franca property is not a design aspiration — it is an inevitable consequence of the architecture. You cannot mistranslate a `1` or `0`. You cannot misinterpret `>`. You cannot have a cultural disagreement about whether `R2_best_alt > R2_frm + 0.05` is TRUE or FALSE for a given pair of values. The meaning is in the structure, not in any language.
 
-There is no possible argument against this. It is not a claim that can be debated. Binary logic is binary logic. A predicate that evaluates to TRUE in Beijing evaluates to TRUE in Boston, in São Paulo, in Lagos, and on a server with no locale setting at all. The evaluation is deterministic by construction (Falsification Kernel, Section 3.2, constraint 1: Determinism) and the determinism does not depend on any human language, cultural context, or interpretive framework.
+This property is structural, not aspirational. Binary logic is binary logic. A predicate that evaluates to TRUE in Beijing evaluates to TRUE in Boston, in São Paulo, in Lagos, and on a server with no locale setting at all. The evaluation is deterministic by construction (Falsification Kernel, Section 3.2, constraint 1: Determinism) and the determinism does not depend on any human language, cultural context, or interpretive framework.
 
 This is the deepest property of the DRS: it does not *translate* knowledge across languages. It *encodes* knowledge in a substrate that predates and transcends all human languages — the substrate of logic itself.
 
