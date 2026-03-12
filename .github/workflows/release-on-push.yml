@@ -1,0 +1,96 @@
+name: Auto-merge and release for v12.2.0
+
+on:
+  push:
+    branches:
+      - "claude/release-v12.2.0-*"
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  merge-and-release:
+    name: Create PR, merge, retag, and release
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Create and merge PR
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          BRANCH="${GITHUB_REF#refs/heads/}"
+
+          # Check if PR already exists
+          EXISTING=$(gh pr list --head "$BRANCH" --state open --json number --jq '.[0].number' 2>/dev/null || true)
+
+          if [ -z "$EXISTING" ]; then
+            gh pr create \
+              --title "v12.2.0: Zenodo metadata, corpus integrity fixes, epistemic corrections" \
+              --base main \
+              --head "$BRANCH" \
+              --body "## Summary
+
+          - **Sentinel v12.2.0**: epistemic language corrections + production() multiplier 3.0→4.5 (FPR 35.6%→~6%)
+          - **Zenodo metadata**: .zenodo.json version 12.2.0, 162 claims, 21 AI layers
+          - **zenodo-dataset-description.md**: v12.2 changes, MK-P6 added, paper count 5→6
+          - **Corpus integrity (S55)**: P3 claim count, A-3.1 cross-ref, 18 orphan derivation_sources, bootstrap rewrite, Build Table, journal index
+
+          ## Validation
+
+          - 21/21 AI layers valid, 0 errors
+          - 162 claims, 225+ derivation_source entries
+
+          *Auto-created by release-on-push workflow.*"
+            EXISTING=$(gh pr list --head "$BRANCH" --state open --json number --jq '.[0].number')
+          fi
+
+          echo "Merging PR #$EXISTING..."
+          gh pr merge "$EXISTING" --merge --delete-branch
+
+      - name: Fix v12.2.0 tag and create release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          # Update to merged main
+          git fetch origin main
+          git checkout main
+          git pull origin main
+
+          # Delete the wrongly-placed tag
+          git tag -d v12.2.0 2>/dev/null || true
+          git push origin :refs/tags/v12.2.0 2>/dev/null || true
+
+          # Create correct tag on main HEAD
+          git tag v12.2.0
+          git push origin v12.2.0
+
+          # Create GitHub Release (triggers Zenodo webhook)
+          gh release create v12.2.0 \
+            --title "Fracttalix Sentinel v12.2.0" \
+            --notes "## Sentinel v12.2.0
+
+          ### Epistemic Language Corrections
+          - Replaced \"physics-derived\" framing with \"signal-processing heuristic\" throughout
+          - Corrected README maintenance burden formula to match implementation (μ = 1−κ̄)
+          - Reframed \"thermodynamic arrow\" as \"heuristic ordering hypothesis\"
+
+          ### Default Multiplier Change
+          - \`SentinelConfig.production()\` multiplier: 3.0 → 4.5
+          - Normal FPR: 35.6% → ~6% on white noise N(0,1)
+          - Users who need v12.1 behaviour: \`SentinelConfig(multiplier=3.0)\`
+
+          ### Corpus Integrity (S55)
+          - 6 corrections, 0 validation errors
+          - 162 claims, 225+ derivation_source entries
+
+          ### Zenodo
+          - .zenodo.json updated to v12.2.0
+          - MK-P6 added to dataset description
+
+          Full changelog: CHANGELOG.md"
+
+          echo "Release v12.2.0 created. Zenodo webhook should fire automatically."
