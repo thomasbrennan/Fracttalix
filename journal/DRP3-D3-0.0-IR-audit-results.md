@@ -8,26 +8,17 @@
 
 ## BLOCKER-1 — DRP-2 ABSENT FROM CLAIMS REGISTRY
 
-**Status:** CANNOT RESOLVE FROM REPO
+**Status:** RESOLVED S54
 
-DRP-2 has no AI layer in the repository. Session 52 notes
-(`journal/session_52_notes.md` line 166) confirm:
+DRP-2 AI layer deposited S54 (`ai-layers/DRP2-ai-layer.json`).
+9 claims confirmed: 6F + 2D + 1A. Claims registry updated to
+162 total (v1.2). All four required actions completed:
+1. All claim IDs confirmed against live layer
+2. DRP-2 block added to `ai-layers/claim-registry-index.md`
+3. C-DRP2.4 = "Testability Relation T(P,O,M)" confirmed
+4. Registry total updated: 153 → 162
 
-> "DRP-2 AI layer and build table entry — pending deposit from claude.ai"
-
-The 9 provisional claim IDs (C-DRP2.1–C-DRP2.9) listed in the
-audit are inferred from prose. Per the audit's own rules, claims
-must be confirmed against the live AI layer before registry
-addition.
-
-**Required action:** Deposit DRP-2 AI layer to repo. Once
-deposited, Claude Code can:
-1. Confirm all claim IDs against the live layer
-2. Add DRP-2 block to `ai-layers/claim-registry-index.md`
-3. Confirm C-DRP2.4 = "Testability Relation T(P,O,M)"
-4. Update registry total
-
-**Gate status:** DRP-3 Phase 1 HELD on this blocker.
+**Gate status:** BLOCKER-1 RESOLVED. DRP-3 Phase 1 UNBLOCKED.
 
 ---
 
@@ -103,11 +94,10 @@ The 5 inference rules (IR-DRP3-1 through IR-DRP3-5) are accepted
 as provisional per the audit specification. They will be finalized
 at Phase 1 close.
 
-Note: IR-DRP3-2 (Received Axiom) references C-DRP2.4 and UMP —
-both currently unresolvable (BLOCKER-1 and BLOCKER-2 implementation
-pending). The inference rule is valid in structure but its
-specific citations cannot be confirmed until both blockers are
-cleared.
+Note: IR-DRP3-2 (Received Axiom) references C-DRP2.4 and UMP (C-DRP.8) —
+both now confirmed against live AI layers (DRP-2 deposited S54, C-DRP.8
+registered S53). All IR citations now resolvable. IR inventory confirmed
+at D3-1.0 close: all five rules exercised, no additional rules needed.
 
 ---
 
@@ -115,16 +105,17 @@ cleared.
 
 | Item | Status | Action Required |
 |------|--------|-----------------|
-| BLOCKER-1 (DRP-2 registry) | HELD | Deposit DRP-2 AI layer |
-| BLOCKER-2 (C-DRP.7 label) | RESOLVED — C-DRP.8 registered S53 | ARCH-2 and DRP-2 prose corrections pending (files not in repo) |
+| BLOCKER-1 (DRP-2 registry) | RESOLVED S54 | DRP-2 AI layer deposited, registry updated to 162 |
+| BLOCKER-2 (C-DRP.7 label) | RESOLVED S53 | C-DRP.8 registered; ARCH-2 prose corrections pending (not in repo) |
 | OBS-1 (phantom entries) | CLEAN ✓ | None |
 | OBS-2 (C-prefix MK) | Known | Coordinate batch rename |
 | OBS-3 (C-prefix DRP-1) | Known | Coordinate with OBS-2 |
 | OBS-4 (MK-P6 status) | Registry correct | Audit text had observation error |
 | IR inventory v0.1 | Accepted provisional | Finalize at Phase 1 close |
 
-**DRP-3 Phase 1 gate:** HELD pending BLOCKER-1 only.
-BLOCKER-2 RESOLVED (C-DRP.8 registered S53).
+**DRP-3 Phase 1 gate:** UNBLOCKED. Both blockers resolved.
+BLOCKER-1 RESOLVED S54. BLOCKER-2 RESOLVED S53.
+D3-1.0 Claim Identification completed S54 — see `journal/DRP3-D3-1.0-claim-identification.md`.
 
 ---
 
