@@ -3,7 +3,7 @@
 **Session:** S54
 **Date:** 2026-03-12
 **Source:** Thomas Brennan (predicate design) + Claude Code (archive)
-**Pass:** A (C-DRP3.5, C-DRP3.6). Pass B (C-DRP3.7) pending DRS_v1_1_S49.docx upload.
+**Pass:** A (C-DRP3.5, C-DRP3.6) + B (C-DRP3.7). All three Type F predicates complete.
 
 **Predicate syntax:** 5-part DRS standard — FALSIFIED IF / WHERE / EVALUATION / BOUNDARY / CONTEXT. Vacuity witness required for each Type F claim. UMP compliance (C6) checked for each predicate.
 
@@ -209,29 +209,140 @@ modes come apart asymmetrically.
 
 ---
 
-## Pass A Summary
+## D3-3.0 Summary
 
-| Claim | Predicate | UMP | C6 | Vacuity | Status |
-|-------|-----------|-----|----|---------|--------|
-| C-DRP3.5 | n_counterexamples > 0 | PASS | PASS | PRESENT | COMPLETE |
-| C-DRP3.6 | n_asymmetric_failures > 0 | PASS | PASS | PRESENT | COMPLETE |
-| C-DRP3.7 | (Pass B) | — | — | — | PENDING §10.7 |
+| Claim | Predicate | UMP | C6 | Vacuity | Pass | Status |
+|-------|-----------|-----|----|---------|------|--------|
+| C-DRP3.5 | n_counterexamples > 0 | PASS | PASS | PRESENT | A | COMPLETE |
+| C-DRP3.6 | n_asymmetric_failures > 0 | PASS | PASS | PRESENT | A | COMPLETE |
+| C-DRP3.7 | n_citations > 0 | PASS | PASS | PRESENT | B | COMPLETE |
 
-Pass B trigger: upload DRS_v1_1_S49.docx. On upload: read §10.7 → confirm Arm 1 → produce C-DRP3.7 predicate → D3-3.0 complete.
+All three Type F predicates written. D3-3.0 COMPLETE.
 
 ---
 
-## C-DRP3.7 [F] — Level Independence (Pass B — PENDING)
+## C-DRP3.7 [F] — Level Independence (Pass B — COMPLETE)
 
-**Status:** Blocked on DRS_v1_1_S49.docx upload.
+**Statement:** The M↔C2 isomorphism (C-DRP3.5) is not a definitional equivalence
+or engineered correspondence. It holds because the convergence requirement in each
+domain was derived independently from the same abstract mathematical structure.
+The DRS condition (b) — M finite deterministic — was derived from the Falsification
+Kernel's completeness requirement (DRP-1 §10.7.1). The Hopf condition μ<0 was
+derived from delay differential equation analysis (P2, C-2.1). Neither derivation
+cites the other. The isomorphism is a structural discovery, not a constructed
+equivalence.
 
-**Predicate structure confirmed at OQ-1 resolution:**
-- Observation class: text of DRP-1 §10.7
-- FALSIFIED IF: DRP-1 §10.7 cites P2 or any Hopf analysis in deriving the finite-deterministic requirement for M
-- Scope: published formal derivation chain only (no private thought processes)
-- Arm 2 (P2 citation audit): CONFIRMED — P2 does not cite DRP-1 or DRS
+### FALSIFIED IF
 
-**Predicate to be finalised at Pass B when §10.7 text is available.**
+`n_citations > 0`
+
+### WHERE
+
+`n_citations`: integer, dimensionless
+
+Source: count of instances in the published formal derivation chain where the
+derivation of condition (b) of T(P,O,M) in one domain cites or depends on the
+convergence criterion from the other domain.
+
+**Arm 1 — DRP-1 §10.7 citation audit:**
+Count of locations in DRP-1 v1.1 §10.7 (specifically §10.7.1, the derivation of
+the finite-deterministic requirement for M) where the text cites, references, or
+logically depends on any of the following:
+- P2 (the FRM paper deriving β=1/2 and the Hopf condition)
+- Hopf bifurcation analysis
+- Eigenvalue conditions (Re(λ) < 0, μ < 0)
+- Delay differential equation stability analysis
+- Any physical oscillation model as a source for the M-termination requirement
+
+Scope: the published formal derivation chain in §10.7.1 only. Structural
+observations made after the derivation is complete (e.g. §10.7.3 "The Four-Level
+Isomorphism," which notes the correspondence as an observation) do not count —
+the question is whether the derivation *depends on* the Hopf analysis, not whether
+the author *observes* the correspondence after deriving both independently.
+
+**Arm 2 — P2 citation audit:**
+Count of locations in the P2 derivation of μ<0 (Hopf stability criterion, C-2.1)
+where the text cites, references, or logically depends on any of the following:
+- DRP-1 or any DRS construction
+- Falsification predicates or the Falsification Kernel
+- Condition (b) of T(P,O,M) or M-termination
+- Any epistemological evaluation framework as a source for the μ<0 requirement
+
+n_citations = Arm 1 count + Arm 2 count.
+
+### EVALUATION
+
+**Arm 1 procedure:**
+1. Obtain the published text of DRP-1 v1.1 §10.7.
+2. Identify the derivation of condition (b) — the finite-deterministic requirement for M. This is located in §10.7.1.
+3. For each step in the §10.7.1 derivation chain, determine whether the step cites or logically requires any Hopf/eigenvalue/DDE analysis from P2 or any physical oscillation model.
+4. Count citations found. If count > 0: n_citations += count.
+5. NOTE: §10.7.3 ("The Four-Level Isomorphism") observes the structural correspondence between M-termination and μ<0 *after* condition (b) is already derived. This observation is not part of the derivation chain for condition (b) and does not increment n_citations. The predicate tests derivation dependence, not post-hoc observation.
+
+**Arm 2 procedure:**
+1. Obtain the published text of P2 (FRM corpus).
+2. Identify the derivation of C-2.1 (Hopf stability criterion, μ<0 condition).
+3. For each step in the derivation chain, determine whether the step cites or logically requires any DRS construction, falsification predicate, or epistemological evaluation framework.
+4. Count citations found. If count > 0: n_citations += count.
+
+Output: n_citations. Finite procedure — both texts are finite published documents; both audits are finite string searches + logical dependency checks.
+
+**Arm 1 audit result (S54):** §10.7.1 derives condition (b) from the Falsification
+Kernel's completeness requirement: the Kernel requires definite output → definite
+output requires finite termination → finite termination requires deterministic
+procedure. No citation to P2, Hopf, eigenvalues, or μ found in the derivation chain.
+The Hopf connection appears only in §10.7.3 as a post-derivation structural
+observation. **Arm 1 count: 0.**
+
+**Arm 2 audit result (S54):** P2 derives μ<0 from Hopf bifurcation analysis of the
+FRM delay differential equation. No reference to falsification predicates, DRS, or
+DRP-1 in the derivation. **Arm 2 count: 0.**
+
+**Current evaluation: n_citations = 0. NOT FALSIFIED.**
+
+### BOUNDARY
+
+- n_citations = 0 → NOT FALSIFIED
+- n_citations = 1 → FALSIFIED (a single citation in either direction establishes derivation dependence, refuting level independence)
+
+### CONTEXT
+
+C-DRP3.7 · Type F · Level independence. This predicate tests whether the two
+convergence requirements were derived independently. If condition (b) was derived
+by importing the Hopf analysis, or μ<0 was derived by importing the DRS framework,
+the isomorphism would be a definitional equivalence (engineered by construction)
+rather than a structural discovery (found independently in two domains). The claim
+is that neither derivation cites the other — the convergence requirement was
+discovered twice, independently, because it is a genuine structural feature of
+fixed-point convergence. Threshold: 0. One citation in either direction falsifies.
+
+### UMP Compliance Check
+
+- **O** (observation class): Published text of DRP-1 v1.1 §10.7 and P2 derivation of C-2.1. Both are finite, published documents whose content is fixed independently of whether the independence claim holds.
+- **P** (proposition): The two derivations are independent — neither cites the other.
+- **O ⊥ P:** YES. The text of §10.7 and the text of P2 are published documents whose content was fixed at time of publication. Whether or not the independence claim is true does not change what those documents say. The observation class (citation presence/absence in published text) is determined by reading the documents, not by knowing the proposition. O is upstream of P. **UMP SATISFIED.**
+- **M finite deterministic:** YES. Citation audit of a finite published text is a finite string search + logical dependency check. Both arms terminate. Both are reproducible — any reader examining the same text finds the same citations (or lack thereof).
+- **M can return FALSIFIED:** YES. If a citation from P2/Hopf is found in §10.7.1's derivation chain, or a citation from DRS/DRP-1 is found in P2's derivation chain, M returns FALSIFIED. **C6 SATISFIED.**
+
+### Vacuity Witness
+
+A hypothetical document that would falsify: a version of DRP-1 §10.7.1 in which
+the derivation of condition (b) explicitly states: "The requirement that M be
+finite deterministic follows from the Hopf stability condition μ<0 (P2, C-2.1):
+just as the physical system requires eigenvalue convergence for a stable limit
+cycle, the evaluation procedure requires termination for a definite output. We
+import this criterion from the Hopf analysis." If §10.7.1 contained such a passage,
+Arm 1 count > 0 and n_citations > 0 → FALSIFIED. The derivation of condition (b)
+would depend on the Hopf analysis, making the isomorphism an engineered equivalence
+rather than an independent discovery.
+
+**Why this witness is believed non-existent:** DRP-1 v1.1 §10.7.1 derives
+condition (b) from the Falsification Kernel's internal completeness requirement —
+the Kernel must produce a definite output to function as a falsification instrument.
+The derivation makes no reference to physical oscillation, eigenvalues, or stability
+analysis. The Hopf correspondence is noted only in §10.7.3 as a structural
+observation after condition (b) is already established. The published text does not
+contain the hypothetical passage. Arm 1 audit confirms: 0 citations.
 
 ---
 
@@ -242,11 +353,11 @@ Pass B trigger: upload DRS_v1_1_S49.docx. On upload: read §10.7 → confirm Arm
 | D3-0.0 IR Inventory Audit | COMPLETE (S53) |
 | D3-1.0 Claim Identification | COMPLETE (S54) |
 | D3-2.0 Derivation Table | COMPLETE (S54) |
-| D3-3.0 Falsification Predicates | **PASS A COMPLETE** (C-DRP3.5, C-DRP3.6) |
-| D3-3.0 Pass B | PENDING — C-DRP3.7, requires DRS_v1_1_S49.docx §10.7 |
-| D3-4.0 Human Reader Pass | Follows D3-3.0 completion |
+| D3-3.0 Falsification Predicates | **COMPLETE** (C-DRP3.5, C-DRP3.6, C-DRP3.7) |
+| D3-4.0 Human Reader Pass | **NEXT** |
 | D3-5.0 CBT Execution | Gate to PHASE-READY |
 
 ---
 
-*D3-3.0 Pass A: predicates designed by Thomas Brennan, archived by Claude Code, Session S54.*
+*D3-3.0: Pass A predicates designed by Thomas Brennan, archived by Claude Code, Session S54.*
+*D3-3.0: Pass B predicate (C-DRP3.7) — §10.7 citation audit completed, predicate archived by Claude Code, Session S54.*

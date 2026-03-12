@@ -2,7 +2,7 @@
 *Fractal Rhythm Model — Unified Corpus*
 *Living document. Updated by Claude (Anthropic) as
 architect revises plans during construction.*
-*Last revised: Session 53 — MK-P1 Type F count corrected (9→6), claim IDs renamed C-MK1.x→F-MK1.x, MK series position corrected (5→6), build table claim totals reconciled with registry*
+*Last revised: Session 54 — DRP-3 D3-3.0 complete (all 3 Type F predicates), R-12/R-13 resolved, ARCH-2 extracted, claims registry 162 total*
 *KVS Score: 0.832 (threshold κ = 0.75)*
 *κ_corpus: 0.91*
 
@@ -382,8 +382,8 @@ AI Layers:          21/21 PASS (0 errors)
 Phase-Ready:        10/21
 Act I:              P1 PHASE-READY, P2 Phase 1 PHASE-READY (S49), P3 QUEUED
 Meta-Kaizen:        6/6 PUBLISHED (MK-P1–MK-P6, all with AI layers, series "x/6")
-DRS:                DRP-1 + DRS-ARCH (Architecture Specification)
-Total Claims:       153 (A:36 D:51 F:66)
+DRS:                DRP-1 + DRS-ARCH + DRP-2 (deposited S54) + DRP-3 (D3-3.0 complete S54)
+Total Claims:       162 (A:37 D:53 F:72)
 Cross-references:   118+ derivation_source entries
 Cross-paper errors: 0
 Open Placeholders:  17
@@ -550,7 +550,7 @@ framework.
 | R-9 | Internal consistency | MEDIUM | Measurement decoupling threshold and rhythmicity threshold need consistent treatment across corpus. | Flag in each paper's scope notes during writing. |
 | R-10 | DRP ARCH patch | LOW | ARCH-S50-PATCH-001 (S53): 3 changes pending application to DRP_Series_ARCH_S50.docx (programme identity, P2 status, ARCH-3 framing). File not in repo. Patch notes at `journal/ARCH-S50-PATCH-001.md`. | Apply when .docx is next in scope. |
 | R-11 | ARCH-3 P2 placeholders | LOW | FLAG: ARCH3-P2-PLACEHOLDER-RETIREMENT. P2 claim IDs in ARCH-3 rows DRP-1 and DRP-3 still marked PLACEHOLDER. P2 is now PHASE-READY — verify IDs against live P2 AI layer and retire PLACEHOLDER status. | Next DRP build session. |
-| R-12 | DRP-2 AI layer | RESOLVED | DRP-2 AI layer deposited S54 (9 claims: 6F + 2D + 1A). Claims registry updated to 162 total (15 papers). DRP-3 BLOCKER-1 cleared. ARCH-2 pass-forward register extracted to repo (S54, WO-S54-ARCH2-1). | — |
+| R-12 | DRP-2 AI layer | RESOLVED | DRP-2 AI layer deposited S54 (9 claims: 6F + 2D + 1A). Claims registry updated to 162 total (15 papers). DRP-3 BLOCKER-1 cleared. ARCH-2 pass-forward register extracted to repo (S54, WO-S54-ARCH2-1). DRP-3 D3-3.0 complete S54 (all 3 Type F predicates: C-DRP3.5, C-DRP3.6, C-DRP3.7). Next gate: D3-4.0 Human Reader Pass. | — |
 | R-13 | UMP claim ID | RESOLVED | C-DRP.8 (UMP) registered in DRP-1 AI layer v1.1 and claims registry (S53). Statement corrected S54 per DRP-2 v1.2 prose read (O⊥P not O⊥M; removed imported conservation law and M-termination). ARCH-2 C-DRP.7→C-DRP.8 correction applied in repo extract (S54, WO-S54-ARCH2-1). DRP-2 prose corrections pending (file not in repo). Patch notes at `journal/DRP1-v1.1-UMP-patch-spec.md`. | — |
 
 ---
@@ -573,6 +573,7 @@ framework.
 | v2.3 | Session 51 | DRS Architecture paper written and deployed with AI layer (DRS-ARCH, 11 claims). GVP v1.0 portable spec added. Falsification Kernel v1.1 (Layer 0) deployed. Auto-PR workflow added. Corpus totals: 23 objects, 138 claims (A:29 D:46 F:63), 21 AI layers, 17 open placeholders. Schema v3-S51. |
 | v3.0 (v10) | Session 52 | CorpusArch v10 reconciliation. P2 status corrected: Phase 1 PHASE-READY (S49), not full PHASE-READY — v9 entry was speculative forward projection. P3 status corrected: QUEUED, no build plan — v9 "BUILD PLAN COMPLETE S48" was speculative. P1 bioRxiv REJECTED (S49, scope mismatch) — arXiv cs.DL route active. Protocol Amendment Log added (S48-A1, S48-A2, S49-A3). S49-A3: Type B papers must declare own IR inventory. Act I status updated: P1 PHASE-READY, P2 Phase 1 only, P3 QUEUED. |
 | v3.1 | Session 53 | Error correction pass. MK-P1 Type F count corrected 9→6 (phantom entries F-MK1.7–9 removed). Claim IDs renamed C-MK1.x→F-MK1.x per DRS type-prefix convention. MK series position corrected: "x/5"→"x/6" across build table and all MK AI layers (MK-P1 through MK-P5). MK-P2/P3/P4 AI Layer column populated (v1, produced S50, all PHASE-READY). Critical gate note and R-1 corrected: P3 is QUEUED, not PHASE-READY — v9 "PHASE-READY S48" was speculative per v3.0 correction. Total claims reconciled with registry: 152 (A:36 D:50 F:66). MK-P1 citation_format updated C-MK1.X→F-MK1.X. |
+| v3.2 | Session 54 | DRP-3 build: D3-0.0 through D3-3.0 complete. R-12 resolved (DRP-2 AI layer deposited, 9 claims). R-13 resolved (C-DRP.8 UMP statement corrected). ARCH-2 pass-forward register extracted to repo. DRP-3 D3-3.0 all 3 Type F predicates complete (C-DRP3.5 M↔C2 Isomorphism, C-DRP3.6 Failure Mode Equivalence, C-DRP3.7 Level Independence). §10.7 citation audit confirms Arm 1 (0 P2/Hopf citations in derivation of condition (b)). Claims registry: 162 total, 15 papers. Next gate: D3-4.0 Human Reader Pass. |
 
 ---
 
