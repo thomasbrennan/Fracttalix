@@ -14,7 +14,7 @@ Sentinel ingests one scalar (or multivariate) observation at a time and emits a 
 > DOI: [10.5281/zenodo.18859299](https://doi.org/10.5281/zenodo.18859299)
 > License: **CC0** — public domain
 
-**[Full documentation](https://thomasbrennan.github.io/Fracttalix)** | **[Examples](examples/)** | **[CHANGELOG](CHANGELOG.md)**
+**[Quickstart Tutorial](examples/00_quickstart.ipynb)** | **[Full documentation](https://thomasbrennan.github.io/Fracttalix)** | **[Examples](examples/)** | **[CHANGELOG](CHANGELOG.md)**
 
 ---
 
@@ -198,6 +198,8 @@ pytest
 ---
 
 ## Quick Start
+
+> **New to Sentinel?** Start with the [Quickstart Tutorial](examples/00_quickstart.ipynb) — a hands-on notebook that walks through three-channel detection, physics diagnostics, and tuning tips in under five minutes. GitHub renders it in-browser, no clone required.
 
 ### Basic scalar stream
 
