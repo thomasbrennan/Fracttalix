@@ -723,23 +723,20 @@ Here's what everything is and why it's built this way.
 
 ### How This Was Built — AI Collaboration
 
-This repo was built by a human architect working with AI collaborators.
-The theory, the research direction, and every significant design decision
-are Thomas Brennan's. The code, documentation, validation infrastructure,
-AI layers, and session journal were built in collaboration with Claude
-(Anthropic) and Grok (xAI).
+This repo was built by Thomas Brennan working with Claude (Anthropic) and
+Grok (xAI). The theory, the research direction, and the quality control
+architecture — Meta-Kaizen, the Dual Reader Standard, the canonical build
+process — are Brennan's. The code, documentation, validation infrastructure,
+and session journal were built collaboratively with AI.
 
-No human being could write 374 tests, 15 machine-verifiable claim layers,
-three validation scripts, a 37-step detection pipeline, and a full
-documentation suite alone in the time this was built. We didn't pretend
-otherwise. The session journal documents exactly what was built in each
-session, including which AI was involved. The commit history is transparent.
+Without AI, none of this exists. 374 tests, 15 machine-verifiable claim
+layers, a 37-step detection pipeline, three validation scripts, and a full
+documentation suite — no single person produces this alone. The session
+journal and commit history document exactly what was built, when, and with
+which AI. Nothing is hidden.
 
-This is what AI collaboration looks like when you don't hide it: the human
-provides the ideas and the judgment, the AI provides the throughput and the
-precision, and the work is better than either could produce alone. If that
-bothers you, the falsification predicates are right there — test the claims,
-not the authorship.
+If that bothers you, the falsification predicates are right there — test the
+claims, not the authorship.
 
 ### The Software — Sentinel
 
