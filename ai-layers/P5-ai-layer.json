@@ -1,7 +1,7 @@
 {
   "_meta": {
     "document_type": "AI_LAYER",
-    "schema_version": "v2-S42",
+    "schema_version": "v3-S49",
     "schema_url": "https://github.com/thomasbrennan/Fracttalix/blob/main/ai-layers/ai-layer-schema.json",
     "produced_session": "S48",
     "produced_by": "Claude (Anthropic) — Session 48 Phase 2 retroactive build",
@@ -38,7 +38,10 @@
         "D-1.1",
         "D-4.2"
       ],
-      "falsification_predicate": null
+      "falsification_predicate": null,
+      "tier": "axiom",
+      "test_bindings": [],
+      "verified_against": null
     },
     {
       "claim_id": "D-5.1",
@@ -50,7 +53,10 @@
         "D-1.1",
         "A-5.1"
       ],
-      "falsification_predicate": null
+      "falsification_predicate": null,
+      "tier": "definition",
+      "test_bindings": [],
+      "verified_against": null
     },
     {
       "claim_id": "D-5.2",
@@ -61,7 +67,10 @@
       "derivation_source": [
         "D-1.2"
       ],
-      "falsification_predicate": null
+      "falsification_predicate": null,
+      "tier": "definition",
+      "test_bindings": [],
+      "verified_against": null
     },
     {
       "claim_id": "F-5.1",
@@ -83,7 +92,10 @@
         "EVALUATION": "Fit FRM to AMOC data; extract parameters; verify R² ≥ 0.85 and parameters physically meaningful; finite",
         "BOUNDARY": "R² = 0.85 → NOT FALSIFIED (boundary inclusive). λ = 0 or ω = 0 → FALSIFIED (degenerate FRM)",
         "CONTEXT": "First empirical application at ocean-circulation scale. This is an application paper — failure here does not falsify the law, only this instantiation."
-      }
+      },
+      "tier": "empirical_pending",
+      "test_bindings": [],
+      "verified_against": null
     },
     {
       "claim_id": "F-5.2",
@@ -106,7 +118,10 @@
         "EVALUATION": "Extract ω_AMOC from fit; compute ω_Khaldun from generational estimate; compute fractional difference; finite",
         "BOUNDARY": "30% threshold is generous — accounts for uncertainty in generational timescale (25–30 yr range). If P11 derives ω independently and matches both, threshold tightens to 10%.",
         "CONTEXT": "[PLACEHOLDER: full independent validation requires P11 derivation of ω from first principles. Current comparison is preliminary.]"
-      }
+      },
+      "tier": "empirical_pending",
+      "test_bindings": [],
+      "verified_against": null
     },
     {
       "claim_id": "F-5.3",
@@ -130,7 +145,10 @@
         "EVALUATION": "Fit standard FRM (no scale-dependent terms) to AMOC data; if R² < 0.85, attempt modified form; if only modified form achieves threshold → scale independence falsified; finite",
         "BOUNDARY": "Any modification that introduces scale-dependent parameters → FALSIFIED. Initial conditions (B, A, φ) are not scale-dependent parameters — they are measured per instance.",
         "CONTEXT": "[PLACEHOLDER: pending complete AMOC parameter extraction in P5 v11 revision]"
-      }
+      },
+      "tier": "empirical_pending",
+      "test_bindings": [],
+      "verified_against": null
     }
   ],
   "placeholder_register": [

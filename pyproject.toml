@@ -1,5 +1,5 @@
 [build-system]
-requires = ["setuptools>=68", "wheel"]
+requires = ["setuptools>=68,<77", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
@@ -23,7 +23,6 @@ classifiers = [
     "Development Status :: 5 - Production/Stable",
     "Intended Audience :: Science/Research",
     "Intended Audience :: Developers",
-    "License :: CC0 1.0 Universal (CC0 1.0) Public Domain Dedication",
     "Programming Language :: Python :: 3",
     "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
@@ -54,6 +53,7 @@ Homepage = "https://github.com/thomasbrennan/Fracttalix"
 Repository = "https://github.com/thomasbrennan/Fracttalix"
 "Bug Tracker" = "https://github.com/thomasbrennan/Fracttalix/issues"
 Documentation = "https://thomasbrennan.github.io/Fracttalix"
+Changelog = "https://github.com/thomasbrennan/Fracttalix/blob/main/CHANGELOG.md"
 DOI = "https://doi.org/10.5281/zenodo.18859299"
 
 [project.scripts]

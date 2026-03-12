@@ -1,0 +1,222 @@
+{
+  "_meta": {
+    "document_type": "AI_LAYER",
+    "schema_version": "v2-S48",
+    "schema_url": "https://github.com/thomasbrennan/Fracttalix/blob/main/ai-layers/ai-layer-schema.json",
+    "semantic_spec_url": "github.com/thomasbrennan/Fracttalix/ai-layers/falsification-kernel.md",
+    "produced_session": "S49",
+    "produced_by": "Claude (Anthropic) — MK Series DRS revision build",
+    "licence": "CC BY 4.0"
+  },
+  "paper_id": "MK-P5",
+  "corpus_id": "Meta-Kaizen",
+  "series": "Meta-Kaizen Series",
+  "series_position": "Paper 5 of 5 — Capstone",
+  "paper_title": "On the Decision to Act: Strategic Convergence and the Mathematics of Intervention Timing at System Tipping Points",
+  "paper_type": "derivation_B",
+  "version": "v10",
+  "session": "S49",
+  "ai_layer_url": "https://github.com/thomasbrennan/Fracttalix/blob/main/ai-layers/MK-P5-ai-layer.json",
+  "citation_format": "[MK Paper 5, AI-Layer, Claim C-MK5.X]",
+  "phase_ready": {
+    "verdict": "PHASE-READY",
+    "c1": "SATISFIED",
+    "c2": "SATISFIED",
+    "c3": "SATISFIED",
+    "c4_mode": "PHASE-READY-TRACKING",
+    "c5": "SATISFIED",
+    "c6": "SATISFIED",
+    "placeholder_count": 3,
+    "note": "PH-MK5.1: AMOC empirical test (Grok Work Order 001) pending. PH-MK5.2: Theorem 4 sigma_tau scaling derivation sketch present but full non-asymptotic bound not yet independently verified. PH-MK5.3: Seven-tradition convergence is motivational evidence, not part of mathematical foundation — empirical structural analysis pending."
+  },
+  "verification_protocol": "Fracttalix Phase 1-2 Merged, S42, Stage 2.1",
+  "falsification_syntax": "I-2 5-part (FALSIFIED IF / WHERE / EVALUATION / BOUNDARY / CONTEXT)",
+  "inference_rule_inventory": "IR-1 through IR-9 — Fracttalix P2 Build Plan S48",
+  "principle_10_compliant": true,
+  "principle_10_audit": [
+    { "constant_or_condition": "kappa = 0.50 as symmetric special case of Theorem 2", "derivation_path": "kappa*(sym) = C_late / (C_late + C_fp) with C_late = C_fp → kappa* = 0.50. Extension of MK-P1 C-MK1.3 derivation, not a correction." },
+    { "constant_or_condition": "Distributed detection advantage = (1/lambda)(1 - 1/k)", "derivation_path": "Derived from order statistics: E[min(T_1,...,T_k)] = (1/lambda)(1 - 1/k) for exponential(lambda) detection times. Theorem 3 — standard result." },
+    { "constant_or_condition": "sigma_tau ~ (mu_c - mu(t))^(-1/2) first-passage scaling", "derivation_path": "Kramers-type escape rate theory near fold bifurcation — Gardiner (2004 §5.2), Berglund & Gentz (2006 Ch.5)." },
+    { "constant_or_condition": "t_trap existence (CV_tau divergence point)", "derivation_path": "Derived from sigma_tau / mu_tau → ∞ as mu(t) → mu_c. t_trap is defined as the point at which E[remaining window] < agent's decision horizon T_decision." }
+  ],
+  "claim_registry": [
+    {
+      "claim_id": "A-MK5.1",
+      "type": "A",
+      "label": "[TYPE:A]",
+      "name": "Sequential decision theory foundation",
+      "statement": "Sequential probability ratio test (Wald 1947) and Bayesian sequential analysis (Arrow et al. 1949; DeGroot 1970) provide the mathematical infrastructure for optimal stopping under competing hypotheses. Optimal thresholds minimize expected loss.",
+      "derivation_source": ["Wald 1947", "Arrow et al. 1949", "DeGroot 1970"],
+      "falsification_predicate": null
+    },
+    {
+      "claim_id": "A-MK5.2",
+      "type": "A",
+      "label": "[TYPE:A]",
+      "name": "Critical slowing down near fold bifurcation",
+      "statement": "Near a fold bifurcation, the dominant eigenvalue approaches zero, causing critical slowing down: rising variance and increasing autocorrelation in observable time series. DFA scaling exponent alpha increases from ~0.5 toward 1.0 as the tipping point approaches (Scheffer et al. 2009; Lenton et al. 2012).",
+      "derivation_source": ["Scheffer et al. 2009", "Lenton et al. 2012"],
+      "falsification_predicate": null
+    },
+    {
+      "claim_id": "A-MK5.3",
+      "type": "A",
+      "label": "[TYPE:A]",
+      "name": "EWS decision-theoretic gap",
+      "statement": "The EWS literature has not provided a principled decision theory for when to act on tipping point detections. Detection and decision are distinct problems. Lade & Niiranen (2025, Proc. Royal Society B) confirm that EWS systems can paradoxically induce riskier behavior absent decision theory.",
+      "derivation_source": ["Lade & Niiranen 2025"],
+      "falsification_predicate": null
+    },
+    {
+      "claim_id": "D-MK5.1",
+      "type": "D",
+      "label": "[TYPE:D]",
+      "name": "Fortuna Process",
+      "statement": "The Fortuna Process is the stochastic process governing a system approaching a fold bifurcation under slow parameter forcing. The tipping time tau has mean mu_tau(t) and standard deviation sigma_tau(t) that evolve as the system parameter approaches the critical value mu_c.",
+      "derivation_source": ["A-MK5.2", "Gardiner 2004", "Berglund & Gentz 2006"],
+      "falsification_predicate": null
+    },
+    {
+      "claim_id": "D-MK5.2",
+      "type": "D",
+      "label": "[TYPE:D]",
+      "name": "Virtù Window",
+      "statement": "The Virtù Window W_v(t) is the expected remaining time during which intervention is rational: W_v(t) = E[tau | data_t] - t_current. The window is actionable when W_v(t) > T_decision, where T_decision is the agent's minimum implementation lead time.",
+      "derivation_source": ["D-MK5.1", "MK-P5 Section 4"],
+      "falsification_predicate": null
+    },
+    {
+      "claim_id": "C-MK5.1",
+      "type": "F",
+      "label": "[TYPE:F]",
+      "name": "Theorem 1 Window Rationality",
+      "statement": "Intervention is rational if and only if E[W_v(t)] > T_decision × (1 + C_fp/C_late), where C_fp is the cost of false alarm and C_late is the cost of missed transition. The symmetric case C_fp = C_late reduces to E[W_v(t)] > T_decision.",
+      "derivation_source": ["A-MK5.1", "D-MK5.2"],
+      "inference_rule_steps": [
+        { "step": "1", "input": ["A-MK5.1", "D-MK5.2"], "operation": "IR-1: Cited theorem application — Bayesian decision theory: act when expected benefit > expected cost. Benefit = C_late × P(transition within W_v). Cost = C_fp × P(false alarm).", "output": "Rationality condition: C_late × P(transition) > C_fp × P(false alarm)." },
+        { "step": "2", "input": ["Step 1", "D-MK5.1"], "operation": "IR-5: Algebraic manipulation — P(transition within T_decision) ≈ T_decision / E[W_v(t)] for small T_decision. Rationality condition becomes E[W_v] > T_decision × (1 + C_fp/C_late).", "output": "Theorem 1 rationality condition derived." }
+      ],
+      "falsification_predicate": {
+        "FALSIFIED_IF": "rationality_condition_incorrect = true",
+        "WHERE": {
+          "rationality_condition_incorrect": "boolean — true if there exists a cost structure (C_fp, C_late) and window distribution for which Theorem 1 condition gives a different intervention recommendation than direct expected utility calculation from Bayesian decision theory"
+        },
+        "EVALUATION": "(1) Specify cost structure (C_fp, C_late) and T_decision; (2) specify distribution of W_v; (3) compute direct EU(act) and EU(wait); (4) compute Theorem 1 condition; (5) check whether they agree on act/wait. Test for 10 representative cost structures. Terminates in finite steps.",
+        "BOUNDARY": "rationality_condition_incorrect = false → NOT FALSIFIED.",
+        "CONTEXT": "C-MK5.1 — approximation P(transition within T_decision) ≈ T_decision/E[W_v] is valid for T_decision << E[W_v]. For T_decision comparable to E[W_v], exact calculation required."
+      },
+      "vacuity_witness": "Set C_fp = 0 (costless false alarms): condition becomes E[W_v] > T_decision, trivially satisfied. But C_fp = 0 is degenerate. Non-vacuous cases have C_fp > 0 where the threshold is genuinely restrictive."
+    },
+    {
+      "claim_id": "C-MK5.2",
+      "type": "F",
+      "label": "[TYPE:F]",
+      "name": "Theorem 2 Asymmetric Loss Threshold",
+      "statement": "The optimal detection threshold under asymmetric loss is delta_c* = C_late/(C_late + C_fp). The symmetric case r = 1 gives delta_c*(sym) = 0.50, recovering MK-P1's kappa = 0.50. For r > 1 (C_late > C_fp), the optimal threshold is strictly below 0.50.",
+      "derivation_source": ["A-MK5.1", "MK-P1 AI-Layer C-MK1.3", "MK-P5 Section 4"],
+      "inference_rule_steps": [
+        { "step": "1", "input": ["A-MK5.1"], "operation": "IR-5: Algebraic manipulation — expected loss: E[Loss(delta_c)] = C_fp × P(FP | delta_c) + C_late × P(FN | delta_c). Minimize over delta_c.", "output": "Optimization problem stated." },
+        { "step": "2", "input": ["Step 1"], "operation": "IR-5: Algebraic manipulation — differentiating and setting to zero: delta_c* = C_late/(C_late + C_fp).", "output": "Optimal threshold derived." },
+        { "step": "3", "input": ["Step 2", "MK-P1 AI-Layer C-MK1.3"], "operation": "IR-3: Logical deduction — with C_fp = C_late: delta_c* = 0.50. Recovers MK-P1 kappa = 0.50 as symmetric special case.", "output": "Connection to MK-P1 confirmed." }
+      ],
+      "falsification_predicate": {
+        "FALSIFIED_IF": "abs(optimal_threshold - C_late/(C_late + C_fp)) > 0.001",
+        "WHERE": {
+          "optimal_threshold": "scalar in [0,1] — the delta_c that minimizes E[Loss(delta_c)] = C_fp × FP_rate(delta_c) + C_late × FN_rate(delta_c), computed numerically for test case (C_fp=1.0, C_late=3.0)"
+        },
+        "EVALUATION": "(1) Specify C_fp=1.0, C_late=3.0; (2) define FP_rate and FN_rate as functions of delta_c; (3) compute E[Loss] over grid 0 to 1; (4) find minimizer; (5) compare to formula: 3.0/4.0 = 0.75; (6) check abs difference < 0.001. Terminates in finite steps.",
+        "BOUNDARY": "abs(optimal_threshold - C_late/(C_late + C_fp)) <= 0.001 → NOT FALSIFIED.",
+        "CONTEXT": "C-MK5.2 — intended extension of MK-P1 C-MK1.3, not a correction. The symmetric case is preserved. Organizations should assess actual C_fp/C_late ratio before using kappa = 0.50."
+      },
+      "vacuity_witness": "Set C_late = 0: delta_c* = 0 (always act). Degenerate. Non-trivial regime is C_late > 0, C_fp > 0 where threshold formula gives value in (0,1). Non-vacuous."
+    },
+    {
+      "claim_id": "C-MK5.3",
+      "type": "F",
+      "label": "[TYPE:F]",
+      "name": "Theorem 3 Distributed Detection Advantage",
+      "statement": "With k independent monitoring nodes each with exponential(lambda) detection time distribution, E[min(T_1,...,T_k)] = (1/lambda)(1 - 1/k). The detection window extension relative to a single node is (1/lambda)(1 - 1/k), saturating at 1/lambda as k → ∞.",
+      "derivation_source": ["A-MK5.1", "MK-P5 Section 4"],
+      "inference_rule_steps": [
+        { "step": "1", "input": ["A-MK5.1"], "operation": "IR-1: Cited theorem application — order statistics: for k i.i.d. Exp(lambda) variables, E[min(T_1,...,T_k)] = 1/(k × lambda). Single node: E[T_1] = 1/lambda.", "output": "Expected minimum detection time = 1/(k × lambda)." },
+        { "step": "2", "input": ["Step 1"], "operation": "IR-5: Algebraic manipulation — window extension = E[T_1] - E[min] = (1/lambda)(1 - 1/k).", "output": "Extension formula derived." },
+        { "step": "3", "input": ["Step 2"], "operation": "IR-5: Algebraic manipulation — as k → ∞: (1/lambda)(1 - 1/k) → 1/lambda. Saturation confirmed.", "output": "Saturation property: benefit concentrated in first several nodes." }
+      ],
+      "falsification_predicate": {
+        "FALSIFIED_IF": "abs(simulated_mean_min - formula_value) > 0.05 × formula_value",
+        "WHERE": {
+          "simulated_mean_min": "scalar — empirical mean of min(T_1,...,T_k) from 100,000 Monte Carlo trials with T_i ~ Exp(lambda=1.0) for k in {2, 5, 10}",
+          "formula_value": "scalar — (1/lambda)(1 - 1/k) with lambda=1.0 for each k"
+        },
+        "EVALUATION": "(1) For each k in {2, 5, 10}: simulate 100,000 draws of min(T_1,...,T_k) with T_i ~ Exp(1); (2) compute empirical mean; (3) compute formula (1 - 1/k); (4) check relative error < 5%. 300,000 total iterations.",
+        "BOUNDARY": "abs(simulated_mean_min - formula_value) <= 0.05 × formula_value → NOT FALSIFIED for all tested k.",
+        "CONTEXT": "C-MK5.3 — independence assumption (k nodes detect independently) is critical. If nodes share a detection channel or observe correlated signals, E[min] may differ."
+      },
+      "vacuity_witness": "For k=1: extension = 0. No extension from a single node — trivially correct. For k=2: extension = 0.5/lambda — a substantive non-zero prediction that can be tested. The k=1 degenerate case confirms non-vacuity of the k > 1 cases."
+    },
+    {
+      "claim_id": "C-MK5.4",
+      "type": "F",
+      "label": "[TYPE:F]",
+      "name": "Theorem 4 Self-Generated Friction — t_trap existence",
+      "statement": "As a system approaches its tipping point mu_c under slow parameter forcing, sigma_tau(t) ~ (mu_c - mu(t))^(-1/2) (Kramers scaling), causing CV_tau = sigma_tau/mu_tau → ∞. There exists a point t_trap before the tipping time beyond which E[remaining Virtù Window] < T_decision, making intervention irrational regardless of cost structure.",
+      "derivation_source": ["A-MK5.2", "D-MK5.1", "D-MK5.2", "Gardiner 2004 §5.2", "Berglund & Gentz 2006 Ch.5"],
+      "inference_rule_steps": [
+        { "step": "1", "input": ["A-MK5.2", "D-MK5.1"], "operation": "IR-1: Cited theorem application — Gardiner (2004 §5.2): near fold bifurcation, sigma_tau ~ (mu_c - mu)^(-1/2) (Kramers escape rate). As mu(t) → mu_c: sigma_tau → ∞.", "output": "sigma_tau diverges as tipping point approaches." },
+        { "step": "2", "input": ["Step 1"], "operation": "IR-5: Algebraic manipulation — mu_tau decreases as mu(t) → mu_c, but sigma_tau diverges faster. Therefore CV_tau = sigma_tau/mu_tau → ∞.", "output": "CV_tau divergence confirmed." },
+        { "step": "3", "input": ["Step 2", "D-MK5.2"], "operation": "IR-3: Logical deduction — as CV_tau → ∞, E[W_v(t)] → 0 relative to T_decision. There exists t_trap defined by E[W_v(t_trap)] = T_decision × (1 + C_fp/C_late). After t_trap, Theorem 1 rationality condition fails regardless of cost structure.", "output": "t_trap existence proved conditional on Kramers scaling." }
+      ],
+      "falsification_predicate": {
+        "FALSIFIED_IF": "t_trap_nonexistent = true",
+        "WHERE": {
+          "t_trap_nonexistent": "boolean — true if, for a simulated system with analytically known fold bifurcation at mu_c, the quantity E[W_v(t)] / T_decision remains > (1 + C_fp/C_late) for all t up to the empirical tipping time, meaning the rationality condition is never violated before transition"
+        },
+        "EVALUATION": "(1) Simulate fold bifurcation normal form: dx = (mu(t) - x^2)dt + sigma dW, with mu(t) increasing from -1 to 0 linearly; (2) at each t, estimate E[W_v(t)] from 10,000 Monte Carlo forward trajectories; (3) compute rationality ratio E[W_v(t)] / (T_decision × (1 + C_fp/C_late)); (4) check whether ratio drops below 1.0 before tipping time. If never drops: t_trap_nonexistent = true → FALSIFIED.",
+        "BOUNDARY": "t_trap_nonexistent = false → NOT FALSIFIED.",
+        "CONTEXT": "C-MK5.4 — PLACEHOLDER PH-MK5.2: full non-asymptotic bound on sigma_tau scaling from Berglund & Gentz (2006) not yet independently verified for this parameter regime. PH-MK5.1: AMOC empirical test registered (Grok Work Order 001) — pending bioRxiv DOI confirmation."
+      },
+      "vacuity_witness": "A system with fold bifurcation at mu_c = ∞ (no tipping point) would have E[W_v(t)] → ∞ and t_trap would not exist — t_trap_nonexistent = true → FALSIFIED. The t_trap claim is specifically about systems WITH finite tipping points. Non-trivial: requires sigma_tau to diverge faster than mu_tau decreases."
+    }
+  ],
+  "placeholder_register": [
+    {
+      "placeholder_id": "PH-MK5.1",
+      "source_claim": "C-MK5.4",
+      "description": "AMOC pre-specified empirical test (Grok Work Order 001) pending. First empirical test of Fortuna Process and t_trap dynamics against real tipping-point data.",
+      "resolved": false,
+      "blocks_phase_ready": false,
+      "target_session": "OPEN — pending Grok Work Order 001 completion"
+    },
+    {
+      "placeholder_id": "PH-MK5.2",
+      "source_claim": "C-MK5.4",
+      "description": "Full non-asymptotic bound on sigma_tau ~ (mu_c - mu)^(-1/2) from Berglund & Gentz (2006) Ch.5 not yet independently verified for specific MK-P5 parameter regime.",
+      "resolved": false,
+      "blocks_phase_ready": false,
+      "target_session": "OPEN — resolves with independent mathematical review of Theorem 4 derivation"
+    },
+    {
+      "placeholder_id": "PH-MK5.3",
+      "source_claim": "A-MK5.1",
+      "description": "Seven-tradition convergence structural analysis is motivational corroborating evidence, not part of the mathematical foundation. Independent structural analysis by historians of strategic thought not yet conducted.",
+      "resolved": false,
+      "blocks_phase_ready": false,
+      "target_session": "OPEN — motivational claim, non-blocking"
+    }
+  ],
+  "deferred_resolutions": [
+    { "from_paper": "MK-P1", "deferred_question": "Asymmetric loss — what if C_fp ≠ C_fn?", "resolved_by": "C-MK5.2 (Theorem 2)" },
+    { "from_paper": "MK-P2", "deferred_question": "Mechanism of distributed resilience advantage", "resolved_by": "C-MK5.3 (Theorem 3)" },
+    { "from_paper": "MK-P3", "deferred_question": "Decision trigger for adaptive action when signal emerges", "resolved_by": "D-MK5.2 (Virtù Window) + C-MK5.1 (Theorem 1)" },
+    { "from_paper": "MK-P4", "deferred_question": "When should organization act after regime detection?", "resolved_by": "C-MK5.1 through C-MK5.4 (Theorems 1-4)" }
+  ],
+  "summary": {
+    "total_claims": 9,
+    "type_A": 3,
+    "type_D": 2,
+    "type_F": 4,
+    "placeholder_count": 3,
+    "phase_ready": true,
+    "session_produced": "S49"
+  }
+}

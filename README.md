@@ -924,6 +924,9 @@ Machine-readable falsification layers for the Fracttalix corpus. All layers conf
 
 | Version | Notes |
 |---------|-------|
+| v12.1.0 | VarCUSUM reset fix, ChannelCoherence Pearson correlation, 374 tests |
+| v12.0.0 | Package restructure, PyPI release, hostile-review corrections, ablation study |
+| v11.0.0 | Meta-Kaizen corrective: physics corrections, state_dict/load_state, diagnostic window |
 | v10.0.0 | 4 physics-derived capabilities, 37 steps, 98 tests |
 | v9.0.0 | Three-channel model, 26 steps, 65 tests |
 | v8.0.0 | Frozen config, WindowBank, 19-step pipeline |

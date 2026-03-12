@@ -1,7 +1,7 @@
 {
   "_meta": {
     "document_type": "AI_LAYER",
-    "schema_version": "v2-S42",
+    "schema_version": "v3-S49",
     "schema_url": "github.com/thomasbrennan/Fracttalix/ai-layers/ai-layer-schema.json",
     "produced_session": "S43",
     "produced_by": "Instance 1 (Claude, Anthropic) — Phase 5 retroactive AI layer build",
@@ -49,7 +49,10 @@
       "axiomatic_basis": "Minimum condition for any measurement to be meaningful. Standard conjoint measurement axiom (Luce & Tukey, 1964).",
       "falsification_predicate": null,
       "derivation_source": [],
-      "note": "Type A: taken as given. Reject only by rejecting the measurement framework itself."
+      "note": "Type A: taken as given. Reject only by rejecting the measurement framework itself.",
+      "tier": "axiom",
+      "test_bindings": [],
+      "verified_against": null
     },
     {
       "claim_id": "A-MK1.2",
@@ -62,7 +65,10 @@
       "modeling_assumption_flag": true,
       "modeling_assumption_note": "Paper explicitly flags this as a modeling assumption, not an empirical regularity. Violations require differential weights or non-additive-in-logs model. Identified as target for empirical testing in Section 5.4 and Section 7.6.",
       "falsification_predicate": null,
-      "derivation_source": []
+      "derivation_source": [],
+      "tier": "axiom",
+      "test_bindings": [],
+      "verified_against": null
     },
     {
       "claim_id": "A-MK1.3",
@@ -73,7 +79,10 @@
       "source": "Axiom 3, Section 4.1",
       "axiomatic_basis": "Standard conjoint measurement axiom (Luce & Tukey, 1964).",
       "falsification_predicate": null,
-      "derivation_source": []
+      "derivation_source": [],
+      "tier": "axiom",
+      "test_bindings": [],
+      "verified_against": null
     },
     {
       "claim_id": "A-MK1.4",
@@ -84,7 +93,10 @@
       "source": "Axiom 4, Section 4.1",
       "axiomatic_basis": "Standard conjoint measurement axiom (Luce & Tukey, 1964; Krantz et al., 1971).",
       "falsification_predicate": null,
-      "derivation_source": []
+      "derivation_source": [],
+      "tier": "axiom",
+      "test_bindings": [],
+      "verified_against": null
     },
     {
       "claim_id": "A-MK1.5",
@@ -96,7 +108,10 @@
       "axiomatic_basis": "Novel axiom introduced in this paper. Defense: N=0 is reimplementation; I′=0 produces no improvement; C′=0 costs overwhelm benefit; T=0 relevance window passed.",
       "falsification_predicate": null,
       "derivation_source": [],
-      "note": "This is the axiom that eliminates the additive form and necessitates the multiplicative form. Rejecting Axiom 5 is explicitly permitted — the library implements both KVS and ADD variants."
+      "note": "This is the axiom that eliminates the additive form and necessitates the multiplicative form. Rejecting Axiom 5 is explicitly permitted — the library implements both KVS and ADD variants.",
+      "tier": "axiom",
+      "test_bindings": [],
+      "verified_against": null
     },
     {
       "claim_id": "A-MK1.6",
@@ -107,7 +122,10 @@
       "source": "Axiom 6, Section 4.1",
       "axiomatic_basis": "Justifies equal weights in the absence of domain-specific calibration data. Relaxing this axiom requires replacing equal exponents with estimated per-component exponents.",
       "falsification_predicate": null,
-      "derivation_source": []
+      "derivation_source": [],
+      "tier": "axiom",
+      "test_bindings": [],
+      "verified_against": null
     },
     {
       "claim_id": "D-MK1.1",
@@ -117,7 +135,10 @@
       "statement": "A substrate S is a tuple S = (D, P, Ω, M) where D = document set, P = principal set, Ω = outcome space, M = metric function M: D × time → Ω. An improvement candidate for S is a proposed revision δ to D characterized by Novelty, Impact, Complexity, and Timeliness.",
       "source": "Definition 3.1, Section 3.1",
       "falsification_predicate": null,
-      "derivation_source": []
+      "derivation_source": [],
+      "tier": "definition",
+      "test_bindings": [],
+      "verified_against": null
     },
     {
       "claim_id": "D-MK1.2",
@@ -130,7 +151,10 @@
       "falsification_predicate": null,
       "derivation_source": [
         "F-MK1.3"
-      ]
+      ],
+      "tier": "definition",
+      "test_bindings": [],
+      "verified_against": null
     },
     {
       "claim_id": "D-MK1.3",
@@ -140,7 +164,10 @@
       "statement": "N_j = 1 − max_{τ ∈ {t−1,t−2,t−3,t−4}} Jaccard(K_j, K_τ), where Jaccard(A,B) = |A∩B|/|A∪B|. Maximum (not mean) Jaccard similarity used. Operational target: E[N] ≥ 0.70 over rolling 4-scan window.",
       "source": "Definition 4.2, Section 4.3",
       "falsification_predicate": null,
-      "derivation_source": []
+      "derivation_source": [],
+      "tier": "definition",
+      "test_bindings": [],
+      "verified_against": null
     },
     {
       "claim_id": "D-MK1.4",
@@ -150,7 +177,10 @@
       "statement": "I′_j = min(1, μ_j / I_max), where μ_j is the administrator's point estimate of annualized improvement and I_max is the pre-committed substrate-specific maximum. Recommended I_max values: IPS = 3.0 pp/yr; clinical = 5.0 pp; DORA = 50%; lean = 10% waste reduction.",
       "source": "Definition 4.3, Section 4.4",
       "falsification_predicate": null,
-      "derivation_source": []
+      "derivation_source": [],
+      "tier": "definition",
+      "test_bindings": [],
+      "verified_against": null
     },
     {
       "claim_id": "D-MK1.5",
@@ -160,7 +190,10 @@
       "statement": "C′_j = (2.0 − C_j) / 1.0, where C_j ∈ {1.0, 1.2, 1.4, 1.6, 1.8, 2.0}. Linear rescaling maps [1.0, 2.0] bijectively onto [1.0, 0.0], fully spanning [0,1] and reaching zero at maximum complexity. Corrects prior 1/C formulation which compressed range to [1.0, 0.5].",
       "source": "Definition 4.4, Section 4.5",
       "falsification_predicate": null,
-      "derivation_source": []
+      "derivation_source": [],
+      "tier": "definition",
+      "test_bindings": [],
+      "verified_against": null
     },
     {
       "claim_id": "D-MK1.6",
@@ -170,7 +203,10 @@
       "statement": "T_j = max(0, 1 − h_j / H_max), where h_j = months to relevance and H_max = 60 (default). H_max revisable at annual review with principal approval.",
       "source": "Definition 4.5, Section 4.6",
       "falsification_predicate": null,
-      "derivation_source": []
+      "derivation_source": [],
+      "tier": "definition",
+      "test_bindings": [],
+      "verified_against": null
     },
     {
       "claim_id": "F-MK1.1",
@@ -213,7 +249,10 @@
         "BOUNDARY": "KVS_j = 0 or KVS_j = 1 → NOT FALSIFIED (boundary values are permitted)",
         "CONTEXT": "This property follows immediately from D-MK1.2: the product of four numbers each in [0,1] is in [0,1]. It is a Property rather than a Theorem because it requires no non-trivial inference. Stated for architectural significance: ensures cross-substrate comparability without renormalization."
       },
-      "derivation_source": ["D-MK1.2", "D-MK1.3", "D-MK1.4", "D-MK1.5", "D-MK1.6"]
+      "derivation_source": ["D-MK1.2", "D-MK1.3", "D-MK1.4", "D-MK1.5", "D-MK1.6"],
+      "tier": "formal_proof",
+      "test_bindings": [],
+      "verified_against": null
     },
     {
       "claim_id": "F-MK1.2",
@@ -254,7 +293,10 @@
         "BOUNDARY": "KVS_j′ = KVS_j when the improved component starts at or contributes zero product — NOT FALSIFIED (non-decreasing, not strictly increasing)",
         "CONTEXT": "Significance is normative: correct incentive structure. An improvement candidate that scores higher on any dimension should never score lower overall."
       },
-      "derivation_source": ["D-MK1.2", "D-MK1.3", "D-MK1.4", "D-MK1.5", "D-MK1.6"]
+      "derivation_source": ["D-MK1.2", "D-MK1.3", "D-MK1.4", "D-MK1.5", "D-MK1.6"],
+      "tier": "formal_proof",
+      "test_bindings": [],
+      "verified_against": null
     },
     {
       "claim_id": "F-MK1.3",
@@ -431,7 +473,10 @@
           "CONTEXT": "Part (c) is a canonical modeling choice. The paper's Correction 2 explicitly states: 'α = 1 is the canonical modeling choice under proportional normalization, not a uniquely forced mathematical conclusion.' This claim has weaker epistemic status than parts (a) and (b) and should be read accordingly."
         }
       },
-      "derivation_source": ["A-MK1.1", "A-MK1.2", "A-MK1.3", "A-MK1.4", "A-MK1.5", "A-MK1.6", "D-MK1.3", "D-MK1.4", "D-MK1.5", "D-MK1.6"]
+      "derivation_source": ["A-MK1.1", "A-MK1.2", "A-MK1.3", "A-MK1.4", "A-MK1.5", "A-MK1.6", "D-MK1.3", "D-MK1.4", "D-MK1.5", "D-MK1.6"],
+      "tier": "formal_proof",
+      "test_bindings": [],
+      "verified_against": null
     },
     {
       "claim_id": "F-MK1.4",
@@ -482,7 +527,10 @@
         "BOUNDARY": "Theorem establishes well-definedness only, not convergence or optimality — convergence is addressed in Paper 2 (Governance Closure Theorem). A demonstration that KVS does not converge to an optimal formula does NOT falsify this theorem.",
         "CONTEXT": "Self-referentiality is the mechanism that permits Meta-Kaizen to improve itself. The principal gate (human review required for all adoptions including meta-level ones) prevents runaway self-modification."
       },
-      "derivation_source": ["D-MK1.1", "D-MK1.2", "D-MK1.3", "D-MK1.4", "D-MK1.5", "D-MK1.6"]
+      "derivation_source": ["D-MK1.1", "D-MK1.2", "D-MK1.3", "D-MK1.4", "D-MK1.5", "D-MK1.6"],
+      "tier": "formal_proof",
+      "test_bindings": [],
+      "verified_against": null
     },
     {
       "claim_id": "F-MK1.5",
@@ -546,7 +594,10 @@
         "BOUNDARY": "Asymmetric case (L_FP ≠ L_FN) uses approximation formula requiring distributional assumptions — asymmetric formula is NOT part of this predicate and is presented in the paper as an approximation, not a derivation",
         "CONTEXT": "Symmetric special case is a complete derivation. Asymmetric formula requires distributional assumptions (uniform score distributions, uniform quality prior) stated explicitly in the paper. Practitioners using asymmetric thresholds must derive κ* from their specific loss ratio."
       },
-      "derivation_source": ["A-MK1.1", "D-MK1.2"]
+      "derivation_source": ["A-MK1.1", "D-MK1.2"],
+      "tier": "formal_proof",
+      "test_bindings": [],
+      "verified_against": null
     },
     {
       "claim_id": "F-MK1.6",
@@ -580,7 +631,10 @@
         "BOUNDARY": "Recall = 71.2 or 76.2 → NOT FALSIFIED (CI bounds are inclusive). Result outside CI with numpy seed=42 indicates implementation error, not model falsification — this is a reproducibility claim.",
         "CONTEXT": "This is a structural simulation result, not an empirical validation. The 73.8% figure is earned (not circular: Q_mult_noisy uses log-normal noise, not KVS.copy()). Comparison: ADD achieves 68.4% [66.0, 70.8] — non-overlapping CIs establish meaningful structural advantage. Random selector achieves 5% by construction."
       },
-      "derivation_source": ["D-MK1.2"]
+      "derivation_source": ["D-MK1.2"],
+      "tier": "empirical_pending",
+      "test_bindings": [],
+      "verified_against": null
     },
     {
       "claim_id": "F-MK1.7",
@@ -609,7 +663,10 @@
         "BOUNDARY": "KVS = ADD for any variant → FALSIFIED (claim requires strict advantage)",
         "CONTEXT": "Q_threshold is the most practically informative outcome function: it formalizes that real improvements require minimum thresholds across ALL dimensions. KVS's structural advantage under Q_threshold is the primary simulation-based argument for the multiplicative form over additive alternatives."
       },
-      "derivation_source": ["D-MK1.2", "A-MK1.5"]
+      "derivation_source": ["D-MK1.2", "A-MK1.5"],
+      "tier": "empirical_pending",
+      "test_bindings": [],
+      "verified_against": null
     },
     {
       "claim_id": "F-MK1.8",
@@ -630,7 +687,10 @@
         "BOUNDARY": "ρ_T = 0.730 → NOT FALSIFIED (CI lower bound is inclusive)",
         "CONTEXT": "Operational remedy: filter T=0 candidates before scoring. Equal-weight property holds for candidates with T > 0. This artifact is a structural consequence of the distributional specification, not a model failure."
       },
-      "derivation_source": ["D-MK1.2", "D-MK1.6"]
+      "derivation_source": ["D-MK1.2", "D-MK1.6"],
+      "tier": "empirical_pending",
+      "test_bindings": [],
+      "verified_against": null
     },
     {
       "claim_id": "F-MK1.9",
@@ -656,7 +716,10 @@
         "BOUNDARY": "ρ = 0 or p = 0.05 → FALSIFIED (requires strictly greater than zero with significance)",
         "CONTEXT": "If H₁ is not supported, the paper commits to recharacterizing KVS as a governance tool (transparent, auditable, consistent) rather than a scientific measurement instrument. This is explicitly stated in Section 5.4. Non-confirmation does not invalidate the axiomatic derivation — it bounds the empirical claim."
       },
-      "derivation_source": ["F-MK1.3", "D-MK1.2"]
+      "derivation_source": ["F-MK1.3", "D-MK1.2"],
+      "tier": "empirical_pending",
+      "test_bindings": [],
+      "verified_against": null
     }
   ],
   "placeholder_register": [
