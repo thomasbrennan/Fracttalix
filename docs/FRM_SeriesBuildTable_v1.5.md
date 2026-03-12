@@ -546,8 +546,10 @@ framework.
 | R-5 | P6–P12 scaffolds | LOW | AI layer scaffolds contain old titles from pre-v9 architecture. | Update as papers are written. Content will naturally align. |
 | R-6 | JOSS | MEDIUM | SFW-1 JOSS submission active. 6-month archive risk. | Monitor review timeline. |
 | R-7 | Single author | LOW | Scope manageable with AI collaboration. | Co-authors for specific papers if needed. |
-| R-8 | P9 synchronization | MEDIUM | P9 depends on P3 (satisfied) but enables P10, P11, P12. Bottleneck. | Begin P9 framework sections early. |
+| R-8 | P9 synchronization | MEDIUM | P9 depends on P3 (NOT yet satisfied — P3 QUEUED) and enables P10, P11, P12. Bottleneck. | Begin P9 framework sections early. Unblocking requires P2 → P3 chain. |
 | R-9 | Internal consistency | MEDIUM | Measurement decoupling threshold and rhythmicity threshold need consistent treatment across corpus. | Flag in each paper's scope notes during writing. |
+| R-10 | DRP ARCH patch | LOW | ARCH-S50-PATCH-001 (S53): 3 changes pending application to DRP_Series_ARCH_S50.docx (programme identity, P2 status, ARCH-3 framing). File not in repo. Patch notes at `journal/ARCH-S50-PATCH-001.md`. | Apply when .docx is next in scope. |
+| R-11 | ARCH-3 P2 placeholders | LOW | FLAG: ARCH3-P2-PLACEHOLDER-RETIREMENT. P2 claim IDs in ARCH-3 rows DRP-1 and DRP-3 still marked PLACEHOLDER. P2 is now PHASE-READY — verify IDs against live P2 AI layer and retire PLACEHOLDER status. | Next DRP build session. |
 
 ---
 
