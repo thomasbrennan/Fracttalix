@@ -14,7 +14,7 @@ Sentinel ingests one scalar (or multivariate) observation at a time and emits a 
 > DOI: [10.5281/zenodo.18859299](https://doi.org/10.5281/zenodo.18859299)
 > License: **CC0** — public domain
 
-**[Full documentation](https://thomasbrennan.github.io/Fracttalix)** | **[Examples](examples/)** | **[CHANGELOG](CHANGELOG.md)**
+**[Quickstart Tutorial](examples/00_quickstart.ipynb)** | **[Full documentation](https://thomasbrennan.github.io/Fracttalix)** | **[Examples](examples/)** | **[CHANGELOG](CHANGELOG.md)**
 
 ---
 
@@ -35,7 +35,8 @@ Sentinel ingests one scalar (or multivariate) observation at a time and emits a 
 13. [CLI Reference](#cli-reference)
 14. [Backward Compatibility](#backward-compatibility)
 15. [Theoretical Foundation](#theoretical-foundation)
-16. [Authors & License](#authors--license)
+16. [How This Repository Works](#how-this-repository-works--a-guide-to-everything-here)
+17. [Authors & License](#authors--license)
 
 ---
 
@@ -198,6 +199,8 @@ pytest
 ---
 
 ## Quick Start
+
+> **New to Sentinel?** Start with the [Quickstart Tutorial](examples/00_quickstart.ipynb) — a hands-on notebook that walks through three-channel detection, physics diagnostics, and tuning tips in under five minutes. GitHub renders it in-browser, no clone required.
 
 ### Basic scalar stream
 
@@ -704,6 +707,195 @@ det2.load_state(json_str)
 | Kuramoto order Φ / reversed sequence | `KuramotoOrderStep`, `SequenceOrderingStep`, `ReversedSequenceStep` |
 
 **DOI:** [10.5281/zenodo.18859299](https://doi.org/10.5281/zenodo.18859299)
+
+---
+
+## How This Repository Works — A Guide to Everything Here
+
+This repo contains three things that are usually kept separate: a streaming
+anomaly detector, the physical theory it's derived from (five published papers
+plus Meta-Kaizen, seven more planned), and a machine-verifiable registry of
+every scientific claim made in that theory. They live together because they
+depend on each other — the software implements the theory, the theory justifies
+the software, and the claim registry keeps both honest.
+
+Here's what everything is and why it's built this way.
+
+### How This Was Built — AI Collaboration
+
+This repo started with a single conversation in July 2025 between Thomas
+Brennan and Evelyn Nexus (Grok, xAI). That conversation became a theory,
+the theory became software, and the software became this corpus. The
+`legacy/` folder preserves the evolution from that night forward — v7.6
+through v12.1, every version archived.
+
+The theory, the research direction, and the quality control architecture —
+Meta-Kaizen, the Dual Reader Standard, the canonical build process — are
+Brennan's. The code, documentation, validation infrastructure, and session
+journal were built collaboratively with Claude (Anthropic) and Grok (xAI).
+
+Without AI, none of this exists. 374 tests, 15 machine-verifiable claim
+layers, a 37-step detection pipeline, three validation scripts, and a full
+documentation suite — no single person produces this alone. The session
+journal and commit history document exactly what was built, when, and with
+which AI. Nothing is hidden.
+
+If that bothers you, the falsification predicates are right there — test the
+claims, not the authorship.
+
+### The Software — Sentinel
+
+Sentinel is the streaming anomaly detector. It's what you `pip install`. It runs
+on pure Python stdlib with zero dependencies, processes one observation at a time
+in constant memory, and extracts three-channel diagnostics from a single scalar
+stream — something no comparable tool does. Everything above this section documents
+its API. If you want to see it work, start with the
+[Quickstart Tutorial](examples/00_quickstart.ipynb) — five minutes, no clone required.
+
+### The Theory — Fractal Rhythm Model (FRM)
+
+Sentinel isn't a collection of heuristics — it's derived from a physical theory.
+The Fractal Rhythm Model describes how any network (biological, organizational,
+civilizational) transmits information through coupled oscillatory components, and
+how those systems degrade and collapse.
+
+Five papers and the Meta-Kaizen framework are published. Seven more are planned
+to complete the corpus:
+
+| Published | What they cover |
+|-----------|----------------|
+| **Papers 1–4** (Act I) | The law at human scale — organizations, cognition, mathematical form |
+| **Paper 5** (Act II) | Scale independence — same mathematics at ocean circulation and civilizational scale |
+| **Meta-Kaizen Paper 1** | Continuous improvement framework and KVS scoring methodology |
+
+| Planned | What they will cover |
+|---------|---------------------|
+| **Papers 6–12** (Act III) | Complete statement, formal proofs, instrumentation, and civilizational application |
+
+The [Build Table](docs/FRM_SeriesBuildTable_v1.5.md) is the living architectural
+document — paper status, dependencies, release schedule, referee analysis, and
+risk register. If you want to understand the big picture, start there.
+
+### Meta-Kaizen — How We Score Work
+
+Meta-Kaizen is the continuous improvement framework used to evaluate every work
+item before and after execution. Every significant task gets a KVS score:
+
+```
+KVS = N × I' × C' × T
+```
+
+| Component | Measures |
+|-----------|----------|
+| **N** (Novelty) | Does this exist yet? |
+| **I'** (Impact) | How much does it move the project forward? |
+| **C'** (Inverse Complexity) | How achievable is it in one session? |
+| **T** (Timeliness) | How urgent is it right now? |
+
+Scores above the threshold (κ = 0.75 for the corpus, lower for individual tasks)
+justify the work. Scores below suggest doing something else first. You'll see
+KVS tables bookending the [Quickstart Tutorial](examples/00_quickstart.ipynb) —
+that's Meta-Kaizen in action.
+
+### The Dual Reader Standard — AI Layers
+
+Every paper has a machine-readable AI layer in `ai-layers/`. These are JSON files
+that register every scientific claim with:
+
+- **Claim ID** and type (Axiom, Derivation, or Falsification)
+- **Derivation sources** — which prior claims this one depends on
+- **Falsification predicates** — what would prove the claim wrong, stated precisely
+- **Placeholders** — claims that reference future work, tracked until resolved
+
+The point: a human reads the paper, a machine reads the AI layer. Both see the
+same claims. If a cross-reference is broken, the
+[cross-paper checker](scripts/cross_paper_checker.py) catches it. If a schema
+is violated, [CI catches it](.github/workflows/ai-layer-validation.yml)
+automatically. This is what "Dual Reader" means — every claim is verifiable by
+both audiences, and the verification runs on every commit.
+
+The falsification predicates deserve emphasis. Every Type F claim states exactly
+what would prove it wrong, in machine-parseable five-part syntax. This isn't
+"we welcome criticism" — it's "here is the specific experiment that would
+destroy this claim, stated in advance." 80 claims across 15 layers, 0 cross-reference
+errors.
+
+### The Process Graph
+
+`ai-layers/process_graph.json` maps the dependency structure between all papers
+and supporting documents. It's the machine-readable version of the Build Table's
+dependency diagram — which paper enables which, what's published, what's pending.
+
+### Scripts and Validation
+
+| Script | What it does |
+|--------|-------------|
+| [`validate_ai_layers.py`](scripts/validate_ai_layers.py) | Schema compliance check — runs in CI on every push |
+| [`cross_paper_checker.py`](scripts/cross_paper_checker.py) | Cross-reference integrity — derivation sources, placeholder targets, orphan claims |
+| [`corpus_status.py`](scripts/corpus_status.py) | Human-readable and JSON status report across all layers |
+
+### Examples
+
+| File | What it shows |
+|------|---------------|
+| [`00_quickstart.ipynb`](examples/00_quickstart.ipynb) | Three-channel detection, physics diagnostics, tuning tips |
+| [`01_basic_streaming.py`](examples/01_basic_streaming.py) | Minimal API: create, feed, check |
+| [`02_multistream.py`](examples/02_multistream.py) | Thread-safe multi-stream monitoring |
+| [`03_collapse_detection.py`](examples/03_collapse_detection.py) | PAC degradation and intervention signatures |
+| [`04_autotune.py`](examples/04_autotune.py) | Auto-tuning from labeled data |
+| [`05_getting_started.ipynb`](examples/05_getting_started.ipynb) | Detailed API walkthrough |
+
+### The Journal
+
+`journal/` contains session notes documenting what was built and why, in
+chronological order. Each entry records key actions, validation results, and
+session significance. The [journal index](journal/journal_index.md) links them all.
+
+### Reproducibility
+
+[`REPRODUCIBILITY.md`](REPRODUCIBILITY.md) maps every Type F (falsification)
+claim to an executable test, documents the verification pipeline, and provides
+step-by-step reproduction instructions. If you want to verify any claim in the
+corpus, start there.
+
+### Continuous Integration
+
+Three CI workflows run automatically on every push:
+
+| Workflow | What it checks |
+|----------|---------------|
+| [`tests.yml`](.github/workflows/tests.yml) | 374 tests across Python 3.9–3.12 |
+| [`ai-layer-validation.yml`](.github/workflows/ai-layer-validation.yml) | AI layer schema compliance and cross-reference integrity |
+| [`release.yml`](.github/workflows/release.yml) | PyPI release pipeline |
+
+### Contributing and Community
+
+- [`CONTRIBUTING.md`](CONTRIBUTING.md) — how to report bugs, suggest features, and submit pull requests
+- [`CODE_OF_CONDUCT.md`](CODE_OF_CONDUCT.md) — community standards
+- [`CHANGELOG.md`](CHANGELOG.md) — version history following [Keep a Changelog](https://keepachangelog.com/)
+
+### Legal
+
+[`legal/DISCLAIMER.md`](legal/DISCLAIMER.md) — the software is CC0 public domain,
+provided as-is for research and educational use. Not intended for safety-critical
+or production decision-making without independent validation.
+
+### Directory Map
+
+```
+fracttalix/          Python package — Sentinel detector, config, pipeline steps
+ai-layers/           Machine-readable claim registries (JSON) + schema
+paper/               Software paper + bibliography
+docs/                Build table, bootstrap doc, API docs, theory docs
+examples/            Tutorials and usage examples
+scripts/             Validation and status reporting tools
+journal/             Session notes — what was built and why
+tests/               374 tests across 12 test files
+benchmark/           Performance evaluation suite
+legacy/              Pre-refactor archive
+legal/               Disclaimer
+.github/             CI workflows, issue templates, PR template
+```
 
 ---
 

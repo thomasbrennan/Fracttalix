@@ -1,7 +1,7 @@
-# Session 49 — MK-P5 AI Layer Deployment
+# Session 49 — MK-P5 AI Layer Deployment, Cross-Reference Integrity, and Quickstart Tutorial
 
-**Date:** 2026-03-11
-**Type:** AI layer construction and corpus integration session.
+**Date:** 2026-03-11 / 2026-03-12
+**Type:** AI layer construction, integrity cleanup, documentation, and visitor conversion session.
 
 ---
 
@@ -57,6 +57,53 @@ Deployed full AI layer for Meta-Kaizen Paper 5 — the decision-theoretic capsto
 ### 4. Data Quality Fix
 - Original JSON had `total_claims: 8` but registry contains 9 claims (3+2+4=9). Corrected to 9.
 
+### 5. Cross-Paper Reference Cleanup
+Resolved all 26 warnings from `scripts/cross_paper_checker.py`:
+
+**Unresolved placeholder targets (1 fix):**
+- P1 PH-1.1: target_claim `C-2.1` → `C-2.4` (resolved at S48 via RG fixed-point analysis)
+
+**Process graph dependency reflection (3 fixes):**
+- P3 A-3.1: added `A-2.1` to derivation_source (P3→P2 dependency)
+- P4 A-4.1: added `D-3.1` to derivation_source (P4→P3 dependency)
+- P5 A-5.1: added `D-4.2` to derivation_source (P5→P4 dependency)
+
+**Orphan claims — derivation_source population (22 fixes):**
+- MK-P1: populated derivation_source for all 9 F-claims from existing dependency_edges section
+- SFW-1: populated derivation_source for 9 claims (3 D-type, 6 F-type) from internal structure
+
+Post-fix: **0 errors, 0 warnings** from cross-paper checker.
+
+### 6. Quickstart Tutorial Notebook
+Created `examples/00_quickstart.ipynb` — visitor-to-user conversion entry point for GitHub traffic.
+
+**Motivation:** 19 unique human visitors observed in GitHub traffic (451 cloners are bots). Need an entry point that converts visitors to users in under 5 minutes.
+
+**Structure:**
+1. Meta-Kaizen KVS scoring (Pre): N=0.85, I'=0.90, C'=0.80, T=0.95 → KVS=0.58
+2. Install and import
+3. Create detector with `SentinelConfig.sensitive()` preset
+4. Generate healthy + gradual degradation signal (300 steps)
+5. Alert analysis by channel — demonstrates three-channel detection advantage
+6. Physics-derived diagnostics (maintenance burden, phi-kappa separation, diagnostic window)
+7. State persistence (save/load)
+8. Summary and next steps with KVS Post scoring
+
+**Hostile review:** Three issues identified and fixed:
+- Warmup convergence note added for mu diagnostic in healthy phase
+- Channel status transition highlighting improved in degradation analysis
+- Broken link `../papers/` → `../paper/` corrected
+
+### 7. Meta-Kaizen KVS Assessment
+
+**Quickstart notebook KVS:**
+- Pre: N=0.85 × I'=0.90 × C'=0.80 × T=0.95 = **0.58**
+- Post: Same scores confirmed after hostile review — notebook achieves stated goals
+
+**Session work KVS:**
+- Cross-reference cleanup: infrastructure work, high integration value
+- Tutorial: high timeliness (JOSS submission active, visitors arriving)
+
 ---
 
 ## Validation Results
@@ -68,6 +115,8 @@ Meta-Kaizen Track:  2/5 with AI layers (MK-P1, MK-P5)
 Total Claims:       89 (A:17 D:27 F:45)
 Open Placeholders:  13
 Schema:             v2-S48
+Cross-paper checker: 0 errors, 0 warnings (was 0 errors, 26 warnings)
+Quickstart notebook: Complete, hostile-reviewed
 ```
 
 ---
@@ -77,5 +126,7 @@ Schema:             v2-S48
 MK-P5 is the capstone of the Meta-Kaizen series — the paper that answers "when should you act?" once regime detection has fired. Its AI layer closes four deferred questions from MK-P1 through MK-P4, making it the resolution point for the entire MK series decision-theoretic thread.
 
 The Fortuna Process and Virtù Window are novel constructions that bridge EWS detection (Scheffer et al.) with formal decision theory (Wald/Arrow). The t_trap theorem (C-MK5.4) is the most consequential result: it proves that waiting too long to act creates self-generated friction that makes intervention irrational regardless of cost structure. This has direct implications for P11 (Civilisational Dataset Fitting) and P12 (Civilisational Sentinel) via the cross-track dependency edges.
+
+Session 48 built the infrastructure. Session 49 cleaned the seams — every cross-reference now resolves, every derivation chain is traceable, and the corpus has its first visitor-facing tutorial. The quickstart notebook is designed for the 19 humans finding the repo, not the 451 bots cloning it.
 
 With MK-P5 deployed, the Meta-Kaizen track now has 2 of 5 papers with full machine-readable claim registries. MK-P2, MK-P3, and MK-P4 remain as candidates for retroactive AI layer construction.

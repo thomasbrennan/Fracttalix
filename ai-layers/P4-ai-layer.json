@@ -35,7 +35,8 @@
       "statement": "The FRM functional form f(t) = B + A·e^(−λt)·cos(ωt + φ) is self-similar: the same functional form applies at every scale where the FRM conditions are satisfied.",
       "derivation_source": [
         "D-1.1",
-        "A-1.5"
+        "A-1.5",
+        "D-3.1"
       ],
       "falsification_predicate": null,
       "tier": "axiom",

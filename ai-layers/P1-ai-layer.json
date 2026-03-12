@@ -321,7 +321,7 @@
         },
         "EVALUATION": "For each class compute mean_β; compare to 0.5 ± 2·pooled_σ; finite",
         "BOUNDARY": "exact equality → NOT FALSIFIED (measure zero for continuous β)",
-        "CONTEXT": "[PLACEHOLDER: pending P2, AI-Layer, Claim C-2.1, Phase 1] — class-level 2σ test"
+        "CONTEXT": "[PLACEHOLDER: pending P2, AI-Layer, Claim C-2.4, Phase 1] — class-level 2σ test"
       },
       "tier": "empirical_pending",
       "test_bindings": [],

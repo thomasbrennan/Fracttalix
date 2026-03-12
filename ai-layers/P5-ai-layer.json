@@ -35,7 +35,8 @@
       "statement": "If the FRM derives from topology and information content (P1 A-1.5), it must hold at any scale where the conditions are satisfied. Scale independence is not an additional assumption — it is a consequence of substrate independence.",
       "derivation_source": [
         "A-1.5",
-        "D-1.1"
+        "D-1.1",
+        "D-4.2"
       ],
       "falsification_predicate": null,
       "tier": "axiom",
