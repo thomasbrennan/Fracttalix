@@ -2,8 +2,7 @@
 *Fractal Rhythm Model — Twelve-Paper Corpus*
 *Living document. Updated by Claude (Anthropic) as
 architect revises plans during construction.*
-*Last revised: Session 36 — post referee and
-Meta-Kaizen analysis*
+*Last revised: Session 49 — cross-reference integrity and quickstart tutorial*
 *KVS Score: 0.832 (threshold κ = 0.75)*
 
 ---
@@ -508,6 +507,8 @@ not expansion version.
 | v1.3 | Session 36 | Physical theory of association reframe. Scale inversion. Temporal networks. Taleb relationship. |
 | v1.4 | Session 36 | Complete reframe. No exceptions law. Mathematical form. Paper 6 retitled. Paper 12 retitled. Rippetoe. Ibn Khaldun. Asimov. Heisenberg. Burke. |
 | v1.5 | Session 36 | Consolidation version. Referee analysis complete. All seven objections addressed. Circular definition resolved via information-theoretic foundation. Measurement decoupling threshold named precisely. 13-month release schedule. Meta-Kaizen analysis. KVS 0.832. Synchronization point identified and mitigated. Paper 11b flagged. Internal consistency action item. |
+| v1.5 | Session 48 | Infrastructure and verification. Merged Sentinel v12.1 branch. AI layer schema compliance (35 errors fixed). CI workflow for AI layer validation. Corpus status report script. Process graph v2-S48. Retroactive AI layers for P2-P5. Scaffold layers for P6-P12. Cross-paper consistency checker. Reproducibility manifest. 15/15 layers PASS. 80 claims. 10 open placeholders. |
+| v1.5 | Session 49 | Cross-reference integrity and quickstart tutorial. Resolved all 26 cross-paper checker warnings (placeholder target fix, 3 dependency reflections, 22 orphan claim derivation_source populations). Created `examples/00_quickstart.ipynb` — visitor-to-user conversion entry point demonstrating three-channel detection. Hostile-reviewed. Meta-Kaizen KVS assessed. 0 errors, 0 warnings. |
 
 ---
 
