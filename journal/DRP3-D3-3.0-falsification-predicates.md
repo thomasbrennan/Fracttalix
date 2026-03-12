@@ -2,19 +2,10 @@
 
 **Session:** S54
 **Date:** 2026-03-12
-**Source:** Thomas Brennan (claim design) + Claude Code (predicate formalisation)
+**Source:** Thomas Brennan (predicate design) + Claude Code (archive)
 **Pass:** A (C-DRP3.5, C-DRP3.6). Pass B (C-DRP3.7) pending DRS_v1_1_S49.docx upload.
 
----
-
-## Preamble
-
-This document produces the full falsification predicates for the three Type F claims
-in DRP-3. Each predicate follows the DRS Falsification Kernel 4-tuple (P, O, M, B)
-structure from C-DRP.5 and must satisfy C6 (non-vacuity) and the UMP (C-DRP.8:
-O causally independent of P).
-
-Pass A covers C-DRP3.5 and C-DRP3.6. Pass B covers C-DRP3.7 (blocked on §10.7 read).
+**Predicate syntax:** 5-part DRS standard — FALSIFIED IF / WHERE / EVALUATION / BOUNDARY / CONTEXT. Vacuity witness required for each Type F claim. UMP compliance (C6) checked for each predicate.
 
 ---
 
@@ -22,106 +13,211 @@ Pass A covers C-DRP3.5 and C-DRP3.6. Pass B covers C-DRP3.7 (blocked on §10.7 r
 
 **Statement:** M-termination (the requirement that the measurement function of a
 falsification predicate reach a definite output in finite steps) is epistemically
-equivalent to μ < 0 (the Hopf stability condition for convergent oscillation in
-FRM-class physical systems). Both are instances of the same abstract convergence
-requirement, derivable from the same Hopf stability analysis applied at two levels
-of description. They belong to the same convergence equivalence class (C-DRP3.4).
+equivalent to μ<0 (the Hopf stability condition for convergent oscillation in
+FRM-class physical systems). Both are instances of the same abstract fixed-point
+convergence requirement, derivable from the same Hopf stability analysis applied
+at two levels of description. They belong to the same convergence equivalence
+class (C-DRP3.4).
 
-**Derivation source:** D3-2.0 Steps 3 and 4.
+### FALSIFIED IF
 
-### Falsification Predicate
+`n_counterexamples > 0`
 
-```json
-{
-  "claim_id": "C-DRP3.5",
-  "type": "F",
-  "label": "M↔C2 Isomorphism — central claim",
-  "falsification_predicate": {
-    "condition": "n_counterexamples > 0",
-    "inputs": [
-      {
-        "name": "n_counterexamples",
-        "type": "integer",
-        "units": "dimensionless",
-        "source": "count of systems simultaneously satisfying EITHER: (a) system is in the FRM universality class with μ < 0 (physically convergent) AND its associated falsification predicate has a measurement function M that does not terminate (epistemologically divergent); OR (b) a falsification predicate with a terminating M whose associated physical system has μ > 0 (physically divergent). Each candidate must be a system where both the physical and epistemological descriptions are well-defined — i.e., the system admits an FRM parametrisation AND the proposition under test has a stated falsification predicate with explicit M."
-      }
-    ],
-    "evaluation": "for each candidate system: (1) confirm FRM universality class membership per P1 AI layer criteria; (2) extract μ from the Hopf stability analysis of the linearised system; (3) identify the falsification predicate K = (P, O, M, B) for the proposition under test; (4) determine whether M terminates per C-DRP3.3 (finite deterministic, no cycling, no divergence, no interpretation-dependence); (5) check for mismatch: μ < 0 with non-terminating M, or μ > 0 with terminating M; if mismatch found, count as counterexample. Finite evaluation for any finite candidate set.",
-    "boundary": "n = 0 → NOT FALSIFIED",
-    "context": "C-DRP3.5 · threshold 0 · isomorphism claim: a single system where the convergence status at the physical level (μ sign) disagrees with the convergence status at the epistemological level (M-termination) falsifies the isomorphism. The claim is that these two convergence conditions are structurally locked — they cannot disagree for any system in the FRM universality class.",
-    "vacuity_witness": "An FRM-class system (μ < 0, physically stable) whose associated falsification predicate has M that cycles indefinitely on some input o ∈ O — e.g., a natural language predicate requiring unbounded interpretation steps applied to a physically convergent oscillator. This would demonstrate that physical convergence does not guarantee epistemological convergence, breaking the isomorphism."
-  }
-}
-```
+### WHERE
+
+`n_counterexamples`: integer, dimensionless
+
+Source: count of systems S satisfying ALL of the following:
+
+**(a-c) Convergent physical / divergent epistemological:**
+- (a) S is an FRM-class physical system (satisfies D-2.1 class membership criteria (a)-(c) from P2);
+- (b) S has μ < 0 (physically convergent — Hopf condition satisfied; S has stable limit cycle);
+- (c) The falsification predicate K = (P, O, M, B) associated with S's evaluation protocol has a non-terminating M — i.e. M enters at least one of the three failure modes defined in C-DRP3.3: cycling, divergence, or interpretation-dependence, for at least one o in O.
+
+**OR (d-e) Convergent epistemological / divergent physical:**
+- (d) M terminates (K satisfies C-DRP3.3);
+- (e) The physical analogue of K's convergence structure has μ > 0 (corresponding Hopf system is unstable — trajectory does not reach stable limit cycle).
+
+A single instance of either (a-c) or (d-e) is sufficient to falsify. The two sub-conditions are disjunctive: either the physical and epistemological convergence conditions come apart in the convergent direction, or in the divergent direction.
+
+### EVALUATION
+
+**For sub-condition (a-c):**
+1. Identify candidate system S from the FRM universality class (verify D-2.1(a)-(c)).
+2. Confirm μ < 0 for S via the P3 measurement protocol (C-3.REG from P3 AI layer).
+3. Construct the falsification predicate K for the evaluation of S's central claim.
+4. Apply C-DRP3.3 termination test to M:
+   - (i) Does M loop without exit for any o in O?
+   - (ii) Do M's intermediate values diverge?
+   - (iii) Does M require a judgment call at any step?
+5. If any of (i)-(iii) holds: n_counterexamples += 1.
+
+**For sub-condition (d-e):**
+1. Identify predicate K with terminating M.
+2. Identify the physical system whose oscillatory structure is described by K's claim.
+3. Measure μ for that system via P3 protocol.
+4. If μ > 0: n_counterexamples += 1.
+
+Output: n_counterexamples. Finite procedure.
+
+### BOUNDARY
+
+- n_counterexamples = 0 → NOT FALSIFIED
+- n_counterexamples = 1 → FALSIFIED (single instance suffices; the isomorphism is a universal structural claim)
+
+### CONTEXT
+
+C-DRP3.5 · Type F · M↔C2 Isomorphism — central claim. The predicate tests whether
+the convergence conditions can come apart. The isomorphism claims they cannot,
+because both derive from the same abstract fixed-point convergence requirement
+(D3-2.0 Step 3). A single counterexample would demonstrate that the two levels
+are structurally independent, refuting the isomorphism. Threshold: 0. One instance
+falsifies universally.
 
 ### UMP Compliance Check
 
-- **P:** The M↔C2 isomorphism holds for all FRM-class systems.
-- **O:** Systems in the FRM universality class examined for convergence mismatch between physical (μ sign) and epistemological (M-termination) levels.
-- **O ⊥ P:** The observation class (FRM-class systems and their predicates) exists independently of the isomorphism claim. The systems and their predicates are defined by their own physics and epistemology, not by C-DRP3.5. Examining them does not presuppose the isomorphism.
-- **M terminates:** For any finite candidate set, checking μ sign and M-termination status are both finite deterministic operations. M reaches a definite output.
-- **C6 (non-vacuity):** The vacuity witness is constructive — a natural language predicate applied to a convergent oscillator is a concrete example of a system where the mismatch could occur. The predicate can return FALSIFIED.
+- **O** (observation class): FRM-class physical systems with confirmed μ and associated falsification predicates.
+- **P** (proposition): M-termination ↔ μ<0 (isomorphism holds).
+- **O ⊥ P:** YES. The set of FRM-class systems and their μ values is determined by physical measurement (P3 protocol), not by the proposition that an isomorphism exists. The falsification predicate structure (terminating vs non-terminating M) is a structural property of each predicate, determined by reading the predicate text — not by knowing whether the isomorphism holds. O is upstream of P. **UMP SATISFIED.**
+- **M finite deterministic:** YES. The termination test (C-DRP3.3 steps (i)-(iii)) and the μ measurement (P3 protocol) are both finite deterministic procedures.
+- **M can return FALSIFIED:** YES. If a counterexample system is found, M returns FALSIFIED. **C6 SATISFIED.**
 
-### Joint vs Independent Falsifiability Note
+### Vacuity Witness
 
-C-DRP3.5 and C-DRP3.6 share the convergence equivalence class framework (C-DRP3.4)
-but are independently falsifiable:
+A hypothetical system that would falsify: an FRM-class oscillator with μ < 0
+(confirmed stable limit cycle via P3 measurement) whose associated evaluation
+predicate has a non-terminating M — specifically, where the measurement procedure
+requires a human to judge at some step whether the oscillation counts as "stable."
+If such a system were constructed, the physical and epistemological convergence
+conditions would hold independently, refuting the isomorphism.
 
-- C-DRP3.5 can be falsified while C-DRP3.6 holds: the convergent case fails
-  (mismatch at μ < 0) but the divergent case equivalence is still valid.
-- C-DRP3.6 can be falsified while C-DRP3.5 holds: the divergent case fails
-  (mismatch at μ > 0) but the convergent case equivalence is still valid.
-
-However, if BOTH are falsified, the entire isomorphism collapses (no case holds).
-The exhaustive partition (IR-DRP3-3) means C-DRP3.5 in its complete form requires
-both cases — but the convergent half of C-DRP3.5 is independently testable from
-C-DRP3.6.
+**Why this witness is believed non-existent:** the M-termination requirement and
+the μ<0 condition are both derived from the same abstract fixed-point convergence
+criterion (D3-2.0 Step 3). A system satisfying μ<0 but with non-terminating M
+would require the fixed-point convergence criterion to be satisfied at the physical
+level but not at the epistemological level — which would require the two levels to
+apply different abstract criteria despite the derivation showing they are the same
+criterion. This is the content of C-DRP3.5: the derivation shows they cannot come apart.
 
 ---
 
 ## C-DRP3.6 [F] — Failure Mode Equivalence
 
 **Statement:** Non-terminating M (M fails condition (b) of T(P,O,M)) is the exact
-epistemological analogue of μ > 0 (unstable limit cycle in a physical FRM-class
+epistemological analogue of μ>0 (unstable limit cycle in a physical FRM-class
 system). In both cases: the system has no definite output or stable state; the
 failure is structural, not contingent on measurement error; no amount of additional
 evaluation steps or observations resolves the failure. The failure modes are
 structurally isomorphic under C-DRP3.4.
 
-**Derivation source:** D3-2.0 Step 4.
+### FALSIFIED IF
 
-### Falsification Predicate
+`n_asymmetric_failures > 0`
 
-```json
-{
-  "claim_id": "C-DRP3.6",
-  "type": "F",
-  "label": "Failure mode equivalence",
-  "falsification_predicate": {
-    "condition": "n_structural_mismatches > 0",
-    "inputs": [
-      {
-        "name": "n_structural_mismatches",
-        "type": "integer",
-        "units": "dimensionless",
-        "source": "count of systems where the failure mode structure disagrees between physical and epistemological levels. A structural mismatch is defined as EITHER: (a) a system with μ > 0 (physically divergent) whose associated non-terminating M fails for a CONTINGENT reason — i.e., the non-termination is resolvable by additional evaluation steps, measurement refinement, or error correction, rather than being a structural consequence of the predicate design; OR (b) a system with non-terminating M (epistemologically divergent) whose physical system with μ > 0 reaches a definite state through some mechanism not captured by the Hopf analysis — i.e., the physical divergence is resolvable while the epistemological divergence is not, or vice versa."
-      }
-    ],
-    "evaluation": "for each candidate system with μ > 0 and non-terminating M: (1) classify the non-termination failure mode per C-DRP3.3 (cycling, divergence, or interpretation-dependence); (2) determine whether the failure is structural (inherent in predicate design, not resolvable by more steps) or contingent (resolvable by refinement); (3) determine whether the physical divergence (μ > 0) is structural (inherent in system dynamics) or contingent; (4) if structural status disagrees between levels — one is structural and the other contingent — count as mismatch. Finite evaluation for any finite candidate set.",
-    "boundary": "n = 0 → NOT FALSIFIED",
-    "context": "C-DRP3.6 · threshold 0 · failure mode equivalence: the claim is not merely that both levels fail simultaneously, but that they fail FOR THE SAME STRUCTURAL REASON — the system does not converge to a fixed point. A single system where one level's failure is structural and the other's is contingent falsifies the equivalence. The structural/contingent distinction is the key test: structural failure = inherent in the system's mathematical description; contingent failure = resolvable by changing parameters, adding steps, or refining measurement.",
-    "vacuity_witness": "A physical system with μ > 0 (genuinely divergent trajectory, no stable limit cycle) whose associated falsification predicate has a non-terminating M that can be made to terminate by adding a finite number of additional evaluation steps — e.g., a predicate where interpretation-dependence at step k is resolved by specifying a decision rule at step k+1, yielding a definite output. The physical failure is structural but the epistemological failure is contingent. This would falsify the claim that the failure modes are structurally isomorphic."
-  }
-}
-```
+### WHERE
+
+`n_asymmetric_failures`: integer, dimensionless
+
+Source: count of systems or predicates satisfying ANY of the following:
+
+**Case X — physical failure without epistemological failure:**
+A physical system S with μ > 0 (unstable — no stable limit cycle) whose associated
+falsification predicate K has a terminating M that returns NOT FALSIFIED or
+INDETERMINATE (i.e., M fails to respond to the physical failure — not because it
+correctly detects it, but because the evaluation procedure is structurally decoupled
+from the physical instability). NOTE: M terminating with FALSIFIED for a μ>0 system
+does not constitute Case X — that is M working correctly. The asymmetric failure is
+M terminating without detecting the instability, showing epistemological convergence
+where physical divergence should produce epistemological divergence.
+
+**Case Y — epistemological failure without physical failure:**
+A falsification predicate K with non-terminating M (evaluation does not reach
+definite output) whose associated physical system has μ < 0 (stable limit cycle).
+This would show epistemological divergence is compatible with physical convergence —
+failure modes asymmetric in the other direction.
+
+**Case Z — different failure structure:**
+A system where both physical and epistemological failure occur (μ > 0 and
+non-terminating M) but the failure modes are structurally distinct — e.g., the
+physical system oscillates with growing amplitude (bounded divergence) while the
+epistemological failure is a hard loop (cycling). If the failure modes are not
+isomorphic in their abstract structure (both are "no convergence to fixed point"),
+C-DRP3.6 is falsified by structural mismatch even if both failures co-occur.
+
+### EVALUATION
+
+**For Cases X and Y:**
+1. Identify candidate system S and predicate K.
+2. Measure μ for S via P3 protocol.
+3. Apply C-DRP3.3 termination test to M of K.
+4. If μ > 0 and M terminates with NOT FALSIFIED or INDETERMINATE (Case X): n_asymmetric_failures += 1.
+   If M non-terminates and μ < 0 (Case Y): n_asymmetric_failures += 1.
+   NOTE: μ > 0 with M terminating FALSIFIED is not Case X — it is M correctly detecting the physical failure. Do not increment.
+
+**For Case Z:**
+1. Identify a system where both μ > 0 and M non-terminates.
+2. Characterise the physical failure mode: bounded oscillation with growing amplitude, unbounded divergence, or chaotic trajectory.
+3. Characterise the epistemological failure mode: cycling, divergence, or interpretation loop.
+4. Determine whether both failure modes are instances of "failure to converge to a fixed point." If the abstract failure structure differs: n_asymmetric_failures += 1.
+
+Output: n_asymmetric_failures. Finite procedure.
+
+### BOUNDARY
+
+- n_asymmetric_failures = 0 → NOT FALSIFIED
+- n_asymmetric_failures = 1 → FALSIFIED (single instance sufficient; the failure mode isomorphism is a universal structural claim)
+
+### CONTEXT
+
+C-DRP3.6 · Type F · Failure mode equivalence. C-DRP3.6 is the divergent complement
+of C-DRP3.5. Together they constitute the full isomorphism proof via IR-DRP3-3
+(exhaustive partition). The predicate tests whether the failure modes can come apart —
+either by occurring asymmetrically (Cases X, Y) or by occurring together but with
+different abstract structure (Case Z). The claim is that all three cases are
+structurally impossible under C-DRP3.4. Threshold: 0. One instance falsifies universally.
 
 ### UMP Compliance Check
 
-- **P:** Non-terminating M and μ > 0 are structurally isomorphic failure modes.
-- **O:** Systems with μ > 0 and non-terminating M, examined for structural vs contingent failure classification.
-- **O ⊥ P:** The observation class (divergent systems) exists independently of the failure mode equivalence claim. The structural/contingent classification of each failure is determined by the system's own properties, not by C-DRP3.6.
-- **M terminates:** Classifying a failure as structural or contingent is a finite analysis of the predicate/system description. Definite output: {structural, contingent}.
-- **C6 (non-vacuity):** The vacuity witness is constructive — a resolvable interpretation-dependence failure paired with a genuine physical divergence is a concrete falsification scenario.
+- **O** (observation class): FRM-class systems with measured μ and associated falsification predicates with characterised M-termination status and failure mode structure.
+- **P** (proposition): non-terminating M ↔ μ>0 (failure modes are structurally isomorphic).
+- **O ⊥ P:** YES. μ is measured by the P3 protocol from physical system behaviour. M-termination status is determined by structural analysis of the predicate text. The characterisation of failure mode structure (bounded oscillation, cycling, etc.) is performed by examining the actual behaviour of each system and predicate independently of whether the isomorphism holds. **UMP SATISFIED.**
+- **M finite deterministic:** YES. μ measurement (P3), M-termination test (C-DRP3.3), and failure mode characterisation are all finite deterministic procedures.
+- **M can return FALSIFIED:** YES. Any of Cases X, Y, or Z produces FALSIFIED. **C6 SATISFIED.**
+
+### Vacuity Witness
+
+A hypothetical system that would falsify: an FRM-class oscillator with μ > 0
+(unstable, confirmed via P3) whose associated evaluation predicate K has a
+terminating M that returns NOT FALSIFIED or INDETERMINATE — i.e., M runs to
+completion and fails to detect the physical instability, despite the system never
+reaching a stable limit cycle. If such a predicate existed, the physical system
+would be divergent while the evaluation was epistemologically convergent (M
+terminates without detecting failure), showing the failure modes are structurally
+decoupled. NOTE: M terminating with FALSIFIED for a μ>0 system is NOT this
+witness — that is M functioning correctly.
+
+**Why this witness is believed non-existent:** if the physical system has no stable
+rhythm (μ > 0), any predicate that purports to evaluate its stability must either:
+(i) terminate with a FALSIFIED verdict (correct — but then the predicate is
+well-formed and M terminates, making this not a failure mode at all); or (ii) fail
+to terminate because the system provides no stable reference point for comparison.
+Case (i) does not falsify C-DRP3.6 (it is not an asymmetric failure — M terminates
+because it detects the failure, not despite it). Case (ii) is consistent with
+C-DRP3.6. The predicate either correctly identifies the failure (M terminates →
+FALSIFIED) or itself fails (M non-terminates) — in neither case do the failure
+modes come apart asymmetrically.
+
+---
+
+## Pass A Summary
+
+| Claim | Predicate | UMP | C6 | Vacuity | Status |
+|-------|-----------|-----|----|---------|--------|
+| C-DRP3.5 | n_counterexamples > 0 | PASS | PASS | PRESENT | COMPLETE |
+| C-DRP3.6 | n_asymmetric_failures > 0 | PASS | PASS | PRESENT | COMPLETE |
+| C-DRP3.7 | (Pass B) | — | — | — | PENDING §10.7 |
+
+Pass B trigger: upload DRS_v1_1_S49.docx. On upload: read §10.7 → confirm Arm 1 → produce C-DRP3.7 predicate → D3-3.0 complete.
 
 ---
 
@@ -153,4 +249,4 @@ structurally isomorphic under C-DRP3.4.
 
 ---
 
-*D3-3.0 Pass A produced by Claude Code, Session S54.*
+*D3-3.0 Pass A: predicates designed by Thomas Brennan, archived by Claude Code, Session S54.*
