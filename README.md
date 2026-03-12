@@ -713,10 +713,11 @@ det2.load_state(json_str)
 ## How This Repository Works — A Guide to Everything Here
 
 This repo contains three things that are usually kept separate: a streaming
-anomaly detector, the physical theory it's derived from, and a machine-verifiable
-registry of every scientific claim made in that theory. They live together because
-they depend on each other — the software implements the theory, the theory
-justifies the software, and the claim registry keeps both honest.
+anomaly detector, the physical theory it's derived from (five published papers
+plus Meta-Kaizen, seven more planned), and a machine-verifiable registry of
+every scientific claim made in that theory. They live together because they
+depend on each other — the software implements the theory, the theory justifies
+the software, and the claim registry keeps both honest.
 
 Here's what everything is and why it's built this way.
 
@@ -734,15 +735,20 @@ its API. If you want to see it work, start with the
 Sentinel isn't a collection of heuristics — it's derived from a physical theory.
 The Fractal Rhythm Model describes how any network (biological, organizational,
 civilizational) transmits information through coupled oscillatory components, and
-how those systems degrade and collapse. Twelve papers develop this theory from
-first principles: axiomatic definitions, mathematical derivation, empirical
-parameter extraction, and falsifiable predictions.
+how those systems degrade and collapse.
 
-| Papers | What they cover |
-|--------|----------------|
-| **1–4** (Act I) | The law at human scale — organizations, cognition, mathematical form |
-| **5** (Act II) | Scale independence — same mathematics at ocean circulation and civilizational scale |
-| **6–12** (Act III) | Complete statement, formal proofs, instrumentation, and civilizational application |
+Five papers and the Meta-Kaizen framework are published. Seven more are planned
+to complete the corpus:
+
+| Published | What they cover |
+|-----------|----------------|
+| **Papers 1–4** (Act I) | The law at human scale — organizations, cognition, mathematical form |
+| **Paper 5** (Act II) | Scale independence — same mathematics at ocean circulation and civilizational scale |
+| **Meta-Kaizen Paper 1** | Continuous improvement framework and KVS scoring methodology |
+
+| Planned | What they will cover |
+|---------|---------------------|
+| **Papers 6–12** (Act III) | Complete statement, formal proofs, instrumentation, and civilizational application |
 
 The [Build Table](docs/FRM_SeriesBuildTable_v1.5.md) is the living architectural
 document — paper status, dependencies, release schedule, referee analysis, and
