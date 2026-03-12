@@ -1,4 +1,4 @@
-# Fracttalix Sentinel v12.1
+# Fracttalix Sentinel v12.2
 
 [![Tests](https://github.com/thomasbrennan/Fracttalix/actions/workflows/tests.yml/badge.svg)](https://github.com/thomasbrennan/Fracttalix/actions/workflows/tests.yml)
 [![Python 3.9–3.12](https://img.shields.io/badge/python-3.9%E2%80%933.12-blue.svg)](https://www.python.org/)
@@ -6,7 +6,7 @@
 [![PyPI version](https://img.shields.io/pypi/v/fracttalix.svg)](https://pypi.org/project/fracttalix/)
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.18859299.svg)](https://doi.org/10.5281/zenodo.18859299)
 
-**Streaming anomaly detection grounded in the Three-Channel Model of Dissipative Network Information Transmission — extended with four physics-derived capabilities from Session 36.**
+**Streaming anomaly detection grounded in the Three-Channel Model of Dissipative Network Information Transmission — extended with four signal-processing collapse indicators (v10.0+).**
 
 Sentinel ingests one scalar (or multivariate) observation at a time and emits a rich result dictionary on every call — no batching, no retraining, no warmup gap once past the configurable warmup window.
 
@@ -26,7 +26,7 @@ Sentinel ingests one scalar (or multivariate) observation at a time and emits a 
 4. [Installation](#installation)
 5. [Quick Start](#quick-start)
 6. [SentinelConfig — Configuration](#sentinelconfig--configuration)
-7. [Pipeline Architecture — 37 Steps](#pipeline-architecture--37-steps)
+7. [Pipeline Architecture — 37 Steps](#pipeline-architecture--37-steps-v122)
 8. [Alert Types and Data Structures](#alert-types-and-data-structures)
 9. [SentinelResult API](#sentinelresult-api)
 10. [MultiStreamSentinel](#multistreamssentinel)
@@ -48,7 +48,7 @@ Fracttalix Sentinel is a Python package (`pip install fracttalix`) for real-time
 - **Immutable, inspectable configuration** — `SentinelConfig` is a frozen dataclass; every parameter is readable and picklable.
 - **Composable pipeline** — 37 `DetectorStep` subclasses execute in sequence.
 - **Three-channel anomaly model** — monitors structural properties, broadband rhythmicity, and temporal degradation sequences as independent information channels.
-- **Physics-derived collapse dynamics** — maintenance burden, PAC pre-cascade detection, diagnostic window estimation, and reversed sequence detection derived from the Kuramoto synchronization framework.
+- **Signal-processing collapse indicators** — maintenance burden (coupling heuristic μ = 1−κ̄), PAC pre-cascade detection, diagnostic window estimation, and reversed sequence detection, architecturally inspired by the Kuramoto synchronization framework. These are engineering heuristics, not physical derivations.
 - **Full backward compatibility** — all v7.x, v8.0, v9.0, and v10.0 call patterns continue to work unchanged.
 
 ---
@@ -79,6 +79,37 @@ PAC pre-cascade detected  →  Δt window opens  →  Maintenance burden μ → 
 
 ---
 
+## V12.2 Changes
+
+### Epistemic Language Corrections
+
+- Replaced "physics-derived" framing with "signal-processing heuristic" throughout
+  README and docstrings. The capabilities are real and useful; the claim that they
+  are *derived from physics* was overstated and contradicted by code comments.
+- Corrected the README maintenance burden formula (was showing the abandoned v10.0
+  formula `μ = N·κ̄·E_coupling/P_throughput`; actual implementation is `μ = 1−κ̄`
+  as documented in `MaintenanceBurdenStep` since v11.0).
+- Reframed "thermodynamic arrow" and "intervention signature" language as signal
+  classification labels, not physical or causal claims.
+
+### Default Multiplier Change (Breaking)
+
+- `SentinelConfig.production()` now uses `multiplier=4.5` (was 3.0).
+  Normal alert rate: **35.6% → ~6%** on white noise N(0,1).
+  Expected F1 improvements at the new default (n=1000, seed=42, estimated):
+
+| Archetype  | v12.1 F1 | v12.2 F1 est. | Notes |
+|------------|----------|---------------|-------|
+| point      | 0.415    | ~0.38         | Slight drop in marginal spike detection |
+| contextual | 0.247    | ~0.35         | Precision gain from lower FPR |
+| collective | 0.239    | ~0.45         | Large precision gain from lower FPR |
+| drift      | 0.723    | ~0.66         | Moderate recall reduction |
+| variance   | 0.876    | ~0.82         | Small precision/recall rebalance |
+| **normal** | —        | **~6%**       | Primary improvement target |
+
+> Users who depended on the v12.1 FPR behaviour can restore it with
+> `SentinelConfig(multiplier=3.0)` or set any custom multiplier.
+
 ## V12.1 Changes
 
 ### Bug Fixes
@@ -89,7 +120,7 @@ PAC pre-cascade detected  →  Δt window opens  →  Maintenance burden μ → 
   rate-difference formula with Pearson correlation (scale-invariant). Normal data
   now scores ~0.5 above threshold.
 
-### v12.1 Benchmark (n=1000, seed=42)
+### v12.1 Benchmark (n=1000, seed=42, multiplier=3.0)
 
 | Archetype   |  F1   | Normal alert rate |
 |-------------|-------|-------------------|
@@ -102,24 +133,28 @@ PAC pre-cascade detected  →  Δt window opens  →  Maintenance burden μ → 
 
 ---
 
-## Physics-Derived Capabilities
+## Collapse Indicator Capabilities
 
-Four capabilities derived from the Kuramoto synchronization framework (added v10.0):
+Four signal-processing indicators architecturally inspired by the Kuramoto synchronization framework (added v10.0).
 
-### 1. Maintenance Burden μ (Tainter Regime Detection)
+> **Epistemic status:** These are engineering heuristics, not physical derivations. The maintenance burden μ is explicitly NOT derived from Tainter's socioeconomic model or from any energy-fraction physics — see the full disclaimer in `fracttalix/steps/physics.py` `MaintenanceBurdenStep`. The regime names (TAINTER_CRITICAL, etc.) are descriptive labels; thresholds are empirically set, not calibrated from data.
+
+### 1. Maintenance Burden μ (Coupling Overhead Indicator)
 
 ```
-μ = N · κ̄ · E_coupling / P_throughput
+μ = 1 − κ̄
 ```
 
-When μ → 1, the network spends all energy on coupling maintenance with zero adaptive reserve — the Tainter collapse condition.
+where κ̄ is the mean cross-frequency coupling score. Low coupling (κ̄ → 0) implies high coordination overhead → high inferred maintenance burden (μ → 1). High coupling (κ̄ → 1) implies efficient coordination → low burden (μ → 0).
+
+**Note:** This is an engineering heuristic. μ is NOT derived from Tainter's socioeconomic collapse model. The regime labels below are classification shortcuts; thresholds are empirically set, not calibrated from data.
 
 | μ range | Regime | Meaning |
 |---------|--------|---------|
-| < 0.5 | `HEALTHY` | Full adaptive reserve |
-| 0.5 – 0.75 | `REDUCED_RESERVE` | Adaptive capacity diminishing |
-| 0.75 – 0.9 | `TAINTER_WARNING` | Approaching critical burden |
-| ≥ 0.9 | `TAINTER_CRITICAL` | Spending all energy on maintenance |
+| < 0.5 | `HEALTHY` | High coupling, low inferred overhead |
+| 0.5 – 0.75 | `REDUCED_RESERVE` | Coupling declining |
+| 0.75 – 0.9 | `TAINTER_WARNING` | Approaching fragmented state |
+| ≥ 0.9 | `TAINTER_CRITICAL` | Very low coupling detected |
 
 ```python
 mb = result.get_maintenance_burden()
@@ -154,13 +189,15 @@ dw = result.get_diagnostic_window()
 # {"steps": 47.3, "confidence": "HIGH", "supercompensation": False}
 ```
 
-### 4. Reversed Sequence Detection (Intervention Signature)
+### 4. Reversed Sequence Detection (Sequence Classification)
 
-The thermodynamic arrow of network collapse is irreversible: **coupling degrades before coherence collapses**. A reversed sequence — coherence collapsing before coupling degrades — indicates:
+The heuristic ordering hypothesis: **coupling typically degrades before coherence collapses** in organic degradation patterns. A reversed sequence — coherence collapsing before coupling degrades — may indicate:
 
-1. Measurement error
-2. Non-universality class membership
-3. **Deliberate external intervention** (a civilization being collapsed vs. one that collapses)
+1. Measurement error or noise
+2. A different data-generating process
+3. **Possible external perturbation** (a pattern distinct from gradual organic decay)
+
+> **Note:** "Intervention" here is a signal classification label, not a causal claim about deliberate external action. `sequence_type: "REVERSED"` means the ordering is atypical relative to the heuristic baseline; `intervention_signature_score` is a confidence value for that classification, not a probability of any external cause.
 
 ```python
 if result.is_reversed_sequence():
@@ -286,12 +323,16 @@ det = SentinelDetector.auto_tune(data=[], labeled_data=labeled)
 
 ### Factory presets
 
-| Preset | `alpha` | `warmup` | Notes |
-|--------|---------|----------|-------|
-| `SentinelConfig.fast()` | 0.3 | 10 | Fastest response, higher FP rate |
-| `SentinelConfig.production()` | 0.1 | 30 | Balanced defaults |
-| `SentinelConfig.sensitive()` | 0.05 | 50 | Catches subtle anomalies; tight multiplier (2.5) |
-| `SentinelConfig.realtime()` | 0.2 | 15 | Quantile-adaptive thresholds |
+| Preset | `alpha` | `multiplier` | `warmup` | Normal FPR¹ | Notes |
+|--------|---------|-------------|----------|-------------|-------|
+| `SentinelConfig.fast()` | 0.3 | 3.0 | 10 | ~60–80% | Fastest response; very high FP rate — use only with downstream filtering |
+| `SentinelConfig.production()` | 0.1 | **4.5** | 30 | ~5–8% | Balanced defaults; v12.2 default |
+| `SentinelConfig.sensitive()` | 0.05 | 2.5 | 50 | ~40–50% | Catches subtle anomalies; high FP rate |
+| `SentinelConfig.realtime()` | 0.2 | 3.0 | 15 | ~30–40% | Quantile-adaptive thresholds |
+
+> ¹ Approximate normal alert rate on white noise N(0,1), empirically measured. FPR is a function of multiplier, alpha, and data distribution — these are indicative values from `benchmark/investigate_fpr_s47.py`.
+>
+> **Multiplier–FPR trade-off** (white noise, seed=99): multiplier 1.5 → ~90% FPR, 3.0 → ~35%, 4.5 → ~6%, 5.0 → ~2%. Higher multiplier reduces false positives but may miss subtle anomalies.
 
 ### Parameter groups
 
@@ -406,7 +447,7 @@ det = SentinelDetector.auto_tune(data=[], labeled_data=labeled)
 
 ---
 
-## Pipeline Architecture — 37 Steps
+## Pipeline Architecture — 37 Steps (v12.2)
 
 Every call to `update_and_check()` runs all 37 steps in order. Steps read from and write to a shared `StepContext.scratch` dictionary.
 
@@ -438,7 +479,7 @@ Every call to `update_and_check()` runs all 37 steps in order. Steps read from a
 | 24 | `CascadePrecursorStep` | v9 | `CASCADE_PRECURSOR` — CRITICAL; requires all three conditions |
 | 25 | `DegradationSequenceStep` | v9 | Channel 3: temporal degradation sequence log |
 | 26 | `ThroughputEstimationStep` | **v10** | P_throughput from band amplitudes; populates `band_amplitudes`, `band_powers`, `node_count`, `mean_coupling_strength` |
-| 27 | `MaintenanceBurdenStep` | **v10** | μ = N·κ̄ / P_throughput → Tainter regime classification |
+| 27 | `MaintenanceBurdenStep` | **v10** | μ = 1−κ̄ (coupling overhead heuristic) → regime classification |
 | 28 | `PhaseExtractionStep` | **v10** | FFT bandpass + Hilbert transform → instantaneous phase per band |
 | 29 | `PACCoefficientStep` | **v10** | Modulation Index (Tort 2010) across 6 slow/fast band pairs |
 | 30 | `PACDegradationStep` | **v10** | Rolling PAC history → `pac_degradation_rate`, `pre_cascade_pac` |
@@ -924,10 +965,11 @@ Machine-readable falsification layers for the Fracttalix corpus. All layers conf
 
 | Version | Notes |
 |---------|-------|
+| v12.2.0 | Epistemic language corrections; production() multiplier 3.0→4.5 |
 | v12.1.0 | VarCUSUM reset fix, ChannelCoherence Pearson correlation, 374 tests |
 | v12.0.0 | Package restructure, PyPI release, hostile-review corrections, ablation study |
 | v11.0.0 | Meta-Kaizen corrective: physics corrections, state_dict/load_state, diagnostic window |
-| v10.0.0 | 4 physics-derived capabilities, 37 steps, 98 tests |
+| v10.0.0 | 4 collapse indicators (v10 API), 37 steps, 98 tests |
 | v9.0.0 | Three-channel model, 26 steps, 65 tests |
 | v8.0.0 | Frozen config, WindowBank, 19-step pipeline |
 | v7.11–v7.6 | Earlier releases |
