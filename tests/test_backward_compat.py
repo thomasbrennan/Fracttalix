@@ -50,10 +50,13 @@ class TestLegacyKwargs:
 
 class TestProductionDefault:
     def test_production_is_default(self):
-        """SentinelConfig.production() should equal the default SentinelConfig()."""
+        """SentinelConfig.production() is a curated preset.
+        Since v12.2, production() uses multiplier=4.5 (not the bare default 3.0).
+        Verify it is a SentinelConfig instance with the expected multiplier.
+        """
         prod = SentinelConfig.production()
-        default = SentinelConfig()
-        assert prod == default
+        assert isinstance(prod, SentinelConfig)
+        assert prod.multiplier == 4.5
 
     def test_default_detector_uses_production_config(self):
         det = SentinelDetector()
