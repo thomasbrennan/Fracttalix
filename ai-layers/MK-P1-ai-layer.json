@@ -27,7 +27,7 @@
   "paper_id": "MK-P1",
   "corpus_id": "Meta-Kaizen",
   "series": "Meta-Kaizen Series",
-  "series_position": "Paper 1 of 5",
+  "series_position": "Paper 1 of 6",
   "paper_title": "Meta-Kaizen: A General Theory and Algorithmic Framework for the Mathematical Formalization of Self-Evolving Continuous Improvement Across Arbitrary Governance Substrates",
   "paper_type": "derivation_B",
   "paper_type_note": "Primary contribution is the axiomatic derivation of KVS functional form (Theorem 4.1). Paper also contains application demonstrations (Section 6) and pre-registered empirical path (Section 5.4). Classified derivation_B because the derivation is the novel claim; applications are illustrations, not the object of verification. The schema enum [law_A, derivation_B, application_C] does not include 'methodology'. See paper_type_flag below.",
@@ -36,7 +36,7 @@
   "ai_layer_version": "v1.0",
   "prose_doi": "pending — arXiv submission in progress",
   "ai_layer_url": "github.com/thomasbrennan/Fracttalix/ai-layers/MK-P1-ai-layer.json",
-  "citation_format": "[MK Paper 1, AI-Layer, Claim C-MK1.X]",
+  "citation_format": "[MK Paper 1, AI-Layer, Claim F-MK1.X]",
   "phase_ready": {
     "verdict": "PHASE-READY",
     "c1": "SATISFIED",
@@ -498,5 +498,5 @@
     "type_f": 6
   },
   "session": "S43",
-  "_total_claim_count_note": "Pending CBT verification of A+D counts following F count correction from 4 to 6. S53 audit."
+  "_total_claim_count_note": "S53 audit complete. Counts verified: 6A + 6D + 6F = 18 total. F count corrected from 4 to 6. Claim IDs renamed C-MK1.x → F-MK1.x. Crosswalk preserved."
 }
