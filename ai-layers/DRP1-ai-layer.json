@@ -152,7 +152,7 @@
       "claim_id": "C-DRP.8",
       "type": "D",
       "label": "Upstream Measurement Principle (UMP)",
-      "statement": "O-independence is a logical necessity, not a design choice: for a falsification predicate to be evaluable by any observer (human or AI), the observation O must be defined independently of the model M being tested. If O is derived from or conditioned on M, the predicate is self-referential and M-termination is not achievable. Formally: I(M(O); P) = 0 is required for any valid predicate, where I is mutual information, M(O) is the model-conditioned observation, and P is the predicate. This is a theorem, not a convention.",
+      "statement": "For any falsification predicate K = (P, O, M, B), the causal independence of O from P is a necessary condition for non-vacuity. This is a theorem proved by contradiction in DRP-1 v1.1 §10.7, not a methodological convention. A predicate where O is derived from or conditioned on P is structurally vacuous regardless of the contents of M or B: no measurement procedure can extract information about P from observations defined relative to P.",
       "derivation_source": [
         "DRP-1 v1.1 Section 10.7"
       ],

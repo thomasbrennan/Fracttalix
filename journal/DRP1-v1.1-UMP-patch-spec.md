@@ -87,17 +87,17 @@ with the same commit as patches 1 and 2.)
 **Proofread:** S53 (hard stop rule applied)
 **Issues found:** 5
 **Issues resolved in this file:** 3 (Issues 2, 4, 5)
-**Issues resolved in AI layer:** 1 (Issue 3 — C-DRP.8 note corrected in DRP1-ai-layer.json)
-**Issues outstanding:** 1 (Issue 1 — VERIFY-BEFORE-COMMIT)
+**Issues resolved in AI layer:** 2 (Issue 3 — C-DRP.8 note corrected S53; Issue 1 — C-DRP.8 statement corrected S54)
+**Issues outstanding:** 0
 
-### Issue 1 — VERIFY-BEFORE-COMMIT: C-DRP.8 Statement
+### Issue 1 — RESOLVED S54: C-DRP.8 Statement
 
-C-DRP.8 statement text (currently in `ai-layers/DRP1-ai-layer.json`) was
-synthesized from DRP-2's description of the UMP, NOT verified against the
-actual DRP-1 v1.1 §10.7 source prose. The formal expression `I(M(O);P) = 0`
-may represent DRP-2's epistemic conservation law (C-DRP2.2), not the UMP
-itself as stated in DRP-1. **Statement text must be verified against
-DRP-1 v1.1 §10.7 before this patch is cleared for publication.**
+C-DRP.8 statement was synthesized from DRP-2's description of the UMP with
+three errors: (1) wrong independence object (O⊥M instead of O⊥P); (2) imported
+conservation law formula I(M(O);P)=0 which is C-DRP2.2, not the UMP; (3) imported
+DRP-3 concept (M-termination). Corrected S54 per DRP-2 v1.2 §1 prose read report.
+Source authority: DRP-2 v1.2 §1 reproducing DRP-1 v1.1 §10.7.
+**RESOLVED — C-DRP.8 statement corrected in DRP1-ai-layer.json, S54.**
 
 ---
 
