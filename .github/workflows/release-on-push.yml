@@ -10,15 +10,15 @@ permissions:
   pull-requests: write
 
 jobs:
-  merge-and-release:
-    name: Create PR, merge, retag, and release
+  ensure-merged:
+    name: Ensure branch is merged to main
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
-      - name: Ensure branch is merged to main
+      - name: Create and merge PR if needed
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
@@ -27,45 +27,47 @@ jobs:
           # Check if already merged
           MERGED=$(gh pr list --head "$BRANCH" --state merged --json number --jq '.[0].number' 2>/dev/null || true)
           if [ -n "$MERGED" ]; then
-            echo "PR #$MERGED already merged. Skipping."
-            exit 0
+            echo "PR #$MERGED already merged."
+          else
+            EXISTING=$(gh pr list --head "$BRANCH" --state open --json number --jq '.[0].number' 2>/dev/null || true)
+            if [ -z "$EXISTING" ]; then
+              gh pr create --title "v12.2.0 release" --base main --head "$BRANCH" --body "Auto-created."
+              EXISTING=$(gh pr list --head "$BRANCH" --state open --json number --jq '.[0].number')
+            fi
+            gh pr merge "$EXISTING" --merge --delete-branch || echo "Merge failed"
           fi
 
-          # Check if open PR exists
-          EXISTING=$(gh pr list --head "$BRANCH" --state open --json number --jq '.[0].number' 2>/dev/null || true)
+  fix-release:
+    name: Fix tag and recreate release
+    needs: ensure-merged
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
 
-          if [ -z "$EXISTING" ]; then
-            gh pr create \
-              --title "v12.2.0: Zenodo metadata, corpus integrity fixes, epistemic corrections" \
-              --base main \
-              --head "$BRANCH" \
-              --body "Auto-created by release-on-push workflow."
-            EXISTING=$(gh pr list --head "$BRANCH" --state open --json number --jq '.[0].number')
-          fi
-
-          echo "Merging PR #$EXISTING..."
-          gh pr merge "$EXISTING" --merge --delete-branch || echo "Merge failed or already done"
-
-      - name: Fix v12.2.0 tag and recreate release
+      - name: Delete old release and tag
         env:
           GH_TOKEN: ${{ github.token }}
+        run: |
+          echo "Deleting old v12.2.0 release..."
+          gh release delete v12.2.0 --yes --cleanup-tag 2>&1 || echo "No release to delete"
+          sleep 5
+
+      - name: Pull latest main and create new tag
         run: |
           git fetch origin main
           git checkout main
           git pull origin main
-
-          # Delete existing release first (it has wrong content)
-          gh release delete v12.2.0 --yes 2>/dev/null || echo "No existing release to delete"
-
-          # Delete the wrongly-placed tag
-          git push origin :refs/tags/v12.2.0 2>/dev/null || echo "Remote tag already gone"
           git tag -d v12.2.0 2>/dev/null || true
-
-          # Create correct tag on main HEAD
           git tag v12.2.0
-          git push origin v12.2.0
+          git push origin v12.2.0 2>&1 || echo "Tag push note"
 
-          # Create GitHub Release (triggers Zenodo webhook)
+      - name: Create new release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
           gh release create v12.2.0 \
             --title "Fracttalix Sentinel v12.2.0" \
             --latest \
@@ -73,13 +75,13 @@ jobs:
 
           ### Epistemic Language Corrections
           - Replaced \"physics-derived\" framing with \"signal-processing heuristic\" throughout
-          - Corrected README maintenance burden formula to match implementation (μ = 1−κ̄)
+          - Corrected README maintenance burden formula (μ = 1−κ̄)
           - Reframed \"thermodynamic arrow\" as \"heuristic ordering hypothesis\"
 
           ### Default Multiplier Change
           - \`SentinelConfig.production()\` multiplier: 3.0 → 4.5
           - Normal FPR: 35.6% → ~6% on white noise N(0,1)
-          - Users who need v12.1 behaviour: \`SentinelConfig(multiplier=3.0)\`
+          - Restore v12.1 behaviour: \`SentinelConfig(multiplier=3.0)\`
 
           ### Corpus Integrity (S55)
           - 6 corrections, 0 validation errors
@@ -91,6 +93,4 @@ jobs:
 
           Full changelog: CHANGELOG.md"
 
-          echo "=== DONE ==="
-          echo "Release v12.2.0 recreated with correct content."
-          echo "Zenodo webhook should fire automatically."
+          echo "=== Release v12.2.0 recreated ==="
