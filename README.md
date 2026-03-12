@@ -6,12 +6,12 @@
 [![PyPI version](https://img.shields.io/pypi/v/fracttalix.svg)](https://pypi.org/project/fracttalix/)
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.18859299.svg)](https://doi.org/10.5281/zenodo.18859299)
 
-**Streaming anomaly detection grounded in the Three-Channel Model of Dissipative Network Information Transmission — extended with four signal-processing collapse indicators (v10.0+).**
+**Streaming anomaly detection combining EWMA, CUSUM, spectral decomposition, cross-frequency coupling, and Kuramoto-inspired synchrony metrics in a 37-step composable pipeline.**
 
 Sentinel ingests one scalar (or multivariate) observation at a time and emits a rich result dictionary on every call — no batching, no retraining, no warmup gap once past the configurable warmup window.
 
-> **Theoretical foundation:** Fractal Rhythm Model Papers 1–6
-> DOI: [10.5281/zenodo.18859299](https://doi.org/10.5281/zenodo.18859299)
+> **Companion materials:** Fractal Rhythm Model working papers 1–6 (unpublished)
+> DOI: [10.5281/zenodo.18859299](https://doi.org/10.5281/zenodo.18859299) (data deposit, not peer-reviewed)
 > License: **CC0** — public domain
 
 **[Quickstart Tutorial](examples/00_quickstart.ipynb)** | **[Full documentation](https://thomasbrennan.github.io/Fracttalix)** | **[Examples](examples/)** | **[CHANGELOG](CHANGELOG.md)**
@@ -21,7 +21,7 @@ Sentinel ingests one scalar (or multivariate) observation at a time and emits a 
 ## Table of Contents
 
 1. [Overview](#overview)
-2. [Three-Channel Model](#three-channel-model)
+2. [Three-Channel Decomposition](#three-channel-decomposition)
 3. [V12.2 Changes](#v122-changes)
 4. [Installation](#installation)
 5. [Quick Start](#quick-start)
@@ -34,7 +34,7 @@ Sentinel ingests one scalar (or multivariate) observation at a time and emits a 
 12. [SentinelServer — REST API](#sentinelserver--rest-api)
 13. [CLI Reference](#cli-reference)
 14. [Backward Compatibility](#backward-compatibility)
-15. [Theoretical Foundation](#theoretical-foundation)
+15. [Algorithms and Techniques](#algorithms-and-techniques)
 16. [How This Repository Works](#how-this-repository-works--a-guide-to-everything-here)
 17. [Authors & License](#authors--license)
 
@@ -47,35 +47,25 @@ Fracttalix Sentinel is a Python package (`pip install fracttalix`) for real-time
 - **Zero external dependencies for core operation** — works on the Python standard library alone; numpy, scipy, numba, matplotlib, and tqdm are optional accelerators.
 - **Immutable, inspectable configuration** — `SentinelConfig` is a frozen dataclass; every parameter is readable and picklable.
 - **Composable pipeline** — 37 `DetectorStep` subclasses execute in sequence.
-- **Three-channel anomaly model** — monitors structural properties, broadband rhythmicity, and temporal degradation sequences as independent information channels.
-- **Signal-processing collapse indicators** — maintenance burden (coupling heuristic μ = 1−κ̄), PAC pre-cascade detection, diagnostic window estimation, and reversed sequence detection, architecturally inspired by the Kuramoto synchronization framework. These are engineering heuristics, not physical derivations.
+- **Three-channel decomposition** — monitors structural statistics, spectral properties, and temporal degradation sequences as independent signal channels.
+- **Signal-processing heuristics** — maintenance burden (μ = 1−κ̄), PAC pre-cascade detection, diagnostic window estimation, and reversed sequence detection. These use standard signal processing techniques (EWMA, FFT, Hilbert transform, phase coherence) with hand-tuned thresholds — not physics derivations.
 - **Full backward compatibility** — all v7.x, v8.0, v9.0, and v10.0 call patterns continue to work unchanged.
 
 ---
 
-## Three-Channel Model
+## Three-Channel Decomposition
 
-Implemented from Meta-Kaizen Paper 6:
+The detector organizes its 37 steps into three independent signal channels:
 
 | Channel | Name | What it monitors |
 |---------|------|-----------------|
-| **1** | Structural | Network topology as active transmitter — mean, variance, skewness, kurtosis, autocorrelation, stationarity |
-| **2** | Rhythmic | Broadband multiplexed oscillatory transmission — FFT decomposition into five carrier-wave bands and cross-frequency phase-amplitude coupling |
-| **3** | Temporal | One-way irreversible carrier wave — temporal sequence and ordering of channel degradation events |
+| **1** | Structural | Statistical properties — mean, variance, skewness, kurtosis, autocorrelation, stationarity |
+| **2** | Spectral | FFT decomposition into five frequency bands, cross-frequency phase-amplitude coupling |
+| **3** | Temporal | Ordering of degradation events across channels 1 and 2 |
 
-**Degradation cascade logic (v9.0):**
+**Cascade detection (v9.0):** alerts when band anomaly + coupling degradation + structural-spectral decoupling all occur simultaneously.
 
-```
-Band anomaly detected  →  Cross-frequency coupling degrades  →
-  Structural-rhythmic channels decouple  →  CASCADE PRECURSOR (CRITICAL)
-```
-
-**Extended diagnostics (v10.0):**
-
-```
-PAC pre-cascade detected  →  Δt window opens  →  Maintenance burden μ → 1  →
-  Coupling rate dκ̄/dt negative  →  Collapse imminent
-```
+**Extended heuristics (v10.0):** PAC degradation tracking, time-to-threshold estimation, and sequence ordering classification.
 
 ---
 
@@ -133,11 +123,11 @@ PAC pre-cascade detected  →  Δt window opens  →  Maintenance burden μ → 
 
 ---
 
-## Collapse Indicator Capabilities
+## Signal-Processing Heuristics (v10.0+)
 
-Four signal-processing indicators architecturally inspired by the Kuramoto synchronization framework (added v10.0).
+Four indicators added in v10.0 that track coupling and coherence trends over time.
 
-> **Epistemic status:** These are engineering heuristics, not physical derivations. The maintenance burden μ is explicitly NOT derived from Tainter's socioeconomic model or from any energy-fraction physics — see the full disclaimer in `fracttalix/steps/physics.py` `MaintenanceBurdenStep`. The regime names (TAINTER_CRITICAL, etc.) are descriptive labels; thresholds are empirically set, not calibrated from data.
+> **Epistemic status:** These are engineering heuristics with hand-tuned thresholds, not physics derivations. The maintenance burden μ is a simple linear rescaling of coupling strength, not derived from Tainter's socioeconomic model. The regime names (TAINTER_CRITICAL, etc.) are classification labels; thresholds are empirically set.
 
 ### 1. Maintenance Burden μ (Coupling Overhead Indicator)
 
@@ -161,24 +151,24 @@ mb = result.get_maintenance_burden()
 # {"mu": 0.82, "regime": "TAINTER_WARNING"}
 ```
 
-### 2. PAC Pre-Cascade Detection (Extended Diagnostic Window)
+### 2. PAC Pre-Cascade Detection
 
-Phase-Amplitude Coupling (PAC) measures the depth of nonlinear coupling architecture — the structural memory of the network. PAC degrades **before** mean coupling strength κ̄ measurably decreases, providing an earlier warning signal than the v9.0 cascade precursor.
+Phase-Amplitude Coupling (PAC) tracks how strongly low-frequency phase modulates high-frequency amplitude. In practice, PAC degradation tends to precede mean coupling drops, so it can fire earlier than the v9.0 cascade precursor.
 
-Method: Modulation Index (Tort et al. 2010) across 6 slow-phase/fast-amplitude band pairs.
+Method: Simplified Modulation Index (after Tort et al. 2010) across 6 slow-phase/fast-amplitude band pairs, using 8 fixed phase bins.
 
 ```python
 pac = result.get_pac_status()
 # {"mean_pac": 0.41, "degradation_rate": 0.18, "pre_cascade_pac": True}
 ```
 
-### 3. Diagnostic Window Δt Estimation (Time-to-Collapse)
+### 3. Diagnostic Window Δt Estimation (Time-to-Threshold)
 
 ```
 Δt = (κ̄ - κ_c) / |dκ̄/dt|
 ```
 
-The estimated number of observations remaining before coherence collapse, given current coupling strength and its rate of change. Sentinel stops just detecting that collapse is coming and starts estimating **when**.
+A linear extrapolation of how many observations remain before coupling strength crosses the critical threshold, assuming the current rate of change continues.
 
 - Only active when κ̄ > κ_c and dκ̄/dt < 0
 - Confidence graded: `HIGH` / `MEDIUM` / `LOW` based on rate stability
@@ -191,11 +181,7 @@ dw = result.get_diagnostic_window()
 
 ### 4. Reversed Sequence Detection (Sequence Classification)
 
-The heuristic ordering hypothesis: **coupling typically degrades before coherence collapses** in organic degradation patterns. A reversed sequence — coherence collapsing before coupling degrades — may indicate:
-
-1. Measurement error or noise
-2. A different data-generating process
-3. **Possible external perturbation** (a pattern distinct from gradual organic decay)
+A heuristic based on the assumption that coupling typically degrades before coherence collapses. When the opposite order is observed, it may indicate noise, a different data-generating process, or an abrupt external change.
 
 > **Note:** "Intervention" here is a signal classification label, not a causal claim about deliberate external action. `sequence_type: "REVERSED"` means the ordering is atypical relative to the heuristic baseline; `intervention_signature_score` is a confidence value for that classification, not a probability of any external cause.
 
@@ -285,11 +271,11 @@ labeled = [(value, is_anomaly), ...]
 det = SentinelDetector.auto_tune(data=[], labeled_data=labeled)
 ```
 
-### Collapse indicators
+### Signal-processing heuristics
 
-Four signal-processing indicators track how coupling and coherence are evolving.
-They are heuristics — useful for early warning and pattern characterisation,
-not physical measurements.
+Four indicators track how coupling and coherence metrics are evolving.
+Useful for early warning and pattern characterization — these are threshold-based
+heuristics, not calibrated physical measurements.
 
 ```python
 result = det.update_and_check(value)
@@ -322,11 +308,11 @@ if result.is_reversed_sequence():
           f"gradual organic decay pattern")
 ```
 
-### Three-channel status
+### Channel status
 
 ```python
 # CASCADE_PRECURSOR requires all three conditions simultaneously:
-# coupling degradation + structural-rhythmic decoupling + ≥2 EWS indicators elevated
+# coupling degradation + structural-spectral decoupling + ≥2 EWS indicators elevated
 if result.is_cascade_precursor():
     print("CRITICAL: cascade precursor — all three channels confirming")
 
@@ -410,7 +396,7 @@ result = await mss.aupdate("sensor_43", 7.71)
 | `n_channels` | `1` | Number of input channels |
 | `cov_alpha` | `0.05` | EWMA factor for covariance (Woodbury rank-1) |
 
-#### D — FRM Metrics
+#### D — Spectral Metrics
 
 | Field | Default | Description |
 |-------|---------|-------------|
@@ -429,7 +415,7 @@ result = await mss.aupdate("sensor_43", 7.71)
 | `ews_window` | `40` | EWS rolling window (independent from scalar window) |
 | `ews_threshold` | `0.6` | EWS "approaching critical" threshold |
 
-#### F — Fluid Dynamics
+#### F — Signal Analysis Windows
 
 | Field | Default | Description |
 |-------|---------|-------------|
@@ -466,7 +452,7 @@ result = await mss.aupdate("sensor_43", 7.71)
 
 | Field | Default | Description |
 |-------|---------|-------------|
-| `enable_frequency_decomposition` | `True` | Enable FFT into five carrier-wave bands |
+| `enable_frequency_decomposition` | `True` | Enable FFT into five frequency bands |
 | `min_window_for_fft` | `32` | Minimum window before FFT runs |
 
 #### V9.0 — Cross-Frequency Coupling
@@ -477,11 +463,11 @@ result = await mss.aupdate("sensor_43", 7.71)
 | `coupling_degradation_threshold` | `0.3` | Composite score below this → `COUPLING_DEGRADATION` |
 | `coupling_trend_window` | `10` | FrequencyBands snapshots for coupling trend |
 
-#### V9.0 — Structural-Rhythmic Coherence
+#### V9.0 — Structural-Spectral Coherence
 
 | Field | Default | Description |
 |-------|---------|-------------|
-| `enable_channel_coherence` | `True` | Enable Channel 1–2 coherence |
+| `enable_channel_coherence` | `True` | Enable structural-spectral coherence |
 | `coherence_threshold` | `0.4` | Score below this → `STRUCTURAL_RHYTHMIC_DECOUPLING` |
 | `coherence_window` | `20` | Rolling coherence window |
 
@@ -504,7 +490,7 @@ Every call to `update_and_check()` runs all 37 steps in order. Steps read from a
 |---|------|---------|-------------|
 | 1 | `CoreEWMAStep` | v8 | EWMA baseline + deviation; must run first |
 | 2 | `StructuralSnapshotStep` | v9 | Channel 1: mean, variance, skewness, kurtosis, autocorrelation, stationarity |
-| 3 | `FrequencyDecompositionStep` | v9 | Channel 2: FFT into 5 carrier-wave bands with power and phase |
+| 3 | `FrequencyDecompositionStep` | v9 | Channel 2: FFT into 5 frequency bands with power and phase |
 | 4 | `CUSUMStep` | v8 | CUSUM persistent shift detection |
 | 5 | `RegimeStep` | v8 | Regime change with soft alpha boost |
 | 6 | `VarCUSUMStep` | v8 | CUSUM on variance |
@@ -515,20 +501,20 @@ Every call to `update_and_check()` runs all 37 steps in order. Steps read from a
 | 11 | `CPDStep` | v8 | Change-Point Detection |
 | 12 | `RPIStep` | v8 | Rhythm Periodicity Index (FFT) |
 | 13 | `RFIStep` | v8 | Rhythm Fractal Index (Hurst / R-S) |
-| 14 | `SSIStep` | v8 | Synchronization Stability Index — Kuramoto proxy (`rsi` alias preserved) |
-| 15 | `PEStep` | v8 | Permutation Entropy (FRM Axiom 3) |
-| 16 | `EWSStep` | v8 | Early Warning Signals — variance + AC(1) (FRM Axiom 9) |
+| 14 | `SSIStep` | v8 | Synchronization Stability Index — phase coherence via FFT (`rsi` alias preserved) |
+| 15 | `PEStep` | v8 | Permutation Entropy |
+| 16 | `EWSStep` | v8 | Early Warning Signals — variance + AC(1) |
 | 17 | `AQBStep` | v8 | Adaptive Quantile Baseline |
 | 18 | `SeasonalStep` | v8 | Seasonal decomposition with FFT auto-period |
 | 19 | `MahalStep` | v8 | Mahalanobis distance (multivariate) |
 | 20 | `RRSStep` | v8 | Robust Residual Score |
-| 21 | `BandAnomalyStep` | v9 | Per-carrier-wave anomaly invisible to composite |
+| 21 | `BandAnomalyStep` | v9 | Per-frequency-band anomaly invisible to composite |
 | 22 | `CrossFrequencyCouplingStep` | v9 | PAC coupling matrix + `COUPLING_DEGRADATION` alert |
 | 23 | `ChannelCoherenceStep` | v9 | Structural-rhythmic coherence + `SR_DECOUPLING` alert |
 | 24 | `CascadePrecursorStep` | v9 | `CASCADE_PRECURSOR` — CRITICAL; requires all three conditions |
 | 25 | `DegradationSequenceStep` | v9 | Channel 3: temporal degradation sequence log |
 | 26 | `ThroughputEstimationStep` | **v10** | P_throughput from band amplitudes; populates `band_amplitudes`, `band_powers`, `node_count`, `mean_coupling_strength` |
-| 27 | `MaintenanceBurdenStep` | **v10** | μ = 1−κ̄ (coupling overhead heuristic) → regime classification |
+| 27 | `MaintenanceBurdenStep` | **v10** | μ = 1−κ̄ (linear rescaling of coupling) → regime classification |
 | 28 | `PhaseExtractionStep` | **v10** | FFT bandpass + Hilbert transform → instantaneous phase per band |
 | 29 | `PACCoefficientStep` | **v10** | Modulation Index (Tort 2010) across 6 slow/fast band pairs |
 | 30 | `PACDegradationStep` | **v10** | Rolling PAC history → `pac_degradation_rate`, `pre_cascade_pac` |
@@ -571,7 +557,7 @@ class MyStep(DetectorStep):
 
 | Class | Channel | Description |
 |-------|---------|-------------|
-| `FrequencyBands` | 2 | Five carrier-wave band powers and phases |
+| `FrequencyBands` | 2 | Five frequency band powers and phases |
 | `StructuralSnapshot` | 1 | Mean, variance, skewness, kurtosis, autocorrelation, stationarity |
 | `CouplingMatrix` | 2 | PAC coefficients between adjacent bands + composite score |
 | `ChannelCoherence` | 1↔2 | Structural-rhythmic coherence score |
@@ -581,7 +567,7 @@ class MyStep(DetectorStep):
 
 | `AlertType` | `AlertSeverity` | Trigger |
 |-------------|-----------------|---------|
-| `BAND_ANOMALY` | WARNING | Per-carrier-wave anomaly |
+| `BAND_ANOMALY` | WARNING | Per-frequency-band anomaly |
 | `COUPLING_DEGRADATION` | WARNING | `composite_coupling_score` below threshold |
 | `STRUCTURAL_RHYTHMIC_DECOUPLING` | ALERT | `coherence_score` below threshold |
 | `CASCADE_PRECURSOR` | **CRITICAL** | All three: coupling + decoupling + ≥N EWS |
@@ -781,134 +767,84 @@ det2.load_state(json_str)
 
 ---
 
-## Theoretical Foundation
+## Algorithms and Techniques
 
-| FRM Component | Sentinel Implementation |
-|---------------|------------------------|
-| FRM Axiom 3 (ordinal pattern complexity) | `PEStep` — Permutation Entropy |
-| FRM Axiom 9 (critical slowing down) | `EWSStep` — variance + lag-1 autocorrelation |
-| Rhythm Periodicity Index | `RPIStep` — FFT spectral coherence |
-| Rhythm Fractal Index | `RFIStep` — Hurst exponent via R/S |
-| Synchronization Stability Index | `SSIStep` — Kuramoto proxy via FFT phase coherence |
-| Three-channel model (Paper 6) | `StructuralSnapshotStep`, `FrequencyDecompositionStep`, `ChannelCoherenceStep`, `CascadePrecursorStep`, `DegradationSequenceStep` |
-| Maintenance burden μ | `ThroughputEstimationStep`, `MaintenanceBurdenStep` |
-| PAC pre-cascade (Tort 2010) | `PhaseExtractionStep`, `PACCoefficientStep`, `PACDegradationStep` |
-| Diagnostic window Δt | `CriticalCouplingEstimationStep`, `CouplingRateStep`, `DiagnosticWindowStep` |
-| Kuramoto order Φ / reversed sequence | `KuramotoOrderStep`, `SequenceOrderingStep`, `ReversedSequenceStep` |
+The pipeline combines well-known signal processing and anomaly detection techniques:
 
-**DOI:** [10.5281/zenodo.18859299](https://doi.org/10.5281/zenodo.18859299)
+| Technique | Sentinel Implementation |
+|-----------|------------------------|
+| Permutation Entropy (ordinal pattern complexity) | `PEStep` |
+| Early Warning Signals (variance + lag-1 AC, per Scheffer et al.) | `EWSStep` |
+| FFT spectral coherence | `RPIStep` |
+| Hurst exponent via simplified R/S analysis | `RFIStep` |
+| Phase coherence (Kuramoto order parameter) | `SSIStep` |
+| Statistical moments + stationarity | `StructuralSnapshotStep` |
+| FFT band decomposition | `FrequencyDecompositionStep` |
+| Phase-amplitude coupling (simplified Tort 2010 Modulation Index) | `PACCoefficientStep` |
+| Linear time-to-threshold extrapolation | `DiagnosticWindowStep` |
+| Coupling strength μ = 1−κ̄ (linear rescaling) | `MaintenanceBurdenStep` |
+
+These are standard techniques applied in a streaming context. The novelty is in their composition into a single pipeline, not in the individual algorithms.
+
+**Data deposit DOI:** [10.5281/zenodo.18859299](https://doi.org/10.5281/zenodo.18859299)
 
 ---
 
 ## How This Repository Works — A Guide to Everything Here
 
-This repo contains three things that are usually kept separate: a streaming
-anomaly detector, the physical theory it's derived from (five published papers
-plus Meta-Kaizen, seven more planned), and a machine-verifiable registry of
-every scientific claim made in that theory. They live together because they
-depend on each other — the software implements the theory, the theory justifies
-the software, and the claim registry keeps both honest.
-
-Here's what everything is and why it's built this way.
+This repo contains three things: a streaming anomaly detector, an unpublished
+theoretical framework (the Fractal Rhythm Model), and a machine-readable
+registry of claims made in that framework.
 
 ### How This Was Built — AI Collaboration
 
-This repo started with a single conversation in July 2025 between Thomas
-Brennan and Evelyn Nexus (Grok, xAI). That conversation became a theory,
-the theory became software, and the software became this corpus. The
-`legacy/` folder preserves the evolution from that night forward — v7.6
-through v12.1, every version archived.
-
-The theory, the research direction, and the quality control architecture —
-Meta-Kaizen, the Dual Reader Standard, the canonical build process — are
-Brennan's. The code, documentation, validation infrastructure, and session
-journal were built collaboratively with Claude (Anthropic) and Grok (xAI).
-
-Without AI, none of this exists. 374 tests, 15 machine-verifiable claim
-layers, a 37-step detection pipeline, three validation scripts, and a full
-documentation suite — no single person produces this alone. The session
-journal and commit history document exactly what was built, when, and with
-which AI. Nothing is hidden.
-
-If that bothers you, the falsification predicates are right there — test the
-claims, not the authorship.
+This repo was built collaboratively with Claude (Anthropic) and Grok (xAI).
+The theoretical direction and quality control architecture are Brennan's.
+The code, tests, documentation, and validation infrastructure were produced
+through AI-assisted development. The session journal and commit history
+document what was built, when, and with which AI.
 
 ### The Software — Sentinel
 
 Sentinel is the streaming anomaly detector. It's what you `pip install`. It runs
 on pure Python stdlib with zero dependencies, processes one observation at a time
-in constant memory, and extracts three-channel diagnostics from a single scalar
-stream — something no comparable tool does. Everything above this section documents
-its API. If you want to see it work, start with the
-[Quickstart Tutorial](examples/00_quickstart.ipynb) — five minutes, no clone required.
+in constant memory, and combines 37 signal processing steps into a single
+streaming pipeline. Everything above this section documents its API. Start with
+the [Quickstart Tutorial](examples/00_quickstart.ipynb).
 
-### The Theory — Fractal Rhythm Model (FRM)
+### The Fractal Rhythm Model (FRM) — Unpublished Working Papers
 
-Sentinel isn't a collection of heuristics — it's derived from a physical theory.
-The Fractal Rhythm Model describes how any network (biological, organizational,
-civilizational) transmits information through coupled oscillatory components, and
-how those systems degrade and collapse.
+The FRM is an unpublished theoretical framework that motivated the detector's
+three-channel decomposition. The working papers exist as markdown documents in
+`paper/` and machine-readable claim registries in `ai-layers/`.
 
-Five papers and the Meta-Kaizen framework are published. Seven more are planned
-to complete the corpus:
+**Important:** These papers are not peer-reviewed and have not been published
+in any journal or conference proceedings. The Zenodo DOI is a data deposit,
+not a publication record. The detector works as engineering software regardless
+of whether the theoretical claims hold up under review.
 
-| Published | What they cover |
-|-----------|----------------|
-| **Papers 1–4** (Act I) | The law at human scale — organizations, cognition, mathematical form |
-| **Paper 5** (Act II) | Scale independence — same mathematics at ocean circulation and civilizational scale |
-| **Meta-Kaizen Paper 1** | Continuous improvement framework and KVS scoring methodology |
+| Status | What they cover |
+|--------|----------------|
+| **Papers 1–5** (working drafts) | Network information transmission, organizational/cognitive/mathematical framing, scale independence |
+| **Meta-Kaizen Paper 1** (working draft) | Continuous improvement framework and KVS scoring methodology |
+| **Papers 6–12** (planned) | Formal proofs, instrumentation, applications |
 
-| Planned | What they will cover |
-|---------|---------------------|
-| **Papers 6–12** (Act III) | Complete statement, formal proofs, instrumentation, and civilizational application |
+The [Build Table](docs/FRM_SeriesBuildTable_v1.5.md) tracks paper status and
+dependencies.
 
-The [Build Table](docs/FRM_SeriesBuildTable_v1.5.md) is the living architectural
-document — paper status, dependencies, release schedule, referee analysis, and
-risk register. If you want to understand the big picture, start there.
+### Meta-Kaizen — Task Prioritization
 
-### Meta-Kaizen — How We Score Work
+Meta-Kaizen is the task prioritization framework used in this project. Tasks
+are scored using KVS = N x I' x C' x T (Novelty, Impact, Inverse Complexity,
+Timeliness). Scores above a threshold justify the work.
 
-Meta-Kaizen is the continuous improvement framework used to evaluate every work
-item before and after execution. Every significant task gets a KVS score:
+### AI Layers — Claim Registry
 
-```
-KVS = N × I' × C' × T
-```
-
-| Component | Measures |
-|-----------|----------|
-| **N** (Novelty) | Does this exist yet? |
-| **I'** (Impact) | How much does it move the project forward? |
-| **C'** (Inverse Complexity) | How achievable is it in one session? |
-| **T** (Timeliness) | How urgent is it right now? |
-
-Scores above the threshold (κ = 0.75 for the corpus, lower for individual tasks)
-justify the work. Scores below suggest doing something else first. You'll see
-KVS tables bookending the [Quickstart Tutorial](examples/00_quickstart.ipynb) —
-that's Meta-Kaizen in action.
-
-### The Dual Reader Standard — AI Layers
-
-Every paper has a machine-readable AI layer in `ai-layers/`. These are JSON files
-that register every scientific claim with:
-
-- **Claim ID** and type (Axiom, Derivation, or Falsification)
-- **Derivation sources** — which prior claims this one depends on
-- **Falsification predicates** — what would prove the claim wrong, stated precisely
-- **Placeholders** — claims that reference future work, tracked until resolved
-
-The point: a human reads the paper, a machine reads the AI layer. Both see the
-same claims. If a cross-reference is broken, the
-[cross-paper checker](scripts/cross_paper_checker.py) catches it. If a schema
-is violated, [CI catches it](.github/workflows/ai-layer-validation.yml)
-automatically. This is what "Dual Reader" means — every claim is verifiable by
-both audiences, and the verification runs on every commit.
-
-The falsification predicates deserve emphasis. Every Type F claim states exactly
-what would prove it wrong, in machine-parseable five-part syntax. This isn't
-"we welcome criticism" — it's "here is the specific experiment that would
-destroy this claim, stated in advance." 80 claims across 15 layers, 0 cross-reference
-errors.
+Every working paper has a machine-readable JSON file in `ai-layers/` that
+registers claims with IDs, derivation sources, and falsification predicates.
+The [cross-paper checker](scripts/cross_paper_checker.py) validates
+cross-references, and [CI](.github/workflows/ai-layer-validation.yml) checks
+schema compliance on every push.
 
 ### The Process Graph
 
@@ -928,10 +864,10 @@ dependency diagram — which paper enables which, what's published, what's pendi
 
 | File | What it shows |
 |------|---------------|
-| [`00_quickstart.ipynb`](examples/00_quickstart.ipynb) | Three-channel detection, physics diagnostics, tuning tips |
+| [`00_quickstart.ipynb`](examples/00_quickstart.ipynb) | Three-channel detection, signal diagnostics, tuning tips |
 | [`01_basic_streaming.py`](examples/01_basic_streaming.py) | Minimal API: create, feed, check |
 | [`02_multistream.py`](examples/02_multistream.py) | Thread-safe multi-stream monitoring |
-| [`03_collapse_detection.py`](examples/03_collapse_detection.py) | PAC degradation and intervention signatures |
+| [`03_collapse_detection.py`](examples/03_collapse_detection.py) | PAC degradation and sequence classification |
 | [`04_autotune.py`](examples/04_autotune.py) | Auto-tuning from labeled data |
 | [`05_getting_started.ipynb`](examples/05_getting_started.ipynb) | Detailed API walkthrough |
 
@@ -989,9 +925,9 @@ legal/               Disclaimer
 
 ---
 
-## Channel 2 — AI Layers
+## AI Layers — Claim Registry
 
-Machine-readable falsification layers for the Fracttalix corpus. All layers conform to `ai-layers/ai-layer-schema.json` (v2-S42, Dual Reader Standard).
+Machine-readable claim registries for the Fracttalix working papers. All layers conform to `ai-layers/ai-layer-schema.json` (v2-S42).
 
 | ID    | Paper                        | Status      | File                             |
 |-------|------------------------------|-------------|----------------------------------|
@@ -1014,7 +950,7 @@ Machine-readable falsification layers for the Fracttalix corpus. All layers conf
 
 | Version | Notes |
 |---------|-------|
-| v12.2.0 | Epistemic language corrections; production() multiplier 3.0→4.5 |
+| v12.2.0 | Replaced physics-derived framing with signal-processing heuristic language; production() multiplier 3.0→4.5 |
 | v12.1.0 | VarCUSUM reset fix, ChannelCoherence Pearson correlation, 374 tests |
 | v12.0.0 | Package restructure, PyPI release, hostile-review corrections, ablation study |
 | v11.0.0 | Meta-Kaizen corrective: physics corrections, state_dict/load_state, diagnostic window |
