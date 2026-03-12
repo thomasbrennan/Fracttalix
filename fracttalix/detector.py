@@ -95,7 +95,7 @@ class SentinelDetector:
             if legacy_kwargs:
                 config = _legacy_kwargs_to_config(legacy_kwargs)
             else:
-                config = SentinelConfig()
+                config = SentinelConfig.production()
         self.config = config
         self._bank = WindowBank()
         if steps is not None:

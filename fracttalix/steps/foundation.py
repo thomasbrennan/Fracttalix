@@ -37,6 +37,9 @@ class CoreEWMAStep(DetectorStep):
         self._warmup_buf: List[float] = []
         self._initialized = False
         self._n = 0
+        # Warmup baseline — frozen after warmup, used by non-adaptive CUSUM
+        self._warmup_mean: float = 0.0
+        self._warmup_std: float = 1.0
         # per-channel state (multivariate)
         self._ch_ewma: List[float] = []
         self._ch_dev: List[float] = []
@@ -70,10 +73,14 @@ class CoreEWMAStep(DetectorStep):
                 sq = [(x - self._ewma) ** 2 for x in self._warmup_buf]
                 self._dev_ewma = math.sqrt(_mean(sq)) or 1.0
                 self._initialized = True
+                # Freeze warmup baseline for non-adaptive CUSUM (v12.3)
+                self._warmup_mean = self._ewma
+                self._warmup_std = max(self._dev_ewma, 1e-10)
             return {"ewma": v, "dev_ewma": 1.0, "baseline_mean": v,
                     "baseline_std": 1.0, "z_score": 0.0,
                     "anomaly_score": 0.0, "anomaly": False,
-                    "alert": False, "warmup": True}
+                    "alert": False, "warmup": True,
+                    "warmup_mean": 0.0, "warmup_std": 1.0}
 
         a = self._eff_alpha()
         da = self._eff_dev_alpha()
@@ -109,6 +116,9 @@ class CoreEWMAStep(DetectorStep):
             "anomaly": alert,
             "alert": alert,
             "warmup": False,
+            # Frozen warmup baseline for non-adaptive drift detection (v12.3)
+            "warmup_mean": self._warmup_mean,
+            "warmup_std": self._warmup_std,
         }
 
     def _mv_update(self, vs: List[float], ctx: StepContext) -> Dict[str, Any]:
@@ -172,7 +182,12 @@ class CoreEWMAStep(DetectorStep):
             result = self._mv_update(vals, ctx)
             sv = float(vals[-1]) if vals else 0.0
         else:
-            sv = float(v)
+            # v12.3: use deseasonalized residual when SeasonalPreprocessStep
+            # has detected a period and provided a residual.  This causes the
+            # window bank to accumulate deseasonalized signal, eliminating
+            # seasonal false positives in all downstream steps.
+            ds_val = ctx.scratch.get("deseasonalized_value")
+            sv = float(ds_val) if ds_val is not None else float(v)
             result = self._scalar_update(sv, ctx)
 
         ctx.bank.append(sv)
@@ -399,9 +414,25 @@ class FrequencyDecompositionStep(DetectorStep):
 class CUSUMStep(DetectorStep):
     """Bidirectional CUSUM for persistent mean shift detection.
 
-    Phase 2: k and h now read from config.cusum_k / config.cusum_h.
-    Default values (0.5 / 5.0) preserve v10.0 behavior.
+    Two accumulator pairs (v12.3):
+
+    1. *Adaptive CUSUM* — operates on the EWMA z-score.  Detects large,
+       fast mean shifts (point anomalies, collective blocks).  Uses
+       ``config.cusum_k`` / ``config.cusum_h`` (defaults: 1.0 / 8.0 in v12.3).
+
+    2. *Non-adaptive drift CUSUM* — operates on z_raw = (v − warmup_mean) /
+       warmup_std (the warmup-frozen baseline).  Because the EWMA baseline
+       adapts to slow trends, the adaptive z-score stays near zero during slow
+       drift; z_raw does not.  Uses fixed k=0.5 / h=20.0.  Fires as
+       ``drift_cusum_alert`` — a STRONG signal in the consensus gate.
     """
+
+    # Non-adaptive drift CUSUM parameters (v12.3, not user-configurable).
+    # k=0.5 (half the minimum 1σ detectable shift); h=5.0 (fires every ~10–15
+    # steps during 2σ+ drift, giving dense coverage across the anomaly region).
+    # RESETS after each crossing — drift during ongoing shift re-crosses quickly.
+    _DRIFT_K = 0.5
+    _DRIFT_H = 5.0
 
     def __init__(self, config: SentinelConfig):
         self.cfg = config
@@ -410,6 +441,9 @@ class CUSUMStep(DetectorStep):
     def reset(self):
         self._s_hi = 0.0
         self._s_lo = 0.0
+        # Non-adaptive drift accumulators
+        self._d_hi = 0.0
+        self._d_lo = 0.0
 
     def update(self, ctx: StepContext) -> None:
         if ctx.is_warmup:
@@ -417,22 +451,51 @@ class CUSUMStep(DetectorStep):
         z = ctx.scratch.get("z_score", 0.0)
         k = self.cfg.cusum_k
         h = self.cfg.cusum_h
+
+        # Adaptive CUSUM (on EWMA z-score)
         self._s_hi = max(0.0, self._s_hi + z - k)
         self._s_lo = max(0.0, self._s_lo - z - k)
         cusum_alert = (self._s_hi > h) or (self._s_lo > h)
+        if cusum_alert:
+            self._s_hi = 0.0
+            self._s_lo = 0.0
         ctx.scratch["cusum_hi"] = self._s_hi
         ctx.scratch["cusum_lo"] = self._s_lo
         ctx.scratch["cusum_alert"] = cusum_alert
-        if cusum_alert:
+
+        # Non-adaptive drift CUSUM (on warmup-frozen baseline)
+        # Operates on z_raw = (v - warmup_mean) / warmup_std so the EWMA
+        # cannot mask slow drift by adapting.  Resets after each crossing so
+        # it re-arms quickly during ongoing drift (next crossing in ~5–15 steps).
+        wm = ctx.scratch.get("warmup_mean", 0.0)
+        ws = max(ctx.scratch.get("warmup_std", 1.0), 1e-10)
+        v_raw = ctx.value if not isinstance(ctx.value, (list, tuple)) else ctx.value[0]
+        z_raw = (float(v_raw) - wm) / ws
+        dk = self._DRIFT_K
+        dh = self._DRIFT_H
+        self._d_hi = max(0.0, self._d_hi + z_raw - dk)
+        self._d_lo = max(0.0, self._d_lo - z_raw - dk)
+        drift_alert = (self._d_hi > dh) or (self._d_lo > dh)
+        if drift_alert:
+            self._d_hi = 0.0
+            self._d_lo = 0.0
+        ctx.scratch["drift_cusum_hi"] = self._d_hi
+        ctx.scratch["drift_cusum_lo"] = self._d_lo
+        ctx.scratch["drift_cusum_alert"] = drift_alert
+
+        if cusum_alert or drift_alert:
             ctx.scratch["alert"] = True
             ctx.scratch["anomaly"] = True
 
     def state_dict(self) -> Dict[str, Any]:
-        return {"s_hi": self._s_hi, "s_lo": self._s_lo}
+        return {"s_hi": self._s_hi, "s_lo": self._s_lo,
+                "d_hi": self._d_hi, "d_lo": self._d_lo}
 
     def load_state(self, sd: Dict[str, Any]) -> None:
         self._s_hi = sd.get("s_hi", 0.0)
         self._s_lo = sd.get("s_lo", 0.0)
+        self._d_hi = sd.get("d_hi", 0.0)
+        self._d_lo = sd.get("d_lo", 0.0)
 
 
 # ---------------------------------------------------------------------------

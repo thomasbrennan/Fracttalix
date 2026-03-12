@@ -109,9 +109,10 @@ class TestSentinelConfigPresets:
         assert isinstance(cfg, SentinelConfig)
 
     def test_production_is_default(self):
+        """production() is a curated preset with multiplier=4.5 (since v12.2)."""
         prod = SentinelConfig.production()
-        default = SentinelConfig()
-        assert prod == default
+        assert isinstance(prod, SentinelConfig)
+        assert prod.multiplier == 4.5
 
     def test_sensitive_returns_sentinelconfig(self):
         cfg = SentinelConfig.sensitive()

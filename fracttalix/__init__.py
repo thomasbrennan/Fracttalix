@@ -6,9 +6,9 @@ try:
     try:
         __version__ = version("fracttalix")
     except PackageNotFoundError:
-        __version__ = "12.2.0"
+        __version__ = "12.3.0"
 except ImportError:
-    __version__ = "12.2.0"
+    __version__ = "12.3.0"
 
 from fracttalix.config import SentinelConfig
 from fracttalix.types import (
@@ -25,6 +25,8 @@ from fracttalix.types import (
 from fracttalix.window import WindowBank, StepContext
 from fracttalix.steps.base import DetectorStep, RegimeBoostState
 from fracttalix.steps import (
+    # Pre-pipeline (v12.3)
+    SeasonalPreprocessStep,
     # Foundation
     CoreEWMAStep,
     StructuralSnapshotStep,
@@ -113,6 +115,8 @@ __all__ = [
     "RFIStep",
     "SSIStep",
     "PEStep",
+    # Pre-pipeline step (v12.3)
+    "SeasonalPreprocessStep",
     # Complexity steps (16-20)
     "EWSStep",
     "AQBStep",

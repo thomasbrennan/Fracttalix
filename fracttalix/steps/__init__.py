@@ -25,6 +25,7 @@ from fracttalix.steps.frequency import (
     PEStep,
 )
 from fracttalix.steps.complexity import (
+    SeasonalPreprocessStep,
     EWSStep,
     AQBStep,
     SeasonalStep,
@@ -59,6 +60,9 @@ def _build_default_pipeline(config: SentinelConfig):
     """Return ordered list of DetectorStep instances for a SentinelDetector.
 
     V11.0: 37 steps. Steps numbered 1-37 consecutively.
+    V12.3: SeasonalPreprocessStep prepended as step 0.  Detects periodic
+    baseline and writes deseasonalized residual to scratch before CoreEWMAStep
+    runs, eliminating seasonal false positives across all downstream steps.
     Phase 1.3: CoreEWMAStep and RegimeStep share a RegimeBoostState object —
     no scratch-key side channel.
     Phase 0: @register_step / _STEP_REGISTRY removed; pipeline is explicit.
@@ -68,6 +72,7 @@ def _build_default_pipeline(config: SentinelConfig):
     regime = RegimeStep(config, boost_state=boost)  # Step 5 — shares same boost
     rrs = RRSStep(config, regime)
     return [
+        SeasonalPreprocessStep(config),             # Step  0 — deseasonalize (v12.3)
         core,                                       # Step  1 — EWMA baseline
         StructuralSnapshotStep(config),             # Step  2 — Channel 1
         FrequencyDecompositionStep(config),         # Step  3 — Channel 2
@@ -115,6 +120,8 @@ __all__ = [
     # Base
     "DetectorStep",
     "RegimeBoostState",
+    # Step 0 (v12.3)
+    "SeasonalPreprocessStep",
     # Foundation (Steps 1-7)
     "CoreEWMAStep",
     "StructuralSnapshotStep",

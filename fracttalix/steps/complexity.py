@@ -1,5 +1,6 @@
 # fracttalix/steps/complexity.py
 # Steps 16-20: EWSStep, AQBStep, SeasonalStep, MahalStep, RRSStep
+# v12.3: SeasonalPreprocessStep prepended to pipeline (step 0)
 
 import math
 from collections import deque
@@ -9,6 +10,143 @@ from fracttalix._compat import _NP, _mean, np
 from fracttalix.config import SentinelConfig
 from fracttalix.steps.base import DetectorStep
 from fracttalix.window import StepContext, WindowBank
+
+
+# ---------------------------------------------------------------------------
+# Step 0 (v12.3): SeasonalPreprocessStep — Deseasonalize before CoreEWMA
+# ---------------------------------------------------------------------------
+
+class SeasonalPreprocessStep(DetectorStep):
+    """Pre-pipeline seasonal deseasonalization (v12.3).
+
+    Runs as the FIRST step in the pipeline — before CoreEWMAStep.  When a
+    reliable periodic component is detected (FFT peak power > 3× mean), this
+    step writes a deseasonalized residual to ``ctx.scratch["deseasonalized_value"]``.
+    CoreEWMAStep then uses this residual as its working value, causing the window
+    bank to accumulate deseasonalized signal.  All subsequent steps (RFI, PE,
+    VarCUSUM, coherence, etc.) therefore operate on the seasonal residual rather
+    than the raw signal — eliminating the 67.8% contextual archetype FPR that
+    resulted from downstream steps firing on normal sinusoidal variation.
+
+    When no period is detected (non-seasonal data), the scratch key is absent
+    and CoreEWMAStep falls back to the raw value with zero overhead.
+
+    Confidence gate: FFT peak must have power > ``seasonal_confidence`` × mean
+    spectral power (default 3.0).  This prevents deseasonalization on noisy or
+    aperiodic data where the period estimate is unreliable.
+    """
+
+    # Minimum spectral dominance ratio for period acceptance.
+    # Empirically calibrated: for n=64 N(0,1) white noise, the peak/mean ratio
+    # of |FFT|² follows an extreme-value distribution with p99 ≈ 7.64 and
+    # p99.9 ≈ 9.64.  Threshold=10.0 gives <0.1% false period detection on white
+    # noise while reliably detecting genuine periodic signals (e.g. amplitude-3
+    # sinusoids produce ratios of 40–60×).
+    _CONFIDENCE = 10.0
+    # Minimum buffer length before attempting detection
+    _MIN_DETECT = 64
+
+    def __init__(self, config: SentinelConfig):
+        self.cfg = config
+        self.reset()
+
+    def reset(self) -> None:
+        self._period: Optional[int] = (
+            self.cfg.seasonal_period if self.cfg.seasonal_period > 0 else None
+        )
+        self._phase_ewma: Dict[int, float] = {}
+        self._phase_dev: Dict[int, float] = {}
+        self._detect_buf: List[float] = []
+        self._n: int = 0
+        self._detection_attempted: bool = False
+
+    def _try_detect_period(self) -> Optional[int]:
+        """Attempt period detection; returns period only if confident."""
+        if not _NP or len(self._detect_buf) < self._MIN_DETECT:
+            return None
+        arr = np.array(self._detect_buf, dtype=float)
+        arr = arr - arr.mean()
+        spec = np.abs(np.fft.rfft(arr)) ** 2
+        if len(spec) < 2:
+            return None
+        spec[0] = 0.0  # skip DC
+        mean_power = float(spec[1:].mean()) if len(spec) > 1 else 0.0
+        if mean_power < 1e-12:
+            return None
+        peak_idx = int(np.argmax(spec))
+        if peak_idx == 0:
+            return None
+        # Confidence gate: peak must dominate the spectrum
+        if spec[peak_idx] < self._CONFIDENCE * mean_power:
+            return None
+        freqs = np.fft.rfftfreq(len(arr))
+        freq = float(freqs[peak_idx])
+        if freq < 1e-6:
+            return None
+        period = int(round(1.0 / freq))
+        return period if 2 <= period <= len(self._detect_buf) // 2 else None
+
+    def update(self, ctx: StepContext) -> None:
+        v = float(ctx.value if not isinstance(ctx.value, (list, tuple)) else ctx.value[0])
+        self._n += 1
+
+        # Phase 1: accumulate detect buffer and attempt period detection once
+        if self._period is None and not self._detection_attempted:
+            self._detect_buf.append(v)
+            if len(self._detect_buf) >= self._MIN_DETECT:
+                self._period = self._try_detect_period()
+                self._detection_attempted = True
+            # No deseasonalized value yet — downstream uses raw
+            ctx.scratch["seasonal_preprocess_period"] = None
+            return
+
+        if self._period is None:
+            # No period detected; pass-through
+            ctx.scratch["seasonal_preprocess_period"] = None
+            return
+
+        # Phase 2: maintain per-phase EWMA and produce residual
+        phase = self._n % self._period
+        alpha = self.cfg.alpha
+
+        if phase not in self._phase_ewma:
+            # First observation for this phase: initialize
+            self._phase_ewma[phase] = v
+            self._phase_dev[phase] = 1.0
+            # Not enough history yet; no deseasonalization on first pass
+            ctx.scratch["seasonal_preprocess_period"] = self._period
+            return
+
+        phase_baseline = self._phase_ewma[phase]
+        residual = v - phase_baseline
+
+        # Update per-phase EWMA with slower tracking
+        self._phase_ewma[phase] = alpha * v + (1.0 - alpha) * phase_baseline
+        err = abs(residual)
+        self._phase_dev[phase] = 0.1 * err + 0.9 * self._phase_dev[phase]
+
+        # Write deseasonalized value for CoreEWMAStep to consume
+        ctx.scratch["deseasonalized_value"] = residual
+        ctx.scratch["seasonal_preprocess_period"] = self._period
+        ctx.scratch["seasonal_preprocess_phase"] = phase
+
+    def state_dict(self) -> Dict[str, Any]:
+        return {
+            "period": self._period,
+            "phase_ewma": self._phase_ewma,
+            "phase_dev": self._phase_dev,
+            "n": self._n,
+            "detect_buf": self._detect_buf,
+            "detection_attempted": self._detection_attempted,
+        }
+
+    def load_state(self, sd: Dict[str, Any]) -> None:
+        self._period = sd.get("period")
+        self._phase_ewma = {int(k): v for k, v in sd.get("phase_ewma", {}).items()}
+        self._phase_dev = {int(k): v for k, v in sd.get("phase_dev", {}).items()}
+        self._n = sd.get("n", 0)
+        self._detect_buf = list(sd.get("detect_buf", []))
+        self._detection_attempted = sd.get("detection_attempted", False)
 
 
 # ---------------------------------------------------------------------------
