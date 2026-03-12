@@ -47,8 +47,9 @@ Targeted find-replace only where context = UMP.
 
 ## Patch 4 — DRP-2 Prose: Correct UMP Citation
 
-**FILE:** DRP-2 v1.2 prose (both versions)
-**STATUS:** PENDING — file not in repo.
+**FILES:** DRP2_v1_1_S49.docx and DRP2_v1_2_S49.docx
+**STATUS:** PENDING — files not in repo.
+**SCOPE NOTE:** v1.0 predates the UMP and is out of scope.
 
 All prose references citing C-DRP.7 as the UMP → correct to C-DRP.8.
 DRP-2 receives UMP as C-DRP2.5 (Type A), must cite [DRP-1, AI-Layer, C-DRP.8].
@@ -74,9 +75,31 @@ DRP-3 receives C-DRP2.4 as Type A inbound edge
 DRP-3 proves M↔C2 isomorphism
 ```
 
-Chain is clean once patches 1, 2, 5 are committed (repo files)
-and patches 3, 4 are applied when .docx/prose files are next in scope.
+Chain is clean once the three GitHub commits (patches 1, 2, 5) are
+executed and patches 3, 4 are applied when .docx/prose files are
+next in scope. (Patch 5 is an internal document update bundled
+with the same commit as patches 1 and 2.)
+
+---
+
+## Proofreading Status
+
+**Proofread:** S53 (hard stop rule applied)
+**Issues found:** 5
+**Issues resolved in this file:** 3 (Issues 2, 4, 5)
+**Issues resolved in AI layer:** 1 (Issue 3 — C-DRP.8 note corrected in DRP1-ai-layer.json)
+**Issues outstanding:** 1 (Issue 1 — VERIFY-BEFORE-COMMIT)
+
+### Issue 1 — VERIFY-BEFORE-COMMIT: C-DRP.8 Statement
+
+C-DRP.8 statement text (currently in `ai-layers/DRP1-ai-layer.json`) was
+synthesized from DRP-2's description of the UMP, NOT verified against the
+actual DRP-1 v1.1 §10.7 source prose. The formal expression `I(M(O);P) = 0`
+may represent DRP-2's epistemic conservation law (C-DRP2.2), not the UMP
+itself as stated in DRP-1. **Statement text must be verified against
+DRP-1 v1.1 §10.7 before this patch is cleared for publication.**
 
 ---
 
 *Patch spec archived by Claude Code, Session 53.*
+*Proofreading corrections applied S53 per hard stop rule.*

@@ -160,7 +160,7 @@
       "added_session": "S53",
       "addition_reason": "UMP proved in DRP-1 v1.1 prose but absent from v1 AI layer. Registered per BLOCKER-2 resolution (R-13). Claim ID C-DRP.8 consistent with S47 renumbering plan recorded in phase_ready note.",
       "falsification_predicate": null,
-      "note": "UMP is a theorem (type D). Received as Type A axiom in DRP-2 (C-DRP2.5) and in DRP-3 (received via DRP-2).",
+      "note": "UMP is a theorem (type D). Received as Type A axiom in DRP-2 (C-DRP2.5). DRP-3 receives C-DRP2.4 from DRP-2, which is itself derived from the UMP — C-DRP.8 is therefore an indirect ancestor of DRP-3 but is not a direct inbound edge in DRP-3's AI layer.",
       "tier": "definition",
       "test_bindings": [],
       "verified_against": null
