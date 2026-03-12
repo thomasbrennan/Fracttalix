@@ -5,24 +5,26 @@
 
 ---
 
-## Fracttalix Sentinel v12.2.0
+## Fracttalix Sentinel v12.3.0
 
 **Lightweight, regime-aware anomaly detection for time series**
 
 Single-file Python | Zero required dependencies | `pip install fracttalix`
 
 - Three-channel dissipative network model (structural, rhythmic, temporal)
-- 37-step streaming pipeline — one observation in, rich result out
+- 38-step streaming pipeline — one observation in, rich result out (Step 0: seasonal preprocessing)
 - Four signal-processing collapse indicators: maintenance burden (μ = 1−κ̄), PAC pre-cascade, diagnostic window, Kuramoto order
-- Production defaults: ~6% normal FPR (v12.2, multiplier=4.5; was 35.6% in v12.1)
-- 374 unit tests passing | Python 3.9–3.12
+- Production defaults: 2.6% normal FPR (v12.3; was 35% in v12.2)
+- 405 unit tests passing | Python 3.9–3.12
 - GitHub: https://github.com/thomasbrennan/Fracttalix
 - Software DOI: [10.5281/zenodo.18859299](https://doi.org/10.5281/zenodo.18859299)
 
-### v12.2 Changes
-- Epistemic language corrections: "physics-derived" → "signal-processing heuristic" throughout
-- `SentinelConfig.production()` multiplier 3.0→4.5 (normal FPR 35.6%→~6%)
-- Corrected README maintenance burden formula to match implementation (μ = 1−κ̄)
+### v12.3 Changes (FPR −93%, Mean F1 +25%)
+- SeasonalPreprocessStep (Step 0): FFT deseasonalization with 10× confidence gate
+- ConsensusGate: requires ≥2 soft alerts before firing (primary FPR reduction)
+- VarCUSUM/CUSUM k correction: 0.5→1.0 (eliminated +0.5/step systematic bias)
+- Null-distribution threshold recalibration: RFI, PE, coherence, coupling to p99 white noise
+- Non-adaptive drift CUSUM: warmup-frozen baseline catches slow drift masked by EWMA
 
 ---
 
