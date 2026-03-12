@@ -1,6 +1,6 @@
 # Three-Channel Dissipative Network Model
 
-Fracttalix Sentinel is built on the Three-Channel Dissipative Network Model, introduced in the Fractal Rhythm Model working papers (DOI: [10.5281/zenodo.18859299](https://doi.org/10.5281/zenodo.18859299)). The model describes how information is transmitted through a network that dissipates energy — a regime in which structural, oscillatory, and temporal properties carry independent diagnostic information about the network's health.
+Fracttalix Sentinel is built on the Three-Channel Dissipative Network Model, introduced in the Fractal Rhythm Model working papers (DOI: [10.5281/zenodo.18859299](https://doi.org/10.5281/zenodo.18859299)). The model provides a conceptual framework — inspired by dissipative network theory — in which structural, oscillatory, and temporal properties are treated as independent diagnostic channels. The collapse indicators derived from this model are **signal-processing heuristics**, not physical derivations; see the epistemic notes throughout this document.
 
 ## The Three Channels
 
@@ -33,7 +33,7 @@ Per-band power and instantaneous phase are stored in a `FrequencyBands` frozen d
 
 ### Channel 3 — Temporal
 
-Channel 3 monitors the one-way irreversible ordering of degradation events. In a dissipative network, time has a thermodynamic arrow: coupling architecture degrades before coherence collapses. This sequencing is not an assumption — it is a consequence of the hierarchy of energy scales in the network.
+Channel 3 monitors the ordering of degradation events. The Three-Channel Model treats coupling architecture degrading before coherence collapse as the expected sequence in gradual organic degradation. This is a modelling assumption of the framework, not a universal physical law — it functions as a baseline against which atypical orderings are flagged.
 
 `DegradationSequenceStep` (step 25) maintains a log of the order in which Channel 1 (structural) and Channel 2 (rhythmic) degradation events occur. The temporal ordering is the primary input to the reversed-sequence detection logic in the V12 physics group.
 
@@ -55,8 +55,8 @@ This multi-condition gate makes `CASCADE_PRECURSOR` a high-specificity signal. T
 
 | Type | Meaning |
 |------|---------|
-| `COUPLING_FIRST` | Coupling degraded before coherence — thermodynamically normal |
-| `COHERENCE_FIRST` | Coherence collapsed before coupling — anomalous ordering |
+| `COUPLING_FIRST` | Coupling degraded before coherence — matches heuristic baseline |
+| `COHERENCE_FIRST` | Coherence collapsed before coupling — atypical ordering |
 | `SIMULTANEOUS` | Both degraded within the same observation window |
 | `STABLE` | No degradation event at this step |
 
@@ -81,15 +81,19 @@ PAC Modulation Index declines (PACDegradationStep, step 30)
         → Coherence collapse imminent
 ```
 
-## Physics Metrics Reference
+## Signal-Processing Heuristics Reference
+
+> **Epistemic note:** The metrics below are engineering heuristics inspired by concepts from physics and complexity science. They are not physical derivations. The regime names and thresholds are empirically set classification labels, not quantities calibrated from physical data.
 
 ### Maintenance Burden μ
 
 ```
-μ = N · κ̄ · E_coupling / P_throughput
+μ = 1 − κ̄
 ```
 
-Operationally, `ThroughputEstimationStep` (step 26) estimates P_throughput from band amplitudes and counts active nodes N. `MaintenanceBurdenStep` (step 27) computes μ and maps it to a Tainter regime. When μ = 1, the network has no adaptive reserve: all energy is consumed by maintaining existing coupling, with nothing left for adaptation or recovery.
+where κ̄ is the mean cross-frequency coupling score (0–1). Low coupling implies high inferred coordination overhead; high coupling implies efficient coordination. `MaintenanceBurdenStep` (step 27) computes μ and maps it to a regime. When μ → 1 (κ̄ → 0), very low coupling is detected.
+
+> **Note:** An earlier version of this document showed an abandoned formula `μ = N · κ̄ · E_coupling / P_throughput`. The actual implementation since v11.0 is `μ = 1 − κ̄` as above. The regime names (`TAINTER_WARNING`, `TAINTER_CRITICAL`) are descriptive labels borrowed from Tainter's work on complexity — μ is not derived from that model.
 
 ### Diagnostic Window Δt
 

@@ -31,5 +31,5 @@ for value in my_data_stream:
 ## Next Steps
 
 - [Getting Started](getting_started.md) — installation options, factory presets, multi-stream usage, reading results
-- [Three-Channel Model](three_channel_model.md) — theoretical background and physics metrics
+- [Three-Channel Model](three_channel_model.md) — theoretical background and signal-processing heuristics
 - [API Reference](api/detector.md) — full class and method documentation

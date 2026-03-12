@@ -35,14 +35,14 @@ Streaming time-series anomaly detection is a practical requirement across indust
 
 Neither category provides collapse-precursor diagnostics: the ability to detect that coupling architecture is degrading before the primary anomaly score crosses a threshold, nor to estimate a remaining time window before coherence collapse.
 
-| Library | Streaming | Collapse Physics | Zero Core Deps | Time-to-Collapse |
-|---------|-----------|-----------------|----------------|-----------------|
+| Library | Streaming | Coupling Heuristics | Zero Core Deps | Collapse Estimate |
+|---------|-----------|---------------------|----------------|------------------|
 | PyOD | No | No | No | No |
 | ADTK | Yes | No | No | No |
 | River | Yes | No | No | No |
 | **Fracttalix** | **Yes** | **Yes** | **Yes** | **Yes** |
 
-Fracttalix Sentinel addresses this gap for four practitioner communities. Industrial IoT operators can receive a quantified time-to-collapse estimate before a sensor stream reaches alert threshold, allowing pre-emptive maintenance scheduling. Network operations teams can distinguish organic degradation from externally driven disruption via the intervention signature metric. Financial data engineers can monitor market microstructure coupling in real time without batch re-fitting. Researchers studying critical transitions can use the diagnostic window and Kuramoto order outputs as empirical test signals for theoretical collapse models.
+Fracttalix Sentinel addresses this gap for four practitioner communities. Industrial IoT operators can receive a heuristic time-to-collapse estimate before a sensor stream reaches alert threshold, allowing earlier maintenance scheduling. Network operations teams can flag unusual degradation ordering patterns via the intervention signature metric. Financial data engineers can monitor market microstructure coupling in real time without batch re-fitting. Researchers studying critical transitions can use the diagnostic window and Kuramoto order outputs as exploratory signals alongside established methods.
 
 # Methodology
 
@@ -50,17 +50,17 @@ Every call to `update_and_check()` runs 37 `DetectorStep` subclasses in strict s
 
 ## Three-Channel Model
 
-The pipeline implements the Three-Channel Dissipative Network Model [@FRM2026]. **Channel 1 (Structural)** computes distributional moments and stationarity at every step; elevated variance and lag-1 autocorrelation are the classical critical-slowing-down signature. **Channel 2 (Rhythmic)** decomposes the signal via FFT into five carrier-wave bands and measures phase-amplitude coupling (PAC) across six band pairs using the Modulation Index [@Tort2010]; declining composite coupling score triggers `COUPLING_DEGRADATION` before any single-band threshold is breached. **Channel 3 (Temporal)** records the ordering of degradation events: because thermodynamic irreversibility dictates that coupling degrades before coherence collapses organically, a reversed ordering is treated as a distinct signal class. The multi-stage cascade trigger (band anomaly → coupling degradation → channel decoupling → `CASCADE_PRECURSOR`) reduces false-positive critical alerts relative to any single threshold.
+The pipeline implements the Three-Channel Dissipative Network Model [@FRM2026]. **Channel 1 (Structural)** computes distributional moments and stationarity at every step; elevated variance and lag-1 autocorrelation are the classical critical-slowing-down signature. **Channel 2 (Rhythmic)** decomposes the signal via FFT into five carrier-wave bands and measures phase-amplitude coupling (PAC) across six band pairs using the Modulation Index [@Tort2010]; declining composite coupling score triggers `COUPLING_DEGRADATION` before any single-band threshold is breached. **Channel 3 (Temporal)** records the ordering of degradation events: the Three-Channel framework models coupling degradation as typically preceding coherence collapse; a reversed ordering is therefore treated as a distinct signal class requiring a different explanation. The multi-stage cascade trigger (band anomaly → coupling degradation → channel decoupling → `CASCADE_PRECURSOR`) reduces false-positive critical alerts relative to any single threshold.
 
-## Collapse Dynamics
+## Collapse-Proximity Heuristics
 
-Four physics-derived steps provide collapse forecasting. **Maintenance Burden** μ = 1 − κ̄ [@Tainter1988] encodes the fraction of adaptive reserve consumed; four regimes (`HEALTHY`, `REDUCED_RESERVE`, `TAINTER_WARNING`, `TAINTER_CRITICAL`) are reported continuously. **PAC pre-cascade detection** fires when PAC degrades before mean coupling κ̄ crosses its threshold [@Tort2010], providing an earlier precursor than the cascade logic alone. **Diagnostic window** Δt = (κ̄ − κ_c) / |dκ̄/dt| estimates remaining steps before coherence collapse under the Kuramoto synchronization framework [@Kuramoto1984], with pessimistic, expected, and optimistic bounds and a `HIGH/MEDIUM/LOW` confidence grading based on rate stability. **Reversed-sequence detection** classifies a coherence collapse preceding coupling decline as an intervention signature, quantified by `intervention_signature_score` (0.0–1.0).
+Four signal-processing heuristic steps provide collapse-proximity indicators. **Maintenance Burden** μ = 1 − κ̄ encodes inferred coordination overhead from mean coupling strength; four regimes (`HEALTHY`, `REDUCED_RESERVE`, `TAINTER_WARNING`, `TAINTER_CRITICAL`) are reported continuously. The regime names are borrowed from Tainter [-@Tainter1988] as descriptive labels only — μ is not derived from Tainter's socioeconomic model. **PAC pre-cascade detection** fires when PAC degrades before mean coupling κ̄ crosses its threshold [@Tort2010], providing an earlier precursor than the cascade logic alone. **Diagnostic window** Δt = (κ̄ − κ_c) / |dκ̄/dt| estimates remaining steps before coherence collapse under a Kuramoto-inspired framework [@Kuramoto1984], with pessimistic, expected, and optimistic bounds and a `HIGH/MEDIUM/LOW` confidence grading based on rate stability; this is a trajectory extrapolation under current conditions, not a physical prediction. **Reversed-sequence detection** classifies a coherence collapse preceding coupling decline as a pattern distinct from the heuristic baseline, quantified by `intervention_signature_score` (0.0–1.0).
 
 # Performance
 
 The built-in `SentinelBenchmark` harness evaluates Sentinel against five labeled anomaly archetypes: point anomalies (sparse 8σ spikes), contextual anomalies (values anomalous relative to sinusoidal seasonal context), collective anomalies (extended runs of moderately elevated values), drift (slow linear mean drift starting mid-series), and variance anomalies (sudden 4× variance explosion). Metrics reported are F1 score, area under the precision-recall curve (AUPRC), volume under the surface of precision-recall (VUS-PR), and mean detection lag in observations.
 
-The following results were produced with seed 42 and n=1000 observations per archetype using `benchmark.run_suite(seed=42)`:
+The following results were produced with seed 42 and n=1000 observations per archetype using `benchmark.run_suite(seed=42)` (pre-v12.3 baseline; v12.3 substantially improves point, contextual, collective, and FPR — see CHANGELOG):
 
 | Archetype          | F1   | AUPRC | VUS-PR | Detection Lag (obs) |
 |--------------------|------|-------|--------|---------------------|
