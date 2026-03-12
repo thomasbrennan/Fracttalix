@@ -13,6 +13,7 @@ Executor:        Claude Code
 Authorised by:   Thomas Brennan (verbal instruction, Session 49)
 Repository:      github.com/thomasbrennan/Fracttalix
 Target branch:   main
+Status:          BLOCKED — see Section 2a
 
 ## 2. SCOPE
 
@@ -20,6 +21,30 @@ Push three AI layer files to the Fracttalix GitHub repository. All
 three overwrite existing repo files found to be corrupt or stale by
 the Session 49 divergence audit. The files to be pushed are the
 canonical S48/S49 CBT-passing versions held in the programme corpus.
+
+## 2a. PREREQUISITE — DEPOSIT (BLOCKING)
+
+The three JSON files listed in Section 3 are held in the corpus outputs
+of the session instance that produced them. They have not yet been
+deposited to this repository instance. This work order cannot be
+executed until all three files are deposited.
+
+Required deposit action (Thomas or originating instance):
+
+Deposit P1-ai-layer-v13.json  →  available to Claude Code
+Deposit P2-ai-layer-v4.json   →  available to Claude Code
+Deposit P3-ai-layer-v2.json   →  available to Claude Code
+
+DO NOT reconstruct JSON from the archived text versions. The text files
+are human-readable derivatives, not sources. Text-to-JSON reconstruction
+introduces synthesis errors and is ruled out by programme standing rule.
+
+Version note: The archived text file for P1 is labelled v12. The
+canonical JSON is v13. The content is identical — the v12→v13 version
+bump occurred during the PR3-2 update in Session 49, after the text
+file was generated. Content is correct; header numbering is one version
+behind. No correction to content required. Header to be corrected on
+next archive pass.
 
 ## 3. PUSH TASKS
 
@@ -109,8 +134,9 @@ principle_10_compliant = true
 
 ## 5. BLOCKING CONDITIONS
 
-None. Thomas Brennan has given verbal authorisation (Session 49).
-Files are held in corpus outputs. Claude Code has repository access.
+BLOCKED — JSON files not yet deposited. See Section 2a.
+All other conditions satisfied: Thomas Brennan verbal authorisation
+given Session 49. Claude Code has repository access.
 
 ## 6. POST-PUSH VERIFICATION
 
@@ -136,9 +162,9 @@ falsifiability standard amendment).
 
 ## 8. COMPLETION
 
-This work order is complete when all three pushes are confirmed and
-post-push verification passes. Claude Code to report completion with
-commit hashes.
+This work order is complete when deposit (Section 2a) is confirmed,
+all three pushes are confirmed, and post-push verification passes.
+Claude Code to report completion with commit hashes.
 
 # ========================================================================
 # END  |  WO-S49-PUSH-1  |  Session 49  |  12 March 2026
