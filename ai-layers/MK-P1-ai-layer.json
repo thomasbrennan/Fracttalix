@@ -42,7 +42,7 @@
     {
       "claim_id": "A-MK1.1",
       "type": "A",
-      "label": "[TYPE:A]",
+      "label": "Axiom 1 — Weak Order",
       "name": "Axiom 1 — Weak Order",
       "statement": "For any two improvement candidates a and b, either a is at least as good as b or b is at least as good as a, and this ordering is transitive.",
       "source": "Axiom 1, Section 4.1",
@@ -57,7 +57,7 @@
     {
       "claim_id": "A-MK1.2",
       "type": "A",
-      "label": "[TYPE:A]",
+      "label": "Axiom 2 — Preferential Independence",
       "name": "Axiom 2 — Preferential Independence",
       "statement": "The preference ordering over candidates that differ only in component N is independent of the values of I′, C′, and T. Holds symmetrically for all four components.",
       "source": "Axiom 2, Section 4.1",
@@ -73,7 +73,7 @@
     {
       "claim_id": "A-MK1.3",
       "type": "A",
-      "label": "[TYPE:A]",
+      "label": "Axiom 3 — Solvability",
       "name": "Axiom 3 — Solvability",
       "statement": "For any three components held fixed, there exists a value of the fourth component that achieves any target quality score in [0,1]. Ensures scale is continuous and complete.",
       "source": "Axiom 3, Section 4.1",
@@ -87,7 +87,7 @@
     {
       "claim_id": "A-MK1.4",
       "type": "A",
-      "label": "[TYPE:A]",
+      "label": "Axiom 4 — Archimedean Condition",
       "name": "Axiom 4 — Archimedean Condition",
       "statement": "No finite sequence of equal-interval steps in any component is unbounded. No component can be infinitely more important than another.",
       "source": "Axiom 4, Section 4.1",
@@ -101,7 +101,7 @@
     {
       "claim_id": "A-MK1.5",
       "type": "A",
-      "label": "[TYPE:A]",
+      "label": "Axiom 5 — Essentialness with Veto Power",
       "name": "Axiom 5 — Essentialness with Veto Power",
       "statement": "A zero value on any single component renders the candidate inadoptable: f(0,I′,C′,T) = f(N,0,C′,T) = f(N,I′,0,T) = f(N,I′,C′,0) = 0 for all component values.",
       "source": "Axiom 5, Section 4.1",
@@ -116,7 +116,7 @@
     {
       "claim_id": "A-MK1.6",
       "type": "A",
-      "label": "[TYPE:A]",
+      "label": "Axiom 6 — Marginal Symmetry",
       "name": "Axiom 6 — Marginal Symmetry",
       "statement": "The marginal rate of substitution between any two components is equal at all points where their values are equal. Formally: ∂f/∂N = ∂f/∂I′ whenever N = I′; and symmetrically for all pairs.",
       "source": "Axiom 6, Section 4.1",
@@ -130,7 +130,7 @@
     {
       "claim_id": "D-MK1.1",
       "type": "D",
-      "label": "[TYPE:D]",
+      "label": "Governance Substrate",
       "name": "Governance Substrate",
       "statement": "A substrate S is a tuple S = (D, P, Ω, M) where D = document set, P = principal set, Ω = outcome space, M = metric function M: D × time → Ω. An improvement candidate for S is a proposed revision δ to D characterized by Novelty, Impact, Complexity, and Timeliness.",
       "source": "Definition 3.1, Section 3.1",
@@ -143,7 +143,7 @@
     {
       "claim_id": "D-MK1.2",
       "type": "D",
-      "label": "[TYPE:D]",
+      "label": "KVS Formula",
       "name": "KVS Formula",
       "statement": "KVS_j = N_j × I′_j × C′_j × T_j, where N_j, I′_j, C′_j, T_j ∈ [0,1] are defined in D-MK1.3 through D-MK1.6.",
       "source": "Definition 4.1, Section 4.2",
@@ -159,7 +159,7 @@
     {
       "claim_id": "D-MK1.3",
       "type": "D",
-      "label": "[TYPE:D]",
+      "label": "Novelty Factor",
       "name": "Novelty Factor",
       "statement": "N_j = 1 − max_{τ ∈ {t−1,t−2,t−3,t−4}} Jaccard(K_j, K_τ), where Jaccard(A,B) = |A∩B|/|A∪B|. Maximum (not mean) Jaccard similarity used. Operational target: E[N] ≥ 0.70 over rolling 4-scan window.",
       "source": "Definition 4.2, Section 4.3",
@@ -172,7 +172,7 @@
     {
       "claim_id": "D-MK1.4",
       "type": "D",
-      "label": "[TYPE:D]",
+      "label": "Normalized Impact",
       "name": "Normalized Impact",
       "statement": "I′_j = min(1, μ_j / I_max), where μ_j is the administrator's point estimate of annualized improvement and I_max is the pre-committed substrate-specific maximum. Recommended I_max values: IPS = 3.0 pp/yr; clinical = 5.0 pp; DORA = 50%; lean = 10% waste reduction.",
       "source": "Definition 4.3, Section 4.4",
@@ -185,7 +185,7 @@
     {
       "claim_id": "D-MK1.5",
       "type": "D",
-      "label": "[TYPE:D]",
+      "label": "Normalized Inverse Complexity",
       "name": "Normalized Inverse Complexity",
       "statement": "C′_j = (2.0 − C_j) / 1.0, where C_j ∈ {1.0, 1.2, 1.4, 1.6, 1.8, 2.0}. Linear rescaling maps [1.0, 2.0] bijectively onto [1.0, 0.0], fully spanning [0,1] and reaching zero at maximum complexity. Corrects prior 1/C formulation which compressed range to [1.0, 0.5].",
       "source": "Definition 4.4, Section 4.5",
@@ -198,7 +198,7 @@
     {
       "claim_id": "D-MK1.6",
       "type": "D",
-      "label": "[TYPE:D]",
+      "label": "Timeliness Score",
       "name": "Timeliness Score",
       "statement": "T_j = max(0, 1 − h_j / H_max), where h_j = months to relevance and H_max = 60 (default). H_max revisable at annual review with principal approval.",
       "source": "Definition 4.5, Section 4.6",
@@ -211,7 +211,7 @@
     {
       "claim_id": "F-MK1.1",
       "type": "F",
-      "label": "[TYPE:F]",
+      "label": "Property 4.1 — Boundedness",
       "name": "Property 4.1 — Boundedness",
       "statement": "KVS_j ∈ [0,1] for all improvement candidates j.",
       "source": "Property 4.1, Section 4.2",
@@ -249,7 +249,13 @@
         "BOUNDARY": "KVS_j = 0 or KVS_j = 1 → NOT FALSIFIED (boundary values are permitted)",
         "CONTEXT": "This property follows immediately from D-MK1.2: the product of four numbers each in [0,1] is in [0,1]. It is a Property rather than a Theorem because it requires no non-trivial inference. Stated for architectural significance: ensures cross-substrate comparability without renormalization."
       },
-      "derivation_source": ["D-MK1.2", "D-MK1.3", "D-MK1.4", "D-MK1.5", "D-MK1.6"],
+      "derivation_source": [
+        "D-MK1.2",
+        "D-MK1.3",
+        "D-MK1.4",
+        "D-MK1.5",
+        "D-MK1.6"
+      ],
       "tier": "formal_proof",
       "test_bindings": [],
       "verified_against": null
@@ -257,7 +263,7 @@
     {
       "claim_id": "F-MK1.2",
       "type": "F",
-      "label": "[TYPE:F]",
+      "label": "Property 4.2 — Monotonicity",
       "name": "Property 4.2 — Monotonicity",
       "statement": "KVS_j is non-decreasing in each of N_j, I′_j, C′_j, T_j, holding others fixed. For any factor f_k: ∂KVS_j/∂f_k = ∏_{i≠k} f_i ≥ 0.",
       "source": "Property 4.2, Section 4.2",
@@ -293,7 +299,13 @@
         "BOUNDARY": "KVS_j′ = KVS_j when the improved component starts at or contributes zero product — NOT FALSIFIED (non-decreasing, not strictly increasing)",
         "CONTEXT": "Significance is normative: correct incentive structure. An improvement candidate that scores higher on any dimension should never score lower overall."
       },
-      "derivation_source": ["D-MK1.2", "D-MK1.3", "D-MK1.4", "D-MK1.5", "D-MK1.6"],
+      "derivation_source": [
+        "D-MK1.2",
+        "D-MK1.3",
+        "D-MK1.4",
+        "D-MK1.5",
+        "D-MK1.6"
+      ],
       "tier": "formal_proof",
       "test_bindings": [],
       "verified_against": null
@@ -301,7 +313,7 @@
     {
       "claim_id": "F-MK1.3",
       "type": "F",
-      "label": "[TYPE:F]",
+      "label": "Theorem 4.1 — KVS Functional Form (three-part)",
       "name": "Theorem 4.1 — KVS Functional Form (three-part)",
       "statement": "Under Axioms 1–6 and the Scale Normalization Condition, the canonical functional form representing improvement quality is KVS_j = N_j × I′_j × C′_j × T_j. (a) Multiplicative structure follows necessarily from Axiom 5. (b) Equal exponents follow necessarily from Axiom 6. (c) Common exponent α = 1 is the canonical modeling choice under Scale Normalization — not a uniquely forced mathematical result.",
       "source": "Theorem 4.1, Section 4.1, Stages 1–4",
@@ -473,7 +485,18 @@
           "CONTEXT": "Part (c) is a canonical modeling choice. The paper's Correction 2 explicitly states: 'α = 1 is the canonical modeling choice under proportional normalization, not a uniquely forced mathematical conclusion.' This claim has weaker epistemic status than parts (a) and (b) and should be read accordingly."
         }
       },
-      "derivation_source": ["A-MK1.1", "A-MK1.2", "A-MK1.3", "A-MK1.4", "A-MK1.5", "A-MK1.6", "D-MK1.3", "D-MK1.4", "D-MK1.5", "D-MK1.6"],
+      "derivation_source": [
+        "A-MK1.1",
+        "A-MK1.2",
+        "A-MK1.3",
+        "A-MK1.4",
+        "A-MK1.5",
+        "A-MK1.6",
+        "D-MK1.3",
+        "D-MK1.4",
+        "D-MK1.5",
+        "D-MK1.6"
+      ],
       "tier": "formal_proof",
       "test_bindings": [],
       "verified_against": null
@@ -481,7 +504,7 @@
     {
       "claim_id": "F-MK1.4",
       "type": "F",
-      "label": "[TYPE:F]",
+      "label": "Theorem 4.2 — Self-Referential Applicability",
       "name": "Theorem 4.2 — Self-Referential Applicability",
       "statement": "Let S_MK denote the Meta-Kaizen process itself as a substrate. Then KVS is well-defined for improvement candidates targeting S_MK.",
       "source": "Theorem 4.2, Section 4.2",
@@ -527,7 +550,14 @@
         "BOUNDARY": "Theorem establishes well-definedness only, not convergence or optimality — convergence is addressed in Paper 2 (Governance Closure Theorem). A demonstration that KVS does not converge to an optimal formula does NOT falsify this theorem.",
         "CONTEXT": "Self-referentiality is the mechanism that permits Meta-Kaizen to improve itself. The principal gate (human review required for all adoptions including meta-level ones) prevents runaway self-modification."
       },
-      "derivation_source": ["D-MK1.1", "D-MK1.2", "D-MK1.3", "D-MK1.4", "D-MK1.5", "D-MK1.6"],
+      "derivation_source": [
+        "D-MK1.1",
+        "D-MK1.2",
+        "D-MK1.3",
+        "D-MK1.4",
+        "D-MK1.5",
+        "D-MK1.6"
+      ],
       "tier": "formal_proof",
       "test_bindings": [],
       "verified_against": null
@@ -535,7 +565,7 @@
     {
       "claim_id": "F-MK1.5",
       "type": "F",
-      "label": "[TYPE:F]",
+      "label": "Theorem 4.3 — Threshold Optimality (Symmetric Case)",
       "name": "Theorem 4.3 — Threshold Optimality (Symmetric Case)",
       "statement": "When L_FP = L_FN (symmetric losses), π = 0.5 (uniform quality prior), and score distributions are symmetric around κ = 0.5 such that p_G(0.5) = p_P(0.5), the unique optimal adoption threshold is κ* = 0.50.",
       "source": "Theorem 4.3 symmetric special case, Section 4.7",
@@ -594,7 +624,10 @@
         "BOUNDARY": "Asymmetric case (L_FP ≠ L_FN) uses approximation formula requiring distributional assumptions — asymmetric formula is NOT part of this predicate and is presented in the paper as an approximation, not a derivation",
         "CONTEXT": "Symmetric special case is a complete derivation. Asymmetric formula requires distributional assumptions (uniform score distributions, uniform quality prior) stated explicitly in the paper. Practitioners using asymmetric thresholds must derive κ* from their specific loss ratio."
       },
-      "derivation_source": ["A-MK1.1", "D-MK1.2"],
+      "derivation_source": [
+        "A-MK1.1",
+        "D-MK1.2"
+      ],
       "tier": "formal_proof",
       "test_bindings": [],
       "verified_against": null
@@ -602,7 +635,7 @@
     {
       "claim_id": "F-MK1.6",
       "type": "F",
-      "label": "[TYPE:F]",
+      "label": "Simulation Result — KVS Recall under Q_mult_noisy",
       "name": "Simulation Result — KVS Recall under Q_mult_noisy",
       "statement": "KVS achieves 73.8% top-5% recall [90% CI: 71.2, 76.2] against Q_mult_noisy (multiplicative ground truth with log-normal noise σ=0.30) under the simulation specification in Section 5.2 with numpy seed=42.",
       "source": "Section 5.3, Table: Decision-Theoretic Comparison",
@@ -631,7 +664,9 @@
         "BOUNDARY": "Recall = 71.2 or 76.2 → NOT FALSIFIED (CI bounds are inclusive). Result outside CI with numpy seed=42 indicates implementation error, not model falsification — this is a reproducibility claim.",
         "CONTEXT": "This is a structural simulation result, not an empirical validation. The 73.8% figure is earned (not circular: Q_mult_noisy uses log-normal noise, not KVS.copy()). Comparison: ADD achieves 68.4% [66.0, 70.8] — non-overlapping CIs establish meaningful structural advantage. Random selector achieves 5% by construction."
       },
-      "derivation_source": ["D-MK1.2"],
+      "derivation_source": [
+        "D-MK1.2"
+      ],
       "tier": "empirical_pending",
       "test_bindings": [],
       "verified_against": null
@@ -639,7 +674,7 @@
     {
       "claim_id": "F-MK1.7",
       "type": "F",
-      "label": "[TYPE:F]",
+      "label": "Simulation Result — KVS Outperforms ADD under Q_threshold (all distributional variants)",
       "name": "Simulation Result — KVS Outperforms ADD under Q_threshold (all distributional variants)",
       "statement": "KVS maintains recall advantage over ADD under Q_threshold (Q=1 iff all factors > 0.5, else Q=0) across all six distributional parameter variants tested in Section 5.3. Baseline: KVS = 58.8% [56.1, 61.5] vs ADD = 51.2% [48.6, 54.1] — 7.5 pp advantage with non-overlapping confidence intervals.",
       "source": "Section 5.3, Sensitivity Analysis tables",
@@ -663,7 +698,10 @@
         "BOUNDARY": "KVS = ADD for any variant → FALSIFIED (claim requires strict advantage)",
         "CONTEXT": "Q_threshold is the most practically informative outcome function: it formalizes that real improvements require minimum thresholds across ALL dimensions. KVS's structural advantage under Q_threshold is the primary simulation-based argument for the multiplicative form over additive alternatives."
       },
-      "derivation_source": ["D-MK1.2", "A-MK1.5"],
+      "derivation_source": [
+        "D-MK1.2",
+        "A-MK1.5"
+      ],
       "tier": "empirical_pending",
       "test_bindings": [],
       "verified_against": null
@@ -671,7 +709,7 @@
     {
       "claim_id": "F-MK1.8",
       "type": "F",
-      "label": "[TYPE:F]",
+      "label": "Simulation Result — Timeliness Dominance Artifact",
       "name": "Simulation Result — Timeliness Dominance Artifact",
       "statement": "Timeliness T correlates with KVS at ρ = 0.740 [90% CI: 0.730, 0.749] under baseline simulation specification — substantially higher than N (ρ=0.258), I′ (ρ=0.217), C′ (ρ=0.385). This is a distributional artifact explained by T=0 candidates (~17% of draws) collapsing KVS to zero.",
       "source": "Section 5.3, Factor Dominance table",
@@ -687,7 +725,10 @@
         "BOUNDARY": "ρ_T = 0.730 → NOT FALSIFIED (CI lower bound is inclusive)",
         "CONTEXT": "Operational remedy: filter T=0 candidates before scoring. Equal-weight property holds for candidates with T > 0. This artifact is a structural consequence of the distributional specification, not a model failure."
       },
-      "derivation_source": ["D-MK1.2", "D-MK1.6"],
+      "derivation_source": [
+        "D-MK1.2",
+        "D-MK1.6"
+      ],
       "tier": "empirical_pending",
       "test_bindings": [],
       "verified_against": null
@@ -695,7 +736,7 @@
     {
       "claim_id": "F-MK1.9",
       "type": "F",
-      "label": "[TYPE:F]",
+      "label": "Pre-Registered H₁ — Empirical Validation Path",
       "name": "Pre-Registered H₁ — Empirical Validation Path",
       "statement": "H₁: Among improvement candidates meeting KVS ≥ κ threshold, Spearman rank correlation between KVS score and realized outcome improvement (at 12 months post-adoption) is significantly greater than zero, stratified by substrate type. Minimum sample: n ≥ 30 per substrate per organization, across ≥ 10 organizations, minimum 300 observations per substrate.",
       "source": "Section 5.4",
@@ -716,7 +757,10 @@
         "BOUNDARY": "ρ = 0 or p = 0.05 → FALSIFIED (requires strictly greater than zero with significance)",
         "CONTEXT": "If H₁ is not supported, the paper commits to recharacterizing KVS as a governance tool (transparent, auditable, consistent) rather than a scientific measurement instrument. This is explicitly stated in Section 5.4. Non-confirmation does not invalidate the axiomatic derivation — it bounds the empirical claim."
       },
-      "derivation_source": ["F-MK1.3", "D-MK1.2"],
+      "derivation_source": [
+        "F-MK1.3",
+        "D-MK1.2"
+      ],
       "tier": "empirical_pending",
       "test_bindings": [],
       "verified_against": null

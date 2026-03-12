@@ -34,66 +34,105 @@
   "inference_rule_inventory": "IR-1 through IR-8 — Fracttalix P2 Build Plan S48",
   "principle_10_compliant": true,
   "principle_10_audit": [
-    { "constant_or_condition": "QSS 4-element schema {A, D, P, C}", "derivation_path": "Derived from minimality proof (Proposition 5.2): constructive counterexample shows each element is necessary." },
-    { "constant_or_condition": "4 challenge types (I-IV)", "derivation_path": "Grounded in Aristotle's Topics 1.4 (101b11-20) partition of predicables. Stock (1888 §339) exhaustiveness argument." },
-    { "constant_or_condition": "KVS self-score = 0.413", "derivation_path": "N=0.86, I'=0.60, C'=0.80, T=1.00. KVS = 0.86 × 0.60 × 0.80 × 1.00 = 0.413. Below kappa=0.50. Explicitly labeled as demonstration of self-referential applicability, not quality evidence." }
+    {
+      "constant_or_condition": "QSS 4-element schema {A, D, P, C}",
+      "derivation_path": "Derived from minimality proof (Proposition 5.2): constructive counterexample shows each element is necessary."
+    },
+    {
+      "constant_or_condition": "4 challenge types (I-IV)",
+      "derivation_path": "Grounded in Aristotle's Topics 1.4 (101b11-20) partition of predicables. Stock (1888 §339) exhaustiveness argument."
+    },
+    {
+      "constant_or_condition": "KVS self-score = 0.413",
+      "derivation_path": "N=0.86, I'=0.60, C'=0.80, T=1.00. KVS = 0.86 × 0.60 × 0.80 × 1.00 = 0.413. Below kappa=0.50. Explicitly labeled as demonstration of self-referential applicability, not quality evidence."
+    }
   ],
   "claim_registry": [
     {
       "claim_id": "A-MK3.1",
       "type": "A",
-      "label": "[TYPE:A]",
+      "label": "Aristotle's Topics — predicable partition",
       "name": "Aristotle's Topics — predicable partition",
       "statement": "Aristotle's Topics (1.4, 101b11-20) partitions predicables into four types: definition, genus, property, and accident. Stock (1888 §339) argues this partition is exhaustive for productive questioning about any subject.",
-      "derivation_source": ["Aristotle, Topics", "Stock 1888"],
+      "derivation_source": [
+        "Aristotle, Topics",
+        "Stock 1888"
+      ],
       "falsification_predicate": null
     },
     {
       "claim_id": "A-MK3.2",
       "type": "A",
-      "label": "[TYPE:A]",
+      "label": "Koestler's bisociation framework",
       "name": "Koestler's bisociation framework",
       "statement": "Creative insights arise from simultaneous activation of two habitually incompatible matrices of thought (Koestler 1964). The bisociative bridge between domains produces novel structural analogies.",
-      "derivation_source": ["Koestler 1964"],
+      "derivation_source": [
+        "Koestler 1964"
+      ],
       "falsification_predicate": null
     },
     {
       "claim_id": "A-MK3.3",
       "type": "A",
-      "label": "[TYPE:A]",
+      "label": "Institutional memory decay",
       "name": "Institutional memory decay",
       "statement": "Institutional memory decays with personnel transitions. Individual memory is the most volatile retention facility (Walsh & Ungson 1991). Argote & Epple (1990) and Levitt & March (1988) document systematic forgetting curves following personnel transitions.",
-      "derivation_source": ["Walsh & Ungson 1991", "Argote & Epple 1990", "Levitt & March 1988"],
+      "derivation_source": [
+        "Walsh & Ungson 1991",
+        "Argote & Epple 1990",
+        "Levitt & March 1988"
+      ],
       "falsification_predicate": null
     },
     {
       "claim_id": "D-MK3.1",
       "type": "D",
-      "label": "[TYPE:D]",
+      "label": "Question Structure Schema (QSS)",
       "name": "Question Structure Schema (QSS)",
       "statement": "A QSS is a 4-tuple (A, D, P, C) where A = governing Assumption challenged, D = Orthogonal Domain (Jaccard distance > 0.70 from substrate), P = Structural Principle extracted from D, C = Applicability Condition specifying when P applies to the substrate.",
-      "derivation_source": ["MK-P1 AI-Layer D-MK1.3"],
+      "derivation_source": [
+        "MK-P1 AI-Layer D-MK1.3"
+      ],
       "falsification_predicate": null
     },
     {
       "claim_id": "D-MK3.2",
       "type": "D",
-      "label": "[TYPE:D]",
+      "label": "Challenge Taxonomy (Types I-IV)",
       "name": "Challenge Taxonomy (Types I-IV)",
       "statement": "Four challenge types derived from Aristotle's predicables: Type I (Scope challenge — assumption applies to wrong domain), Type II (Precision challenge — assumption is vague or ambiguous), Type III (Mechanism challenge — assumption identifies wrong causal mechanism), Type IV (Relevance challenge — assumption is obsolete or irrelevant to current context).",
-      "derivation_source": ["A-MK3.1"],
+      "derivation_source": [
+        "A-MK3.1"
+      ],
       "falsification_predicate": null
     },
     {
       "claim_id": "C-MK3.1",
       "type": "F",
-      "label": "[TYPE:F]",
+      "label": "Proposition 4.1 — Institutional Memory Loss",
       "name": "Proposition 4.1 — Institutional Memory Loss",
       "statement": "Under standard improvement record formats (outcome documented, rationale brief or absent, QSS elements not specified), the retention level RL(t) declines with personnel transitions: RL(t_0 + k*Delta) → 0 as k → infinity, where Delta is the median tenure length.",
-      "derivation_source": ["A-MK3.3", "D-MK3.1"],
+      "derivation_source": [
+        "A-MK3.3",
+        "D-MK3.1"
+      ],
       "inference_rule_steps": [
-        { "step": "1", "input": ["A-MK3.3"], "operation": "IR-1: Cited theorem application — Walsh & Ungson (1991): individual memory is most volatile retention facility. QSS elements A and P are predominantly held in individual memory.", "output": "QSS elements decay with personnel departure." },
-        { "step": "2", "input": ["Step 1"], "operation": "IR-5: Algebraic manipulation — each personnel transition eliminates fraction of QSS knowledge. After k transitions: RL ~ (1-d)^k → 0.", "output": "RL(t_0 + k*Delta) → 0 as k → infinity." }
+        {
+          "step": "1",
+          "input": [
+            "A-MK3.3"
+          ],
+          "operation": "IR-1: Cited theorem application — Walsh & Ungson (1991): individual memory is most volatile retention facility. QSS elements A and P are predominantly held in individual memory.",
+          "output": "QSS elements decay with personnel departure."
+        },
+        {
+          "step": "2",
+          "input": [
+            "Step 1"
+          ],
+          "operation": "IR-5: Algebraic manipulation — each personnel transition eliminates fraction of QSS knowledge. After k transitions: RL ~ (1-d)^k → 0.",
+          "output": "RL(t_0 + k*Delta) → 0 as k → infinity."
+        }
       ],
       "falsification_predicate": {
         "FALSIFIED_IF": "retention_stable = true",
@@ -109,13 +148,31 @@
     {
       "claim_id": "C-MK3.2",
       "type": "F",
-      "label": "[TYPE:F]",
+      "label": "Proposition 5.1 — Challenge Taxonomy Exhaustiveness",
       "name": "Proposition 5.1 — Challenge Taxonomy Exhaustiveness",
       "statement": "Every challenge to a governing assumption A can be classified into exactly one of four types derived from Aristotle's predicables (Topics 1.4, 101b11-20): Type I (Scope), Type II (Precision), Type III (Mechanism), Type IV (Relevance).",
-      "derivation_source": ["A-MK3.1", "D-MK3.2"],
+      "derivation_source": [
+        "A-MK3.1",
+        "D-MK3.2"
+      ],
       "inference_rule_steps": [
-        { "step": "1", "input": ["A-MK3.1"], "operation": "IR-1: Cited theorem application — Aristotle's Topics 1.4 partitions predicables exhaustively. Stock (1888 §339) confirms exhaustiveness.", "output": "Four predicable types are exhaustive." },
-        { "step": "2", "input": ["Step 1", "D-MK3.2"], "operation": "IR-2: Universal Instantiation — map predicable types to challenge types: definition→scope, genus→precision, property→mechanism, accident→relevance.", "output": "Challenge taxonomy is exhaustive by inheritance from predicable partition." }
+        {
+          "step": "1",
+          "input": [
+            "A-MK3.1"
+          ],
+          "operation": "IR-1: Cited theorem application — Aristotle's Topics 1.4 partitions predicables exhaustively. Stock (1888 §339) confirms exhaustiveness.",
+          "output": "Four predicable types are exhaustive."
+        },
+        {
+          "step": "2",
+          "input": [
+            "Step 1",
+            "D-MK3.2"
+          ],
+          "operation": "IR-2: Universal Instantiation — map predicable types to challenge types: definition→scope, genus→precision, property→mechanism, accident→relevance.",
+          "output": "Challenge taxonomy is exhaustive by inheritance from predicable partition."
+        }
       ],
       "placeholder": true,
       "placeholder_id": "PH-MK3.2",
@@ -133,13 +190,31 @@
     {
       "claim_id": "C-MK3.3",
       "type": "F",
-      "label": "[TYPE:F]",
+      "label": "Proposition 5.2 — Minimum Generative Completeness",
       "name": "Proposition 5.2 — Minimum Generative Completeness",
       "statement": "No proper subset of {A, D, P, C} generates the full space of reusable bisociative insights. Proof by constructive counterexample: removing any single element prevents at least one class of productive reuse.",
-      "derivation_source": ["D-MK3.1", "A-MK3.2"],
+      "derivation_source": [
+        "D-MK3.1",
+        "A-MK3.2"
+      ],
       "inference_rule_steps": [
-        { "step": "1", "input": ["D-MK3.1"], "operation": "IR-4: Definition Expansion — QSS = (A, D, P, C). Consider each 3-element subset.", "output": "Four subsets to test: {D,P,C}, {A,P,C}, {A,D,C}, {A,D,P}." },
-        { "step": "2", "input": ["Step 1", "A-MK3.2"], "operation": "IR-2: Universal Instantiation — for each subset, construct a reuse scenario that requires the missing element.", "output": "Without A: cannot reconstruct challenge type. Without D: cannot extend to new substrates. Without P: must re-derive insight from scratch. Without C: indiscriminate application." }
+        {
+          "step": "1",
+          "input": [
+            "D-MK3.1"
+          ],
+          "operation": "IR-4: Definition Expansion — QSS = (A, D, P, C). Consider each 3-element subset.",
+          "output": "Four subsets to test: {D,P,C}, {A,P,C}, {A,D,C}, {A,D,P}."
+        },
+        {
+          "step": "2",
+          "input": [
+            "Step 1",
+            "A-MK3.2"
+          ],
+          "operation": "IR-2: Universal Instantiation — for each subset, construct a reuse scenario that requires the missing element.",
+          "output": "Without A: cannot reconstruct challenge type. Without D: cannot extend to new substrates. Without P: must re-derive insight from scratch. Without C: indiscriminate application."
+        }
       ],
       "falsification_predicate": {
         "FALSIFIED_IF": "proper_subset_sufficient = true",
@@ -155,16 +230,42 @@
     {
       "claim_id": "C-MK3.4",
       "type": "F",
-      "label": "[TYPE:F]",
+      "label": "Theorem 5.3 — Library Quality Convergence (conditional)",
       "name": "Theorem 5.3 — Library Quality Convergence (conditional)",
       "statement": "IF (C1) honest majority of contributing practitioners, AND (C2) retrospective validation each cycle, AND (C3) bounded strategic benefit, THEN Q_L(t) → 1 as t → infinity. This is a conditional design guarantee: C1-C3 jointly characterize the target system, not independent premises.",
-      "derivation_source": ["D-MK3.1", "A-MK3.3", "MK-P2 AI-Layer C-MK2.3"],
+      "derivation_source": [
+        "D-MK3.1",
+        "A-MK3.3",
+        "MK-P2 AI-Layer C-MK2.3"
+      ],
       "placeholder": true,
       "placeholder_id": "PH-MK3.1",
       "inference_rule_steps": [
-        { "step": "1", "input": ["D-MK3.1", "A-MK3.3"], "operation": "IR-1: Modus Ponens — under C1 (honest majority), submitted QSS records are predominantly accurate.", "output": "Library receives mostly accurate entries." },
-        { "step": "2", "input": ["Step 1"], "operation": "IR-1: Modus Ponens — under C2 (retrospective validation), inaccurate entries are identified and corrected each cycle.", "output": "Library quality increases monotonically." },
-        { "step": "3", "input": ["Step 2"], "operation": "IR-1: Modus Ponens — under C3 (bounded strategic benefit), incentive to submit inaccurate records is bounded, so correction rate exceeds corruption rate.", "output": "Q_L(t) → 1 as t → infinity by construction." }
+        {
+          "step": "1",
+          "input": [
+            "D-MK3.1",
+            "A-MK3.3"
+          ],
+          "operation": "IR-1: Modus Ponens — under C1 (honest majority), submitted QSS records are predominantly accurate.",
+          "output": "Library receives mostly accurate entries."
+        },
+        {
+          "step": "2",
+          "input": [
+            "Step 1"
+          ],
+          "operation": "IR-1: Modus Ponens — under C2 (retrospective validation), inaccurate entries are identified and corrected each cycle.",
+          "output": "Library quality increases monotonically."
+        },
+        {
+          "step": "3",
+          "input": [
+            "Step 2"
+          ],
+          "operation": "IR-1: Modus Ponens — under C3 (bounded strategic benefit), incentive to submit inaccurate records is bounded, so correction rate exceeds corruption rate.",
+          "output": "Q_L(t) → 1 as t → infinity by construction."
+        }
       ],
       "falsification_predicate": {
         "FALSIFIED_IF": "quality_diverges_under_conditions = true",
@@ -197,17 +298,29 @@
     }
   ],
   "cross_references": [
-    { "from": "D-MK3.1", "to": "MK-P1 AI-Layer D-MK1.3", "relation": "QSS generates the Novelty signal via orthogonal domain bisociation." },
-    { "from": "C-MK3.4", "to": "MK-P2 AI-Layer C-MK2.3", "relation": "Library quality convergence parallels governance process-equivalence — both conditional on honest majority." },
-    { "from": "C-MK3.1", "to": "MK-P5 AI-Layer D-MK5.2", "relation": "Institutional memory loss motivates the Virtù Window — organizations lose ability to act when institutional knowledge decays." }
+    {
+      "from": "D-MK3.1",
+      "to": "MK-P1 AI-Layer D-MK1.3",
+      "relation": "QSS generates the Novelty signal via orthogonal domain bisociation."
+    },
+    {
+      "from": "C-MK3.4",
+      "to": "MK-P2 AI-Layer C-MK2.3",
+      "relation": "Library quality convergence parallels governance process-equivalence — both conditional on honest majority."
+    },
+    {
+      "from": "C-MK3.1",
+      "to": "MK-P5 AI-Layer D-MK5.2",
+      "relation": "Institutional memory loss motivates the Virtù Window — organizations lose ability to act when institutional knowledge decays."
+    }
   ],
   "self_kvs_demonstration": {
     "N": 0.86,
-    "I_prime": 0.60,
-    "C_prime": 0.80,
-    "T": 1.00,
+    "I_prime": 0.6,
+    "C_prime": 0.8,
+    "T": 1.0,
     "KVS": 0.413,
-    "threshold": 0.50,
+    "threshold": 0.5,
     "verdict": "BELOW_THRESHOLD",
     "note": "Demonstration of MK-P1 Theorem 4.2 (self-referential applicability). Authors scoring their own paper — threefold circularity explicitly acknowledged. Not quality evidence."
   },

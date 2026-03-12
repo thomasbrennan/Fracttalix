@@ -30,7 +30,7 @@
     {
       "claim_id": "A-5.1",
       "type": "A",
-      "label": "[TYPE:A]",
+      "label": "Scale independence principle",
       "name": "Scale independence principle",
       "statement": "If the FRM derives from topology and information content (P1 A-1.5), it must hold at any scale where the conditions are satisfied. Scale independence is not an additional assumption — it is a consequence of substrate independence.",
       "derivation_source": [
@@ -46,7 +46,7 @@
     {
       "claim_id": "D-5.1",
       "type": "D",
-      "label": "[TYPE:D]",
+      "label": "AMOC parameter extraction",
       "name": "AMOC parameter extraction",
       "statement": "Parameters λ, ω, A, B extracted from Atlantic Meridional Overturning Circulation (AMOC) data by fitting the FRM functional form f(t) = B + A·e^(−λt)·cos(ωt + φ) to ocean circulation measurements.",
       "derivation_source": [
@@ -61,7 +61,7 @@
     {
       "claim_id": "D-5.2",
       "type": "D",
-      "label": "[TYPE:D]",
+      "label": "Ibn Khaldun ω measurement",
       "name": "Ibn Khaldun ω measurement",
       "statement": "Ibn Khaldun's three-generation estimate of the asabiyyah (social cohesion) cycle (1377 AD) constitutes an independent empirical measurement of the characteristic frequency ω at civilizational scale. This measurement was made without knowledge of the FRM.",
       "derivation_source": [
@@ -75,7 +75,7 @@
     {
       "claim_id": "F-5.1",
       "type": "F",
-      "label": "[TYPE:F]",
+      "label": "FRM fit to AMOC data",
       "name": "FRM fit to AMOC data",
       "statement": "The FRM functional form fits AMOC ocean circulation data with R² ≥ 0.85, and extracted parameters are physically meaningful (λ > 0, ω > 0).",
       "derivation_source": [
@@ -100,7 +100,7 @@
     {
       "claim_id": "F-5.2",
       "type": "F",
-      "label": "[TYPE:F]",
+      "label": "ω agreement across scales",
       "name": "ω agreement across scales",
       "statement": "The characteristic frequency ω extracted from AMOC data and the ω implied by Ibn Khaldun's three-generation estimate are consistent: |ω_AMOC − ω_Khaldun| / ω_AMOC < 0.3.",
       "placeholder": true,
@@ -126,7 +126,7 @@
     {
       "claim_id": "F-5.3",
       "type": "F",
-      "label": "[TYPE:F]",
+      "label": "Scale independence demonstration",
       "name": "Scale independence demonstration",
       "statement": "The same functional form (FRM) fits both AMOC ocean circulation data and civilizational-scale data (Ibn Khaldun cycle) without substrate-specific modifications. This is the first empirical demonstration of scale independence.",
       "placeholder": true,

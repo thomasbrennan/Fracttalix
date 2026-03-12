@@ -1,4 +1,4 @@
-# Fracttalix Claim Registry Index v1.0
+# Fracttalix Claim Registry Index v1.1
 
 **Generated:** 2026-03-12 (Session 53)
 **Purpose:** Read-only cross-project citation reference
@@ -19,26 +19,23 @@ CLAIM_ID         PAPER_ID     TYPE           LABEL
 
 Types: **A** = Axiom, **D** = Definition, **F** = Falsifiable, **C** = Claim/Conjecture
 
-Labels marked `[TYPE:X]` are placeholder-only in the current AI layer.
-Full claim text lives in the paper prose and will be populated as each paper completes.
-
 ---
 
 ### DRP-1: Dual-Reader Scientific Publishing: A Framework for Machine-Verifiable Knowledge Corpora
 **Status:** PHASE-READY
 
 ```
-C-DRP.1          DRP-1        Claim          Syntax Necessity and Sufficiency
-C-DRP.2          DRP-1        Claim          Gate Enforcement Requirement
-C-DRP.3          DRP-1        Claim          DRS Self-Sufficiency Definition
-C-DRP.4          DRP-1        Claim          DRS Core Requirement Definition
-C-DRP.5          DRP-1        Claim          Live C5 Instance — MK-P1
-C-DRP.6          DRP-1        Claim          PHASE-READY Definition
-C-DRP.7          DRP-1        Claim          CORPUS-COMPLETE Definition
+C-DRP.1          DRP-1        Falsifiable    Syntax Necessity and Sufficiency
+C-DRP.2          DRP-1        Falsifiable    Gate Enforcement Requirement
+C-DRP.3          DRP-1        Definition     DRS Self-Sufficiency Definition
+C-DRP.4          DRP-1        Definition     DRS Core Requirement Definition
+C-DRP.5          DRP-1        Falsifiable    Live C5 Instance — MK-P1
+C-DRP.6          DRP-1        Definition     PHASE-READY Definition
+C-DRP.7          DRP-1        Definition     CORPUS-COMPLETE Definition
 ```
 
 ### DRS-ARCH: The Dual Reader Standard: Architecture Specification
-**Status:** PHASE-READY
+**Status:** NOT-PHASE-READY
 
 ```
 A-DRSARCH.1      DRS-ARCH     Axiom          Popperian Epistemological Foundation
@@ -58,209 +55,209 @@ F-DRSARCH.3      DRS-ARCH     Falsifiable    Predicate Binary Determinism
 **Status:** PHASE-READY
 
 ```
-A-MK1.1          MK-P1        Axiom          [TYPE:A]
-A-MK1.2          MK-P1        Axiom          [TYPE:A]
-A-MK1.3          MK-P1        Axiom          [TYPE:A]
-A-MK1.4          MK-P1        Axiom          [TYPE:A]
-A-MK1.5          MK-P1        Axiom          [TYPE:A]
-A-MK1.6          MK-P1        Axiom          [TYPE:A]
-D-MK1.1          MK-P1        Definition     [TYPE:D]
-D-MK1.2          MK-P1        Definition     [TYPE:D]
-D-MK1.3          MK-P1        Definition     [TYPE:D]
-D-MK1.4          MK-P1        Definition     [TYPE:D]
-D-MK1.5          MK-P1        Definition     [TYPE:D]
-D-MK1.6          MK-P1        Definition     [TYPE:D]
-F-MK1.1          MK-P1        Falsifiable    [TYPE:F]
-F-MK1.2          MK-P1        Falsifiable    [TYPE:F]
-F-MK1.3          MK-P1        Falsifiable    [TYPE:F]
-F-MK1.4          MK-P1        Falsifiable    [TYPE:F]
-F-MK1.5          MK-P1        Falsifiable    [TYPE:F]
-F-MK1.6          MK-P1        Falsifiable    [TYPE:F]
-F-MK1.7          MK-P1        Falsifiable    [TYPE:F]
-F-MK1.8          MK-P1        Falsifiable    [TYPE:F]
-F-MK1.9          MK-P1        Falsifiable    [TYPE:F]
+A-MK1.1          MK-P1        Axiom          Axiom 1 — Weak Order
+A-MK1.2          MK-P1        Axiom          Axiom 2 — Preferential Independence
+A-MK1.3          MK-P1        Axiom          Axiom 3 — Solvability
+A-MK1.4          MK-P1        Axiom          Axiom 4 — Archimedean Condition
+A-MK1.5          MK-P1        Axiom          Axiom 5 — Essentialness with Veto Power
+A-MK1.6          MK-P1        Axiom          Axiom 6 — Marginal Symmetry
+D-MK1.1          MK-P1        Definition     Governance Substrate
+D-MK1.2          MK-P1        Definition     KVS Formula
+D-MK1.3          MK-P1        Definition     Novelty Factor
+D-MK1.4          MK-P1        Definition     Normalized Impact
+D-MK1.5          MK-P1        Definition     Normalized Inverse Complexity
+D-MK1.6          MK-P1        Definition     Timeliness Score
+F-MK1.1          MK-P1        Falsifiable    Property 4.1 — Boundedness
+F-MK1.2          MK-P1        Falsifiable    Property 4.2 — Monotonicity
+F-MK1.3          MK-P1        Falsifiable    Theorem 4.1 — KVS Functional Form (three-part)
+F-MK1.4          MK-P1        Falsifiable    Theorem 4.2 — Self-Referential Applicability
+F-MK1.5          MK-P1        Falsifiable    Theorem 4.3 — Threshold Optimality (Symmetric Case)
+F-MK1.6          MK-P1        Falsifiable    Simulation Result — KVS Recall under Q_mult_noisy
+F-MK1.7          MK-P1        Falsifiable    Simulation Result — KVS Outperforms ADD under Q_threshold (all distributional variants)
+F-MK1.8          MK-P1        Falsifiable    Simulation Result — Timeliness Dominance Artifact
+F-MK1.9          MK-P1        Falsifiable    Pre-Registered H₁ — Empirical Validation Path
 ```
 
 ### MK-P2: Meta-Kaizen in Networked Organizations: Governance Closure, Privacy Amplification, and Bayesian Calibration Under a Federated Architecture
 **Status:** PHASE-READY
 
 ```
-A-MK2.1          MK-P2        Axiom          [TYPE:A]
-A-MK2.2          MK-P2        Axiom          [TYPE:A]
-A-MK2.3          MK-P2        Axiom          [TYPE:A]
-D-MK2.1          MK-P2        Definition     [TYPE:D]
-C-MK2.1          MK-P2        Claim          [TYPE:F]
-C-MK2.2          MK-P2        Claim          [TYPE:F]
-C-MK2.3          MK-P2        Claim          [TYPE:F]
-C-MK2.4          MK-P2        Claim          [TYPE:F]
+A-MK2.1          MK-P2        Axiom          Shuffle model privacy amplification
+A-MK2.2          MK-P2        Axiom          Club goods governance mechanism
+A-MK2.3          MK-P2        Axiom          Beta-Binomial conjugacy
+D-MK2.1          MK-P2        Definition     Meta-Kaizen Network (MKN) architecture
+C-MK2.1          MK-P2        Falsifiable    Theorem 3.1 — Minimum Network Size
+C-MK2.2          MK-P2        Falsifiable    Theorem 7.1 — Temporal Consistency
+C-MK2.3          MK-P2        Falsifiable    Theorem 7.2 — Governance Process-Equivalence
+C-MK2.4          MK-P2        Falsifiable    Bayesian calibration convergence
 ```
 
 ### MK-P3: The Meta-Kaizen Reasoning Network: A Formal Theory of Bisociative Question Structure, Challenge Taxonomy, and Institutional Memory Propagation
 **Status:** PHASE-READY
 
 ```
-A-MK3.1          MK-P3        Axiom          [TYPE:A]
-A-MK3.2          MK-P3        Axiom          [TYPE:A]
-A-MK3.3          MK-P3        Axiom          [TYPE:A]
-D-MK3.1          MK-P3        Definition     [TYPE:D]
-D-MK3.2          MK-P3        Definition     [TYPE:D]
-C-MK3.1          MK-P3        Claim          [TYPE:F]
-C-MK3.2          MK-P3        Claim          [TYPE:F]
-C-MK3.3          MK-P3        Claim          [TYPE:F]
-C-MK3.4          MK-P3        Claim          [TYPE:F]
+A-MK3.1          MK-P3        Axiom          Aristotle's Topics — predicable partition
+A-MK3.2          MK-P3        Axiom          Koestler's bisociation framework
+A-MK3.3          MK-P3        Axiom          Institutional memory decay
+D-MK3.1          MK-P3        Definition     Question Structure Schema (QSS)
+D-MK3.2          MK-P3        Definition     Challenge Taxonomy (Types I-IV)
+C-MK3.1          MK-P3        Falsifiable    Proposition 4.1 — Institutional Memory Loss
+C-MK3.2          MK-P3        Falsifiable    Proposition 5.1 — Challenge Taxonomy Exhaustiveness
+C-MK3.3          MK-P3        Falsifiable    Proposition 5.2 — Minimum Generative Completeness
+C-MK3.4          MK-P3        Falsifiable    Theorem 5.3 — Library Quality Convergence (conditional)
 ```
 
 ### MK-P4: The Fractal Rhythm Model: Closed-Loop Governance, Regime-Aware Adaptation, and the Axiom 5 Modification for Dynamic Environments
 **Status:** PHASE-READY
 
 ```
-A-MK4.1          MK-P4        Axiom          [TYPE:A]
-A-MK4.2          MK-P4        Axiom          [TYPE:A]
-D-MK4.1          MK-P4        Definition     [TYPE:D]
-D-MK4.2          MK-P4        Definition     [TYPE:D]
-D-MK4.3          MK-P4        Definition     [TYPE:D]
-D-MK4.4          MK-P4        Definition     [TYPE:D]
-D-MK4.5          MK-P4        Definition     [TYPE:D]
-C-MK4.1          MK-P4        Claim          [TYPE:F]
-C-MK4.2          MK-P4        Claim          [TYPE:F]
-C-MK4.3          MK-P4        Claim          [TYPE:F]
-C-MK4.4          MK-P4        Claim          [TYPE:F]
+A-MK4.1          MK-P4        Axiom          Bayesian Online Changepoint Detection (BOCP)
+A-MK4.2          MK-P4        Axiom          Axiom 5 — Essentialness with Veto Power (from MK-P1)
+D-MK4.1          MK-P4        Definition     Regime Discontinuity Score (RDS)
+D-MK4.2          MK-P4        Definition     Complexity Surge Score (CSS)
+D-MK4.3          MK-P4        Definition     Axiom 5-prime — Regime-Conditioned Essentialness
+D-MK4.4          MK-P4        Definition     KVS-hat Formula
+D-MK4.5          MK-P4        Definition     Extinguishing Recursion
+C-MK4.1          MK-P4        Falsifiable    Axiom 5-prime Restoration Property
+C-MK4.2          MK-P4        Falsifiable    Extinguishing Recursion Convergence (delta_min)
+C-MK4.3          MK-P4        Falsifiable    KVS-hat IPS Worked Example
+C-MK4.4          MK-P4        Falsifiable    Closed-loop feedback architecture completeness
 ```
 
 ### MK-P5: On the Decision to Act: Strategic Convergence and the Mathematics of Intervention Timing at System Tipping Points
 **Status:** PHASE-READY
 
 ```
-A-MK5.1          MK-P5        Axiom          [TYPE:A]
-A-MK5.2          MK-P5        Axiom          [TYPE:A]
-A-MK5.3          MK-P5        Axiom          [TYPE:A]
-D-MK5.1          MK-P5        Definition     [TYPE:D]
-D-MK5.2          MK-P5        Definition     [TYPE:D]
-C-MK5.1          MK-P5        Claim          [TYPE:F]
-C-MK5.2          MK-P5        Claim          [TYPE:F]
-C-MK5.3          MK-P5        Claim          [TYPE:F]
-C-MK5.4          MK-P5        Claim          [TYPE:F]
+A-MK5.1          MK-P5        Axiom          Sequential decision theory foundation
+A-MK5.2          MK-P5        Axiom          Critical slowing down near fold bifurcation
+A-MK5.3          MK-P5        Axiom          EWS decision-theoretic gap
+D-MK5.1          MK-P5        Definition     Fortuna Process
+D-MK5.2          MK-P5        Definition     Virtù Window
+C-MK5.1          MK-P5        Falsifiable    Theorem 1 Window Rationality
+C-MK5.2          MK-P5        Falsifiable    Theorem 2 Asymmetric Loss Threshold
+C-MK5.3          MK-P5        Falsifiable    Theorem 3 Distributed Detection Advantage
+C-MK5.4          MK-P5        Falsifiable    Theorem 4 Self-Generated Friction — t_trap existence
 ```
 
 ### MK-P6: The Dual Reader Standard for Software: Measurement-Theoretic Falsification Applied to Executable Systems
-**Status:** PHASE-READY
+**Status:** NOT-PHASE-READY
 
 ```
-A-MK6.1          MK-P6        Axiom          [TYPE:A]
-A-MK6.2          MK-P6        Axiom          [TYPE:A]
-A-MK6.3          MK-P6        Axiom          [TYPE:A]
-D-MK6.1          MK-P6        Definition     [TYPE:D]
-D-MK6.2          MK-P6        Definition     [TYPE:D]
-D-MK6.3          MK-P6        Definition     [TYPE:D]
-D-MK6.4          MK-P6        Definition     [TYPE:D]
-F-MK6.1          MK-P6        Falsifiable    [TYPE:F]
-F-MK6.2          MK-P6        Falsifiable    [TYPE:F]
-F-MK6.3          MK-P6        Falsifiable    [TYPE:F]
-F-MK6.4          MK-P6        Falsifiable    [TYPE:F]
-F-MK6.5          MK-P6        Falsifiable    [TYPE:F]
+A-MK6.1          MK-P6        Axiom          Popperian epistemological foundation
+A-MK6.2          MK-P6        Axiom          DRS Layer 0 kernel applicability
+A-MK6.3          MK-P6        Axiom          Design by Contract foundation
+D-MK6.1          MK-P6        Definition     Software Claim Taxonomy
+D-MK6.2          MK-P6        Definition     Falsification Completeness
+D-MK6.3          MK-P6        Definition     Software Phase-Ready Verdict
+D-MK6.4          MK-P6        Definition     Three gap categories
+F-MK6.1          MK-P6        Falsifiable    Kernel universality — K applies to software without modification
+F-MK6.2          MK-P6        Falsifiable    Falsification completeness implies coverage
+F-MK6.3          MK-P6        Falsifiable    Coverage does not imply falsification completeness
+F-MK6.4          MK-P6        Falsifiable    Gap detection — DRS reveals gaps invisible to coverage
+F-MK6.5          MK-P6        Falsifiable    Feasibility — DRS applicable in one session
 ```
 
 ### P1: The Fractal Rhythm Model: A Universal Law of Network Information Transmission
 **Status:** PHASE-READY
 
 ```
-A-1.1            P1           Axiom          [TYPE:A]
-A-1.2            P1           Axiom          [TYPE:A]
-A-1.3            P1           Axiom          [TYPE:A]
-A-1.4            P1           Axiom          [TYPE:A]
-A-1.5            P1           Axiom          [TYPE:A]
-D-1.1            P1           Definition     [TYPE:D]
-D-1.2            P1           Definition     [TYPE:D]
-D-1.3            P1           Definition     [TYPE:D]
-D-1.4            P1           Definition     [TYPE:D]
-F-1.1            P1           Falsifiable    [TYPE:F]
-F-1.2            P1           Falsifiable    [TYPE:F]
-F-1.3            P1           Falsifiable    [TYPE:F]
-F-1.4            P1           Falsifiable    [TYPE:F]
-F-1.5            P1           Falsifiable    [TYPE:F]
-F-1.6            P1           Falsifiable    [TYPE:F]
-F-1.7            P1           Falsifiable    [TYPE:F]
+A-1.1            P1           Axiom          Thermodynamic irreversibility
+A-1.2            P1           Axiom          Information distinguishability
+A-1.3            P1           Axiom          Network definition
+A-1.4            P1           Axiom          Non-equilibrium physics
+A-1.5            P1           Axiom          Substrate independence
+D-1.1            P1           Definition     FRM functional form
+D-1.2            P1           Definition     Characteristic frequency
+D-1.3            P1           Definition     Decay rate
+D-1.4            P1           Definition     Validation set P1
+F-1.1            P1           Falsifiable    FRM functional form uniqueness
+F-1.2            P1           Falsifiable    36-orders validation
+F-1.3            P1           Falsifiable    β = 1/2 substrate independence (empirical)
+F-1.4            P1           Falsifiable    β = 1/2 analytic derivation (Hopf quarter-wave theorem)
+F-1.5            P1           Falsifiable    λ derivation — leading order
+F-1.6            P1           Falsifiable    Circadian period prediction
+F-1.7            P1           Falsifiable    Stuart-Landau connection
 ```
 
 ### P2: Derivation and Universality: The β=1/2 Critical Exponent as a Universal Law
 **Status:** PHASE-READY
 
 ```
-D-2.1            P2           Definition     The FRM universality class is the set of dynamical systems satisfying all three of the following structural criteria: (a
-C-2.1            P2           Claim          β=1/2 is the universal critical exponent for systems in the FRM universality class. This follows necessarily from the RG
-C-2.2            P2           Claim          The FRM belongs to the universality class characterised by β=1/2 and functional form f(t) = B + A·exp(−λt)·cos(ωt+φ). Me
-C-2.3            P2           Claim          Systems in the FRM universality class exhibit f(t) = B + A·exp(−λt)·cos(ωt+φ) with λ and ω determined by the same derive
-C-2.4            P2           Claim          The critical exponent β=1/2 holds across all substrates satisfying the class membership criteria D-2.1(a)–(c), not only 
-C-2.5            P2           Claim          The β=1/2 fixed point is stable under perturbation of the class membership conditions. Shift in β is O(ε) for perturbati
+D-2.1            P2           Definition     FRM Universality Class — Structural Definition
+C-2.1            P2           Falsifiable    β=1/2 Derivation Validity
+C-2.2            P2           Falsifiable    Universality Class Membership
+C-2.3            P2           Falsifiable    Functional Form Universality
+C-2.4            P2           Falsifiable    Substrate Independence (resolves PH-1.1)
+C-2.5            P2           Falsifiable    RG Fixed-Point Stability
 ```
 
 ### P3: FRM Measurement and Diagnostics: Standard Protocol for Extracting Parameters, Computing Goodness-of-Fit, and Diagnosing Scope Boundaries
 **Status:** PHASE-READY
 
 ```
-A-3.1            P3           Axiom          [TYPE:A]
-A-3.2            P3           Axiom          [TYPE:A]
-D-3.1            P3           Definition     A system S is eligible for the P3 measurement protocol if and only if it satisfies all three conditions: (a) O(t) is a s
-D-3.2            P3           Definition     τ_gen is identified from system S using the following sub-protocol hierarchy applied in order: (a) STRUCTURAL: τ_gen fro
-C-3.REG          P3           Claim          The FRM regression protocol consists of steps R1–R9 and produces: R²_frm, β_measured, T_char, σ_β, and classification ∈ 
-C-3.ALT          P3           Claim          For each substrate class, the best alternative model is pre-specified in the Section 5 mapping table. Comparison is by Δ
-C-3.DIAG         P3           Claim          The P3 diagnostic tool produces classification ∈ {CONFIRMED, EXCLUDED, ANOMALOUS} by a fully computable decision rule. A
-C-3.sigma        P3           Claim          σ_β per substrate is computed from bootstrap residual analysis (B=1000 resamples). pooled_σ_β is weighted mean across va
+A-3.1            P3           Axiom          Neural substrate is a network
+A-3.2            P3           Axiom          Electromagnetic basis of neural association
+D-3.1            P3           Definition     FRM System Definition for Measurement
+D-3.2            P3           Definition     τ_gen Extraction Protocol
+C-3.REG          P3           Falsifiable    FRM Regression Protocol
+C-3.ALT          P3           Falsifiable    Alternative Model Comparison Protocol
+C-3.DIAG         P3           Falsifiable    Scope Boundary Diagnostics
+C-3.sigma        P3           Falsifiable    β Standard Error Protocol
 ```
 
 ### P4: The Fractal Rhythm Model: Mathematical Formalization of Structure and Rhythmicity
-**Status:** PHASE-READY
+**Status:** NOT-PHASE-READY
 
 ```
-A-4.1            P4           Axiom          [TYPE:A]
-D-4.1            P4           Definition     [TYPE:D]
-D-4.2            P4           Definition     [TYPE:D]
-D-4.3            P4           Definition     [TYPE:D]
-F-4.1            P4           Falsifiable    [TYPE:F]
-F-4.2            P4           Falsifiable    [TYPE:F]
+A-4.1            P4           Axiom          Self-similarity across scales
+D-4.1            P4           Definition     Fractal property as carrier wave signature
+D-4.2            P4           Definition     Scale-invariant parameters
+D-4.3            P4           Definition     Mathematical structure of FRM
+F-4.1            P4           Falsifiable    Scale-invariance of β
+F-4.2            P4           Falsifiable    Fractal-like behavior from carrier wave architecture
 ```
 
 ### P5: On the Decision to Act: Scale Independence and Empirical Validation
-**Status:** PHASE-READY
+**Status:** NOT-PHASE-READY
 
 ```
-A-5.1            P5           Axiom          [TYPE:A]
-D-5.1            P5           Definition     [TYPE:D]
-D-5.2            P5           Definition     [TYPE:D]
-F-5.1            P5           Falsifiable    [TYPE:F]
-F-5.2            P5           Falsifiable    [TYPE:F]
-F-5.3            P5           Falsifiable    [TYPE:F]
+A-5.1            P5           Axiom          Scale independence principle
+D-5.1            P5           Definition     AMOC parameter extraction
+D-5.2            P5           Definition     Ibn Khaldun ω measurement
+F-5.1            P5           Falsifiable    FRM fit to AMOC data
+F-5.2            P5           Falsifiable    ω agreement across scales
+F-5.3            P5           Falsifiable    Scale independence demonstration
 ```
 
 ### SFW-1: Fracttalix Sentinel v12.1: Software AI Layer — DRS for Software Feasibility Demonstration
-**Status:** PHASE-READY
+**Status:** NOT-PHASE-READY
 
 ```
-A-SFW.1          SFW-1        Axiom          [TYPE:A]
-A-SFW.2          SFW-1        Axiom          [TYPE:A]
-A-SFW.3          SFW-1        Axiom          [TYPE:A]
-A-SFW.4          SFW-1        Axiom          [TYPE:A]
-A-SFW.5          SFW-1        Axiom          [TYPE:A]
-D-SFW.1          SFW-1        Definition     [TYPE:D]
-D-SFW.2          SFW-1        Definition     [TYPE:D]
-D-SFW.3          SFW-1        Definition     [TYPE:D]
-D-SFW.4          SFW-1        Definition     [TYPE:D]
-D-SFW.5          SFW-1        Definition     [TYPE:D]
-D-SFW.6          SFW-1        Definition     [TYPE:D]
-D-SFW.7          SFW-1        Definition     [TYPE:D]
-D-SFW.8          SFW-1        Definition     [TYPE:D]
-F-SFW.1          SFW-1        Falsifiable    [TYPE:F]
-F-SFW.2          SFW-1        Falsifiable    [TYPE:F]
-F-SFW.3          SFW-1        Falsifiable    [TYPE:F]
-F-SFW.4          SFW-1        Falsifiable    [TYPE:F]
-F-SFW.5          SFW-1        Falsifiable    [TYPE:F]
-F-SFW.6          SFW-1        Falsifiable    [TYPE:F]
-F-SFW.7          SFW-1        Falsifiable    [TYPE:F]
-F-SFW.8          SFW-1        Falsifiable    [TYPE:F]
-F-SFW.9          SFW-1        Falsifiable    [TYPE:F]
-F-SFW.10         SFW-1        Falsifiable    [TYPE:F]
-F-SFW.11         SFW-1        Falsifiable    [TYPE:F]
-F-SFW.12         SFW-1        Falsifiable    [TYPE:F]
+A-SFW.1          SFW-1        Axiom          Python platform requirement
+A-SFW.2          SFW-1        Axiom          Zero required dependencies
+A-SFW.3          SFW-1        Axiom          numpy FFT correctness
+A-SFW.4          SFW-1        Axiom          IEEE 754 floating-point arithmetic
+A-SFW.5          SFW-1        Axiom          FRM physics foundation
+D-SFW.1          SFW-1        Definition     Package version
+D-SFW.2          SFW-1        Definition     SentinelResult structure
+D-SFW.3          SFW-1        Definition     AlertType enumeration
+D-SFW.4          SFW-1        Definition     SentinelConfig defaults
+D-SFW.5          SFW-1        Definition     37-step pipeline architecture
+D-SFW.6          SFW-1        Definition     Three-channel model architecture
+D-SFW.7          SFW-1        Definition     Maintenance burden definition
+D-SFW.8          SFW-1        Definition     Phi-kappa separation metric
+F-SFW.1          SFW-1        Falsifiable    Streaming single-observation API
+F-SFW.2          SFW-1        Falsifiable    Three-channel detection completeness
+F-SFW.3          SFW-1        Falsifiable    Test suite passes
+F-SFW.4          SFW-1        Falsifiable    Backward compatibility — v7.x kwargs
+F-SFW.5          SFW-1        Falsifiable    Cascade precursor conjunction requirement
+F-SFW.6          SFW-1        Falsifiable    Config parameter validation
+F-SFW.7          SFW-1        Falsifiable    State persistence round-trip
+F-SFW.8          SFW-1        Falsifiable    Warmup period behavior
+F-SFW.9          SFW-1        Falsifiable    auto_tune returns valid detector
+F-SFW.10         SFW-1        Falsifiable    MultiStreamSentinel cross-stream correlation
+F-SFW.11         SFW-1        Falsifiable    Detector reset clears state
+F-SFW.12         SFW-1        Falsifiable    numpy fallback warning
 ```
 
 ---
