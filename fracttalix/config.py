@@ -86,7 +86,7 @@ class SentinelConfig:
     """EWS score threshold for 'approaching critical' classification."""
 
     # ------------------------------------------------------------------
-    # F: Fluid dynamics
+    # F: Temporal / oscillatory dynamics (signal-processing parameters)
     # ------------------------------------------------------------------
     sti_window: int = 20
     """Shear-Turbulence Index window."""
@@ -240,13 +240,28 @@ class SentinelConfig:
 
     @classmethod
     def fast(cls) -> "SentinelConfig":
-        """High α, low warmup — react instantly, higher false-positive rate."""
+        """High α, low warmup — react instantly, very high false-positive rate.
+
+        Warning: multiplier=3.0 with alpha=0.3 produces approximately 60–80%
+        normal alert rate on white noise (see benchmark/investigate_fpr_s47.py).
+        Suitable only for contexts where false positives are tolerated or
+        downstream filtering is applied.  Use production() for general use.
+        """
         return cls(alpha=0.3, dev_alpha=0.3, warmup_periods=10)
 
     @classmethod
     def production(cls) -> "SentinelConfig":
-        """Balanced defaults — suitable for most production deployments."""
-        return cls()
+        """Balanced defaults — suitable for most production deployments.
+
+        Uses multiplier=4.5, which gives approximately 5–8% normal alert rate
+        on white noise N(0,1) (see benchmark/investigate_fpr_s47.py for the
+        full multiplier–FPR trade-off curve).
+
+        Changed in v12.2: multiplier raised from 3.0 → 4.5.  The previous
+        default produced a 35.6% normal alert rate.  Users who need the old
+        behaviour can set SentinelConfig(multiplier=3.0) explicitly.
+        """
+        return cls(multiplier=4.5)
 
     @classmethod
     def sensitive(cls) -> "SentinelConfig":

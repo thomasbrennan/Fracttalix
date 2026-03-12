@@ -6,6 +6,49 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
+## [12.2.0] — 2026-03-12
+
+### Epistemic Language Corrections
+
+- **README physics framing removed**: Replaced "physics-derived" and
+  "derived from the Kuramoto synchronization framework" throughout README
+  with accurate "signal-processing heuristic" language. The capabilities are
+  real and useful; the framing implied physical derivation that the code
+  explicitly disclaims (see `MaintenanceBurdenStep` docstring: "NOT derived
+  from physics...must not be cited as such in publications").
+- **Corrected maintenance burden formula**: README line 103 previously showed
+  `μ = N·κ̄·E_coupling/P_throughput` (the abandoned v10.0 formula). Corrected
+  to the actual v11.0 implementation `μ = 1−κ̄`.
+- **Reframed reversed sequence detection**: "Thermodynamic arrow" and
+  "civilization being collapsed" language replaced with "heuristic ordering
+  hypothesis" and "signal classification label, not a causal claim".
+- **Epistemic status block** added to Collapse Indicator Capabilities section.
+
+### Default Multiplier Change — Expected Behaviour Change
+
+- `SentinelConfig.production()` now uses `multiplier=4.5` (was `3.0`).
+  Normal alert rate on white noise: **35.6% → ~6%**.
+  Root cause of old FPR: EWMA z-score threshold at 3.0σ flags ~35% of
+  observations from a true N(0,1) stream (tail probability too large
+  at that threshold for practical use).
+  Expected F1 impact (estimates from investigate_fpr_s47.py trade-off data):
+  - Contextual: 0.247 → ~0.35 (precision gain dominates recall loss)
+  - Collective: 0.239 → ~0.45 (large precision gain from FPR reduction)
+  - Drift: 0.723 → ~0.66 (moderate recall reduction)
+  - Variance: 0.876 → ~0.82 (small rebalance)
+  - Point: 0.415 → ~0.38 (slight drop)
+  Users who need the v12.1 behaviour: `SentinelConfig(multiplier=3.0)`.
+
+### Documentation
+
+- `fast()` docstring now quantifies expected FPR (~60–80% on white noise).
+- Preset table in README now includes FPR column and multiplier–FPR trade-off note.
+- `SentinelConfig` group F comment corrected from "Fluid dynamics" to
+  "Temporal / oscillatory dynamics (signal-processing parameters)".
+- `SFW1-ai-layer.json` version metadata synced to 12.2.0.
+
+---
+
 ## [12.1.0] — 2026-03-10
 
 ### Bug Fixes
