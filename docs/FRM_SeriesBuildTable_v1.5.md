@@ -550,6 +550,8 @@ framework.
 | R-9 | Internal consistency | MEDIUM | Measurement decoupling threshold and rhythmicity threshold need consistent treatment across corpus. | Flag in each paper's scope notes during writing. |
 | R-10 | DRP ARCH patch | LOW | ARCH-S50-PATCH-001 (S53): 3 changes pending application to DRP_Series_ARCH_S50.docx (programme identity, P2 status, ARCH-3 framing). File not in repo. Patch notes at `journal/ARCH-S50-PATCH-001.md`. | Apply when .docx is next in scope. |
 | R-11 | ARCH-3 P2 placeholders | LOW | FLAG: ARCH3-P2-PLACEHOLDER-RETIREMENT. P2 claim IDs in ARCH-3 rows DRP-1 and DRP-3 still marked PLACEHOLDER. P2 is now PHASE-READY — verify IDs against live P2 AI layer and retire PLACEHOLDER status. | Next DRP build session. |
+| R-12 | DRP-2 AI layer | MEDIUM | DRP-3 BLOCKER-1: DRP-2 AI layer not deposited to repo. Cannot add DRP-2 block to claims registry. S52 notes confirm "pending deposit from claude.ai." DRP-3 Phase 1 HELD on this. | Deposit DRP-2 AI layer from claude.ai session. |
+| R-13 | UMP claim ID | MEDIUM | DRP-3 BLOCKER-2 (resolved conceptually): UMP exists in DRP-1 v1.1 prose but has NO claim ID in AI layer (v1, S47). C-DRP.7 = CORPUS-COMPLETE Definition (confirmed correct). ARCH-2 reference to C-DRP.7 as UMP is WRONG. UMP needs new claim ID (e.g. F-DRP.8). | Register UMP in DRP-1 AI layer v1.1; update ARCH-2. |
 
 ---
 
