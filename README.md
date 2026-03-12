@@ -14,7 +14,7 @@ Sentinel ingests one scalar (or multivariate) observation at a time and emits a 
 
 1. [Overview](#overview)
 2. [Three-Channel Model](#three-channel-model)
-3. [V12.1 Changes](#v121-changes)
+3. [V12.2 Changes](#v122-changes)
 4. [Installation](#installation)
 5. [Quick Start](#quick-start)
 6. [SentinelConfig — Configuration](#sentinelconfig--configuration)
@@ -225,12 +225,15 @@ pytest
 
 ## Quick Start
 
-### Basic scalar stream
+### Basic use — production defaults (v12.2)
+
+In v12.1, `SentinelConfig.production()` alerted on 35.6% of normal observations.
+In v12.2, that default is ~6%. Same API, same one line:
 
 ```python
 from fracttalix import SentinelDetector, SentinelConfig
 
-det = SentinelDetector(SentinelConfig.production())
+det = SentinelDetector(SentinelConfig.production())  # multiplier=4.5, ~6% normal FPR
 
 for value in my_data_stream:
     result = det.update_and_check(value)
@@ -238,39 +241,82 @@ for value in my_data_stream:
         print(f"Step {result['step']}: {result['alert_reasons']}")
 ```
 
-### Collapse dynamics
+If you were on v12.1 and need the old threshold back:
+
+```python
+det = SentinelDetector(SentinelConfig(multiplier=3.0))  # restores v12.1 behaviour (~35% FPR)
+```
+
+### Choosing sensitivity
+
+The multiplier is the single most important dial. Here is what it means in practice:
+
+```python
+# ~6% normal alert rate — good for production dashboards, on-call alerting
+det = SentinelDetector(SentinelConfig.production())          # multiplier=4.5
+
+# ~2% normal alert rate — for high-confidence alerting with low tolerance for noise
+det = SentinelDetector(SentinelConfig(multiplier=5.0))
+
+# ~35% normal alert rate — v12.1 default; use when missing anomalies is worse
+# than chasing false positives, or when downstream filtering is in place
+det = SentinelDetector(SentinelConfig(multiplier=3.0))
+
+# ~40-50% normal alert rate — catches the subtlest shifts; pairs with human review
+det = SentinelDetector(SentinelConfig.sensitive())           # multiplier=2.5
+```
+
+Auto-tune picks the multiplier that maximises F1 on your labeled examples:
+
+```python
+labeled = [(value, is_anomaly), ...]
+det = SentinelDetector.auto_tune(data=[], labeled_data=labeled)
+```
+
+### Collapse indicators
+
+Four signal-processing indicators track how coupling and coherence are evolving.
+They are heuristics — useful for early warning and pattern characterisation,
+not physical measurements.
 
 ```python
 result = det.update_and_check(value)
 
-# Tainter regime
+# Coupling overhead indicator (μ = 1 − κ̄)
+# High μ = low cross-frequency coupling = high inferred coordination cost
 mb = result.get_maintenance_burden()
-if mb["regime"] == "TAINTER_CRITICAL":
-    print(f"Tainter critical: μ={mb['mu']:.2f}")
+if mb["regime"] in ("TAINTER_WARNING", "TAINTER_CRITICAL"):
+    print(f"Coupling fragmented: μ={mb['mu']:.2f} ({mb['regime']})")
 
-# PAC pre-cascade (earlier warning than cascade precursor)
+# PAC pre-cascade: phase-amplitude coupling degrading before κ̄ drops
+# Fires earlier than the cascade precursor — gives more lead time
 pac = result.get_pac_status()
 if pac["pre_cascade_pac"]:
-    print("PAC pre-cascade: coupling architecture degrading")
+    print(f"PAC degrading at rate {pac['degradation_rate']:.3f} — early warning")
 
-# Time to collapse estimate
+# Diagnostic window: estimated steps before coherence collapse
+# Only active when κ̄ > κ_c and coupling is falling
 dw = result.get_diagnostic_window()
 if dw["steps"] is not None:
     print(f"Δt ≈ {dw['steps']:.0f} steps ({dw['confidence']} confidence)")
 if dw["supercompensation"]:
-    print("Supercompensation detected — adaptive recovery in progress")
+    print("Coupling recovering — possible adaptive response")
 
-# Intervention signature
+# Sequence classification: is coherence collapsing before coupling degrades?
+# REVERSED means atypical ordering; it is a classification label, not a causal claim
 if result.is_reversed_sequence():
     sig = result.get_intervention_signature()
-    print(f"Reversed sequence — intervention score {sig['score']:.2f}")
+    print(f"Atypical sequence (score {sig['score']:.2f}) — ordering does not match "
+          f"gradual organic decay pattern")
 ```
 
-### V9.0 three-channel status
+### Three-channel status
 
 ```python
+# CASCADE_PRECURSOR requires all three conditions simultaneously:
+# coupling degradation + structural-rhythmic decoupling + ≥2 EWS indicators elevated
 if result.is_cascade_precursor():
-    print("CRITICAL: cascade precursor")
+    print("CRITICAL: cascade precursor — all three channels confirming")
 
 status = result.get_channel_status()
 # {"structural": "healthy", "rhythmic_composite": "degrading",
@@ -280,7 +326,7 @@ print(result.get_degradation_narrative())
 print(result.get_primary_carrier_wave())   # "mid", "low", etc.
 ```
 
-### Multivariate mode
+### Multivariate streams
 
 ```python
 cfg = SentinelConfig(multivariate=True, n_channels=3)
@@ -294,11 +340,16 @@ result = det.update_and_check([v1, v2, v3])
 result = await det.aupdate(value)
 ```
 
-### Auto-tune from labeled data
+### Multiple streams (thread-safe)
 
 ```python
-labeled = [(value, is_anomaly), ...]
-det = SentinelDetector.auto_tune(data=[], labeled_data=labeled)
+from fracttalix import MultiStreamSentinel
+
+mss = MultiStreamSentinel(config=SentinelConfig.production())
+
+# Each stream ID gets its own independent detector instance
+result = mss.update("sensor_42", 3.14)
+result = await mss.aupdate("sensor_43", 7.71)
 ```
 
 ---
@@ -474,7 +525,7 @@ Every call to `update_and_check()` runs all 37 steps in order. Steps read from a
 | 33 | `DiagnosticWindowStep` | **v10** | Δt = (κ̄−κ_c)/|dκ̄/dt|; confidence grading; supercompensation |
 | 34 | `KuramotoOrderStep` | **v10** | Φ = |mean(e^iθ_k)| — phase coherence independent of κ̄ |
 | 35 | `SequenceOrderingStep` | **v10** | COUPLING_FIRST / COHERENCE_FIRST / SIMULTANEOUS / STABLE per step |
-| 36 | `ReversedSequenceStep` | **v10** | Reversed thermodynamic sequence → intervention signature |
+| 36 | `ReversedSequenceStep` | **v10** | Atypical degradation ordering → sequence classification + intervention_signature_score |
 | 37 | `AlertReasonsStep` | v8 | Must run last — aggregates all alert signals |
 
 ### Custom steps
@@ -585,7 +636,7 @@ result.get_intervention_signature() -> dict
 | `"supercompensation_detected"` | `bool` | Adaptive recovery in progress |
 | `"kuramoto_order"` | `float` | Φ inter-band phase coherence (0.0–1.0) |
 | `"reversed_sequence"` | `bool` | Coherence collapsing before coupling |
-| `"intervention_signature_score"` | `float` | 0.0–1.0 confidence of deliberate intervention |
+| `"intervention_signature_score"` | `float` | 0.0–1.0 confidence of atypical sequence ordering (classification label, not causal claim) |
 | `"sequence_type"` | `str` | ORGANIC / REVERSED / AMBIGUOUS / INSUFFICIENT_DATA |
 | `"coupling_rate"` | `float` | dκ̄/dt (negative = degrading) |
 | `"critical_coupling"` | `float` | κ_c estimated from frequency distribution |
@@ -689,7 +740,7 @@ fracttalix [OPTIONS]
 
 ## Backward Compatibility
 
-v12.1 is a strict superset of all prior versions. No step is removed. No result key is removed.
+v12.2 is a strict superset of all prior versions. No step is removed. No result key is removed. The only breaking change from v12.1 is the `production()` default multiplier (3.0 → 4.5) — restore with `SentinelConfig(multiplier=3.0)`.
 
 ### V8.0 root-cause fixes (all preserved)
 
@@ -746,7 +797,7 @@ Machine-readable falsification layers for the Fracttalix corpus. All layers conf
 | P1    | Fractal Rhythm Model (Paper 1) | PHASE-READY | ai-layers/P1-ai-layer.json       |
 | MK-P1 | Meta-Kaizen Paper 1          | PHASE-READY | ai-layers/MK-P1-ai-layer.json    |
 | DRP-1 | Dependency Resolution Process | PHASE-READY | ai-layers/DRP1-ai-layer.json     |
-| SFW-1 | Sentinel v12                 | PHASE-READY | ai-layers/SFW1-ai-layer.json     |
+| SFW-1 | Sentinel v12.2               | PHASE-READY | ai-layers/SFW1-ai-layer.json     |
 
 ---
 
