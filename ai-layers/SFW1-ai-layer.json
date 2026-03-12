@@ -8,7 +8,7 @@
     "licence": "CC BY 4.0"
   },
   "paper_id": "SFW-1",
-  "paper_title": "Fracttalix Sentinel v12: A Three-Channel Streaming Anomaly Detector for FRM Regime Identification",
+  "paper_title": "Fracttalix Sentinel v12.2: A Three-Channel Streaming Anomaly Detector for FRM Regime Identification",
   "paper_type": "methodology_D",
   "version": "v1",
   "session": "S47",
@@ -25,7 +25,7 @@
     "c5": "SATISFIED",
     "c6": "SATISFIED",
     "placeholder_count": 1,
-    "note": "I-9 all 7 steps SATISFIED. One live placeholder: PH-SFW.1 — P1 FRM physics dependency (regime/Hopf channel). P1 is PHASE-READY; PH-SFW.1 does not block. 374 tests passing on main at commit 105c775."
+    "note": "I-9 all 7 steps SATISFIED. One live placeholder: PH-SFW.1 — P1 FRM physics dependency (regime/Hopf channel). P1 is PHASE-READY; PH-SFW.1 does not block. 374 tests passing on main at commit 105c775. v12.2.0: README physics language corrected to 'signal-processing heuristics'; production() multiplier raised 3.0→4.5; no new falsifiable claims; all 6 F-claims remain NOT FALSIFIED."
   },
   "i9_record": {
     "step1_schema_validate": "SATISFIED — all required fields present; paper_type methodology_D ✓; version v1 matches ^v[0-9]+$ ✓; session S47 matches ^S[0-9]+$ ✓",
@@ -60,7 +60,7 @@
       "type": "D",
       "label": "Package version",
       "name": "Package version",
-      "statement": "This AI layer describes Fracttalix Sentinel v12.0.0 as defined by __version__ = '12.0.0' in fracttalix/__init__.py (lines 4–11, with importlib.metadata fallback).",
+      "statement": "This AI layer describes Fracttalix Sentinel v12.2.0 as defined by __version__ = '12.2.0' in fracttalix/__init__.py (lines 4–11, with importlib.metadata fallback). v12.2.0 adds epistemic language corrections and a production() multiplier change (3.0→4.5); no new falsifiable claims added since v12.1.0.",
       "source": "fracttalix/__init__.py lines 4–11",
       "derivation_source": [
         "D-SFW.1"
@@ -953,7 +953,7 @@
   ],
   "software_metadata": {
     "package_name": "fracttalix",
-    "version": "12.0.0",
+    "version": "12.2.0",
     "language": "Python 3",
     "test_count": 374,
     "test_framework": "pytest",
@@ -969,7 +969,7 @@
       "tqdm"
     ],
     "install": "pip install -e .",
-    "version_confirmed": "python -c \"from fracttalix import __version__; print(__version__)\" → 12.0.0",
+    "version_confirmed": "python -c \"from fracttalix import __version__; print(__version__)\" → 12.2.0",
     "git_commit_main": "105c775 (merge f34b7a3 — Merge V12 package into main)"
   },
   "summary": {

@@ -6,9 +6,9 @@ try:
     try:
         __version__ = version("fracttalix")
     except PackageNotFoundError:
-        __version__ = "12.1.0"
+        __version__ = "12.2.0"
 except ImportError:
-    __version__ = "12.1.0"
+    __version__ = "12.2.0"
 
 from fracttalix.config import SentinelConfig
 from fracttalix.detector import Detector_7_10, SentinelDetector, _legacy_kwargs_to_config
