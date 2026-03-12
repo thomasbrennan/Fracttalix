@@ -377,13 +377,13 @@ PHASE-READY as of Session 48.
 ## Verification Status
 
 ```
-AI Layers:          21/21 PASS (0 errors)
+AI Layers:          21/21 schema PASS (0 errors)
 Phase-Ready:        10/21
 Act I:              P1 PHASE-READY, P2 Phase 1 PHASE-READY (S49), P3 QUEUED
 Meta-Kaizen:        6/6 PUBLISHED (MK-P1–MK-P6, all with AI layers)
 DRS:                DRP-1 + DRS-ARCH (Architecture Specification)
-Total Claims:       138 (A:29 D:46 F:63)
-Cross-references:   118+ derivation_source entries
+Total Claims:       140 (A:31 D:46 F:63)
+Cross-references:   225+ derivation_source entries (153 claim IDs, 72 prose refs)
 Cross-paper errors: 0
 Open Placeholders:  17
 Schema:             v3-S51
@@ -393,7 +393,7 @@ Verification Tiers (v3):
   formal_proof:      18 claims (P1 ×2, P2 ×5, P3 ×4, MK-P1 ×5, DRP-1 ×3)
   analytic:           4 claims (P1 ×3, P4 ×1)
   empirical_pending:  8 claims (P1 ×1, P4 ×1, P5 ×3, MK-P1 ×3)
-  axiom:             29 claims
+  axiom:             31 claims
   definition:        46 claims
 ```
 

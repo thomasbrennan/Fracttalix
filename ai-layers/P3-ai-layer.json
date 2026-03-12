@@ -160,7 +160,7 @@
       "label": "[TYPE:A]",
       "name": "Neural substrate is a network",
       "statement": "The neural system is a network in the precise sense of P1 A-1.3: neurons are nodes, synaptic connections are directed edges, and coupling κ is measurable as the ratio of active to possible synaptic connections.",
-      "derivation_source": ["A-1.3", "A-1.5", "A-2.1"],
+      "derivation_source": ["A-1.3", "A-1.5", "D-2.1"],
       "falsification_predicate": null,
       "tier": "axiom",
       "test_bindings": [],
@@ -198,6 +198,7 @@
       "type": "D",
       "name": "τ_gen Extraction Protocol",
       "statement": "τ_gen is identified from system S using the following sub-protocol hierarchy applied in order: (a) STRUCTURAL: τ_gen from published system architecture (cell cycle time, feedback delay); (b) SPECTRAL: τ_gen = T_obs/4 where T_obs is dominant period from power spectrum of O(t); (c) MECHANISTIC: τ_gen from mechanism literature review. First successful sub-protocol defines τ_gen. τ_gen is never fitted to O(t).",
+      "derivation_source": ["D-1.1"],
       "derivation_sources": [
         "P1 D-1.1",
         "IR-8 parsimony — P10-GAP-3.3 CLOSED"
@@ -212,6 +213,7 @@
       "claim_id": "C-3.REG",
       "type": "F",
       "name": "FRM Regression Protocol",
+      "derivation_source": ["D-1.1", "D-3.1", "D-3.2", "F-1.4"],
       "statement": "The FRM regression protocol consists of steps R1–R9 and produces: R²_frm, β_measured, T_char, σ_β, and classification ∈ {CONFIRMED, EXCLUDED, ANOMALOUS}. The protocol preserves the zero-free-parameter constraint of P1 I-7.",
       "resolves_placeholders": [
         "PH-1.2",
@@ -313,6 +315,7 @@
       "claim_id": "C-3.ALT",
       "type": "F",
       "name": "Alternative Model Comparison Protocol",
+      "derivation_source": ["C-3.REG"],
       "statement": "For each substrate class, the best alternative model is pre-specified in the Section 5 mapping table. Comparison is by Δ = R²_frm − R²_alt with threshold Δ≥−0.05.",
       "falsification_predicate": {
         "FALSIFIED_IF": "(best_alt_model_class_mapping_is_post_hoc = true) OR (delta_margin_threshold_is_undefined = true)",
@@ -329,6 +332,7 @@
       "claim_id": "C-3.DIAG",
       "type": "F",
       "name": "Scope Boundary Diagnostics",
+      "derivation_source": ["C-3.REG", "D-2.1"],
       "statement": "The P3 diagnostic tool produces classification ∈ {CONFIRMED, EXCLUDED, ANOMALOUS} by a fully computable decision rule. ANOMALOUS cases (D-2.1 satisfied AND R²<0.85) are corpus-level C-2.2 falsification candidates and generate flagged observation records.",
       "anomalous_propagation_procedure": "ANOMALOUS observation → corpus anomaly register entry → architecture review: (a) D-2.1 misclassification → EXCLUDED on review; (b) genuine C-2.2 falsification → triggers C-2.2 falsification event. Distinction determined by re-running D-3.1/D-2.1 verification independently.",
       "falsification_predicate": {
@@ -346,6 +350,7 @@
       "claim_id": "C-3.sigma",
       "type": "F",
       "name": "β Standard Error Protocol",
+      "derivation_source": ["C-3.REG", "C-2.4"],
       "statement": "σ_β per substrate is computed from bootstrap residual analysis (B=1000 resamples). pooled_σ_β is weighted mean across validation set. 2σ threshold for β substrate independence corresponds to 95% CI of normal distribution. CLOSES P10-GAP-2.5.",
       "resolves_placeholders": [
         "P10-GAP-2.5"
@@ -452,7 +457,8 @@
     ]
   },
   "summary": {
-    "total_claims": 6,
+    "total_claims": 8,
+    "type_A": 2,
     "type_D": 2,
     "type_F": 4,
     "placeholder_count": 0,
