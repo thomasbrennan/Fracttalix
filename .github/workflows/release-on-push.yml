@@ -18,13 +18,20 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Create and merge PR
+      - name: Ensure branch is merged to main
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
           BRANCH="${GITHUB_REF#refs/heads/}"
 
-          # Check if PR already exists
+          # Check if already merged
+          MERGED=$(gh pr list --head "$BRANCH" --state merged --json number --jq '.[0].number' 2>/dev/null || true)
+          if [ -n "$MERGED" ]; then
+            echo "PR #$MERGED already merged. Skipping."
+            exit 0
+          fi
+
+          # Check if open PR exists
           EXISTING=$(gh pr list --head "$BRANCH" --state open --json number --jq '.[0].number' 2>/dev/null || true)
 
           if [ -z "$EXISTING" ]; then
@@ -32,37 +39,27 @@ jobs:
               --title "v12.2.0: Zenodo metadata, corpus integrity fixes, epistemic corrections" \
               --base main \
               --head "$BRANCH" \
-              --body "## Summary
-
-          - **Sentinel v12.2.0**: epistemic language corrections + production() multiplier 3.0→4.5 (FPR 35.6%→~6%)
-          - **Zenodo metadata**: .zenodo.json version 12.2.0, 162 claims, 21 AI layers
-          - **zenodo-dataset-description.md**: v12.2 changes, MK-P6 added, paper count 5→6
-          - **Corpus integrity (S55)**: P3 claim count, A-3.1 cross-ref, 18 orphan derivation_sources, bootstrap rewrite, Build Table, journal index
-
-          ## Validation
-
-          - 21/21 AI layers valid, 0 errors
-          - 162 claims, 225+ derivation_source entries
-
-          *Auto-created by release-on-push workflow.*"
+              --body "Auto-created by release-on-push workflow."
             EXISTING=$(gh pr list --head "$BRANCH" --state open --json number --jq '.[0].number')
           fi
 
           echo "Merging PR #$EXISTING..."
-          gh pr merge "$EXISTING" --merge --delete-branch
+          gh pr merge "$EXISTING" --merge --delete-branch || echo "Merge failed or already done"
 
-      - name: Fix v12.2.0 tag and create release
+      - name: Fix v12.2.0 tag and recreate release
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          # Update to merged main
           git fetch origin main
           git checkout main
           git pull origin main
 
+          # Delete existing release first (it has wrong content)
+          gh release delete v12.2.0 --yes 2>/dev/null || echo "No existing release to delete"
+
           # Delete the wrongly-placed tag
+          git push origin :refs/tags/v12.2.0 2>/dev/null || echo "Remote tag already gone"
           git tag -d v12.2.0 2>/dev/null || true
-          git push origin :refs/tags/v12.2.0 2>/dev/null || true
 
           # Create correct tag on main HEAD
           git tag v12.2.0
@@ -71,6 +68,7 @@ jobs:
           # Create GitHub Release (triggers Zenodo webhook)
           gh release create v12.2.0 \
             --title "Fracttalix Sentinel v12.2.0" \
+            --latest \
             --notes "## Sentinel v12.2.0
 
           ### Epistemic Language Corrections
@@ -93,4 +91,6 @@ jobs:
 
           Full changelog: CHANGELOG.md"
 
-          echo "Release v12.2.0 created. Zenodo webhook should fire automatically."
+          echo "=== DONE ==="
+          echo "Release v12.2.0 recreated with correct content."
+          echo "Zenodo webhook should fire automatically."
