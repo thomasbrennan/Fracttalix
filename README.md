@@ -477,11 +477,11 @@ result = await mss.aupdate("sensor_43", 7.71)
 | `ews_window` | `40` | EWS rolling window (independent from scalar window) |
 | `ews_threshold` | `0.6` | EWS "approaching critical" threshold |
 
-#### F — Fluid Dynamics
+#### F — Temporal Signal Heuristics
 
 | Field | Default | Description |
 |-------|---------|-------------|
-| `sti_window` | `20` | Shear-Turbulence Index window |
+| `sti_window` | `20` | Shear-Turbulence Index window (signal heuristic inspired by turbulence concepts) |
 | `tps_window` | `30` | Temporal Phase Space window |
 | `osc_damp_window` | `20` | Oscillation damping window |
 | `osc_threshold` | `1.5` | Oscillation damping alert multiplier |
@@ -691,7 +691,7 @@ result.get_intervention_signature() -> dict
 | `"mean_pac"` | `float` | Current PAC strength (0.0–1.0) |
 | `"pac_degradation_rate"` | `float` | Fractional PAC decline rate |
 | `"pre_cascade_pac"` | `bool` | PAC warning before cascade precursor |
-| `"diagnostic_window_steps"` | `float\|None` | Steps until coherence collapse |
+| `"diagnostic_window_steps"` | `float\|None` | Heuristic estimate of steps until coherence collapse (trajectory extrapolation under current conditions) |
 | `"diagnostic_window_confidence"` | `str` | HIGH / MEDIUM / LOW / NOT_APPLICABLE |
 | `"supercompensation_detected"` | `bool` | Adaptive recovery in progress |
 | `"kuramoto_order"` | `float` | Φ inter-band phase coherence (0.0–1.0) |
@@ -831,17 +831,19 @@ det2.load_state(json_str)
 
 ## Theoretical Foundation
 
+> The FRM components below refer to concepts in the Fractal Rhythm Model working papers (DOI: [10.5281/zenodo.18859299](https://doi.org/10.5281/zenodo.18859299)). These are working-paper concepts, not established scientific axioms. The implementations are signal-processing heuristics inspired by the framework.
+
 | FRM Component | Sentinel Implementation |
 |---------------|------------------------|
-| FRM Axiom 3 (ordinal pattern complexity) | `PEStep` — Permutation Entropy |
-| FRM Axiom 9 (critical slowing down) | `EWSStep` — variance + lag-1 autocorrelation |
+| FRM Concept 3 (ordinal pattern complexity) | `PEStep` — Permutation Entropy |
+| FRM Concept 9 (critical slowing down) | `EWSStep` — variance + lag-1 autocorrelation |
 | Rhythm Periodicity Index | `RPIStep` — FFT spectral coherence |
 | Rhythm Fractal Index | `RFIStep` — Hurst exponent via R/S |
 | Synchronization Stability Index | `SSIStep` — Kuramoto proxy via FFT phase coherence |
 | Three-channel model (Paper 6) | `StructuralSnapshotStep`, `FrequencyDecompositionStep`, `ChannelCoherenceStep`, `CascadePrecursorStep`, `DegradationSequenceStep` |
-| Maintenance burden μ | `ThroughputEstimationStep`, `MaintenanceBurdenStep` |
-| PAC pre-cascade (Tort 2010) | `PhaseExtractionStep`, `PACCoefficientStep`, `PACDegradationStep` |
-| Diagnostic window Δt | `CriticalCouplingEstimationStep`, `CouplingRateStep`, `DiagnosticWindowStep` |
+| Maintenance burden μ (heuristic) | `ThroughputEstimationStep`, `MaintenanceBurdenStep` |
+| PAC pre-cascade (Tort 2010 method) | `PhaseExtractionStep`, `PACCoefficientStep`, `PACDegradationStep` |
+| Diagnostic window Δt (heuristic estimate) | `CriticalCouplingEstimationStep`, `CouplingRateStep`, `DiagnosticWindowStep` |
 | Kuramoto order Φ / reversed sequence | `KuramotoOrderStep`, `SequenceOrderingStep`, `ReversedSequenceStep` |
 
 **DOI:** [10.5281/zenodo.18859299](https://doi.org/10.5281/zenodo.18859299)
@@ -873,7 +875,9 @@ Machine-readable falsification layers for the Fracttalix corpus. All layers conf
 
 | Version | Notes |
 |---------|-------|
+| v12.3.0 | FPR floor eliminated via ConsensusGate + threshold recalibration; SeasonalPreprocessStep |
 | v12.2.0 | Epistemic language corrections; production() multiplier 3.0→4.5 |
+| v12.1.0 | VarCUSUM non-reset fix; ChannelCoherence unit mismatch fix |
 | v10.0.0 | 4 collapse indicators (v10 API), 37 steps, 98 tests |
 | v9.0.0 | Three-channel model, 26 steps, 65 tests |
 | v8.0.0 | Frozen config, WindowBank, 19-step pipeline |
