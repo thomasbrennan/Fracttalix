@@ -117,17 +117,36 @@ All five exercised. No additional rules identified.
 
 ## Open Question
 
-**OQ-1 — C-DRP3.7 Independence Verification**
+**OQ-1 — C-DRP3.7 Independence Verification — RESOLVED S54**
 
 C-DRP3.7 requires that condition (b) of T(P,O,M) was derived independently of the
-Hopf analysis in P2. This cannot be verified from published papers alone — requires
-either: (a) DRP-1 §10.7 does not cite Hopf/P2 in deriving finite-deterministic
-requirement; or (b) Thomas confirms derivation independence.
+Hopf analysis in P2.
 
-If independence is definitionally true, C-DRP3.7 cannot be falsified and should be
-reclassified as Type D.
+**Resolution:** C-DRP3.7 stays **Type F**. Claim count unchanged at 2A + 2D + 3F = 7.
 
-**Status:** Flag for Thomas review. Does not block D3-2.0.
+**Reasoning:**
+1. C-DRP3.7 is independently falsifiable from C-DRP3.5. The isomorphism (C-DRP3.5)
+   could hold structurally while the independence claim (C-DRP3.7) fails — the
+   designer could have consciously imported the Hopf structure into the DRS design.
+   The isomorphism would still be valid mathematics; it just wouldn't be an
+   independent discovery.
+2. The observation class is a citation audit of the published formal derivation
+   chain: does DRP-1 §10.7 cite P2 or any Hopf analysis in deriving the
+   finite-deterministic requirement for M? This is finite, deterministic, and
+   capable of returning FALSIFIED.
+3. Derivation independence is a contingent historical fact about how two specific
+   documents were written, not a provable structural property of the mathematics.
+   It could have gone either way. Therefore C-DRP3.7 is not Type D.
+
+**Scope constraint for D3-3.0 predicate writing:**
+The observation class must be scoped to the *published formal derivation chain* only.
+"DRP-1 §10.7 cites P2/Hopf in the derivation of condition (b)" is testable.
+"The author was thinking about Hopf when writing it" is not — private thought
+processes are not observations in the DRS sense. The predicate must be written
+against the published text. No handwaving assertions — the falsification path
+requires a mathematical chain of causation traceable through the citation graph.
+
+**Status:** RESOLVED S54. Does not block D3-2.0 or D3-3.0.
 
 ---
 
