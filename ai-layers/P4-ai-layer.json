@@ -30,7 +30,7 @@
     {
       "claim_id": "A-4.1",
       "type": "A",
-      "label": "[TYPE:A]",
+      "label": "Self-similarity across scales",
       "name": "Self-similarity across scales",
       "statement": "The FRM functional form f(t) = B + A·e^(−λt)·cos(ωt + φ) is self-similar: the same functional form applies at every scale where the FRM conditions are satisfied.",
       "derivation_source": [
@@ -46,7 +46,7 @@
     {
       "claim_id": "D-4.1",
       "type": "D",
-      "label": "[TYPE:D]",
+      "label": "Fractal property as carrier wave signature",
       "name": "Fractal property as carrier wave signature",
       "statement": "The 'fractal' in Fractal Rhythm Model refers to the self-similar carrier wave architecture across scales. This is a property of the law (the functional form), not of any particular substrate or organization.",
       "derivation_source": [
@@ -62,7 +62,7 @@
     {
       "claim_id": "D-4.2",
       "type": "D",
-      "label": "[TYPE:D]",
+      "label": "Scale-invariant parameters",
       "name": "Scale-invariant parameters",
       "statement": "The universal constants β = 1/2, k* = π/2, and Γ = 1 + π²/4 are scale-invariant — they take the same values at every scale. Only τ_gen varies with substrate.",
       "derivation_source": [
@@ -79,7 +79,7 @@
     {
       "claim_id": "D-4.3",
       "type": "D",
-      "label": "[TYPE:D]",
+      "label": "Mathematical structure of FRM",
       "name": "Mathematical structure of FRM",
       "statement": "The FRM is the exact transient solution of the Stuart-Landau normal form for μ < 0. The mathematical properties (exponential decay envelope, oscillatory core, phase offset) are derivable from the DDE characteristic equation.",
       "derivation_source": [
@@ -95,7 +95,7 @@
     {
       "claim_id": "F-4.1",
       "type": "F",
-      "label": "[TYPE:F]",
+      "label": "Scale-invariance of β",
       "name": "Scale-invariance of β",
       "statement": "β = 1/2 holds across all scales tested in P1 validation set (36 substrates, biological through civilisational). No scale-dependent correction is needed.",
       "derivation_source": [
@@ -120,7 +120,7 @@
     {
       "claim_id": "F-4.2",
       "type": "F",
-      "label": "[TYPE:F]",
+      "label": "Fractal-like behavior from carrier wave architecture",
       "name": "Fractal-like behavior from carrier wave architecture",
       "statement": "The self-similar appearance across scales (fractal-like behavior) emerges from the carrier wave structure, not from fractal geometry. Removing the oscillatory component (ω → 0) destroys the self-similarity.",
       "placeholder": true,

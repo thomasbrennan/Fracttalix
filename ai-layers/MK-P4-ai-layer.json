@@ -11,7 +11,7 @@
   "paper_id": "MK-P4",
   "corpus_id": "Meta-Kaizen",
   "series": "Meta-Kaizen Series",
-  "series_position": "Paper 4 of 5",
+  "series_position": "Paper 4 of 6",
   "paper_title": "The Fractal Rhythm Model: Closed-Loop Governance, Regime-Aware Adaptation, and the Axiom 5 Modification for Dynamic Environments",
   "paper_type": "application_C",
   "paper_type_note": "Primary contribution is the application of FRM regime detection to Meta-Kaizen governance. Axiom 5-prime is a modification, not a new derivation. Classified application_C because the paper applies FRM to an existing framework.",
@@ -35,45 +35,69 @@
   "inference_rule_inventory": "IR-1 through IR-8 — Fracttalix P2 Build Plan S48",
   "principle_10_compliant": true,
   "principle_10_audit": [
-    { "constant_or_condition": "RDS threshold = 0.70", "derivation_path": "Operational default. Not derived — chosen as balance between sensitivity and false alarm rate. Organizations should calibrate empirically." },
-    { "constant_or_condition": "w_N = 0.20 (novelty floor weight)", "derivation_path": "Operational default. Ensures zero-novelty candidates receive at most 0.20 effective novelty under maximum regime signal. Not derived from first principles." },
-    { "constant_or_condition": "w_I = 0.10 (impact floor weight)", "derivation_path": "Operational default. More conservative than w_N because impact floors are riskier than novelty floors." },
-    { "constant_or_condition": "delta = 0.30 (extinguishing rate default)", "derivation_path": "Operational default. delta_min formula in Section 6.1 provides principled lower bound." },
-    { "constant_or_condition": "L = 12 months (BOCP hazard rate default)", "derivation_path": "Operational default. Substrate-specific calibration guidance in Section 4.1." },
-    { "constant_or_condition": "delta_min = 1 - (epsilon/r_0)^(1/H_plan)", "derivation_path": "Derived from extinguishing recursion r_{t+1} = r_t * (1 - delta * a_t). Solving for delta that guarantees r_t < epsilon within H_plan cycles." }
+    {
+      "constant_or_condition": "RDS threshold = 0.70",
+      "derivation_path": "Operational default. Not derived — chosen as balance between sensitivity and false alarm rate. Organizations should calibrate empirically."
+    },
+    {
+      "constant_or_condition": "w_N = 0.20 (novelty floor weight)",
+      "derivation_path": "Operational default. Ensures zero-novelty candidates receive at most 0.20 effective novelty under maximum regime signal. Not derived from first principles."
+    },
+    {
+      "constant_or_condition": "w_I = 0.10 (impact floor weight)",
+      "derivation_path": "Operational default. More conservative than w_N because impact floors are riskier than novelty floors."
+    },
+    {
+      "constant_or_condition": "delta = 0.30 (extinguishing rate default)",
+      "derivation_path": "Operational default. delta_min formula in Section 6.1 provides principled lower bound."
+    },
+    {
+      "constant_or_condition": "L = 12 months (BOCP hazard rate default)",
+      "derivation_path": "Operational default. Substrate-specific calibration guidance in Section 4.1."
+    },
+    {
+      "constant_or_condition": "delta_min = 1 - (epsilon/r_0)^(1/H_plan)",
+      "derivation_path": "Derived from extinguishing recursion r_{t+1} = r_t * (1 - delta * a_t). Solving for delta that guarantees r_t < epsilon within H_plan cycles."
+    }
   ],
   "claim_registry": [
     {
       "claim_id": "A-MK4.1",
       "type": "A",
-      "label": "[TYPE:A]",
+      "label": "Bayesian Online Changepoint Detection (BOCP)",
       "name": "Bayesian Online Changepoint Detection (BOCP)",
       "statement": "Adams & MacKay (2007) BOCP algorithm computes P(change point at t | y_1,...,y_t) via recursive Bayesian updating with geometric run-length prior. Provides exact posterior over run lengths in O(t) time per observation.",
-      "derivation_source": ["Adams & MacKay 2007"],
+      "derivation_source": [
+        "Adams & MacKay 2007"
+      ],
       "falsification_predicate": null
     },
     {
       "claim_id": "A-MK4.2",
       "type": "A",
-      "label": "[TYPE:A]",
+      "label": "Axiom 5 — Essentialness with Veto Power (from MK-P1)",
       "name": "Axiom 5 — Essentialness with Veto Power (from MK-P1)",
       "statement": "A zero value on any single component renders the candidate inadoptable: KVS(0,I',C',T) = KVS(N,0,C',T) = 0. This is the axiom being deliberately modified by Axiom 5-prime.",
-      "derivation_source": ["MK-P1 AI-Layer A-MK1.5"],
+      "derivation_source": [
+        "MK-P1 AI-Layer A-MK1.5"
+      ],
       "falsification_predicate": null
     },
     {
       "claim_id": "D-MK4.1",
       "type": "D",
-      "label": "[TYPE:D]",
+      "label": "Regime Discontinuity Score (RDS)",
       "name": "Regime Discontinuity Score (RDS)",
       "statement": "RDS_t = P(change point at t | y_1,...,y_t) computed via BOCP algorithm with geometric run-length prior, hazard rate h = 1/L. Default L = 12 months. RDS_t in [0,1]. Threshold: RDS_t > 0.70 triggers FRM adjustment.",
-      "derivation_source": ["A-MK4.1"],
+      "derivation_source": [
+        "A-MK4.1"
+      ],
       "falsification_predicate": null
     },
     {
       "claim_id": "D-MK4.2",
       "type": "D",
-      "label": "[TYPE:D]",
+      "label": "Complexity Surge Score (CSS)",
       "name": "Complexity Surge Score (CSS)",
       "statement": "CSS_t measures volatility-normalized complexity expansion. Two formulations provided: (1) clipping formulation — CSS_t = min(1, (C_t - mu_C) / sigma_C); (2) logistic formulation — CSS_t = 1/(1 + exp(-(C_t - mu_C)/sigma_C)). Both satisfy CSS_t in [0,1].",
       "derivation_source": [],
@@ -82,25 +106,32 @@
     {
       "claim_id": "D-MK4.3",
       "type": "D",
-      "label": "[TYPE:D]",
+      "label": "Axiom 5-prime — Regime-Conditioned Essentialness",
       "name": "Axiom 5-prime — Regime-Conditioned Essentialness",
       "statement": "When a regime signal is active (S_t = max(RDS_t, CSS_t) > 0), candidates with N_j = 0 receive an effective novelty floor w_N * S_t > 0. Bound: w_N * S_t <= 0.20. Restoration: S_t = 0 or w_N = 0 exactly recovers standard KVS (Axiom 5).",
-      "derivation_source": ["A-MK4.2", "D-MK4.1", "D-MK4.2"],
+      "derivation_source": [
+        "A-MK4.2",
+        "D-MK4.1",
+        "D-MK4.2"
+      ],
       "falsification_predicate": null
     },
     {
       "claim_id": "D-MK4.4",
       "type": "D",
-      "label": "[TYPE:D]",
+      "label": "KVS-hat Formula",
       "name": "KVS-hat Formula",
       "statement": "KVS-hat_j = max(w_N * S_t, N_j) * max(w_I * S_t, I'_j) * C'_j * T_j. Default weights: w_N = 0.20, w_I = 0.10. When S_t = 0, KVS-hat_j = KVS_j (standard).",
-      "derivation_source": ["D-MK4.3", "MK-P1 AI-Layer D-MK1.2"],
+      "derivation_source": [
+        "D-MK4.3",
+        "MK-P1 AI-Layer D-MK1.2"
+      ],
       "falsification_predicate": null
     },
     {
       "claim_id": "D-MK4.5",
       "type": "D",
-      "label": "[TYPE:D]",
+      "label": "Extinguishing Recursion",
       "name": "Extinguishing Recursion",
       "statement": "r_{t+1} = r_t * (1 - delta * a_t), where r_t is residual regime intensity, a_t in {0,1} is whether an improvement was adopted, and delta in (0,1] is the extinguishing rate. Passive waiting does not resolve a regime shift.",
       "derivation_source": [],
@@ -109,13 +140,30 @@
     {
       "claim_id": "C-MK4.1",
       "type": "F",
-      "label": "[TYPE:F]",
+      "label": "Axiom 5-prime Restoration Property",
       "name": "Axiom 5-prime Restoration Property",
       "statement": "Setting S_t = 0 (no regime signal) or w_N = 0 (no novelty floor) in KVS-hat exactly recovers standard KVS. The departure from Axiom 5 is bounded: max effective novelty floor = w_N * 1.0 = 0.20. A standard candidate with N = 0.91 always dominates a zero-novelty candidate.",
-      "derivation_source": ["D-MK4.3", "D-MK4.4"],
+      "derivation_source": [
+        "D-MK4.3",
+        "D-MK4.4"
+      ],
       "inference_rule_steps": [
-        { "step": "1", "input": ["D-MK4.4"], "operation": "IR-3: Substitution — set S_t = 0 in KVS-hat formula.", "output": "max(0, N_j) * max(0, I'_j) * C'_j * T_j = N_j * I'_j * C'_j * T_j = KVS_j" },
-        { "step": "2", "input": ["D-MK4.3"], "operation": "IR-5: Algebraic manipulation — max novelty floor = w_N * max(S_t) = 0.20 * 1.0 = 0.20.", "output": "0.20 < 0.91 (standard novel candidate), so novel candidates always dominate." }
+        {
+          "step": "1",
+          "input": [
+            "D-MK4.4"
+          ],
+          "operation": "IR-3: Substitution — set S_t = 0 in KVS-hat formula.",
+          "output": "max(0, N_j) * max(0, I'_j) * C'_j * T_j = N_j * I'_j * C'_j * T_j = KVS_j"
+        },
+        {
+          "step": "2",
+          "input": [
+            "D-MK4.3"
+          ],
+          "operation": "IR-5: Algebraic manipulation — max novelty floor = w_N * max(S_t) = 0.20 * 1.0 = 0.20.",
+          "output": "0.20 < 0.91 (standard novel candidate), so novel candidates always dominate."
+        }
       ],
       "falsification_predicate": {
         "FALSIFIED_IF": "(S_t_zero_recovery_fails = true) OR (floor_exceeds_bound = true)",
@@ -132,14 +180,37 @@
     {
       "claim_id": "C-MK4.2",
       "type": "F",
-      "label": "[TYPE:F]",
+      "label": "Extinguishing Recursion Convergence (delta_min)",
       "name": "Extinguishing Recursion Convergence (delta_min)",
       "statement": "For target planning horizon H_plan and deactivation threshold epsilon, delta_min = 1 - (epsilon/r_0)^(1/H_plan). With H_plan = 8 quarters, epsilon = 0.10, r_0 = 1.0: delta_min = 1 - 0.10^(1/8) = 0.25. Any delta >= delta_min guarantees r_t < epsilon within H_plan cycles.",
-      "derivation_source": ["D-MK4.5"],
+      "derivation_source": [
+        "D-MK4.5"
+      ],
       "inference_rule_steps": [
-        { "step": "1", "input": ["D-MK4.5"], "operation": "IR-5: Algebraic manipulation — assume a_t = 1 every cycle (best case): r_t = r_0 * (1-delta)^t.", "output": "Geometric decay under continuous adoption." },
-        { "step": "2", "input": ["Step 1"], "operation": "IR-5: Algebraic manipulation — solve r_0 * (1-delta)^H_plan = epsilon for delta.", "output": "delta_min = 1 - (epsilon/r_0)^(1/H_plan)." },
-        { "step": "3", "input": ["Step 2"], "operation": "IR-5: Algebraic manipulation — substitute H_plan=8, epsilon=0.10, r_0=1.0.", "output": "delta_min = 1 - 0.10^(1/8) = 1 - 0.7499 = 0.25." }
+        {
+          "step": "1",
+          "input": [
+            "D-MK4.5"
+          ],
+          "operation": "IR-5: Algebraic manipulation — assume a_t = 1 every cycle (best case): r_t = r_0 * (1-delta)^t.",
+          "output": "Geometric decay under continuous adoption."
+        },
+        {
+          "step": "2",
+          "input": [
+            "Step 1"
+          ],
+          "operation": "IR-5: Algebraic manipulation — solve r_0 * (1-delta)^H_plan = epsilon for delta.",
+          "output": "delta_min = 1 - (epsilon/r_0)^(1/H_plan)."
+        },
+        {
+          "step": "3",
+          "input": [
+            "Step 2"
+          ],
+          "operation": "IR-5: Algebraic manipulation — substitute H_plan=8, epsilon=0.10, r_0=1.0.",
+          "output": "delta_min = 1 - 0.10^(1/8) = 1 - 0.7499 = 0.25."
+        }
       ],
       "falsification_predicate": {
         "FALSIFIED_IF": "abs(computed_delta_min - 0.25) > 0.01",
@@ -155,15 +226,31 @@
     {
       "claim_id": "C-MK4.3",
       "type": "F",
-      "label": "[TYPE:F]",
+      "label": "KVS-hat IPS Worked Example",
       "name": "KVS-hat IPS Worked Example",
       "statement": "Under simulated market regime shift (correlations 0.22 → 0.61): archived candidate with N=0 receives effective N = 0.20 * 0.92 = 0.184 in Q4. KVS-hat = 0.184 * 0.67 * 0.60 * 1.00 = 0.074. Below kappa = 0.50 but visible. After domain refresh to N=0.91, standard KVS = 0.91 * 0.73 * 0.60 * 1.00 = 0.399.",
-      "derivation_source": ["D-MK4.4"],
+      "derivation_source": [
+        "D-MK4.4"
+      ],
       "placeholder": true,
       "placeholder_id": "PH-MK4.1",
       "inference_rule_steps": [
-        { "step": "1", "input": ["D-MK4.4"], "operation": "IR-5: Algebraic manipulation — substitute N=0, S_t=0.92, w_N=0.20 into KVS-hat.", "output": "Effective N = max(0.20*0.92, 0) = 0.184." },
-        { "step": "2", "input": ["Step 1"], "operation": "IR-5: Algebraic manipulation — KVS-hat = 0.184 * 0.67 * 0.60 * 1.00.", "output": "KVS-hat = 0.074 (paper reports 0.072 — rounding difference)." }
+        {
+          "step": "1",
+          "input": [
+            "D-MK4.4"
+          ],
+          "operation": "IR-5: Algebraic manipulation — substitute N=0, S_t=0.92, w_N=0.20 into KVS-hat.",
+          "output": "Effective N = max(0.20*0.92, 0) = 0.184."
+        },
+        {
+          "step": "2",
+          "input": [
+            "Step 1"
+          ],
+          "operation": "IR-5: Algebraic manipulation — KVS-hat = 0.184 * 0.67 * 0.60 * 1.00.",
+          "output": "KVS-hat = 0.074 (paper reports 0.072 — rounding difference)."
+        }
       ],
       "falsification_predicate": {
         "FALSIFIED_IF": "abs(computed_kvs_hat - 0.074) > 0.01",
@@ -179,10 +266,15 @@
     {
       "claim_id": "C-MK4.4",
       "type": "F",
-      "label": "[TYPE:F]",
+      "label": "Closed-loop feedback architecture completeness",
       "name": "Closed-loop feedback architecture completeness",
       "statement": "The FRM operates as a closed-loop feedback system with six components: (1) substrate outcome monitoring, (2) regime signal computation, (3) KVS adjustment, (4) candidate evaluation, (5) principal approval, (6) outcome logging feeding back to Bayesian calibration and regime signal computation. The loop is closed: component 6 feeds back to components 1 and 2.",
-      "derivation_source": ["D-MK4.1", "D-MK4.2", "D-MK4.4", "MK-P2 AI-Layer C-MK2.4"],
+      "derivation_source": [
+        "D-MK4.1",
+        "D-MK4.2",
+        "D-MK4.4",
+        "MK-P2 AI-Layer C-MK2.4"
+      ],
       "falsification_predicate": {
         "FALSIFIED_IF": "feedback_loop_broken = true",
         "WHERE": {
@@ -214,11 +306,31 @@
     }
   ],
   "cross_references": [
-    { "from": "D-MK4.3", "to": "MK-P1 AI-Layer A-MK1.5", "relation": "Axiom 5-prime is a deliberate, bounded modification of MK-P1 Axiom 5." },
-    { "from": "D-MK4.4", "to": "MK-P1 AI-Layer D-MK1.2", "relation": "KVS-hat extends KVS formula with regime-conditioned floors." },
-    { "from": "C-MK4.4", "to": "MK-P2 AI-Layer C-MK2.4", "relation": "Closed-loop component 6 feeds back to Bayesian calibration (MK-P2 Section 6)." },
-    { "from": "D-MK4.1", "to": "P1-ai-layer", "relation": "FRM as regime-detection instrument — primary cross-track bridge." },
-    { "from": "C-MK4.2", "to": "MK-P5 AI-Layer C-MK5.1", "relation": "Extinguishing rate delta connects to MK-P5 intervention timing — when to act on regime signal." }
+    {
+      "from": "D-MK4.3",
+      "to": "MK-P1 AI-Layer A-MK1.5",
+      "relation": "Axiom 5-prime is a deliberate, bounded modification of MK-P1 Axiom 5."
+    },
+    {
+      "from": "D-MK4.4",
+      "to": "MK-P1 AI-Layer D-MK1.2",
+      "relation": "KVS-hat extends KVS formula with regime-conditioned floors."
+    },
+    {
+      "from": "C-MK4.4",
+      "to": "MK-P2 AI-Layer C-MK2.4",
+      "relation": "Closed-loop component 6 feeds back to Bayesian calibration (MK-P2 Section 6)."
+    },
+    {
+      "from": "D-MK4.1",
+      "to": "P1-ai-layer",
+      "relation": "FRM as regime-detection instrument — primary cross-track bridge."
+    },
+    {
+      "from": "C-MK4.2",
+      "to": "MK-P5 AI-Layer C-MK5.1",
+      "relation": "Extinguishing rate delta connects to MK-P5 intervention timing — when to act on regime signal."
+    }
   ],
   "summary": {
     "total_claims": 11,
