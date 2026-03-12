@@ -32,6 +32,7 @@ C-DRP.4          DRP-1        Definition     DRS Core Requirement Definition
 C-DRP.5          DRP-1        Falsifiable    Live C5 Instance — MK-P1
 C-DRP.6          DRP-1        Definition     PHASE-READY Definition
 C-DRP.7          DRP-1        Definition     CORPUS-COMPLETE Definition
+C-DRP.8          DRP-1        Definition     Upstream Measurement Principle (UMP)
 ```
 
 ### DRS-ARCH: The Dual Reader Standard: Architecture Specification
@@ -261,5 +262,6 @@ F-SFW.12         SFW-1        Falsifiable    numpy fallback warning
 
 ---
 
-**Total unique claims:** 152
+**Total unique claims:** 153
 **Papers indexed:** 14
+**Note:** C-DRP.8 (UMP) added S53 per BLOCKER-2 resolution (R-13). DRP-2 block pending BLOCKER-1 resolution (R-12).

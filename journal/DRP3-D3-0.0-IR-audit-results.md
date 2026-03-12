@@ -33,45 +33,31 @@ deposited, Claude Code can:
 
 ## BLOCKER-2 — C-DRP.7 LABEL CONFLICT
 
-**Status:** RESOLVED
+**Status:** RESOLVED — C-DRP.8 registered in DRP-1 AI layer v1.1 (S53)
 
-**Finding:** The live DRP-1 AI layer (`ai-layers/DRP1-ai-layer.json`,
-v1, produced S47) confirms:
+**Finding:** The live DRP-1 AI layer confirms C-DRP.7 = "CORPUS-COMPLETE
+Definition" (Type D). Registry label correct.
 
+**Resolution applied (S53):**
+- C-DRP.8 = "Upstream Measurement Principle (UMP)" (Type D) registered
+  in DRP-1 AI layer v1.1 and claims registry
+- C-DRP.7 = CORPUS-COMPLETE Definition — unchanged, correct
+- ARCH-2 citation correction (C-DRP.7→C-DRP.8 where context=UMP)
+  pending — ARCH .docx not in repo, patch notes at
+  `journal/DRP1-v1.1-UMP-patch-spec.md`
+- DRP-2 prose citation correction pending — file not in repo
+
+**Inbound citation for DRP-3 is now CLEAN:**
 ```
-C-DRP.7 = "CORPUS-COMPLETE Definition" (Type D)
+C-DRP.8   (UMP — Upstream Measurement Principle)
+Source: DRP-1 v1.1
+Required as: Type A axiom in DRP-3
+Registry status: PRESENT (C-DRP.8, added S53)
+STATUS: CLEAN ✓
 ```
 
-This matches the claims registry exactly. The label is CORRECT.
-
-**The UMP does not exist in the DRP-1 AI layer.** It was recovered
-in S52 from prior session work and formalized in
-`journal/session_52_notes.md`, but was never registered as a
-claim in the AI layer. The AI layer is v1 (S47); the UMP was
-recovered at S52.
-
-**Resolution = Option B variant:**
-- C-DRP.7 = CORPUS-COMPLETE Definition → CORRECT, no change needed
-- UMP needs its own claim ID registered in DRP-1 AI layer
-  (suggested: F-DRP.8 or C-DRP.8, pending type classification)
-- ARCH-2's reference to C-DRP.7 as UMP is INCORRECT — must be
-  updated to the new UMP claim ID once registered
-
-**S47 renumbering note:** The DRP-1 AI layer phase_ready.note
-documents: "Prior C-DRP.3 and C-DRP.4 renumbered C-DRP.6 and
-C-DRP.7." This confirms C-DRP.7 was assigned to CORPUS-COMPLETE
-Definition at S47 and has not been overwritten.
-
-**Required actions (2 steps, sequenced):**
-1. Register UMP as a new claim in DRP-1 AI layer (v1 → v1.1)
-   with proper falsification predicate. This requires the
-   architect's decision on claim type (F vs C) and ID assignment.
-2. Update ARCH-2 pass-forward register to reference the new
-   UMP claim ID instead of C-DRP.7.
-
-**Gate status:** BLOCKER-2 conceptually resolved (we know the
-answer). Implementation requires architect approval for DRP-1
-AI layer modification.
+**Gate status:** BLOCKER-2 RESOLVED. DRP-3 Phase 1 gate
+remains HELD on BLOCKER-1 only (R-12 — DRP-2 AI layer deposit).
 
 ---
 
@@ -130,15 +116,15 @@ cleared.
 | Item | Status | Action Required |
 |------|--------|-----------------|
 | BLOCKER-1 (DRP-2 registry) | HELD | Deposit DRP-2 AI layer |
-| BLOCKER-2 (C-DRP.7 label) | RESOLVED conceptually | Register UMP in DRP-1 AI layer; update ARCH-2 |
+| BLOCKER-2 (C-DRP.7 label) | RESOLVED — C-DRP.8 registered S53 | ARCH-2 and DRP-2 prose corrections pending (files not in repo) |
 | OBS-1 (phantom entries) | CLEAN ✓ | None |
 | OBS-2 (C-prefix MK) | Known | Coordinate batch rename |
 | OBS-3 (C-prefix DRP-1) | Known | Coordinate with OBS-2 |
 | OBS-4 (MK-P6 status) | Registry correct | Audit text had observation error |
 | IR inventory v0.1 | Accepted provisional | Finalize at Phase 1 close |
 
-**DRP-3 Phase 1 gate:** HELD pending BLOCKER-1 resolution.
-BLOCKER-2 implementation can proceed independently.
+**DRP-3 Phase 1 gate:** HELD pending BLOCKER-1 only.
+BLOCKER-2 RESOLVED (C-DRP.8 registered S53).
 
 ---
 

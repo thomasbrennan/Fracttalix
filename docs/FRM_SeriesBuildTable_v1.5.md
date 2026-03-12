@@ -383,7 +383,7 @@ Phase-Ready:        10/21
 Act I:              P1 PHASE-READY, P2 Phase 1 PHASE-READY (S49), P3 QUEUED
 Meta-Kaizen:        6/6 PUBLISHED (MK-P1–MK-P6, all with AI layers, series "x/6")
 DRS:                DRP-1 + DRS-ARCH (Architecture Specification)
-Total Claims:       152 (A:36 D:50 F:66)
+Total Claims:       153 (A:36 D:51 F:66)
 Cross-references:   118+ derivation_source entries
 Cross-paper errors: 0
 Open Placeholders:  17
@@ -551,7 +551,7 @@ framework.
 | R-10 | DRP ARCH patch | LOW | ARCH-S50-PATCH-001 (S53): 3 changes pending application to DRP_Series_ARCH_S50.docx (programme identity, P2 status, ARCH-3 framing). File not in repo. Patch notes at `journal/ARCH-S50-PATCH-001.md`. | Apply when .docx is next in scope. |
 | R-11 | ARCH-3 P2 placeholders | LOW | FLAG: ARCH3-P2-PLACEHOLDER-RETIREMENT. P2 claim IDs in ARCH-3 rows DRP-1 and DRP-3 still marked PLACEHOLDER. P2 is now PHASE-READY — verify IDs against live P2 AI layer and retire PLACEHOLDER status. | Next DRP build session. |
 | R-12 | DRP-2 AI layer | MEDIUM | DRP-3 BLOCKER-1: DRP-2 AI layer not deposited to repo. Cannot add DRP-2 block to claims registry. S52 notes confirm "pending deposit from claude.ai." DRP-3 Phase 1 HELD on this. | Deposit DRP-2 AI layer from claude.ai session. |
-| R-13 | UMP claim ID | MEDIUM | DRP-3 BLOCKER-2 (resolved conceptually): UMP exists in DRP-1 v1.1 prose but has NO claim ID in AI layer (v1, S47). C-DRP.7 = CORPUS-COMPLETE Definition (confirmed correct). ARCH-2 reference to C-DRP.7 as UMP is WRONG. UMP needs new claim ID (e.g. F-DRP.8). | Register UMP in DRP-1 AI layer v1.1; update ARCH-2. |
+| R-13 | UMP claim ID | RESOLVED | C-DRP.8 (UMP) registered in DRP-1 AI layer v1.1 and claims registry (S53). ARCH-2 and DRP-2 prose citation corrections (C-DRP.7→C-DRP.8) pending — files not in repo. Patch notes at `journal/DRP1-v1.1-UMP-patch-spec.md`. | — |
 
 ---
 

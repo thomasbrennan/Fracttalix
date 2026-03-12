@@ -3,15 +3,16 @@
     "document_type": "AI_LAYER",
     "schema_version": "v3-S49",
     "schema_url": "https://github.com/thomasbrennan/Fracttalix/blob/main/ai-layers/ai-layer-schema.json",
-    "produced_session": "S47",
+    "produced_session": "S53",
     "produced_by": "Build — Thomas Brennan (Architect)",
-    "licence": "CC BY 4.0"
+    "licence": "CC BY 4.0",
+    "version_note": "v1.1 patch (S53): C-DRP.8 (UMP) added per BLOCKER-2 resolution, R-13. All other claims and structure unchanged from v1."
   },
   "paper_id": "DRP-1",
   "paper_title": "Dual-Reader Scientific Publishing: A Framework for Machine-Verifiable Knowledge Corpora",
   "paper_type": "methodology_D",
-  "version": "v1",
-  "session": "S47",
+  "version": "v1.1",
+  "session": "S53",
   "phase_ready": {
     "verdict": "PHASE-READY",
     "c1": "SATISFIED",
@@ -21,7 +22,7 @@
     "c5": "SATISFIED",
     "c6": "SATISFIED",
     "placeholder_count": 0,
-    "note": "I-9 run S47. Fixed: _meta added, paper_title added, version v0.3->v1, predicate field names uppercase per schema, 3 unregistered prose claims registered (C-DRP.3 Type D, C-DRP.4 Type D, C-DRP.5 Type F), C-DRP.1 evaluation rewritten to remove NL judgment. Prior C-DRP.3 and C-DRP.4 renumbered C-DRP.6 and C-DRP.7."
+    "note": "I-9 run S47. Fixed: _meta added, paper_title added, version v0.3->v1, predicate field names uppercase per schema, 3 unregistered prose claims registered (C-DRP.3 Type D, C-DRP.4 Type D, C-DRP.5 Type F), C-DRP.1 evaluation rewritten to remove NL judgment. Prior C-DRP.3 and C-DRP.4 renumbered C-DRP.6 and C-DRP.7. v1.1 (S53): C-DRP.8 (UMP theorem) added. Claim was proved in DRP-1 v1.1 prose and planned in S47 renumbering but not executed. ARCH-2 and DRP-2 prose references to UMP must now cite C-DRP.8, not C-DRP.7."
   },
   "claim_registry": [
     {
@@ -146,6 +147,23 @@
       "tier": "definition",
       "test_bindings": [],
       "verified_against": null
+    },
+    {
+      "claim_id": "C-DRP.8",
+      "type": "D",
+      "label": "Upstream Measurement Principle (UMP)",
+      "statement": "O-independence is a logical necessity, not a design choice: for a falsification predicate to be evaluable by any observer (human or AI), the observation O must be defined independently of the model M being tested. If O is derived from or conditioned on M, the predicate is self-referential and M-termination is not achievable. Formally: I(M(O); P) = 0 is required for any valid predicate, where I is mutual information, M(O) is the model-conditioned observation, and P is the predicate. This is a theorem, not a convention.",
+      "derivation_source": [
+        "DRP-1 v1.1 Section 10.7"
+      ],
+      "added_version": "v1.1",
+      "added_session": "S53",
+      "addition_reason": "UMP proved in DRP-1 v1.1 prose but absent from v1 AI layer. Registered per BLOCKER-2 resolution (R-13). Claim ID C-DRP.8 consistent with S47 renumbering plan recorded in phase_ready note.",
+      "falsification_predicate": null,
+      "note": "UMP is a theorem (type D). Received as Type A axiom in DRP-2 (C-DRP2.5) and in DRP-3 (received via DRP-2).",
+      "tier": "definition",
+      "test_bindings": [],
+      "verified_against": null
     }
   ],
   "placeholder_register": [
@@ -171,12 +189,12 @@
     }
   ],
   "summary": {
-    "total_claims": 7,
+    "total_claims": 8,
     "type_A": 0,
-    "type_D": 4,
+    "type_D": 5,
     "type_F": 3,
     "placeholder_count": 0,
     "phase_ready": true,
-    "session_produced": "S47"
+    "session_produced": "S53"
   }
 }
