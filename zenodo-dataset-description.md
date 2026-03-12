@@ -5,7 +5,7 @@
 
 ---
 
-## Fracttalix Sentinel v12.1.0
+## Fracttalix Sentinel v12.2.0
 
 **Lightweight, regime-aware anomaly detection for time series**
 
@@ -13,14 +13,20 @@ Single-file Python | Zero required dependencies | `pip install fracttalix`
 
 - Three-channel dissipative network model (structural, rhythmic, temporal)
 - 37-step streaming pipeline — one observation in, rich result out
-- Physics-derived collapse dynamics: maintenance burden, PAC pre-cascade, diagnostic window, Kuramoto order
+- Four signal-processing collapse indicators: maintenance burden (μ = 1−κ̄), PAC pre-cascade, diagnostic window, Kuramoto order
+- Production defaults: ~6% normal FPR (v12.2, multiplier=4.5; was 35.6% in v12.1)
 - 374 unit tests passing | Python 3.9–3.12
 - GitHub: https://github.com/thomasbrennan/Fracttalix
 - Software DOI: [10.5281/zenodo.18859299](https://doi.org/10.5281/zenodo.18859299)
 
+### v12.2 Changes
+- Epistemic language corrections: "physics-derived" → "signal-processing heuristic" throughout
+- `SentinelConfig.production()` multiplier 3.0→4.5 (normal FPR 35.6%→~6%)
+- Corrected README maintenance burden formula to match implementation (μ = 1−κ̄)
+
 ---
 
-## Meta-Kaizen Series — 5 Papers
+## Meta-Kaizen Series — 6 Papers
 
 A measurement-theoretic governance framework derived from six axioms of conjoint measurement theory.
 
@@ -31,6 +37,7 @@ A measurement-theoretic governance framework derived from six axioms of conjoint
 | **MK-P3** | The Meta-Kaizen Reasoning Network: A Formal Theory of Bisociative Question Structure, Challenge Taxonomy, and Institutional Memory Propagation |
 | **MK-P4** | The Fractal Rhythm Model: Closed-Loop Governance, Regime-Aware Adaptation, and the Axiom 5 Modification for Dynamic Environments |
 | **MK-P5** | On the Decision to Act: Strategic Convergence and the Mathematics of Intervention Timing at System Tipping Points *(Capstone)* |
+| **MK-P6** | The Dual Reader Standard for Software: Measurement-Theoretic Falsification Applied to Executable Systems |
 
 ### Key Results
 
