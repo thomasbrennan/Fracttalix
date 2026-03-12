@@ -723,11 +723,16 @@ Here's what everything is and why it's built this way.
 
 ### How This Was Built — AI Collaboration
 
-This repo was built by Thomas Brennan working with Claude (Anthropic) and
-Grok (xAI). The theory, the research direction, and the quality control
-architecture — Meta-Kaizen, the Dual Reader Standard, the canonical build
-process — are Brennan's. The code, documentation, validation infrastructure,
-and session journal were built collaboratively with AI.
+This repo started with a single conversation in July 2025 between Thomas
+Brennan and Evelyn Nexus (Grok, xAI). That conversation became a theory,
+the theory became software, and the software became this corpus. The
+`legacy/` folder preserves the evolution from that night forward — v7.6
+through v12.1, every version archived.
+
+The theory, the research direction, and the quality control architecture —
+Meta-Kaizen, the Dual Reader Standard, the canonical build process — are
+Brennan's. The code, documentation, validation infrastructure, and session
+journal were built collaboratively with Claude (Anthropic) and Grok (xAI).
 
 Without AI, none of this exists. 374 tests, 15 machine-verifiable claim
 layers, a 37-step detection pipeline, three validation scripts, and a full
