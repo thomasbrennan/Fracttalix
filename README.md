@@ -34,9 +34,10 @@ Sentinel ingests one scalar (or multivariate) observation at a time and emits a 
 12. [SentinelServer — REST API](#sentinelserver--rest-api)
 13. [CLI Reference](#cli-reference)
 14. [Backward Compatibility](#backward-compatibility)
-15. [Algorithms and Techniques](#algorithms-and-techniques)
-16. [How This Repository Works](#how-this-repository-works--a-guide-to-everything-here)
-17. [Authors & License](#authors--license)
+15. [Limitations](#limitations)
+16. [Algorithms and Techniques](#algorithms-and-techniques)
+17. [How This Repository Works](#how-this-repository-works--a-guide-to-everything-here)
+18. [Authors & License](#authors--license)
 
 ---
 
@@ -129,33 +130,33 @@ Four indicators added in v10.0 that track coupling and coherence trends over tim
 
 > **Epistemic status:** These are engineering heuristics with hand-tuned thresholds, not physics derivations. The maintenance burden μ is a simple linear rescaling of coupling strength, not derived from Tainter's socioeconomic model. The regime names (TAINTER_CRITICAL, etc.) are classification labels; thresholds are empirically set.
 
-### 1. Maintenance Burden μ (Coupling Overhead Indicator)
+### 1. Maintenance Burden μ
 
 ```
 μ = 1 − κ̄
 ```
 
-where κ̄ is the mean cross-frequency coupling score. Low coupling (κ̄ → 0) implies high coordination overhead → high inferred maintenance burden (μ → 1). High coupling (κ̄ → 1) implies efficient coordination → low burden (μ → 0).
-
-**Note:** This is an engineering heuristic. μ is NOT derived from Tainter's socioeconomic collapse model. The regime labels below are classification shortcuts; thresholds are empirically set, not calibrated from data.
+A simple inversion of the mean cross-frequency coupling score. When coupling is high (κ̄ → 1), μ is low. When coupling is low (κ̄ → 0), μ is high. That's all it computes — it's `1 minus the coupling score` with regime labels at fixed thresholds.
 
 | μ range | Regime | Meaning |
 |---------|--------|---------|
-| < 0.5 | `HEALTHY` | High coupling, low inferred overhead |
-| 0.5 – 0.75 | `REDUCED_RESERVE` | Coupling declining |
-| 0.75 – 0.9 | `TAINTER_WARNING` | Approaching fragmented state |
-| ≥ 0.9 | `TAINTER_CRITICAL` | Very low coupling detected |
+| < 0.5 | `HEALTHY` | Coupling above 0.5 |
+| 0.5 – 0.75 | `REDUCED_RESERVE` | Coupling between 0.25–0.5 |
+| 0.75 – 0.9 | `TAINTER_WARNING` | Coupling between 0.1–0.25 |
+| ≥ 0.9 | `TAINTER_CRITICAL` | Coupling below 0.1 |
+
+> The TAINTER_ prefix in regime names is a label choice, not a claim about Tainter's socioeconomic collapse model. Thresholds are hand-picked, not calibrated from data.
 
 ```python
 mb = result.get_maintenance_burden()
 # {"mu": 0.82, "regime": "TAINTER_WARNING"}
 ```
 
-### 2. PAC Pre-Cascade Detection
+### 2. PAC Tracking
 
-Phase-Amplitude Coupling (PAC) tracks how strongly low-frequency phase modulates high-frequency amplitude. In practice, PAC degradation tends to precede mean coupling drops, so it can fire earlier than the v9.0 cascade precursor.
+Phase-Amplitude Coupling (PAC) measures how strongly low-frequency phase modulates high-frequency amplitude, using a simplified Modulation Index (after Tort et al. 2010) across 6 band pairs with 8 fixed phase bins. When PAC drops over a rolling window, `pre_cascade_pac` fires.
 
-Method: Simplified Modulation Index (after Tort et al. 2010) across 6 slow-phase/fast-amplitude band pairs, using 8 fixed phase bins.
+This sometimes precedes a drop in mean coupling κ̄, but the "pre-cascade" framing is aspirational — it's a rolling threshold check on a single metric, not a validated precursor model.
 
 ```python
 pac = result.get_pac_status()
@@ -172,7 +173,7 @@ A linear extrapolation of how many observations remain before coupling strength 
 
 - Only active when κ̄ > κ_c and dκ̄/dt < 0
 - Confidence graded: `HIGH` / `MEDIUM` / `LOW` based on rate stability
-- Detects **supercompensation** (adaptive recovery in progress)
+- Reports `supercompensation` when dκ̄/dt turns positive (coupling recovering instead of declining)
 
 ```python
 dw = result.get_diagnostic_window()
@@ -280,8 +281,8 @@ heuristics, not calibrated physical measurements.
 ```python
 result = det.update_and_check(value)
 
-# Coupling overhead indicator (μ = 1 − κ̄)
-# High μ = low cross-frequency coupling = high inferred coordination cost
+# Maintenance burden (μ = 1 − κ̄, i.e. inverted coupling score)
+# High μ simply means low cross-frequency coupling
 mb = result.get_maintenance_burden()
 if mb["regime"] in ("TAINTER_WARNING", "TAINTER_CRITICAL"):
     print(f"Coupling fragmented: μ={mb['mu']:.2f} ({mb['regime']})")
@@ -292,13 +293,13 @@ pac = result.get_pac_status()
 if pac["pre_cascade_pac"]:
     print(f"PAC degrading at rate {pac['degradation_rate']:.3f} — early warning")
 
-# Diagnostic window: estimated steps before coherence collapse
+# Diagnostic window: estimated steps before coupling crosses threshold
 # Only active when κ̄ > κ_c and coupling is falling
 dw = result.get_diagnostic_window()
 if dw["steps"] is not None:
     print(f"Δt ≈ {dw['steps']:.0f} steps ({dw['confidence']} confidence)")
 if dw["supercompensation"]:
-    print("Coupling recovering — possible adaptive response")
+    print("Coupling rate turned positive — recovering")
 
 # Sequence classification: is coherence collapsing before coupling degrades?
 # REVERSED means atypical ordering; it is a classification label, not a causal claim
@@ -629,9 +630,9 @@ result.get_intervention_signature() -> dict
 | `"mean_pac"` | `float` | Current PAC strength (0.0–1.0) |
 | `"pac_degradation_rate"` | `float` | Fractional PAC decline rate |
 | `"pre_cascade_pac"` | `bool` | PAC warning before cascade precursor |
-| `"diagnostic_window_steps"` | `float\|None` | Steps until coherence collapse |
+| `"diagnostic_window_steps"` | `float\|None` | Steps until coupling crosses critical threshold (linear extrapolation) |
 | `"diagnostic_window_confidence"` | `str` | HIGH / MEDIUM / LOW / NOT_APPLICABLE |
-| `"supercompensation_detected"` | `bool` | Adaptive recovery in progress |
+| `"supercompensation_detected"` | `bool` | Coupling rate turned positive (recovering) |
 | `"kuramoto_order"` | `float` | Φ inter-band phase coherence (0.0–1.0) |
 | `"reversed_sequence"` | `bool` | Coherence collapsing before coupling |
 | `"intervention_signature_score"` | `float` | 0.0–1.0 confidence of atypical sequence ordering (classification label, not causal claim) |
@@ -767,6 +768,18 @@ det2.load_state(json_str)
 
 ---
 
+## Limitations
+
+- **Benchmarks are synthetic.** The five archetypes (point, contextual, collective, drift, variance) are generated sine waves with injected anomalies. There is no validation on real-world data (network traffic, power grid, financial, etc.).
+- **F1 scores are modest.** Point anomaly F1 ~0.64, contextual ~0.42, collective ~0.36 at best. Variance shift (0.99) and drift (0.77) are the strong suits. These are honest numbers, not cherry-picked.
+- **FPR is still non-trivial.** At the default multiplier (4.5), ~6% of normal white noise observations trigger alerts. At sensitive settings, 40–50%.
+- **No comparison to established baselines.** The benchmark does not compare against PyOD, River, ADTK, or other anomaly detection libraries.
+- **Algorithms are simplified.** The Hurst exponent uses a single-pass R/S calculation, not DFA. The PAC uses 8 fixed bins, not surrogate-tested significance. The Kuramoto order parameter computes FFT phase coherence, not a full coupled oscillator model.
+- **Thresholds are hand-tuned.** All regime thresholds, coupling thresholds, and alert conditions are empirically set by the author, not learned from data or calibrated against ground truth.
+- **The theoretical framework is unpublished.** The Fractal Rhythm Model papers have not been peer-reviewed. The detector works as engineering software regardless, but the three-channel framing is the author's organizational choice, not a validated decomposition.
+
+---
+
 ## Algorithms and Techniques
 
 The pipeline combines well-known signal processing and anomaly detection techniques:
@@ -848,9 +861,9 @@ schema compliance on every push.
 
 ### The Process Graph
 
-`ai-layers/process_graph.json` maps the dependency structure between all papers
-and supporting documents. It's the machine-readable version of the Build Table's
-dependency diagram — which paper enables which, what's published, what's pending.
+`ai-layers/process_graph.json` maps the dependency structure between all working
+papers and supporting documents — which paper depends on which, and current
+draft status.
 
 ### Scripts and Validation
 
@@ -911,7 +924,7 @@ or production decision-making without independent validation.
 ```
 fracttalix/          Python package — Sentinel detector, config, pipeline steps
 ai-layers/           Machine-readable claim registries (JSON) + schema
-paper/               Software paper + bibliography
+paper/               Working paper drafts + bibliography
 docs/                Build table, bootstrap doc, API docs, theory docs
 examples/            Tutorials and usage examples
 scripts/             Validation and status reporting tools
@@ -952,9 +965,9 @@ Machine-readable claim registries for the Fracttalix working papers. All layers 
 |---------|-------|
 | v12.2.0 | Replaced physics-derived framing with signal-processing heuristic language; production() multiplier 3.0→4.5 |
 | v12.1.0 | VarCUSUM reset fix, ChannelCoherence Pearson correlation, 374 tests |
-| v12.0.0 | Package restructure, PyPI release, hostile-review corrections, ablation study |
-| v11.0.0 | Meta-Kaizen corrective: physics corrections, state_dict/load_state, diagnostic window |
-| v10.0.0 | 4 collapse indicators (v10 API), 37 steps, 98 tests |
+| v12.0.0 | Package restructure, PyPI release, review-driven corrections, ablation study |
+| v11.0.0 | Corrected overclaimed physics language, added state_dict/load_state, diagnostic window |
+| v10.0.0 | 4 signal-processing heuristics (v10 API), 37 steps, 98 tests |
 | v9.0.0 | Three-channel model, 26 steps, 65 tests |
 | v8.0.0 | Frozen config, WindowBank, 19-step pipeline |
 | v7.11–v7.6 | Earlier releases |
