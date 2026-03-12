@@ -52,30 +52,29 @@ F-DRSARCH.3      DRS-ARCH     Falsifiable    Predicate Binary Determinism
 ```
 
 ### MK-P1: Meta-Kaizen: A General Theory and Algorithmic Framework for the Mathematical Formalization of Self-Evolving Continuous Improvement Across Arbitrary Governance Substrates
+
 **Status:** PHASE-READY
+**Correction (S53):** Type F count corrected 9→6. Phantom entries F-MK1.7, F-MK1.8, F-MK1.9 removed (no corresponding prose claims). Claim IDs renamed C-MK1.x→F-MK1.x per DRS type-prefix convention. Crosswalk to prose labels preserved in AI layer.
 
 ```
-A-MK1.1          MK-P1        Axiom          Axiom 1 — Weak Order
-A-MK1.2          MK-P1        Axiom          Axiom 2 — Preferential Independence
-A-MK1.3          MK-P1        Axiom          Axiom 3 — Solvability
-A-MK1.4          MK-P1        Axiom          Axiom 4 — Archimedean Condition
-A-MK1.5          MK-P1        Axiom          Axiom 5 — Essentialness with Veto Power
-A-MK1.6          MK-P1        Axiom          Axiom 6 — Marginal Symmetry
+A-MK1.1          MK-P1        Axiom          Conjoint Measurement Axiom A1 — Weak Order
+A-MK1.2          MK-P1        Axiom          Conjoint Measurement Axiom A2 — Double Cancellation
+A-MK1.3          MK-P1        Axiom          Conjoint Measurement Axiom A3 — Solvability
+A-MK1.4          MK-P1        Axiom          Conjoint Measurement Axiom A4 — Archimedean
+A-MK1.5          MK-P1        Axiom          Conjoint Measurement Axiom A5 — Essentialness with Veto Power
+A-MK1.6          MK-P1        Axiom          Conjoint Measurement Axiom A6 — Marginal Symmetry
 D-MK1.1          MK-P1        Definition     Governance Substrate
 D-MK1.2          MK-P1        Definition     KVS Formula
 D-MK1.3          MK-P1        Definition     Novelty Factor
 D-MK1.4          MK-P1        Definition     Normalized Impact
 D-MK1.5          MK-P1        Definition     Normalized Inverse Complexity
 D-MK1.6          MK-P1        Definition     Timeliness Score
-F-MK1.1          MK-P1        Falsifiable    Property 4.1 — Boundedness
-F-MK1.2          MK-P1        Falsifiable    Property 4.2 — Monotonicity
-F-MK1.3          MK-P1        Falsifiable    Theorem 4.1 — KVS Functional Form (three-part)
-F-MK1.4          MK-P1        Falsifiable    Theorem 4.2 — Self-Referential Applicability
-F-MK1.5          MK-P1        Falsifiable    Theorem 4.3 — Threshold Optimality (Symmetric Case)
-F-MK1.6          MK-P1        Falsifiable    Simulation Result — KVS Recall under Q_mult_noisy
-F-MK1.7          MK-P1        Falsifiable    Simulation Result — KVS Outperforms ADD under Q_threshold (all distributional variants)
-F-MK1.8          MK-P1        Falsifiable    Simulation Result — Timeliness Dominance Artifact
-F-MK1.9          MK-P1        Falsifiable    Pre-Registered H₁ — Empirical Validation Path
+F-MK1.1          MK-P1        Falsifiable    Multiplicative functional form — uniqueness [prose: C-MK1.1]
+F-MK1.2          MK-P1        Falsifiable    Equal weights derivation from Axiom A6 [prose: C-MK1.2]
+F-MK1.3          MK-P1        Falsifiable    Adoption threshold κ=0.50 derivation under symmetric loss [prose: C-MK1.3]
+F-MK1.4          MK-P1        Falsifiable    Simulation recall 73.8% [90% CI: 71.2, 76.2] [prose: C-MK1.4]
+F-MK1.5          MK-P1        Falsifiable    KVS boundedness — output in [0,1] for all valid inputs [prose: C-MK1.5]
+F-MK1.6          MK-P1        Falsifiable    Self-referential applicability — no logical contradiction [prose: C-MK1.6]
 ```
 
 ### MK-P2: Meta-Kaizen in Networked Organizations: Governance Closure, Privacy Amplification, and Bayesian Calibration Under a Federated Architecture
@@ -262,5 +261,5 @@ F-SFW.12         SFW-1        Falsifiable    numpy fallback warning
 
 ---
 
-**Total unique claims:** 155
+**Total unique claims:** 152
 **Papers indexed:** 14
