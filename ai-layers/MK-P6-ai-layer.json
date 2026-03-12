@@ -86,7 +86,7 @@
       "statement": "A software system S with claim registry R is falsification-complete iff: (1) every publicly documented behavior corresponds to at least one Type F claim, (2) every Type F claim has a well-formed K predicate, (3) every Type F claim evaluates to NOT FALSIFIED, (4) every unverified claim is registered as a placeholder.",
       "source": "MK-P6 Definition 7.2",
       "falsification_predicate": null,
-      "derivation_source": []
+      "derivation_source": ["A-MK6.1", "A-MK6.2"]
     },
     {
       "claim_id": "D-MK6.3",
@@ -108,13 +108,14 @@
       "statement": "Applying DRS to existing software reveals three categories of gap: Category 1 (tested but unbounded — BOUNDARY gaps), Category 2 (documented but untested — placeholder gaps), Category 3 (assumed but unregistered — Type A gaps).",
       "source": "MK-P6 Section 8.1",
       "falsification_predicate": null,
-      "derivation_source": []
+      "derivation_source": ["D-MK6.1", "D-MK6.2"]
     },
     {
       "claim_id": "F-MK6.1",
       "type": "F",
       "label": "Kernel universality — K applies to software without modification",
       "name": "Kernel universality — K applies to software without modification",
+      "derivation_source": ["A-MK6.2"],
       "statement": "The falsification kernel K = (P, O, M, B) as defined in falsification-kernel.md v1.1 applies to software behavioral claims without modification. The same grammar, evaluation semantics, and validity constraints that govern scientific Type F claims govern software Type F claims.",
       "source": "MK-P6 Section 5.4",
       "falsification_predicate": {
@@ -135,6 +136,7 @@
       "type": "F",
       "label": "Falsification completeness implies coverage",
       "name": "Falsification completeness implies coverage",
+      "derivation_source": ["D-MK6.2"],
       "statement": "If a software system S is falsification-complete with respect to claim registry R, then there exists a test suite T derived from evaluation procedures in R such that L(S, T) >= L(S, T') for any T' achieving the same behavioral verification.",
       "source": "MK-P6 Property 7.1",
       "falsification_predicate": {
@@ -160,6 +162,7 @@
       "type": "F",
       "label": "Coverage does not imply falsification completeness",
       "name": "Coverage does not imply falsification completeness",
+      "derivation_source": ["D-MK6.2"],
       "statement": "There exist software systems with L(S, T) = 1.0 (100% line coverage) that are not falsification-complete.",
       "source": "MK-P6 Property 7.2",
       "falsification_predicate": {
@@ -180,6 +183,7 @@
       "type": "F",
       "label": "Gap detection — DRS reveals gaps invisible to coverage",
       "name": "Gap detection — DRS reveals gaps invisible to coverage",
+      "derivation_source": ["D-MK6.4", "F-MK6.1"],
       "statement": "Applying the DRS to Fracttalix Sentinel v12.1 reveals at least one claim in each of the three gap categories (tested-but-unbounded, documented-but-untested, assumed-but-unregistered) that is invisible to conventional line/branch coverage metrics.",
       "source": "MK-P6 Section 9.2",
       "falsification_predicate": {
@@ -200,6 +204,7 @@
       "type": "F",
       "label": "Feasibility — DRS applicable in one session",
       "name": "Feasibility — DRS applicable in one session",
+      "derivation_source": ["A-MK6.2", "D-MK6.1"],
       "statement": "The DRS for Software can be applied to a 37-step, 374-test streaming pipeline to produce a valid software AI layer within a single working session, without specialized formal methods tooling.",
       "source": "MK-P6 Section 9",
       "falsification_predicate": {
