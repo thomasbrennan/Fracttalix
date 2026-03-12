@@ -721,6 +721,26 @@ the software, and the claim registry keeps both honest.
 
 Here's what everything is and why it's built this way.
 
+### How This Was Built — AI Collaboration
+
+This repo was built by a human architect working with AI collaborators.
+The theory, the research direction, and every significant design decision
+are Thomas Brennan's. The code, documentation, validation infrastructure,
+AI layers, and session journal were built in collaboration with Claude
+(Anthropic) and Grok (xAI).
+
+No human being could write 374 tests, 15 machine-verifiable claim layers,
+three validation scripts, a 37-step detection pipeline, and a full
+documentation suite alone in the time this was built. We didn't pretend
+otherwise. The session journal documents exactly what was built in each
+session, including which AI was involved. The commit history is transparent.
+
+This is what AI collaboration looks like when you don't hide it: the human
+provides the ideas and the judgment, the AI provides the throughput and the
+precision, and the work is better than either could produce alone. If that
+bothers you, the falsification predicates are right there — test the claims,
+not the authorship.
+
 ### The Software — Sentinel
 
 Sentinel is the streaming anomaly detector. It's what you `pip install`. It runs
