@@ -1,6 +1,7 @@
-# Fracttalix Claim Registry Index v1.1
+# Fracttalix Claim Registry Index v1.2
 
-**Generated:** 2026-03-12 (Session 53)
+**Generated:** 2026-03-12 (Session 54)
+**Previous version:** v1.1 (Session 53)
 **Purpose:** Read-only cross-project citation reference
 **Source corpus:** Fracttalix + Meta-Kaizen
 **DOI:** 10.5281/zenodo.18859299
@@ -33,6 +34,21 @@ C-DRP.5          DRP-1        Falsifiable    Live C5 Instance — MK-P1
 C-DRP.6          DRP-1        Definition     PHASE-READY Definition
 C-DRP.7          DRP-1        Definition     CORPUS-COMPLETE Definition
 C-DRP.8          DRP-1        Definition     Upstream Measurement Principle (UMP)
+```
+
+### DRP-2: Testability as a Relational Property: Epistemological Consequences of the Upstream Measurement Principle
+**Status:** PHASE-READY
+
+```
+C-DRP2.1         DRP-2        Falsifiable    Structural replication crisis diagnosis
+C-DRP2.2         DRP-2        Falsifiable    Epistemic conservation law — falsifiable form
+C-DRP2.3         DRP-2        Falsifiable    AI training data prediction
+C-DRP2.4         DRP-2        Definition     Testability Relation T(P, O, M)
+C-DRP2.5         DRP-2        Definition     Epistemic Conservation Law — formal theorem statement
+C-DRP2.6         DRP-2        Axiom          Upstream Measurement Principle — received axiom
+C-DRP2.7         DRP-2        Falsifiable    Pre-registration structural equivalence
+C-DRP2.8         DRP-2        Falsifiable    Meta-analysis bias from circular predicates
+C-DRP2.9         DRP-2        Falsifiable    DRS training data advantage for AI
 ```
 
 ### DRS-ARCH: The Dual Reader Standard: Architecture Specification
@@ -262,6 +278,6 @@ F-SFW.12         SFW-1        Falsifiable    numpy fallback warning
 
 ---
 
-**Total unique claims:** 153
-**Papers indexed:** 14
-**Note:** C-DRP.8 (UMP) added S53 per BLOCKER-2 resolution (R-13). DRP-2 block pending BLOCKER-1 resolution (R-12).
+**Total unique claims:** 162
+**Papers indexed:** 15
+**Note:** C-DRP.8 (UMP) added S53 per BLOCKER-2 resolution (R-13). DRP-2 block (9 claims: 6F + 2D + 1A) deposited S54, R-12 resolved.

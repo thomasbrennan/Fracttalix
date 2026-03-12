@@ -76,24 +76,25 @@ Consistent with R-12 (DRP-2 AI layer not yet deposited). No additional action.
 
 DRP-2 v1.2 prose confirms canonical claim structure:
 
-- Type A (received): 1 — UMP from DRP-1 (now C-DRP.8)
-- Type D (defined): 2 — C-DRP2.4 (Testability relation) + one unnamed
-- Type F (falsifiable): 9 — C-DRP2.1 through C-DRP2.9
+- Type A (received): 1 — C-DRP2.6 (UMP from DRP-1, now C-DRP.8)
+- Type D (defined): 2 — C-DRP2.4 (Testability relation), C-DRP2.5 (Conservation law theorem)
+- Type F (falsifiable): 6 — C-DRP2.1, C-DRP2.2, C-DRP2.3 (v1.0 base) + C-DRP2.7, C-DRP2.8, C-DRP2.9 (v1.1 additions)
 
-**Canonical claim count: 1A + 2D + 9F = 12 total claims**
+**Canonical claim count: 1A + 2D + 6F = 9 total claims**
 
-Appendix A "six Type F" refers to v1.1 base only; v1.2 adds 3 more.
-Summary not updated from v1.1 (consistent with OBS-2).
+**Correction:** Earlier prose read inferred 9F from claim IDs C-DRP2.1–C-DRP2.9, but
+C-DRP2.4 is Type D, C-DRP2.5 is Type D, and C-DRP2.6 is Type A. Actual: 6F + 2D + 1A = 9.
+Appendix A "six Type F" is correct for the full set including v1.2 additions.
 
-Registry impact when R-12 resolved: current 153 + 12 = 165 total claims.
+Registry impact: 153 (pre-deposit) + 9 = 162 total claims.
 
 ---
 
-## GATE STATUS
+## GATE STATUS (updated at deposit)
 
 - R-13: RESOLVED (C-DRP.8 statement corrected S54)
-- R-12: OPEN — DRP-2 AI layer (12 claims) still required
-- DRP-3 Phase 1: HELD on R-12 only
+- R-12: RESOLVED (DRP-2 AI layer deposited S54, 9 claims)
+- DRP-3 Phase 1: UNBLOCKED — both R-12 and R-13 resolved
 
 ---
 

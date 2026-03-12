@@ -550,7 +550,7 @@ framework.
 | R-9 | Internal consistency | MEDIUM | Measurement decoupling threshold and rhythmicity threshold need consistent treatment across corpus. | Flag in each paper's scope notes during writing. |
 | R-10 | DRP ARCH patch | LOW | ARCH-S50-PATCH-001 (S53): 3 changes pending application to DRP_Series_ARCH_S50.docx (programme identity, P2 status, ARCH-3 framing). File not in repo. Patch notes at `journal/ARCH-S50-PATCH-001.md`. | Apply when .docx is next in scope. |
 | R-11 | ARCH-3 P2 placeholders | LOW | FLAG: ARCH3-P2-PLACEHOLDER-RETIREMENT. P2 claim IDs in ARCH-3 rows DRP-1 and DRP-3 still marked PLACEHOLDER. P2 is now PHASE-READY — verify IDs against live P2 AI layer and retire PLACEHOLDER status. | Next DRP build session. |
-| R-12 | DRP-2 AI layer | MEDIUM | DRP-3 BLOCKER-1: DRP-2 AI layer not deposited to repo. Cannot add DRP-2 block to claims registry. S52 notes confirm "pending deposit from claude.ai." DRP-3 Phase 1 HELD on this. | Deposit DRP-2 AI layer from claude.ai session. |
+| R-12 | DRP-2 AI layer | RESOLVED | DRP-2 AI layer deposited S54 (9 claims: 6F + 2D + 1A). Claims registry updated to 162 total (15 papers). DRP-3 BLOCKER-1 cleared. ARCH-2 pass-forward update pending (file not in repo). | — |
 | R-13 | UMP claim ID | RESOLVED | C-DRP.8 (UMP) registered in DRP-1 AI layer v1.1 and claims registry (S53). Statement corrected S54 per DRP-2 v1.2 prose read (O⊥P not O⊥M; removed imported conservation law and M-termination). ARCH-2 and DRP-2 prose citation corrections (C-DRP.7→C-DRP.8) pending — files not in repo. Patch notes at `journal/DRP1-v1.1-UMP-patch-spec.md`. | — |
 
 ---
