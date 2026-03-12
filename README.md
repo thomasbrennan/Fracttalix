@@ -86,17 +86,28 @@ PAC pre-cascade detected  →  Δt window opens  →  Maintenance burden μ → 
 ### Default Multiplier Change (Breaking)
 
 - `SentinelConfig.production()` now uses `multiplier=4.5` (was 3.0).
-  Normal alert rate: **35.6% → ~6%** on white noise N(0,1).
-  Expected F1 improvements at the new default (n=1000, seed=42, estimated):
+  Measured normal alert rate on white noise N(0,1), seed=99 (n=1000, post-warmup):
+  **36.7% → 35.4%** — a 1.3 pp marginal improvement only.
 
-| Archetype  | v12.1 F1 | v12.2 F1 est. | Notes |
-|------------|----------|---------------|-------|
-| point      | 0.415    | ~0.38         | Slight drop in marginal spike detection |
-| contextual | 0.247    | ~0.35         | Precision gain from lower FPR |
-| collective | 0.239    | ~0.45         | Large precision gain from lower FPR |
-| drift      | 0.723    | ~0.66         | Moderate recall reduction |
-| variance   | 0.876    | ~0.82         | Small precision/recall rebalance |
-| **normal** | —        | **~6%**       | Primary improvement target |
+  > **Important:** The FPR floor (~35%) is not dominated by the EWMA threshold.
+  > It is driven by other pipeline channels (coherence, coupling, physics steps).
+  > Raising the multiplier alone cannot bring FPR below ~35%. The root cause
+  > requires further investigation (see `benchmark/investigate_fpr_s47.py` for
+  > channel attribution data).
+
+  Measured benchmark F1 at the new default (n=1000, seed=42):
+
+| Archetype  | v12.1 F1 (mult=3.0) | v12.2 F1 (mult=4.5) | Δ |
+|------------|---------------------|---------------------|---|
+| point      | 0.415               | 0.422               | +0.007 |
+| contextual | 0.247               | 0.242               | −0.005 |
+| collective | 0.239               | 0.242               | +0.003 |
+| drift      | 0.723               | 0.727               | +0.004 |
+| variance   | 0.876               | 0.883               | +0.007 |
+| **normal FPR** | **36.7%**       | **35.4%**           | −1.3 pp |
+
+  F1 changes are within noise. The multiplier change is a threshold preference,
+  not a performance fix.
 
 > Users who depended on the v12.1 FPR behaviour can restore it with
 > `SentinelConfig(multiplier=3.0)` or set any custom multiplier.
@@ -227,13 +238,15 @@ pytest
 
 ### Basic use — production defaults (v12.2)
 
-In v12.1, `SentinelConfig.production()` alerted on 35.6% of normal observations.
-In v12.2, that default is ~6%. Same API, same one line:
+The API is unchanged from v12.1. The production() preset now uses `multiplier=4.5`
+(was 3.0). Measured FPR on white noise: 35.4% (was 36.7%) — marginal.
+The primary improvement in v12.2 is epistemic: language corrections to README and
+docstrings that previously overstated the physics basis of the heuristics.
 
 ```python
 from fracttalix import SentinelDetector, SentinelConfig
 
-det = SentinelDetector(SentinelConfig.production())  # multiplier=4.5, ~6% normal FPR
+det = SentinelDetector(SentinelConfig.production())  # multiplier=4.5, ~35% normal FPR
 
 for value in my_data_stream:
     result = det.update_and_check(value)
@@ -244,26 +257,27 @@ for value in my_data_stream:
 If you were on v12.1 and need the old threshold back:
 
 ```python
-det = SentinelDetector(SentinelConfig(multiplier=3.0))  # restores v12.1 behaviour (~35% FPR)
+det = SentinelDetector(SentinelConfig(multiplier=3.0))  # v12.1 behaviour (~37% FPR)
 ```
 
 ### Choosing sensitivity
 
-The multiplier is the single most important dial. Here is what it means in practice:
+The multiplier adjusts only the EWMA z-score threshold. Note that the overall
+normal alert rate has a floor of ~35% driven by other pipeline channels —
+see `benchmark/investigate_fpr_s47.py` for channel attribution.
 
 ```python
-# ~6% normal alert rate — good for production dashboards, on-call alerting
+# ~35% normal alert rate — v12.2 production default
 det = SentinelDetector(SentinelConfig.production())          # multiplier=4.5
 
-# ~2% normal alert rate — for high-confidence alerting with low tolerance for noise
-det = SentinelDetector(SentinelConfig(multiplier=5.0))
-
-# ~35% normal alert rate — v12.1 default; use when missing anomalies is worse
-# than chasing false positives, or when downstream filtering is in place
+# ~37% normal alert rate — v12.1 default; slightly more sensitive EWMA
 det = SentinelDetector(SentinelConfig(multiplier=3.0))
 
 # ~40-50% normal alert rate — catches the subtlest shifts; pairs with human review
 det = SentinelDetector(SentinelConfig.sensitive())           # multiplier=2.5
+
+# ~67% normal alert rate — maximum sensitivity; use with downstream filtering
+det = SentinelDetector(SentinelConfig(multiplier=1.5))
 ```
 
 Auto-tune picks the multiplier that maximises F1 on your labeled examples:
@@ -363,13 +377,13 @@ result = await mss.aupdate("sensor_43", 7.71)
 | Preset | `alpha` | `multiplier` | `warmup` | Normal FPR¹ | Notes |
 |--------|---------|-------------|----------|-------------|-------|
 | `SentinelConfig.fast()` | 0.3 | 3.0 | 10 | ~60–80% | Fastest response; very high FP rate — use only with downstream filtering |
-| `SentinelConfig.production()` | 0.1 | **4.5** | 30 | ~5–8% | Balanced defaults; v12.2 default |
+| `SentinelConfig.production()` | 0.1 | **4.5** | 30 | ~35% | Balanced defaults; v12.2 default |
 | `SentinelConfig.sensitive()` | 0.05 | 2.5 | 50 | ~40–50% | Catches subtle anomalies; high FP rate |
 | `SentinelConfig.realtime()` | 0.2 | 3.0 | 15 | ~30–40% | Quantile-adaptive thresholds |
 
 > ¹ Approximate normal alert rate on white noise N(0,1), empirically measured. FPR is a function of multiplier, alpha, and data distribution — these are indicative values from `benchmark/investigate_fpr_s47.py`.
 >
-> **Multiplier–FPR trade-off** (white noise, seed=99): multiplier 1.5 → ~90% FPR, 3.0 → ~35%, 4.5 → ~6%, 5.0 → ~2%. Higher multiplier reduces false positives but may miss subtle anomalies.
+> **Multiplier–FPR trade-off** (white noise, seed=99, n=1000): multiplier 1.5 → 66.8%, 2.0 → 47.5%, 2.5 → 39.8%, 3.0 → 36.7%, 4.5 → 35.4%, 6.0 → 35.4%. Note: above ~3.5 the curve flattens — FPR is floor-limited (~35%) by non-EWMA channels.
 
 ### Parameter groups
 

@@ -24,19 +24,24 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   hypothesis" and "signal classification label, not a causal claim".
 - **Epistemic status block** added to Collapse Indicator Capabilities section.
 
-### Default Multiplier Change — Expected Behaviour Change
+### Default Multiplier Change — Marginal Behaviour Change
 
 - `SentinelConfig.production()` now uses `multiplier=4.5` (was `3.0`).
-  Normal alert rate on white noise: **35.6% → ~6%**.
-  Root cause of old FPR: EWMA z-score threshold at 3.0σ flags ~35% of
-  observations from a true N(0,1) stream (tail probability too large
-  at that threshold for practical use).
-  Expected F1 impact (estimates from investigate_fpr_s47.py trade-off data):
-  - Contextual: 0.247 → ~0.35 (precision gain dominates recall loss)
-  - Collective: 0.239 → ~0.45 (large precision gain from FPR reduction)
-  - Drift: 0.723 → ~0.66 (moderate recall reduction)
-  - Variance: 0.876 → ~0.82 (small rebalance)
-  - Point: 0.415 → ~0.38 (slight drop)
+  Measured normal alert rate on white noise (seed=99, n=1000, post-warmup):
+  **36.7% → 35.4%** — a 1.3 pp marginal change only.
+  The FPR floor at ~35% is not dominated by the EWMA threshold; it is driven by
+  other pipeline channels (coherence, coupling, physics steps). Raising the
+  multiplier above ~3.5 has negligible further effect (see
+  `benchmark/investigate_fpr_s47.py` channel attribution for root cause analysis).
+  Measured F1 at new default (n=1000, seed=42) vs v12.1 (multiplier=3.0):
+  - Point:      0.415 → 0.422  (+0.007)
+  - Contextual: 0.247 → 0.242  (−0.005)
+  - Collective: 0.239 → 0.242  (+0.003)
+  - Drift:      0.723 → 0.727  (+0.004)
+  - Variance:   0.876 → 0.883  (+0.007)
+  All changes within measurement noise. This release is primarily an epistemic
+  language correction; the performance improvements from the multiplier change are
+  not material.
   Users who need the v12.1 behaviour: `SentinelConfig(multiplier=3.0)`.
 
 ### Documentation

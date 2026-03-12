@@ -253,13 +253,14 @@ class SentinelConfig:
     def production(cls) -> "SentinelConfig":
         """Balanced defaults — suitable for most production deployments.
 
-        Uses multiplier=4.5, which gives approximately 5–8% normal alert rate
-        on white noise N(0,1) (see benchmark/investigate_fpr_s47.py for the
-        full multiplier–FPR trade-off curve).
+        Uses multiplier=4.5.  Measured normal alert rate on white noise N(0,1):
+        ~35% (seed=99, n=1000, post-warmup).  The EWMA multiplier has minimal
+        effect above ~3.5 — the FPR floor is driven by other pipeline channels.
+        See benchmark/investigate_fpr_s47.py for channel attribution data.
 
-        Changed in v12.2: multiplier raised from 3.0 → 4.5.  The previous
-        default produced a 35.6% normal alert rate.  Users who need the old
-        behaviour can set SentinelConfig(multiplier=3.0) explicitly.
+        Changed in v12.2: multiplier raised from 3.0 → 4.5.  Measured FPR
+        change: 36.7% → 35.4% (1.3 pp).  Users who need the v12.1 behaviour
+        can set SentinelConfig(multiplier=3.0) explicitly.
         """
         return cls(multiplier=4.5)
 
