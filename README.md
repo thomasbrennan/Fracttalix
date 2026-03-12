@@ -712,23 +712,31 @@ det2.load_state(json_str)
 
 ## How This Repository Works — A Guide to Everything Here
 
-This repo is more than a Python package. It's a twelve-paper scientific corpus,
-a streaming anomaly detector, and a machine-verifiable claim registry — all in
-one place. Here's what everything is and how the pieces fit together.
+This repo contains three things that are usually kept separate: a streaming
+anomaly detector, the physical theory it's derived from, and a machine-verifiable
+registry of every scientific claim made in that theory. They live together because
+they depend on each other — the software implements the theory, the theory
+justifies the software, and the claim registry keeps both honest.
+
+Here's what everything is and why it's built this way.
 
 ### The Software — Sentinel
 
-Sentinel is the streaming anomaly detector. It's what you `pip install`. Everything
-above this section documents its API, configuration, and architecture. If you want
-to use the software, start with the [Quickstart Tutorial](examples/00_quickstart.ipynb).
+Sentinel is the streaming anomaly detector. It's what you `pip install`. It runs
+on pure Python stdlib with zero dependencies, processes one observation at a time
+in constant memory, and extracts three-channel diagnostics from a single scalar
+stream — something no comparable tool does. Everything above this section documents
+its API. If you want to see it work, start with the
+[Quickstart Tutorial](examples/00_quickstart.ipynb) — five minutes, no clone required.
 
 ### The Theory — Fractal Rhythm Model (FRM)
 
 Sentinel isn't a collection of heuristics — it's derived from a physical theory.
 The Fractal Rhythm Model describes how any network (biological, organizational,
 civilizational) transmits information through coupled oscillatory components, and
-how those systems degrade and collapse. The twelve papers in `paper/` develop
-this theory from first principles.
+how those systems degrade and collapse. Twelve papers develop this theory from
+first principles: axiomatic definitions, mathematical derivation, empirical
+parameter extraction, and falsifiable predictions.
 
 | Papers | What they cover |
 |--------|----------------|
@@ -775,10 +783,14 @@ The point: a human reads the paper, a machine reads the AI layer. Both see the
 same claims. If a cross-reference is broken, the
 [cross-paper checker](scripts/cross_paper_checker.py) catches it. If a schema
 is violated, [CI catches it](.github/workflows/ai-layer-validation.yml)
-automatically. This is what "Dual Reader" means — the corpus is verifiable by
-both audiences simultaneously.
+automatically. This is what "Dual Reader" means — every claim is verifiable by
+both audiences, and the verification runs on every commit.
 
-Currently: 15 layers, 80 claims, 0 cross-reference errors.
+The falsification predicates deserve emphasis. Every Type F claim states exactly
+what would prove it wrong, in machine-parseable five-part syntax. This isn't
+"we welcome criticism" — it's "here is the specific experiment that would
+destroy this claim, stated in advance." 80 claims across 15 layers, 0 cross-reference
+errors.
 
 ### The Process Graph
 
@@ -818,12 +830,34 @@ claim to an executable test, documents the verification pipeline, and provides
 step-by-step reproduction instructions. If you want to verify any claim in the
 corpus, start there.
 
+### Continuous Integration
+
+Three CI workflows run automatically on every push:
+
+| Workflow | What it checks |
+|----------|---------------|
+| [`tests.yml`](.github/workflows/tests.yml) | 374 tests across Python 3.9–3.12 |
+| [`ai-layer-validation.yml`](.github/workflows/ai-layer-validation.yml) | AI layer schema compliance and cross-reference integrity |
+| [`release.yml`](.github/workflows/release.yml) | PyPI release pipeline |
+
+### Contributing and Community
+
+- [`CONTRIBUTING.md`](CONTRIBUTING.md) — how to report bugs, suggest features, and submit pull requests
+- [`CODE_OF_CONDUCT.md`](CODE_OF_CONDUCT.md) — community standards
+- [`CHANGELOG.md`](CHANGELOG.md) — version history following [Keep a Changelog](https://keepachangelog.com/)
+
+### Legal
+
+[`legal/DISCLAIMER.md`](legal/DISCLAIMER.md) — the software is CC0 public domain,
+provided as-is for research and educational use. Not intended for safety-critical
+or production decision-making without independent validation.
+
 ### Directory Map
 
 ```
 fracttalix/          Python package — Sentinel detector, config, pipeline steps
 ai-layers/           Machine-readable claim registries (JSON) + schema
-paper/               JOSS paper draft + bibliography
+paper/               Software paper + bibliography
 docs/                Build table, bootstrap doc, API docs, theory docs
 examples/            Tutorials and usage examples
 scripts/             Validation and status reporting tools
@@ -832,6 +866,7 @@ tests/               374 tests across 12 test files
 benchmark/           Performance evaluation suite
 legacy/              Pre-refactor archive
 legal/               Disclaimer
+.github/             CI workflows, issue templates, PR template
 ```
 
 ---
