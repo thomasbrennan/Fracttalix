@@ -926,3 +926,163 @@ The P4 build plan is structurally complete:
 **Ready for Phase 5 (CBT I-9 7-step PASS).**
 
 *Phase 4 complete S56.*
+
+---
+
+## Phase 5: CBT I-9 — 7-Step Structural Audit
+
+*Canonical Build Test (CBT) I-9 applied to P4-ai-layer.json v3 (Phase 4).
+All 7 steps must PASS for build plan to be structurally sound.
+Session S56.*
+
+### Step 1: Schema Validation — PASS
+
+All required fields present: `_meta`, `paper_id`, `paper_title`, `paper_type`,
+`version`, `session`, `phase_ready`, `claim_registry`, `placeholder_register`.
+
+- `_meta.document_type`: "AI_LAYER" ✓
+- `_meta.schema_version`: "v3-S51" ✓
+- `paper_type`: "application_C" ✓ (valid enum)
+- `version`: "v3" ✓ (pattern `^v[0-9]+$`)
+- `session`: "S56" ✓ (pattern `^S[0-9]+$`)
+- `phase_ready.verdict`: "NOT-PHASE-READY" ✓ (valid enum)
+- All claim types valid: A, D, F ✓
+- All tier values valid: axiom, definition, empirical_pending ✓
+- `placeholder_register`: 2 entries, both with required fields ✓
+
+**Verdict: PASS** — schema-compliant.
+
+### Step 2: Predicate Validation — PASS
+
+All 5 Type F claims have complete 5-part falsification predicates:
+
+| Claim | FALSIFIED_IF | WHERE | EVALUATION | BOUNDARY | CONTEXT | Vacuity Witness |
+|-------|:---:|:---:|:---:|:---:|:---:|:---:|
+| F-4.1 | ✓ | ✓ (3 vars) | ✓ (finite) | ✓ (inclusive) | ✓ | Cardiac μ>0 — discriminating |
+| F-4.2 | ✓ | ✓ (6 vars) | ✓ (finite) | ✓ (2σ anchored) | ✓ | τ_gen misidentification — discriminating |
+| F-4.3 | ✓ | ✓ (3 vars) | ✓ (finite) | ✓ (10% inclusive) | ✓ | Incorrect τ_gen — discriminating |
+| F-4.4 | ✓ | ✓ (2 vars) | ✓ (finite) | ✓ (−0.05 inclusive) | ✓ | Overfitted mechanistic model — discriminating |
+| F-4.5 | ✓ | ✓ (3 vars) | ✓ (finite) | ✓ (inclusive) | ✓ | Pure exponential recovery — discriminating |
+
+All Type A claims: `falsification_predicate: null` ✓ (axioms, unfalsifiable by design).
+All Type D claims: `falsification_predicate: null` ✓ (definitions).
+
+C6 check: All vacuity witnesses describe a plausible observation that would trigger
+FALSIFIED. No tautologies. F-4.2 restructured in Phase 3 resolved the only tautology risk.
+
+**Verdict: PASS** — all predicates complete, discriminating, finite evaluation.
+
+### Step 3: Claims Validation — PASS
+
+12 claims total: 4A + 3D + 5F. Verified:
+
+- All `derivation_source` entries reference valid claim IDs from P1, P2, P3, or same-paper.
+- All Type A claims have `tier: "axiom"` ✓
+- All Type D claims have `tier: "definition"` ✓
+- All Type F claims have `tier: "empirical_pending"` ✓ (correct — no data yet)
+- IR references in predicates: IR-1, IR-2, IR-3, IR-5, IR-7, IR-8, IR-13, IR-14.
+  All canonical (Phase 3 renumbering applied). No references to IR-12 (collision resolved).
+- All `test_bindings: []` ✓ (no software tests for application_C at build plan stage)
+- All `verified_against: null` ✓ (consistent with empty test_bindings)
+
+**Verdict: PASS** — claims consistent, tiers correct, IR references canonical.
+
+### Step 4: Principle 10 Validation — PASS
+
+5 entries in `principle_10_audit`. All closed:
+
+| # | Constant/Condition | Status | Anchor |
+|---|-------------------|--------|--------|
+| 1 | R² threshold (0.85) | CLOSED | Kvålseth (1985) via P3 |
+| 2 | 2σ spectral frequency | CLOSED | Bevington & Robinson (2003) §3.2 |
+| 3 | 10% T_char deviation | CLOSED S56 | Taylor (1997) §4.1 3σ detection |
+| 4 | Δ ≥ −0.05 alt model | CLOSED | Burnham & Anderson (2002) §2.5 via P3 |
+| 5 | n ≥ 3 cross-class | CLOSED S56 | t-distribution properties (df=2) |
+
+Circularity check (S48-A2): All paths terminate at external references (published
+standards) or IR axioms. No self-referential loops. The P10-GAP-4.1 closure (Taylor 1997)
+breaks the only circular path identified in Phase 2 (Objection 8).
+
+`principle_10_compliant: true` ✓
+
+**Verdict: PASS** — all P10 gaps closed, no circular derivation paths.
+
+### Step 5/5b: Dependency and WHERE Scan — PASS
+
+**Step 5 — Outbound edges:**
+- 1 registered outbound edge: P4→P6 (PASS_FORWARD, F-4.1/F-4.2 → P6 integration).
+- Status: REGISTERED — P4 Phase 3. ✓
+
+**Step 5b — WHERE variable scan:**
+- Scanned all WHERE blocks across 5 Type F predicates.
+- All external references (C-3.REG, D-3.1, D-2.1, C-3.ALT, C-3.DIAG) are registered
+  as inbound edges.
+- 0 unregistered external references in WHERE blocks.
+
+**Inbound edges:** 15 total.
+- P1: 6 edges (all LIVE) ✓
+- P2: 4 edges (all LIVE — PROVISIONAL) ✓ (honestly marked)
+- P3: 5 edges (all LIVE) ✓
+
+**Verdict: PASS** — all dependencies registered, no orphaned external references.
+
+### Step 6: Cross-Corpus Validation — PASS
+
+P4 is a Fracttalix-track paper. No MK-track claims referenced in claim_registry
+derivation_source entries. No cross-track edges required or used.
+
+0 unregistered cross-corpus references.
+
+**Verdict: PASS** — no cross-corpus issues.
+
+### Step 7: Holistic Assessment — PASS
+
+**Phase 3 traceability:** All 10 hostile review objections traceable to specific
+AI layer changes via `phase_3_changelog`. Each correction verifiable:
+- F-4.2 restructured → claim_registry F-4.2 rewritten ✓
+- IR-13/IR-14 renumbered → inference_rules updated, no IR-12 references ✓
+- D-4.2 n≥3 → D-4.2 statement updated ✓
+- B3 scope_boundary_class → biological_substrate_classes B3 entry updated ✓
+- F-4.1 α-diagnostic → EVALUATION/BOUNDARY updated ✓
+- F-4.3 P10-GAP-4.1 → principle_10_audit entry CLOSED ✓
+- F-4.4 AIC note → CONTEXT updated ✓
+- PH-4.1 severity → placeholder_register entry updated ✓
+- P2 PROVISIONAL → inbound_edges status fields updated ✓
+- P3 status → Build Table corrected (external to AI layer) ✓
+
+**Scope honesty:**
+- B3 designated as scope boundary class (not inflating cross-class count) ✓
+- Cross-class minimum honestly reported: guaranteed 2, expected 2–3, required ≥3 ✓
+- P2 edges marked PROVISIONAL ✓
+- PH-4.1 severity = POTENTIALLY_BLOCKING ✓
+
+**Structural soundness:**
+- 12 claims consistent with summary counts ✓
+- placeholder_count = 2, placeholder_blocking_count = 1 ✓
+- phase_ready verdict = NOT-PHASE-READY (PH-4.2 blocking) — correct ✓
+
+**Verdict: PASS** — build plan structurally sound, all corrections traceable,
+scope honest, verdict correctly reflects blocking placeholder.
+
+---
+
+### Phase 5 Summary
+
+| Step | Test | Result |
+|------|------|--------|
+| 1 | Schema validation | PASS |
+| 2 | Predicate validation | PASS |
+| 3 | Claims validation | PASS |
+| 4 | Principle 10 validation | PASS |
+| 5/5b | Dependencies / WHERE scan | PASS |
+| 6 | Cross-corpus validation | PASS |
+| 7 | Holistic assessment | PASS |
+
+**CBT I-9: ALL 7 STEPS PASS.**
+
+**Overall verdict:** P4 build plan is structurally sound. Phase_ready remains
+NOT-PHASE-READY because PH-4.2 (biological dataset assembly) is blocking. This
+is correct and expected for an application_C paper at build plan stage — the
+structural integrity of the plan is verified, data collection is the next gate.
+
+*Phase 5 complete S56. CBT I-9 PASS. Build process complete.*

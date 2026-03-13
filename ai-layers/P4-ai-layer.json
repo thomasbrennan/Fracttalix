@@ -515,16 +515,25 @@
     "c2": "SATISFIED",
     "c3": "UNSATISFIED",
     "c4_mode": "PHASE-READY-TRACKING",
-    "c5": "UNSATISFIED",
+    "c5": "SATISFIED",
     "c6": "SATISFIED",
     "placeholder_count": 2,
     "placeholder_blocking_count": 1,
-    "note": "Phase 4 Final Build Plan complete S56. 12 claims (4A + 3D + 5F). All Phase 3 corrections applied. F-4.2 restructured (spectral consistency). P10-GAP-4.1 closed. IR numbering resolved. principle_10_compliant: true. 2 placeholders (PH-4.1 POTENTIALLY_BLOCKING, PH-4.2 blocking). Phase 5 (CBT I-9) pending.",
-    "cbt_session": null,
+    "note": "Phase 5 CBT I-9 all 7 steps PASS (S56). 12 claims (4A + 3D + 5F). All Phase 3 corrections applied. F-4.2 restructured (spectral consistency). P10-GAP-4.1 closed. IR numbering resolved. principle_10_compliant: true. 2 placeholders (PH-4.1 POTENTIALLY_BLOCKING, PH-4.2 blocking). Verdict remains NOT-PHASE-READY (PH-4.2 blocking — data assembly pending).",
+    "cbt_session": "S56",
+    "cbt_steps": {
+      "step_1_schema": "PASS",
+      "step_2_predicates": "PASS",
+      "step_3_claims": "PASS",
+      "step_4_principle_10": "PASS",
+      "step_5_dependencies": "PASS",
+      "step_6_cross_corpus": "PASS",
+      "step_7_holistic": "PASS"
+    },
     "thomas_signoff_required": true,
     "github_publication": {
       "target_path": "ai-layers/P4-ai-layer.json",
-      "status": "Phase 4 — NOT YET PUBLISHABLE (Phase 5 CBT I-9 pending)"
+      "status": "Phase 5 CBT I-9 PASS — NOT-PHASE-READY (PH-4.2 blocking)"
     }
   },
   "prior_art": {
