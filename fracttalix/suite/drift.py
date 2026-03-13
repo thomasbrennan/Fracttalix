@@ -55,7 +55,7 @@ from fracttalix.suite.base import (
 
 
 class DriftDetector(BaseDetector):
-    """Slow distribution-shift detector via frozen-baseline CUSUM + Page-Hinkley.
+    """Slow distribution-shift detector via frozen-baseline CUSUM.
 
     Parameters
     ----------
@@ -75,7 +75,7 @@ class DriftDetector(BaseDetector):
     var_growth_threshold : float
         Variance ratio (current / warmup) above this → OUT_OF_SCOPE (default 4.0).
     drift_threshold : float
-        Combined CUSUM+PH score threshold for ALERT (default 0.50).
+        CUSUM score threshold for ALERT (default 0.50).
     """
 
     def __init__(

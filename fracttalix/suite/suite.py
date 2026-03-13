@@ -71,7 +71,7 @@ class SuiteResult:
     def in_scope(self) -> List[DetectorResult]:
         """Return detectors whose model applies to the current data.
 
-        Includes results with status OK or ALERT (i.e. not WARMUP and not
+        Includes results with status NORMAL or ALERT (i.e. not WARMUP and not
         OUT_OF_SCOPE).
 
         Returns

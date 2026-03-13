@@ -207,7 +207,8 @@ class VarianceDetector(BaseDetector):
         x = window[-1]
 
         # z_raw uses frozen warmup baseline: E[z_raw²] = 1.0 on null data.
-        # CUSUM k=1.0 → increments (v2−k) have mean 0 → correct null behaviour.
+        # CUSUM k=1.848 → increments (v2−k) have negative mean under null
+        # (E[z²]=1.0, so E[v2−k]=−0.848), preventing false accumulation.
         z_raw = (x - self._warmup_mean) / self._warmup_std
         v2 = z_raw ** 2   # χ²(1) proxy; E=1.0 under null
 

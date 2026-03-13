@@ -75,10 +75,13 @@ def _fft_bands(data: List[float]) -> Optional[Dict[str, Tuple[float, float]]]:
         }
     except ImportError:
         # Pure-Python fallback DFT (slow but correct)
+        # Mean-centre to match the NumPy path (line 57)
+        mean_val = sum(data) / n
+        centred = [x - mean_val for x in data]
         spectrum = []
         for k in range(n // 2 + 1):
-            re = sum(data[t] * math.cos(2 * math.pi * k * t / n) for t in range(n))
-            im = sum(data[t] * math.sin(2 * math.pi * k * t / n) for t in range(n))
+            re = sum(centred[t] * math.cos(2 * math.pi * k * t / n) for t in range(n))
+            im = sum(centred[t] * math.sin(2 * math.pi * k * t / n) for t in range(n))
             spectrum.append((math.hypot(re, im), math.atan2(-im, re)))
 
         total = len(spectrum)
@@ -293,7 +296,7 @@ class CouplingDetector(BaseDetector):
         # If the signal's energy is entirely in ultra_low (f < 0.05), the bands
         # used for coupling computation (low=0.05-0.15, mid=0.15-0.40, high=0.40-0.70)
         # are essentially empty → PAC coefficient is noise, not signal.
-        # Require lo+mid+high ≥ 15% of total power.
+        # Require lo+mid+high ≥ 30% of total power.
         pac_power = (
             bands["low"][0] + bands["mid"][0] + bands["high"][0]
         )

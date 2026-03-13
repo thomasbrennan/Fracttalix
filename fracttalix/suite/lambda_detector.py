@@ -584,6 +584,8 @@ class LambdaDetector(BaseDetector):
             "last_r_squared": self._last_r_squared,
             "last_lambda": self._last_lambda,
             "last_lam_rate": self._last_lam_rate,
+            "last_time_to_bif": self._last_time_to_bif,
+            "last_scope": self._last_scope,
         })
         return sd
 
@@ -609,3 +611,5 @@ class LambdaDetector(BaseDetector):
         self._last_r_squared = sd.get("last_r_squared", 0.0)
         self._last_lambda = sd.get("last_lambda")
         self._last_lam_rate = sd.get("last_lam_rate", 0.0)
+        self._last_time_to_bif = sd.get("last_time_to_bif")
+        self._last_scope = sd.get("last_scope", "INSUFFICIENT_DATA")

@@ -42,7 +42,7 @@ from typing import Any, Dict, List, Tuple
 
 from fracttalix.suite.base import (
     BaseDetector, ScopeStatus,
-    _mean, _variance, _std, _ac1, _linear_trend,
+    _mean, _variance, _std, _linear_trend,
 )
 
 
@@ -217,13 +217,11 @@ class DiscordDetector(BaseDetector):
         cur_subseq = _z_normalise(window[-L:])
 
         # Random sample from history (excluding the last 2L to avoid trivial matches)
-        max_start = len(window) - L - 1
         safe_end = max(0, len(window) - 2 * L)
         if safe_end < L:
             return 0.0, "insufficient non-trivial history"
 
-        candidates = range(safe_end)
-        if len(list(candidates)) > self._n_candidates:
+        if safe_end > self._n_candidates:
             starts = random.sample(range(safe_end), self._n_candidates)
         else:
             starts = list(range(safe_end))
