@@ -1,0 +1,86 @@
+# =============================================================================
+# Fracttalix CODEOWNERS — Access Control for Fundamental Records
+# =============================================================================
+#
+# This file defines required reviewers for changes to critical repository paths.
+# GitHub will automatically request reviews from these owners when a PR touches
+# matching files.  Changes to protected paths CANNOT be merged without approval
+# from the designated owner(s).
+#
+# Ownership tiers:
+#   TIER 1 — Canonical records (papers, legal, AI layers, citations)
+#   TIER 2 — Core library source and release infrastructure
+#   TIER 3 — CI/CD, security policy, and repository governance
+#
+# Syntax: <pattern>  <owner> [<owner> ...]
+# Docs:   https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-code-owners
+# =============================================================================
+
+# ---------------------------------------------------------------------------
+# TIER 1 — Fundamental / canonical records  (highest protection)
+# ---------------------------------------------------------------------------
+
+# AI layer archives — the canonical scientific record
+/ai-layers/                          @thomasbrennan
+
+# Published paper and bibliography
+/paper/                              @thomasbrennan
+
+# Journal and research logs
+/journal/                            @thomasbrennan
+
+# Legal documents (IP, licensing)
+/legal/                              @thomasbrennan
+
+# Citation metadata — drives Zenodo DOI / academic attribution
+/CITATION.cff                        @thomasbrennan
+
+# Zenodo dataset description
+/zenodo-dataset-description.md       @thomasbrennan
+
+# Reproducibility guarantees
+/REPRODUCIBILITY.md                  @thomasbrennan
+
+# License (changing license = legal event)
+/LICENSE                             @thomasbrennan
+
+# ---------------------------------------------------------------------------
+# TIER 2 — Core library and release artifacts
+# ---------------------------------------------------------------------------
+
+# Core library source
+/fracttalix/                         @thomasbrennan
+
+# Benchmark suite
+/benchmark/                          @thomasbrennan
+
+# Test suite — guards against regression
+/tests/                              @thomasbrennan
+
+# Package metadata and dependency declarations
+/pyproject.toml                      @thomasbrennan
+
+# Release changelog
+/CHANGELOG.md                        @thomasbrennan
+
+# ---------------------------------------------------------------------------
+# TIER 3 — Repository governance and CI/CD
+# ---------------------------------------------------------------------------
+
+# GitHub workflows (CI/CD pipeline integrity)
+/.github/                            @thomasbrennan
+
+# Security policy itself
+/SECURITY.md                         @thomasbrennan
+
+# This file (access control governance)
+/CODEOWNERS                          @thomasbrennan
+
+# Contributing guidelines
+/CONTRIBUTING.md                     @thomasbrennan
+
+# Code of conduct
+/CODE_OF_CONDUCT.md                  @thomasbrennan
+
+# Scripts (build, validation, release tooling)
+/scripts/                            @thomasbrennan

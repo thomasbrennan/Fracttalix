@@ -1,0 +1,240 @@
+name: Security Gate
+
+# =============================================================================
+# Enforces security controls on all PRs targeting main.
+# This workflow guards against unauthorized or suspicious changes to the
+# repository's fundamental records, CI/CD pipelines, and governance files.
+# =============================================================================
+
+on:
+  pull_request:
+    branches: ["main"]
+
+permissions:
+  contents: read
+  pull-requests: read
+
+jobs:
+  # ---------------------------------------------------------------------------
+  # 1. Detect changes to protected / high-value paths
+  # ---------------------------------------------------------------------------
+  classify-changes:
+    name: Classify changed files by security tier
+    runs-on: ubuntu-latest
+    outputs:
+      tier1_changed: ${{ steps.classify.outputs.tier1 }}
+      tier2_changed: ${{ steps.classify.outputs.tier2 }}
+      tier3_changed: ${{ steps.classify.outputs.tier3 }}
+      changed_files: ${{ steps.classify.outputs.changed_files }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Classify changes
+        id: classify
+        run: |
+          BASE="${{ github.event.pull_request.base.sha }}"
+          HEAD="${{ github.event.pull_request.head.sha }}"
+          CHANGED=$(git diff --name-only "$BASE" "$HEAD" 2>/dev/null || git diff --name-only HEAD~1)
+
+          echo "changed_files<<EOF" >> "$GITHUB_OUTPUT"
+          echo "$CHANGED" >> "$GITHUB_OUTPUT"
+          echo "EOF" >> "$GITHUB_OUTPUT"
+
+          TIER1="false"
+          TIER2="false"
+          TIER3="false"
+
+          while IFS= read -r file; do
+            case "$file" in
+              ai-layers/*|paper/*|journal/*|legal/*|CITATION.cff|LICENSE|REPRODUCIBILITY.md|zenodo-dataset-description.md)
+                TIER1="true" ;;
+              fracttalix/*|benchmark/*|tests/*|pyproject.toml|CHANGELOG.md)
+                TIER2="true" ;;
+              .github/*|SECURITY.md|CODEOWNERS|CONTRIBUTING.md|CODE_OF_CONDUCT.md|scripts/*)
+                TIER3="true" ;;
+            esac
+          done <<< "$CHANGED"
+
+          echo "tier1=$TIER1" >> "$GITHUB_OUTPUT"
+          echo "tier2=$TIER2" >> "$GITHUB_OUTPUT"
+          echo "tier3=$TIER3" >> "$GITHUB_OUTPUT"
+
+          echo "### Security Classification" >> "$GITHUB_STEP_SUMMARY"
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+          if [ "$TIER1" = "true" ]; then
+            echo "- **TIER 1 (Fundamental Records):** Changes detected — requires owner approval" >> "$GITHUB_STEP_SUMMARY"
+          fi
+          if [ "$TIER2" = "true" ]; then
+            echo "- **TIER 2 (Core Library):** Changes detected — requires owner approval" >> "$GITHUB_STEP_SUMMARY"
+          fi
+          if [ "$TIER3" = "true" ]; then
+            echo "- **TIER 3 (Governance/CI):** Changes detected — requires owner approval" >> "$GITHUB_STEP_SUMMARY"
+          fi
+          if [ "$TIER1" = "false" ] && [ "$TIER2" = "false" ] && [ "$TIER3" = "false" ]; then
+            echo "- No protected files changed" >> "$GITHUB_STEP_SUMMARY"
+          fi
+
+  # ---------------------------------------------------------------------------
+  # 2. Verify no secrets or credentials are introduced
+  # ---------------------------------------------------------------------------
+  secrets-scan:
+    name: Scan for leaked secrets
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Check for potential secrets in diff
+        run: |
+          BASE="${{ github.event.pull_request.base.sha }}"
+          HEAD="${{ github.event.pull_request.head.sha }}"
+          DIFF=$(git diff "$BASE" "$HEAD" 2>/dev/null || git diff HEAD~1)
+
+          PATTERNS=(
+            'AKIA[0-9A-Z]{16}'          # AWS Access Key
+            'AIza[0-9A-Za-z\\-_]{35}'   # Google API Key
+            'ghp_[0-9A-Za-z]{36}'       # GitHub PAT
+            'gho_[0-9A-Za-z]{36}'       # GitHub OAuth
+            'sk-[0-9a-zA-Z]{48}'        # OpenAI / Anthropic key
+            'password\s*[:=]\s*["\x27][^"\x27]{8,}' # Hardcoded passwords
+            'PRIVATE KEY-----'           # Private keys
+          )
+
+          FOUND=0
+          for pattern in "${PATTERNS[@]}"; do
+            if echo "$DIFF" | grep -qPi "$pattern"; then
+              echo "::error::Potential secret detected matching pattern: $pattern"
+              FOUND=1
+            fi
+          done
+
+          if [ "$FOUND" -eq 1 ]; then
+            echo ""
+            echo "::error::Potential secrets found in this PR. Remove them before merging."
+            echo "If these are false positives, add a comment explaining why."
+            exit 1
+          fi
+
+          echo "No secrets detected."
+
+  # ---------------------------------------------------------------------------
+  # 3. Verify critical files are not deleted
+  # ---------------------------------------------------------------------------
+  deletion-guard:
+    name: Guard against deletion of critical files
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Check for unauthorized deletions
+        run: |
+          BASE="${{ github.event.pull_request.base.sha }}"
+          HEAD="${{ github.event.pull_request.head.sha }}"
+          DELETED=$(git diff --diff-filter=D --name-only "$BASE" "$HEAD" 2>/dev/null || true)
+
+          if [ -z "$DELETED" ]; then
+            echo "No files deleted."
+            exit 0
+          fi
+
+          # Critical files that must never be deleted
+          CRITICAL_FILES=(
+            "LICENSE"
+            "SECURITY.md"
+            "CODEOWNERS"
+            "CITATION.cff"
+            "REPRODUCIBILITY.md"
+            "pyproject.toml"
+            "CHANGELOG.md"
+          )
+
+          # Critical directories where deletions require scrutiny
+          CRITICAL_DIRS=(
+            "ai-layers/"
+            "paper/"
+            "journal/"
+            "legal/"
+            "fracttalix/"
+          )
+
+          BLOCKED=0
+          while IFS= read -r file; do
+            for critical in "${CRITICAL_FILES[@]}"; do
+              if [ "$file" = "$critical" ]; then
+                echo "::error::BLOCKED: Attempt to delete critical file: $file"
+                BLOCKED=1
+              fi
+            done
+            for dir in "${CRITICAL_DIRS[@]}"; do
+              if [[ "$file" == ${dir}* ]]; then
+                echo "::warning::Deletion in protected directory: $file — requires owner review"
+              fi
+            done
+          done <<< "$DELETED"
+
+          if [ "$BLOCKED" -eq 1 ]; then
+            echo ""
+            echo "::error::This PR attempts to delete critical repository files."
+            echo "This action is blocked. Contact the repository owner."
+            exit 1
+          fi
+
+  # ---------------------------------------------------------------------------
+  # 4. Validate workflow file integrity
+  # ---------------------------------------------------------------------------
+  workflow-integrity:
+    name: Verify workflow file safety
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Check for dangerous workflow modifications
+        run: |
+          BASE="${{ github.event.pull_request.base.sha }}"
+          HEAD="${{ github.event.pull_request.head.sha }}"
+          DIFF=$(git diff "$BASE" "$HEAD" -- '.github/workflows/' 2>/dev/null || true)
+
+          if [ -z "$DIFF" ]; then
+            echo "No workflow changes detected."
+            exit 0
+          fi
+
+          WARNINGS=0
+
+          # Check for pull_request_target (can expose secrets to forks)
+          if echo "$DIFF" | grep -q 'pull_request_target'; then
+            echo "::error::Workflow uses pull_request_target — this can expose secrets to fork PRs"
+            WARNINGS=1
+          fi
+
+          # Check for workflow_dispatch with no restrictions
+          # (informational — not necessarily dangerous)
+          if echo "$DIFF" | grep -q 'workflow_dispatch'; then
+            echo "::warning::Workflow adds workflow_dispatch trigger — verify this is intentional"
+          fi
+
+          # Check for curl piped to shell
+          if echo "$DIFF" | grep -qP 'curl.*\|\s*(ba)?sh'; then
+            echo "::error::Workflow pipes curl output to shell — supply chain risk"
+            WARNINGS=1
+          fi
+
+          # Check for third-party actions not pinned to SHA
+          if echo "$DIFF" | grep -qP 'uses:\s+(?!actions/)[^@]+@(?!v\d|[a-f0-9]{40})'; then
+            echo "::warning::Third-party action not pinned to version tag or SHA"
+          fi
+
+          if [ "$WARNINGS" -eq 1 ]; then
+            echo ""
+            echo "::error::Dangerous workflow patterns detected. Review carefully before merging."
+            exit 1
+          fi
+
+          echo "Workflow changes appear safe."
