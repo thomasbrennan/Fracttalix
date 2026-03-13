@@ -20,14 +20,16 @@
 #   The conservative estimate is: Δt_conservative = Δt / safety_factor.
 #   Default safety_factor = 1.0 (no correction); user may override.
 #
-# STATUS: PLACEHOLDER — awaiting Lady Ada's implementation.
-# API contract defined below; Lady Ada implements the body.
+# Implemented by Lady Ada (FRM physics layer).
 
 from __future__ import annotations
 
 from typing import Any, Dict, List, Optional
 
 from fracttalix.suite.base import BaseDetector, DetectorResult, ScopeStatus
+
+# Planning horizon: ttb beyond this many steps scores near 0 (no urgency)
+_HORIZON = 200.0
 
 
 class VirtuDetector(BaseDetector):
@@ -70,19 +72,10 @@ class VirtuDetector(BaseDetector):
         return True  # Scope determined by Lambda/Omega, not raw data
 
     def _compute(self, window: List[float]):
-        # PLACEHOLDER — Lady Ada implements this.
-        # Contract:
-        #   VirtuDetector is called via update_frm(lambda_val, lam_rate,
-        #     time_to_bif, omega_in_scope) in FRMSuite, bypassing the raw
-        #     window-based update().
-        #   - If time_to_bif is None or lambda is not declining: NORMAL
-        #   - If omega_trust and omega not in scope: OUT_OF_SCOPE
-        #   - Report: ttb_conservative = time_to_bif / safety_factor
-        #   - Score: 1.0 - min(1.0, ttb_conservative / horizon)
-        #     where horizon = some expected planning window (e.g. 200 steps)
-        #   - Message includes: ttb=X steps, confidence=HIGH/MEDIUM/LOW,
-        #     safety_factor=Y, omega_confirmed=True/False
-        return 0.0, "placeholder — awaiting implementation"
+        # Called only via the generic update() path (no Lambda/Omega context).
+        # VirtuDetector is designed for use via update_frm(); without FRM
+        # inputs there is nothing to report.
+        return 0.0, "use update_frm() for FRM-aware time-to-bifurcation estimates"
 
     def update_frm(
         self,
@@ -92,9 +85,23 @@ class VirtuDetector(BaseDetector):
         omega_in_scope: bool,
         step: int,
     ) -> DetectorResult:
-        """FRMSuite-native update: receives pre-computed Lambda/Omega outputs."""
-        # PLACEHOLDER — Lady Ada fills in.
+        """FRMSuite-native update: receives pre-computed Lambda/Omega outputs.
+
+        Parameters
+        ----------
+        lambda_val : float or None
+            Current fitted λ from Lambda detector.
+        lam_rate : float
+            Rate of change dλ/dt from Lambda detector (negative = declining).
+        time_to_bif : float or None
+            Raw time-to-bifurcation estimate from Lambda: λ / |dλ/dt|.
+        omega_in_scope : bool
+            Whether OmegaDetector is currently in scope (FRM structure intact).
+        step : int
+            Current observation step (from FRMSuite).
+        """
         self._step += 1
+
         if step < self._warmup:
             return DetectorResult(
                 detector=self._name,
@@ -103,11 +110,56 @@ class VirtuDetector(BaseDetector):
                 message=f"warmup ({step}/{self._warmup})",
                 step=step,
             )
+
+        # Require actively declining λ — stable or rising λ means no bifurcation signal
+        if time_to_bif is None or lam_rate >= -1e-3:
+            return DetectorResult(
+                detector=self._name,
+                status=ScopeStatus.NORMAL,
+                score=0.0,
+                message="lambda stable or insufficient data",
+                step=step,
+            )
+
+        # omega_trust gate: if FRM structure (ω) is uncertain, report OUT_OF_SCOPE
+        if self._omega_trust and not omega_in_scope:
+            return DetectorResult(
+                detector=self._name,
+                status=ScopeStatus.OUT_OF_SCOPE,
+                score=0.0,
+                message="omega out of scope (FRM structure uncertain)",
+                step=step,
+            )
+
+        # Kramers correction: conservative estimate (act earlier)
+        # safety_factor > 1.0 → shorter reported window → earlier warning
+        ttb_conservative = time_to_bif / max(self._safety_factor, 1e-10)
+        self._last_ttb = ttb_conservative
+
+        # Confidence grading based on rate stability
+        if lam_rate < -0.01:
+            confidence = "HIGH"
+        elif lam_rate < -0.003:
+            confidence = "MEDIUM"
+        else:
+            confidence = "LOW"
+        self._last_confidence = confidence
+
+        # Urgency score: 0 = distant (ttb >> horizon), 1 = imminent (ttb → 0)
+        score = 1.0 - min(1.0, ttb_conservative / _HORIZON)
+
+        omega_confirmed = omega_in_scope
+        msg = (
+            f"ttb={ttb_conservative:.1f} confidence={confidence} "
+            f"safety_factor={self._safety_factor:.2f} omega_confirmed={omega_confirmed}"
+        )
+
+        status = ScopeStatus.ALERT if score >= self._alert_threshold else ScopeStatus.NORMAL
         return DetectorResult(
             detector=self._name,
-            status=ScopeStatus.NORMAL,
-            score=0.0,
-            message="placeholder — awaiting implementation",
+            status=status,
+            score=score,
+            message=msg,
             step=step,
         )
 
