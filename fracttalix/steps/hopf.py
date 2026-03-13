@@ -299,18 +299,39 @@ class HopfDetectorStep(DetectorStep):
         return lam_rate, time_to_bif, confidence
 
     def _compute_scope(self, r_squared, lam_fit, converged):
-        """Determine whether the FRM model applies to current data."""
+        """Determine whether the FRM model applies to current data.
+
+        Key distinction: the FRM applies to DAMPED oscillations (μ < 0).
+        A sustained oscillation (constant amplitude, λ ≈ 0) is a limit
+        cycle (μ ≥ 0) — out of scope for bifurcation detection. The
+        detector must not fire CRITICAL_SLOWING on limit cycles.
+
+        Detection: if λ is very small AND the amplitude envelope shows
+        no decay across the window, the oscillation is sustained, not
+        approaching bifurcation.
+        """
         if not converged:
             return "OUT_OF_SCOPE"
         if r_squared < self.cfg.hopf_r_squared_min:
             return "OUT_OF_SCOPE"
+
+        # Check for limit cycle: λ ≈ 0 with good fit means sustained
+        # oscillation, not a damped system approaching bifurcation.
+        # The test: exp(-λ * window) ≈ 1 means negligible decay.
+        window_len = len(self._window)
+        if window_len > 0 and lam_fit * window_len < 0.05:
+            # Less than 5% amplitude decay across the window.
+            # This is a sustained oscillation (limit cycle), not a
+            # damped system losing its damping.
+            return "LIMIT_CYCLE"
+
         if r_squared < 0.7:
             return "BOUNDARY"
         return "IN_SCOPE"
 
     def _compute_alert(self, lam, time_to_bif, scope_status):
         """Determine alert status from λ and scope."""
-        if scope_status == "OUT_OF_SCOPE":
+        if scope_status in ("OUT_OF_SCOPE", "LIMIT_CYCLE"):
             return False, None
 
         # Check for critical slowing (λ below warning threshold)
