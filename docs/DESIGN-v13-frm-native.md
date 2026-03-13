@@ -1,542 +1,518 @@
-# Sentinel v13 Design — FRM-Native Detector
+# Sentinel v13 Design — Streaming Cross-Scale Coupling Monitor
 
 ## Status: DESIGN DRAFT — Not Approved
 
 ---
 
-## Problem Statement
+## The One Thing
 
-Sentinel v12.2 is a competent streaming anomaly detector built from standard
-signal processing techniques (EWMA, CUSUM, FFT, Hurst, permutation entropy)
-organized in an FRM-inspired architecture. But the FRM's core theoretical
-predictions are never used:
+**Best-in-world target: detecting that a system is about to fail by
+watching how its fast and slow dynamics decouple — in a stream, in
+real time, with a time-to-failure estimate.**
 
-- The functional form `f(t) = B + A·exp(-λt)·cos(ωt+φ)` is never fitted
-- The characteristic frequency `ω = π/(2·τ_gen)` is never computed
-- The decay rate `λ = |α|/(Γ·τ_gen)` is never estimated
-- The Hopf bifurcation approach (λ → 0 as early warning) is absent
-- The MK-P5 decision theory (Virtù Window, t_trap) is not implemented
+This is not a general-purpose anomaly detector. It does one thing:
 
-v13 would add a parallel detection pathway that actually implements the FRM,
-running alongside the existing v12.2 pipeline. The existing steps stay
-unchanged — this is additive, not a replacement.
+> Given a stream of observations from a system with oscillatory dynamics
+> at multiple timescales, detect when the coupling between those scales
+> is degrading, estimate how long before the system transitions, and
+> tell you whether it's organic decay or external disruption.
 
----
+Nobody else does this for streaming data. The neuroscience community has
+mature PAC tools but applies them offline. The EWS community does
+model-free critical slowing down but doesn't use coupling structure.
+DAMP/HS-Trees do general anomaly detection but have no concept of
+cross-scale relationships. This is the open niche.
 
-## Competitive Context
+### What we give up
 
-Current SOTA for streaming anomaly detection (2025-2026):
+- Point anomaly detection (DAMP is better, and simpler)
+- General-purpose streaming anomaly detection (existing v12.2 pipeline, or River)
+- Batch anomaly detection (PyOD has 45 algorithms)
+- Any claim to universality
 
-| Method | Strengths | Weaknesses |
-|--------|-----------|------------|
-| DAMP (Matrix Profile) | Best univariate F1 (0.28 avg), simple, fast | No frequency structure, no early warning |
-| HS-Trees (River) | Constant memory, fast | Global anomalies only, no local detection |
-| xStream | Handles evolving features | Same limitation as HS-Trees |
-| Pi-Transformer | Phase synchrony inductive bias | Batch retraining, heavy compute |
-| EWS (Scheffer) | Theoretically grounded pre-transition warning | Model-free, slow to respond, high FPR |
+### What we claim
 
-**Gap identified:** No published streaming detector uses cross-frequency
-coupling breakdown as an anomaly signal. No detector fits a parametric
-pre-bifurcation model for early warning. The FRM approach occupies a
-genuinely open niche.
-
-**Honest constraint:** This niche is narrow. FRM-native detection targets
-systems approaching critical transitions, not general-purpose anomaly
-detection. It would complement DAMP-style methods, not replace them.
+- **Streaming PAC monitoring** with proper statistical testing (surrogates)
+- **Parametric pre-transition warning** via fitted decay rate λ → 0
+- **Time-to-failure estimation** grounded in the Hopf bifurcation model,
+  not linear extrapolation of a heuristic
+- **Degradation type classification** (organic coupling-first vs external
+  coherence-first) — a genuinely novel diagnostic
+- **Decision-theoretic intervention window** (MK-P5 Virtù Window / t_trap)
+- **Self-aware scope boundary** — knows when it doesn't apply and says so
 
 ---
 
-## Design Principles
+## Why This Could Be Best-in-World
 
-1. **Actually fit the model.** The core contribution is fitting
-   `f(t) = B + A·exp(-λt)·cos(ωt+φ)` to windowed data and tracking
-   parameter evolution. If we don't do this, we're just adding more
-   standard techniques with FRM names.
+### 1. The gap is real and confirmed
 
-2. **λ is the primary signal.** The FRM predicts that λ → 0 indicates
-   approach to Hopf bifurcation (critical transition). This is more
-   specific than generic EWS (rising variance + autocorrelation) and
-   should provide earlier, more informative warning.
+SOTA survey (2025-2026) found:
+- Zero papers applying PAC to streaming anomaly detection outside neuroscience
+- Zero papers using Kuramoto order parameter as a streaming anomaly score
+- Zero streaming detectors that monitor cross-frequency coupling health
+- The Pi-Transformer (2025) acknowledges "synchronisation matters more than
+  individual values" but uses attention, not coupling analysis
 
-3. **ω grounds the spectral analysis.** Instead of 5 arbitrary frequency
-   bands, use the fitted ω to focus analysis on the characteristic
-   frequency and its harmonics.
+### 2. The theory provides something EWS doesn't
 
-4. **Additive, not replacement.** The v12.2 pipeline stays. The FRM
-   pathway runs in parallel and produces its own result keys. Users
-   can use either or both.
+Generic EWS (Scheffer et al.) watches for rising variance and autocorrelation.
+These are model-free signals — they work but they're noisy and slow.
 
-5. **Validate before shipping.** Every new step needs a synthetic test
-   that demonstrates it detects what it claims to detect, and a
-   negative test showing it doesn't fire on data it shouldn't.
+The FRM approach fits a specific parametric form and watches for the decay
+rate λ approaching zero. This is:
+- **More specific** — one parameter to track instead of two noisy statistics
+- **Earlier** — λ changes before variance and AC visibly rise (the model
+  captures the underlying dynamics, not just their statistical shadow)
+- **More informative** — gives you time-to-transition, not just "something
+  is changing"
 
----
+### 3. The implementation barrier is manageable
 
-## Architecture: FRM Pathway (New Steps)
+The core algorithms exist:
+- NLS fitting: scipy.optimize.curve_fit or stdlib Nelder-Mead
+- PAC: Tort 2010 Modulation Index (already in v12.2, needs surrogate testing)
+- Kuramoto Φ: already in v12.2
+- Hilbert transform: already in v12.2
+- FFT: already in v12.2
 
-### Overview
-
-The FRM pathway adds 6 new steps after the existing 37. These steps
-are independent of each other (except where noted) but depend on the
-existing pipeline's frequency decomposition and phase extraction.
-
-```
-Existing Pipeline (Steps 1-37, unchanged)
-    │
-    ├── Step 38: FRMModelFitStep
-    │       Fits f(t) = B + A·exp(-λt)·cos(ωt+φ) to windowed data
-    │       Outputs: λ, ω, A, B, φ, R², residuals
-    │
-    ├── Step 39: DecayRateTrackingStep (depends on 38)
-    │       Tracks λ over time, detects λ → 0 trend
-    │       Outputs: λ_history, dλ/dt, bifurcation_proximity
-    │
-    ├── Step 40: CharacteristicFrequencyStep (depends on 38)
-    │       Compares fitted ω to theoretical ω = π/(2·τ_gen)
-    │       Adaptive band focusing around fitted ω
-    │       Outputs: ω_fitted, ω_theoretical, frequency_drift
-    │
-    ├── Step 41: ModelQualityStep (depends on 38)
-    │       Tracks R² and residual structure over time
-    │       Detects when FRM form stops fitting (scope boundary)
-    │       Outputs: r_squared, residual_autocorrelation, in_scope
-    │
-    ├── Step 42: VirtuWindowStep (depends on 39)
-    │       MK-P5 decision theory: estimates time remaining for
-    │       rational intervention before t_trap
-    │       Outputs: virtu_window, t_trap_proximity, intervention_rational
-    │
-    └── Step 43: FRMAlertStep (depends on 38-42)
-            Aggregates FRM pathway signals into alert decisions
-            Outputs: frm_alert, frm_alert_reasons
-```
+What's new is the composition: fitting the FRM form, tracking λ, and using
+coupling structure as the primary anomaly signal.
 
 ---
 
-## Step Specifications
+## Architecture
 
-### Step 38: FRMModelFitStep
+### Core Pipeline (3 stages, not 6)
 
-**Purpose:** Fit the FRM functional form to a sliding window of data.
+Previous design had 6 steps. That's too many for "one thing." Collapsed to 3:
 
-**Math:**
 ```
-f(t) = B + A·exp(-λt)·cos(ωt + φ)
+Stage 1: FIT
+    Fit f(t) = B + A·exp(-λt)·cos(ωt+φ) to sliding window
+    Track λ, ω, R² over time
+    Detect scope boundary (R² drop, residual structure)
 
-Parameters to estimate: [B, A, λ, ω, φ]
-Fixed: none (all fitted from data)
+Stage 2: COUPLE
+    Monitor PAC with surrogate-tested significance
+    Track Kuramoto Φ independently of κ̄
+    Classify degradation sequence (coupling-first vs coherence-first)
+
+Stage 3: DECIDE
+    Estimate time-to-bifurcation from λ trajectory
+    Compute Virtù Window (rational intervention window)
+    Detect t_trap (point of no return)
+    Issue alerts with confidence grading
 ```
 
-**Algorithm:**
-1. Maintain a sliding window of `frm_fit_window` observations (default: 128)
-2. On each update, fit the 5-parameter model using nonlinear least squares
-   (Levenberg-Marquardt if scipy available, else Nelder-Mead on stdlib)
-3. Initialize ω from the dominant FFT peak (from Step 3)
-4. Initialize λ from log-envelope decay rate
-5. Constrain: λ ≥ 0 (damped only — FRM scope boundary), ω > 0
+These map to 3 new DetectorStep subclasses. They depend on the existing
+pipeline's FFT (Step 3) and phase extraction (Step 28) but are otherwise
+self-contained.
 
-**Outputs to scratch:**
+---
+
+## Stage 1: CouplingFitStep
+
+**The core.** Everything else depends on this.
+
+### What it computes
+
+On every update (or every N updates for performance):
+
+1. **Fit the FRM form** to a sliding window of data:
+   ```
+   f(t) = B + A·exp(-λt)·cos(ωt + φ)
+   ```
+   Five parameters: B (baseline), A (amplitude), λ (decay rate),
+   ω (characteristic frequency), φ (phase offset).
+
+2. **Track parameter evolution:**
+   - λ_history: rolling window of fitted λ values
+   - ω_history: rolling window of fitted ω values
+   - R²_history: rolling window of fit quality
+
+3. **Detect scope boundary:**
+   - R² < 0.5 → OUT_OF_SCOPE (model doesn't fit this data)
+   - R² < 0.7 → BOUNDARY (model fit is degrading)
+   - Residual autocorrelation > 0.3 → STRUCTURED_RESIDUALS
+     (model is missing something systematic)
+
+### Fitting algorithm
+
+**Initialization (critical for convergence):**
+- ω_init: dominant FFT peak frequency from Step 3
+- λ_init: log-envelope decay rate (fit line to log of peak envelope)
+- B_init: mean of last 10% of window (steady-state estimate)
+- A_init: max deviation from B_init
+- φ_init: phase at window start from FFT
+
+**Warm-starting:** After first successful fit, subsequent fits use the
+previous parameters as initial guess. This dramatically improves
+convergence speed and reliability.
+
+**Constraint:** λ ≥ 0. The FRM scope boundary is the Hopf bifurcation
+(λ = 0). Negative λ means the system is past the bifurcation (growing
+oscillation / limit cycle). When the fitter wants λ < 0, report
+`scope_status: "PAST_BIFURCATION"` — the system has already transitioned.
+
+**Backend selection:**
+- scipy available: `curve_fit` with `method='lm'` (Levenberg-Marquardt)
+- scipy unavailable: raise `ImportError` with clear message
+
+**Design decision: require scipy.** The previous design tried to support
+stdlib-only fitting with Nelder-Mead. This is wrong for "best in world."
+Nelder-Mead on 5 parameters is unreliable, slow, and would produce
+worse results than the competition. The FRM pathway requires scipy.
+The existing v12.2 pipeline remains stdlib-only.
+
+### Performance
+
+NLS on 128 points with 5 parameters and warm-starting: ~0.5-2ms with scipy.
+
+Mitigation for high-throughput streams:
+- `fit_interval`: fit every N steps (default: 4, i.e., every 4th observation)
+- `fit_delta_threshold`: skip if RMS window change < threshold
+- Between fits, interpolate λ and ω from trend
+
+### Outputs
+
 ```python
-{
-    "frm_B": float,           # baseline
-    "frm_A": float,           # amplitude
-    "frm_lambda": float,      # decay rate (KEY SIGNAL)
-    "frm_omega": float,       # characteristic frequency
-    "frm_phi": float,         # phase
-    "frm_r_squared": float,   # goodness of fit
-    "frm_residuals": list,    # for residual analysis
-    "frm_fit_converged": bool  # whether optimizer converged
+scratch["coupling_fit"] = {
+    "lambda": float,        # decay rate (THE key signal)
+    "omega": float,         # characteristic frequency
+    "amplitude": float,     # A
+    "baseline": float,      # B
+    "phase": float,         # φ
+    "r_squared": float,     # goodness of fit
+    "scope_status": str,    # IN_SCOPE / BOUNDARY / OUT_OF_SCOPE / PAST_BIFURCATION
+    "fit_converged": bool,
+    "tau_gen_implied": float,  # π/(2ω) — what generation timescale the data implies
 }
 ```
 
-**Computational cost:** This is the expensive step. NLS on 128 points
-with 5 parameters. With scipy, ~1-5ms per call. Without scipy,
-Nelder-Mead will be slower (~10-50ms). Consider:
-- Skip fitting when window hasn't changed enough (delta threshold)
-- Warm-start from previous fit parameters
-- Fit every N steps instead of every step (configurable)
+### Config
 
-**Config parameters:**
 ```python
-frm_fit_window: int = 128        # sliding window size
-frm_fit_interval: int = 1        # fit every N steps (1 = every step)
-frm_fit_delta_threshold: float = 0.01  # skip if RMS change < threshold
+enable_coupling_monitor: bool = False    # opt-in
+coupling_fit_window: int = 128           # sliding window size
+coupling_fit_interval: int = 4           # fit every N steps
+coupling_fit_delta: float = 0.01         # skip if window barely changed
+coupling_r_squared_min: float = 0.5      # below → out of scope
+coupling_tau_gen: float | None = None    # user-supplied, for comparison
 ```
-
-**Tests needed:**
-- Synthetic damped oscillation → should recover known λ, ω within 5%
-- Pure noise → R² should be low, λ estimate should be unreliable
-- Step change → R² should drop, indicating scope boundary
-- Undamped oscillation (λ = 0) → should detect bifurcation proximity
 
 ---
 
-### Step 39: DecayRateTrackingStep
+## Stage 2: CouplingHealthStep
 
-**Purpose:** Track λ over time and detect approach to Hopf bifurcation.
+**Monitor the health of cross-scale coupling with proper statistics.**
 
-**Math:**
-```
-λ → 0  ⟹  system approaching critical transition
+This replaces the crude 8-bin PAC in v12.2 with surrogate-tested coupling.
 
-dλ/dt estimated from rolling window of λ values
-Time-to-zero: Δt_λ = λ / |dλ/dt|  (when dλ/dt < 0)
-```
+### What it computes
 
-This is analogous to the existing DiagnosticWindowStep (Step 33) but
-operates on the fitted decay rate instead of mean coupling strength.
-The theoretical grounding is stronger: λ → 0 at the Hopf bifurcation
-is a mathematical fact of the DDE, not an engineering heuristic.
+1. **PAC with surrogate testing:**
+   - Compute Modulation Index (Tort 2010) for each slow/fast band pair
+   - Generate N=200 surrogate PAC values by time-shifting the amplitude
+     envelope (Aru et al. 2015 method — preserves spectral content,
+     breaks coupling)
+   - Compute z-score: z_PAC = (MI_observed - mean(MI_surrogates)) / std(MI_surrogates)
+   - PAC is significant at p < 0.05 when z_PAC > 1.96
 
-**Key distinction from Step 33:**
-- Step 33: Δt = (κ̄ − κ_c) / |dκ̄/dt| — heuristic threshold on coupling
-- Step 39: Δt_λ = λ / |dλ/dt| — parameter of the fitted physical model
+   **Why this matters:** Without surrogate testing, nonstationary signals
+   produce spurious PAC (documented in Aru et al. 2015, van Driel et al.
+   2015). The v12.2 raw MI is not trustworthy. Surrogate testing is what
+   makes the difference between "we compute a number" and "we detect
+   real coupling."
 
-**Outputs to scratch:**
+2. **Coupling health score:**
+   ```
+   H_coupling = fraction of band pairs with significant PAC (z > 1.96)
+   ```
+   Range: 0.0 (no significant coupling) to 1.0 (all pairs coupled).
+
+   This replaces v12.2's raw `composite_coupling_score` with a
+   statistically grounded measure.
+
+3. **Coupling degradation detection:**
+   - Track H_coupling over rolling window
+   - Degradation = H_coupling declining (OLS slope < 0, p < 0.05)
+   - Rate = slope magnitude
+
+4. **Degradation sequence classification:**
+   Using the fitted λ from Stage 1 and Φ from existing Step 34:
+   ```
+   COUPLING_FIRST:  H_coupling declining while λ stable
+   DECAY_FIRST:     λ declining while H_coupling stable
+   SIMULTANEOUS:    Both declining
+   STABLE:          Neither declining
+   ```
+
+   The FRM predicts that organic degradation follows COUPLING_FIRST →
+   then DECAY_FIRST. External disruption skips to DECAY_FIRST directly.
+   This is the sequence classification idea from v12.2, but using
+   statistically tested coupling and the fitted decay rate instead
+   of raw heuristic scores.
+
+### Surrogate cost
+
+200 surrogates × 6 band pairs = 1200 MI computations per update.
+Each MI: ~0.1ms → ~120ms total. Too expensive for every step.
+
+**Mitigation:** Run surrogate testing every `coupling_health_interval`
+steps (default: 10). Between tests, track raw MI and flag if it drops
+below the last significant threshold. Full retest on flag.
+
+### Outputs
+
 ```python
-{
-    "frm_lambda_rate": float,            # dλ/dt
-    "frm_bifurcation_proximity": float,  # λ (lower = closer)
-    "frm_time_to_bifurcation": float | None,  # Δt_λ (steps)
-    "frm_critical_slowing": bool,        # λ below warning threshold
+scratch["coupling_health"] = {
+    "health_score": float,          # fraction of significant pairs
+    "significant_pairs": int,       # count
+    "total_pairs": int,             # 6
+    "degradation_rate": float,      # OLS slope of H over time
+    "degradation_significant": bool,# p < 0.05
+    "sequence_type": str,           # COUPLING_FIRST / DECAY_FIRST / SIMULTANEOUS / STABLE
+    "pac_z_scores": dict,           # per-pair z-scores
 }
 ```
 
-**Config parameters:**
-```python
-frm_lambda_history_window: int = 20   # rolling window for dλ/dt
-frm_lambda_warning: float = 0.05      # λ below this → critical_slowing
-```
+### Config
 
-**Tests needed:**
-- Linearly decreasing λ → should estimate correct time-to-zero
-- Stable λ → should report no critical slowing
-- Sudden λ drop → should fire critical_slowing immediately
+```python
+coupling_health_interval: int = 10       # surrogate test every N steps
+coupling_n_surrogates: int = 200         # surrogate count
+coupling_significance: float = 0.05     # p-value threshold
+```
 
 ---
 
-### Step 40: CharacteristicFrequencyStep
+## Stage 3: TransitionAlertStep
 
-**Purpose:** Compare fitted ω to theoretical prediction and focus
-spectral analysis on the characteristic frequency.
+**The decision layer. Answers: "How long do I have, and should I act?"**
 
-**Math:**
-```
-ω_theoretical = π / (2·τ_gen)
+### What it computes
 
-If τ_gen is known (user-supplied):
-  frequency_drift = |ω_fitted − ω_theoretical| / ω_theoretical
+1. **Time-to-bifurcation (from λ trajectory):**
+   ```
+   Δt_λ = λ / |dλ/dt|    (when dλ/dt < 0 and scope_status = IN_SCOPE)
+   ```
 
-If τ_gen is unknown:
-  τ_gen_estimated = π / (2·ω_fitted)
-  (informational only — tells user what generation timescale the data implies)
-```
+   Three estimates (pessimistic, expected, optimistic) using the
+   variance of the λ rate:
+   ```
+   Δt_pessimistic = λ / (|dλ/dt| + σ_rate)
+   Δt_expected    = λ / |dλ/dt|
+   Δt_optimistic  = λ / max(|dλ/dt| - σ_rate, 0.1·|dλ/dt|)
+   ```
 
-**Design decision:** τ_gen is domain-specific (e.g., 6 hours for
-circadian, ~20 years for generational). The detector cannot infer it
-from data alone. Two modes:
+   Confidence grading from coefficient of variation of recent dλ/dt:
+   - CV < 0.3 → HIGH
+   - CV < 0.7 → MEDIUM
+   - CV ≥ 0.7 → LOW
 
-1. **τ_gen supplied** (via config): Compare fitted ω to prediction.
-   Drift indicates the system is not behaving as the FRM predicts,
-   which is itself diagnostic.
+2. **Virtù Window (MK-P5 Theorem 1):**
+   ```
+   Intervention is rational iff:
+     Δt_expected > T_decision × (1 + C_fp/C_late)
 
-2. **τ_gen unknown** (default): Report estimated τ_gen from fitted ω.
-   No comparison, just information extraction. The existing 5 fixed
-   bands continue to operate.
+   Where:
+     T_decision = user-supplied minimum lead time
+     C_fp/C_late = cost asymmetry ratio
+   ```
 
-**Outputs to scratch:**
+   Default: symmetric costs → intervention rational when Δt > T_decision.
+
+3. **t_trap detection (MK-P5 Theorem 4):**
+   ```
+   As λ → 0, σ_Δt grows (Kramers scaling):
+     CV_Δt → ∞ as λ → 0
+
+   t_trap: the point where Δt_expected ≤ T_decision × (1 + C_fp/C_late)
+
+   After t_trap, the uncertainty is so large and the window so small
+   that rational intervention is no longer possible.
+   ```
+
+4. **Alert emission:**
+
+   | Alert | Condition | Severity |
+   |-------|-----------|----------|
+   | `COUPLING_DEGRADING` | H_coupling declining significantly | INFO |
+   | `CRITICAL_SLOWING` | λ < warning threshold, in scope | WARNING |
+   | `TRANSITION_APPROACHING` | Δt < 2 × T_decision | WARNING |
+   | `DECIDE_NOW` | T_decision < Δt < 2 × T_decision | CRITICAL |
+   | `WINDOW_CLOSED` | Δt < T_decision (past t_trap) | CRITICAL |
+   | `SCOPE_EXIT` | R² dropped, model no longer fits | INFO |
+
+   Every alert includes: confidence level, Δt estimate with bounds,
+   coupling health score, sequence classification.
+
+### Outputs
+
 ```python
-{
-    "frm_omega_fitted": float,
-    "frm_tau_gen_estimated": float,      # π / (2·ω)
-    "frm_tau_gen_supplied": float | None,
-    "frm_frequency_drift": float | None, # only if τ_gen supplied
-    "frm_omega_stable": bool,            # ω not drifting significantly
+scratch["transition_alert"] = {
+    # Time estimate
+    "time_to_transition": float | None,      # Δt expected (steps)
+    "time_pessimistic": float | None,
+    "time_optimistic": float | None,
+    "confidence": str,                        # HIGH / MEDIUM / LOW
+
+    # Decision theory
+    "intervention_rational": bool,
+    "virtu_window": float | None,            # steps of rational action remaining
+    "t_trap_status": str,                     # FAR / APPROACHING / PAST
+
+    # Alert
+    "alert": bool,
+    "alert_type": str | None,
+    "alert_severity": str,                    # INFO / WARNING / CRITICAL
+
+    # Context (for the human reading the alert)
+    "lambda": float,                          # current decay rate
+    "coupling_health": float,                 # current H_coupling
+    "sequence_type": str,                     # what kind of degradation
+    "scope_status": str,                      # is this estimate trustworthy
 }
 ```
 
-**Config parameters:**
+### Config
+
 ```python
-frm_tau_gen: float | None = None   # user-supplied generation timescale
-frm_omega_drift_threshold: float = 0.15  # fractional drift threshold
+transition_t_decision: float = 10.0      # minimum intervention lead time
+transition_cost_fp: float = 1.0          # false positive cost
+transition_cost_late: float = 1.0        # late intervention cost
+transition_lambda_warning: float = 0.05  # λ below this → CRITICAL_SLOWING
 ```
 
 ---
 
-### Step 41: ModelQualityStep
+## SentinelResult API (New Methods)
 
-**Purpose:** Track whether the FRM form is actually a good fit for the
-current data. This is the scope boundary detector — when R² drops or
-residuals show structure, the FRM pathway should be downweighted.
+Three methods, matching the three stages:
 
-**Math:**
-```
-R² from Step 38
-
-Residual autocorrelation:
-  r_resid = autocorrelation(residuals, lag=1)
-
-  High r_resid means the model is missing systematic structure
-  (the residuals aren't random — something is left unexplained)
-
-Scope boundary detection:
-  in_scope = (R² > frm_r_squared_threshold) AND (|r_resid| < 0.3)
-```
-
-**Why this matters:** The FRM applies to damped systems before the Hopf
-bifurcation (μ < 0 in the DDE). When the data doesn't fit the form —
-e.g., after a regime change, during limit-cycle oscillation, or when
-the signal is just noise — the FRM pathway should flag itself as
-out-of-scope rather than producing unreliable estimates.
-
-**Outputs to scratch:**
 ```python
-{
-    "frm_in_scope": bool,
-    "frm_r_squared": float,                # from Step 38
-    "frm_residual_autocorrelation": float,
-    "frm_scope_status": str,               # "IN_SCOPE" / "BOUNDARY" / "OUT_OF_SCOPE"
-}
+# Stage 1: Is the model fitting? What are the parameters?
+result.get_coupling_fit() -> dict
+# {"lambda": 0.08, "omega": 0.78, "r_squared": 0.91,
+#  "scope_status": "IN_SCOPE", "tau_gen_implied": 2.01}
+
+# Stage 2: Is coupling healthy? What kind of degradation?
+result.get_coupling_health() -> dict
+# {"health_score": 0.67, "significant_pairs": 4,
+#  "degradation_rate": -0.03, "sequence_type": "COUPLING_FIRST"}
+
+# Stage 3: How long do I have? Should I act?
+result.get_transition_status() -> dict
+# {"time_to_transition": 42.7, "confidence": "HIGH",
+#  "intervention_rational": True, "t_trap_status": "APPROACHING",
+#  "alert_type": "DECIDE_NOW"}
 ```
 
-**Config parameters:**
+One-liner for dashboards:
+
 ```python
-frm_r_squared_threshold: float = 0.5    # below this → out of scope
-frm_r_squared_boundary: float = 0.7     # below this → boundary warning
+if result.get_transition_status()["alert"]:
+    status = result.get_transition_status()
+    print(f"{status['alert_type']}: ~{status['time_to_transition']:.0f} steps "
+          f"({status['confidence']} confidence, {status['sequence_type']})")
 ```
 
 ---
 
-### Step 42: VirtuWindowStep
+## What Makes This Best-in-World (vs. Just Good)
 
-**Purpose:** Implement the MK-P5 decision theory. Estimate the window
-of time remaining for rational intervention.
+| Feature | v12.2 (current) | v13 (this design) | Nobody else |
+|---------|-----------------|-------------------|-------------|
+| PAC computation | 8 bins, no significance testing | Surrogate-tested, z-scored | Correct |
+| Coupling health metric | Raw composite score | Fraction of significant pairs | Novel for streaming |
+| Pre-transition warning | Heuristic threshold on κ̄ | Fitted λ → 0 (Hopf model) | Novel |
+| Time-to-failure | Linear extrapolation of κ̄ | λ trajectory with confidence bounds | Novel |
+| Degradation typing | Coupling-first vs coherence-first (raw) | Same idea, statistically tested | Novel |
+| Decision support | None | Virtù Window + t_trap | Novel |
+| Scope awareness | None | R² + residual structure | Correct |
 
-**Math (from MK-P5 Theorem 1):**
-```
-Intervention is rational iff:
-  E[W_v(t)] > T_decision × (1 + C_fp/C_late)
-
-Where:
-  W_v(t) = estimated time remaining before critical transition
-         = frm_time_to_bifurcation from Step 39
-
-  T_decision = minimum implementation lead time (user-supplied)
-  C_fp = cost of false positive intervention (user-supplied or default 1.0)
-  C_late = cost of late/missed intervention (user-supplied or default 1.0)
-```
-
-**t_trap detection (from MK-P5 Theorem 4):**
-```
-As λ → 0, the uncertainty in Δt_λ grows (Kramers scaling):
-  σ_Δt ~ λ^(-1/2)
-
-t_trap is the point where:
-  E[W_v(t)] ≤ T_decision × (1 + C_fp/C_late)
-
-After t_trap, rational intervention is no longer possible
-regardless of cost structure.
-```
-
-**Implementation:**
-- Track variance of Δt_λ estimates over the rolling window
-- Compute coefficient of variation: CV = σ_Δt / E[Δt]
-- When CV exceeds threshold and Δt is shrinking, approaching t_trap
-
-**Outputs to scratch:**
-```python
-{
-    "frm_virtu_window": float | None,    # steps remaining for rational action
-    "frm_intervention_rational": bool,    # W_v > T_decision threshold
-    "frm_t_trap_proximity": str,          # "FAR" / "APPROACHING" / "PAST"
-    "frm_decision_urgency": str,          # "NONE" / "MONITOR" / "DECIDE_NOW" / "TOO_LATE"
-}
-```
-
-**Config parameters:**
-```python
-frm_t_decision: float = 10.0     # minimum lead time for intervention
-frm_cost_fp: float = 1.0         # false positive cost
-frm_cost_late: float = 1.0       # late intervention cost
-```
-
-**Design note:** This step only produces meaningful output when the FRM
-pathway is in scope (Step 41) and λ is declining (Step 39). Otherwise
-it reports `frm_decision_urgency: "NONE"`.
-
----
-
-### Step 43: FRMAlertStep
-
-**Purpose:** Aggregate FRM pathway signals into alert decisions,
-independent of the v12.2 alert system.
-
-**Alert conditions:**
-
-| Alert | Condition | Severity |
-|-------|-----------|----------|
-| `FRM_CRITICAL_SLOWING` | λ < warning threshold AND in_scope | WARNING |
-| `FRM_BIFURCATION_APPROACHING` | Δt_λ < T_decision AND in_scope | CRITICAL |
-| `FRM_SCOPE_EXIT` | R² dropped below threshold | INFO |
-| `FRM_FREQUENCY_DRIFT` | ω drifting from theoretical (if τ_gen supplied) | WARNING |
-| `FRM_INTERVENTION_WINDOW_CLOSING` | t_trap approaching | CRITICAL |
-
-**Outputs to scratch:**
-```python
-{
-    "frm_alert": bool,
-    "frm_alert_reasons": list[str],
-    "frm_alert_severity": str,  # "INFO" / "WARNING" / "CRITICAL"
-}
-```
-
----
-
-## New SentinelResult Convenience Methods
-
-```python
-# FRM model fit
-result.get_frm_fit() -> dict
-# {"lambda": 0.12, "omega": 0.78, "r_squared": 0.91,
-#  "in_scope": True, "tau_gen_estimated": 2.01}
-
-# Bifurcation proximity
-result.get_bifurcation_status() -> dict
-# {"lambda": 0.03, "critical_slowing": True,
-#  "time_to_bifurcation": 42.7, "confidence": "HIGH"}
-
-# Decision window (MK-P5)
-result.get_virtu_window() -> dict
-# {"window_steps": 32.0, "intervention_rational": True,
-#  "t_trap_proximity": "APPROACHING", "urgency": "DECIDE_NOW"}
-```
-
----
-
-## New Config Parameters
-
-```python
-@dataclass(frozen=True, slots=True)
-class SentinelConfig:
-    # ... existing parameters ...
-
-    # FRM Pathway (v13)
-    enable_frm_pathway: bool = False       # opt-in (not enabled by default)
-    frm_fit_window: int = 128              # sliding window for model fit
-    frm_fit_interval: int = 1              # fit every N steps
-    frm_fit_delta_threshold: float = 0.01  # skip fit if RMS change small
-    frm_lambda_history_window: int = 20    # rolling window for dλ/dt
-    frm_lambda_warning: float = 0.05       # λ below this → warning
-    frm_tau_gen: float | None = None       # user-supplied generation timescale
-    frm_omega_drift_threshold: float = 0.15
-    frm_r_squared_threshold: float = 0.5   # below → out of scope
-    frm_r_squared_boundary: float = 0.7    # below → boundary
-    frm_t_decision: float = 10.0           # minimum intervention lead time
-    frm_cost_fp: float = 1.0               # false positive cost
-    frm_cost_late: float = 1.0             # late intervention cost
-```
-
-**Default: disabled.** The FRM pathway is opt-in because:
-1. It requires scipy for practical performance (NLS fitting)
-2. It adds computational cost (~5-50ms per step depending on backend)
-3. It only produces meaningful output for data that actually fits the FRM form
-4. The existing v12.2 pipeline is unaffected
-
----
-
-## What This Does NOT Do
-
-- **Does not replace the existing pipeline.** Steps 1-37 are unchanged.
-- **Does not validate the FRM theory.** It implements the predictions
-  and lets users test them on their data. Whether f(t) actually fits
-  is an empirical question per dataset.
-- **Does not claim universality.** The FRM form fits some data well and
-  other data poorly. The ModelQualityStep (Step 41) exists precisely
-  to detect when the model doesn't apply.
-- **Does not require τ_gen.** If the user doesn't supply a generation
-  timescale, the detector still fits ω from data and reports what
-  τ_gen the data implies. The theoretical comparison is optional.
-- **Does not beat DAMP on general benchmarks.** This targets a specific
-  niche: early warning for systems approaching critical transitions.
-  For point anomalies, contextual anomalies, etc., the existing
-  pipeline (or DAMP) is more appropriate.
+"Novel for streaming" = published in neuroscience but never applied to
+streaming anomaly detection. "Novel" = not published anywhere we could find.
 
 ---
 
 ## Validation Plan
 
-### Synthetic Tests
+### Must-pass before shipping
 
-1. **Known damped oscillation**
-   - Generate `f(t) = 5 + 3·exp(-0.1t)·cos(2t) + noise`
-   - Verify Step 38 recovers λ=0.1, ω=2 within 5%
-   - Verify R² > 0.85
+1. **Parameter recovery:** Synthetic damped oscillation with known λ, ω →
+   Stage 1 recovers both within 5%. Repeat 100 times with different noise
+   levels to establish reliability envelope.
 
-2. **Approaching bifurcation**
-   - Generate data with linearly decreasing λ (0.2 → 0.01 over 1000 steps)
-   - Verify Step 39 fires critical_slowing before λ reaches 0
-   - Verify time-to-bifurcation estimate is within 20% of actual
+2. **Pre-transition detection:** Generate 1000-step series with λ decreasing
+   from 0.2 to 0.01. Stage 3 must fire CRITICAL_SLOWING before step 800
+   (i.e., at least 200 steps of warning). Compare lead time against generic
+   EWS (variance + AC) on the same data.
 
-3. **Scope boundary**
-   - Generate 500 steps of damped oscillation, then 500 steps of white noise
-   - Verify Step 41 reports in_scope for first half, out_of_scope for second
+3. **False positive rate on stable systems:** Generate 10,000 steps of stable
+   damped oscillation (constant λ = 0.15). Stage 3 must fire CRITICAL_SLOWING
+   on < 1% of updates.
 
-4. **Non-FRM data**
-   - Run on standard benchmark archetypes (point, contextual, collective, drift, variance)
-   - FRM pathway should report low R² / out_of_scope for most
-   - Existing v12.2 pipeline performance should be unchanged
+4. **Scope boundary:** White noise, linear trend, step function, undamped
+   sine wave → Stage 1 must report OUT_OF_SCOPE for all of these. The
+   detector must know when it doesn't apply.
 
-5. **Virtù window**
-   - Generate approaching-bifurcation data with known remaining time
-   - Verify Step 42 estimates match within 30%
-   - Verify t_trap fires before the transition
+5. **Surrogate PAC:** Synthetic coupled oscillation (genuine PAC) vs.
+   independent oscillations (no PAC) → Stage 2 must distinguish these
+   with > 95% accuracy.
 
-### Real-World Validation (Future)
+6. **Degradation typing:** Generate coupling-first degradation and
+   decay-first degradation → Stage 2 must classify correctly.
 
-The synthetic tests prove the implementation is correct. Whether the FRM
-form actually fits real-world data is a separate question that requires:
-- Power grid frequency data (known oscillatory dynamics)
-- Heart rate variability (known pre-event signatures)
-- Financial volatility (known regime changes)
-- Network traffic (known periodicity from human behavior)
+7. **v12.2 regression:** All 374 existing tests must still pass. The new
+   pathway must not affect the existing pipeline's behavior.
 
-This is research, not engineering. Results may show the FRM form doesn't
-fit most real-world data, and that's a valid finding.
+### Stretch goals (research, not engineering)
+
+- Run on publicly available power grid frequency data
+- Run on MIT-BIH arrhythmia database (ECG with known pre-event signatures)
+- Run on Yahoo S5 anomaly detection benchmark
+- Compare lead time against Dakos et al. EWS R package on the same data
 
 ---
 
 ## Implementation Order
 
-1. `FRMModelFitStep` (Step 38) — the core; everything depends on this
-2. `ModelQualityStep` (Step 41) — scope boundary needed immediately
-3. `DecayRateTrackingStep` (Step 39) — the primary early warning signal
-4. `CharacteristicFrequencyStep` (Step 40) — informational
-5. `VirtuWindowStep` (Step 42) — decision theory layer
-6. `FRMAlertStep` (Step 43) — aggregation
+1. **CouplingFitStep** — the foundation. Tests 1, 3, 4.
+2. **CouplingHealthStep** — surrogate-tested PAC. Tests 5, 6.
+3. **TransitionAlertStep** — decision layer. Tests 2, 7.
+4. **Integration** — convenience methods, config, documentation.
 
-Tests for each step before moving to the next.
+Each stage is independently useful. Ship Stage 1 alone if needed —
+even without the alert logic, streaming λ tracking is novel.
 
 ---
 
-## Open Questions
+## Resolved Design Decisions
 
-1. **Fitting cost.** NLS on 128 points every step may be too expensive
-   for high-throughput streams. The `frm_fit_interval` parameter
-   mitigates this, but what's the right default? Need benchmarking.
+| Question | Decision | Rationale |
+|----------|----------|-----------|
+| Require scipy? | **Yes** | Best-in-world means best results, not broadest compatibility |
+| Fit every step? | **No, every 4th** | 0.5ms × 4 = 2ms amortized; warm-start makes this reliable |
+| How many new steps? | **3** (not 6) | One thing, done well. Each step = one stage of the pipeline |
+| Separate alert namespace? | **Yes** | `frm_alert` separate from `alert`. Different question, different answer |
+| Window size? | **128 default, adaptive option** | 4× fitted period when ω is stable; 128 as safe default |
+| Multiple ω? | **No** | Fit the dominant mode. If data has multiple modes, report R² degradation — that's useful too |
+| stdlib-only fallback? | **No** | Nelder-Mead on 5 params is unreliable. Don't ship something worse than the competition |
 
-2. **stdlib-only fitting.** Without scipy, Nelder-Mead on 5 parameters
-   is slow and unreliable. Should we require scipy for the FRM pathway
-   and raise ImportError if it's not available?
+---
 
-3. **Multiple ω.** What if the data has multiple oscillatory components?
-   The FRM predicts a single characteristic frequency, but real data
-   may have harmonics or multiple modes. Should we fit multiple FRM
-   forms and take the dominant one?
+## What This Is NOT
 
-4. **Window size.** 128 is arbitrary. Too small → noisy fits. Too large
-   → slow to respond to changes. Should this be adaptive based on the
-   fitted ω (e.g., window = 4 × period)?
+This is not a general anomaly detector. If someone asks "is this data point
+anomalous?", use the v12.2 pipeline or DAMP.
 
-5. **Integration with existing alerts.** Should FRM alerts feed into the
-   existing `alert_reasons` list, or stay in a separate namespace?
-   Separate namespace is cleaner but means users need to check two places.
+This answers a different question: **"Is this system losing its internal
+coherence in a way that predicts failure, and if so, how long do I have?"**
+
+That's a narrower question. But for systems where it applies — oscillatory
+systems approaching critical transitions — nobody else answers it in a
+streaming context with statistical rigor and time-to-failure estimates.
+
+That's the thing we can be best in the world at.
