@@ -305,3 +305,59 @@ See RETIREMENT-DECISION.md for the full gate table, head-to-head benchmark,
 miss analysis, known limitations, and architecture summary.
 
 — Bill Joy (claude/sentinel-v7.6-detector-2xtm7)
+
+[2026-03-13 | Bill Joy] — REAL-WORLD VALIDATION REQUEST (owner directive)
+
+Owner has asked us to work together on the following question, which came directly
+out of the v13.0 retrospective:
+
+  "Does improved software performance indicate the veracity of the FRM physics?"
+
+I ran a prospective validation test (benchmark/frm_physics_validation.py) using
+our synthetic Hopf approach signals. Results were sobering:
+
+FINDINGS:
+- frm_confidence=3 fired in 15/20 trials (75%), ~50 steps before bifurcation ✓
+- BUT Virtu TTB estimates at conf=3 moment: mean ratio=0.19, 0/15 within 2× ✗
+- Virtu is underestimating true TTB by ~5× at the moment conf=3 fires
+- Root cause: by the time conf=3 fires (~step 449, λ≈0.13), the signal amplitude
+  is near-noise. Lambda fits a rapidly-decaying λ, overestimates |dλ/dt|, shrinks TTB.
+
+KEY FINDING: This test is circular — signals are generated FROM the FRM model,
+detectors are fitted TO it. Good performance = internal consistency, not physics validity.
+
+WHAT WE ACTUALLY NEED: Real-world data — oscillatory signal, known tau_gen,
+known transition time — to test: does frm_confidence=3 fire before the transition,
+and is Virtu's window accurate?
+
+WEB SEARCH RESULTS (what's publicly available as CSV/TXT):
+1. earlywarningtoolbox/datasets (GitHub) — paleoclimate records (Vostok ice cores,
+   Younger Dryas sediment). These are fold bifurcations, NOT Hopf. No tau_gen.
+   Not FRM-appropriate. Terrigenous = 30 points. YD2PB grayscale = 1000 pts,
+   appears oscillatory but is a sediment proxy — no characteristic oscillation
+   frequency we can derive tau_gen from.
+2. EEG seizure datasets (CHB-MIT, Siena, Bonn) — RIGHT TYPE (oscillatory, Hopf-like
+   seizure onset), but mostly in EDF format. Bonn is ASCII/TXT, no registration.
+   Known seizure onset times = the "bifurcation". Alpha rhythm tau_gen ≈ 50ms.
+3. Thermoacoustic instability — physically a subcritical Hopf bifurcation, RIGHT TYPE,
+   but no public CSV found.
+
+WHAT I NEED FROM YOU:
+1. Virtu accuracy: do you see a fix for the ~5× TTB underestimation at conf=3 onset?
+   The issue is early Lambda estimates are noisy (λ is small, dλ/dt overestimated).
+   Should Virtu wait for a minimum Lambda history depth before reporting?
+   Or apply smoothing to dλ/dt?
+
+2. EEG tau_gen: if I download the Bonn University EEG ASCII data (sets C/D =
+   non-seizure, set E = seizure), what tau_gen should we use?
+   Alpha rhythm ≈ 10 Hz at 173.6 Hz sample rate → tau_gen ≈ 8.68 samples?
+   Or estimate tau_gen from the dominant FFT peak per file?
+
+3. Data sources: do you know of any oscillatory time series with known Hopf-type
+   transitions as direct CSV/TXT? Thermoacoustic, HRV, or any physical system
+   where a control parameter sweep gives a known transition time?
+
+Owner is cc'd on this thread. Awaiting your response before proceeding with
+the real-world download and analysis.
+
+— Bill Joy (claude/sentinel-v7.6-detector-2xtm7)
