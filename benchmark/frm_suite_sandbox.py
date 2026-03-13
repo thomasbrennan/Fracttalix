@@ -141,18 +141,33 @@ def sig_omega_drift(n: int, seed: int, tau_gen: float = 10.0) -> Tuple[List[floa
 
 
 def sig_coupling_collapse(n: int, seed: int) -> Tuple[List[float], List[bool]]:
-    """Signal 9: PAC coupling collapse — cross-scale coordination degrades at n//2."""
+    """Signal 9: PAC coupling collapse — cross-scale coordination degrades at n//2.
+
+    Redesigned v2: modulator in LOW band (f=0.08, 0.05-0.15 Hz) and carrier in
+    MID band (f=0.25, 0.15-0.40 Hz).  Both bands are explicit spectral components
+    so CouplingDetector's scope gate passes (energy in both bands, dominant < 65%).
+
+    Before collapse: low-phase amplitude-modulates mid carrier (PAC active).
+    After collapse: modulation removed → pure carrier (PAC lost).
+
+    Original design (f=0.05 modulator, f=0.25 carrier) placed modulator in the
+    ultra_low band (< 0.05 Hz edge), leaving mid band energy-dominant (single
+    tone) → CouplingDetector scope gate exited → 2% detection for both suites.
+    """
     rng = random.Random(seed)
     collapse_at = n // 2
     signal = []
     flags = []
     for i in range(n):
         progress = max(0.0, (i - collapse_at) / (n - collapse_at)) if i >= collapse_at else 0.0
-        # Before collapse: low frequency modulates high frequency amplitude
-        low_phase = math.sin(2 * math.pi * 0.05 * i)
-        amp_hi = (1.0 - progress) * (1.0 + 0.8 * low_phase) + progress * 1.0
-        hi = amp_hi * math.sin(2 * math.pi * 0.25 * i)
-        signal.append(hi + rng.gauss(0, 0.1))
+        # LOW-band modulator f=0.08 (in 0.05–0.15 Hz low band)
+        low_phase = math.sin(2 * math.pi * 0.08 * i)
+        # MID-band carrier f=0.25 (in 0.15–0.40 Hz mid band),
+        # amplitude modulated by low_phase before collapse
+        amp_car = (1.0 - progress) * (1.0 + 0.8 * low_phase) + progress * 1.0
+        carrier = amp_car * math.sin(2 * math.pi * 0.25 * i)
+        # Modulator tone explicit in signal so low band has real spectral energy
+        signal.append(0.8 * low_phase + carrier + rng.gauss(0, 0.1))
         flags.append(i >= collapse_at)
     return signal, flags
 

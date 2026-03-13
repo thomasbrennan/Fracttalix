@@ -74,6 +74,50 @@ def _estimate_omega_fft(data) -> float:
     return max(omega, 0.01)
 
 
+def _estimate_omega_autocorr(data, omega_pred: float, tolerance: float = 0.5) -> float:
+    """Estimate dominant angular frequency via autocorrelation lag search.
+
+    Searches for the autocorrelation peak within ±tolerance of the predicted
+    period.  This is immune to the FFT non-integer-bin quantisation error that
+    arises when the signal period is not an integer multiple of the FFT window,
+    and it adapts to frequency changes roughly one period after the onset.
+
+    Parameters
+    ----------
+    data        : array-like of floats
+    omega_pred  : predicted angular frequency (strong mode)
+    tolerance   : fractional period search range (default ±50%)
+
+    Returns estimated angular frequency.
+    """
+    import numpy as np
+    n = len(data)
+    d = np.array(data, dtype=float)
+    d -= d.mean()
+
+    period_pred = 2.0 * math.pi / omega_pred
+    lag_min = max(2, int(period_pred * (1.0 - tolerance)))
+    lag_max = min(n - 2, int(period_pred * (1.0 + tolerance)))
+    if lag_min >= lag_max:
+        return omega_pred  # fallback — tolerance too tight for window
+
+    # Autocorrelation for each lag in the search range
+    lags = range(lag_min, lag_max + 1)
+    ac = np.array([np.dot(d[lag:], d[:n - lag]) / (n - lag) for lag in lags])
+
+    best_idx = int(np.argmax(ac))
+    best_lag = float(lag_min + best_idx)
+
+    # Parabolic sub-sample refinement on the autocorrelation peak
+    if 0 < best_idx < len(ac) - 1:
+        a, b, g = float(ac[best_idx - 1]), float(ac[best_idx]), float(ac[best_idx + 1])
+        denom = a - 2.0 * b + g
+        if abs(denom) > 1e-12:
+            best_lag += -0.5 * (g - a) / denom
+
+    return 2.0 * math.pi / max(best_lag, 1.0)
+
+
 def _spectrum_peak_ratio(data) -> float:
     """Return peak-to-mean ratio of FFT magnitudes (excluding DC).
 
@@ -109,12 +153,16 @@ class OmegaDetector(BaseDetector):
     warmup : int
         Observations before any verdict (default 80).
     window : int
-        Rolling window for FFT frequency estimation (default 64).
+        Minimum FFT window size (default 64).  In strong mode the actual
+        FFT window is auto-expanded to the smallest multiple of the FRM
+        period (4·τ_gen) that is ≥ window, ensuring the signal lands on
+        an integer FFT bin and eliminating spectral leakage quantisation
+        error.  warmup is also raised to match if necessary.
     deviation_threshold : float
         Fractional deviation |Δω/ω_predicted| above which ALERT fires.
         Default 0.05 (5% deviation from predicted frequency).
     alert_steps : int
-        Number of consecutive above-threshold steps before ALERT (default 5).
+        Number of consecutive above-threshold steps before ALERT (default 3).
         Prevents single-step FFT artifacts from triggering.
     """
 
@@ -124,7 +172,7 @@ class OmegaDetector(BaseDetector):
         warmup: int = 80,
         window: int = 64,
         deviation_threshold: float = 0.05,
-        alert_steps: int = 5,
+        alert_steps: int = 3,
         scope_tolerance: float = 0.50,
     ):
         super().__init__("OmegaDetector", warmup=warmup, window_size=max(window, warmup))
@@ -141,17 +189,15 @@ class OmegaDetector(BaseDetector):
         self._omega_history: deque = deque(maxlen=20)
 
     def _check_scope(self, window: List[float]) -> bool:
-        """Return True if FFT has a dominant frequency peak close to omega_predicted.
+        """Return True if signal has a dominant periodic component near omega_predicted.
 
         Two-gate scope check:
-        1. Signal must have a dominant spectral peak (ratio > 3× mean bin power).
+        1. Signal must have a dominant spectral peak (FFT ratio > 3× mean bin power).
            Without this, there is no frequency to track — white noise is OUT_OF_SCOPE.
-        2. Strong mode only: the dominant frequency must be within scope_tolerance
-           (default 50%) of omega_predicted.  If the signal oscillates at a
-           completely different frequency (e.g., 4× the FRM-predicted frequency),
-           the signal is not FRM-shaped and OmegaDetector should stay silent.
-           This prevents the detector from alerting on any oscillatory signal that
-           happens to be processed with a mismatched tau_gen.
+        2. Strong mode only: the dominant frequency (via autocorrelation, which is
+           immune to FFT quantisation error) must be within scope_tolerance (default
+           50%) of omega_predicted.  Signals oscillating far from the FRM-predicted
+           frequency are not FRM-shaped and OmegaDetector stays silent.
         """
         import numpy as np
         fft_window = np.array(window[-self._window_size_fft:], dtype=float)
@@ -161,13 +207,15 @@ class OmegaDetector(BaseDetector):
         if ratio <= 3.0:
             return False
 
-        # Strong mode: initial frequency sanity check
+        # Strong mode: frequency sanity check via FFT.
+        # FFT is used here because it correctly identifies the dominant frequency
+        # of arbitrary signals (e.g. a sinusoid at 4× the FRM frequency).
+        # Autocorrelation is reserved for _compute where precision near omega_pred
+        # matters; in _check_scope we only need to reject wildly mismatched signals.
         if self._strong_mode and self._omega_predicted is not None:
             omega_obs = _estimate_omega_fft(fft_window)
             initial_dev = abs(omega_obs - self._omega_predicted) / self._omega_predicted
             if initial_dev > self._scope_tolerance:
-                # Dominant frequency is too far from FRM prediction.
-                # This signal is not in the FRM frequency domain.
                 return False
 
         return True
@@ -175,25 +223,26 @@ class OmegaDetector(BaseDetector):
     def _compute(self, window: List[float]):
         """Estimate observed ω and compare to FRM prediction.
 
-        Strong mode: compare omega_obs to omega_predicted = π/(2·tau_gen).
+        Strong mode: compare omega_obs (via autocorrelation) to omega_predicted.
+          Autocorrelation adapts within ~1 period after a frequency shift, avoiding
+          the FFT quantisation bias that occurs when the signal period is not an
+          integer multiple of the window length.
           Fires ALERT after alert_steps consecutive deviations > threshold.
-        Weak mode: track omega stability over recent history via CV.
+        Weak mode: track omega stability over recent history via FFT + CV.
           Fires ALERT when frequency wanders > 20% of its mean.
         """
         import numpy as np
         fft_window = np.array(window[-self._window_size_fft:], dtype=float)
-        omega_obs = _estimate_omega_fft(fft_window)
-        self._omega_history.append(omega_obs)
 
-        if self._strong_mode:
-            # Smooth omega estimate over recent history to suppress FFT quantization noise.
-            # Use the mean of the last min(5, len) samples from _omega_history (already
-            # includes omega_obs just appended above).
-            hist = list(self._omega_history)
-            n_smooth = min(5, len(hist))
-            omega_smoothed = sum(hist[-n_smooth:]) / n_smooth
+        if self._strong_mode and self._omega_predicted is not None:
+            # Autocorrelation-based estimate: accurate for any period length,
+            # adapts in ~1 period after a frequency change.
+            omega_obs = _estimate_omega_autocorr(
+                list(fft_window), self._omega_predicted, self._scope_tolerance
+            )
+            self._omega_history.append(omega_obs)
 
-            deviation = abs(omega_smoothed - self._omega_predicted) / self._omega_predicted
+            deviation = abs(omega_obs - self._omega_predicted) / self._omega_predicted
             if deviation > self._deviation_threshold:
                 self._consecutive_above += 1
             else:
@@ -208,7 +257,9 @@ class OmegaDetector(BaseDetector):
             return score, msg
 
         else:
-            # Weak mode: alert on frequency instability (high CV over history)
+            # Weak mode: track frequency stability via FFT + coefficient of variation.
+            omega_obs = _estimate_omega_fft(fft_window)
+            self._omega_history.append(omega_obs)
             if len(self._omega_history) < 3:
                 return 0.0, f"omega_obs={omega_obs:.4f} mode=weak insufficient_history"
 

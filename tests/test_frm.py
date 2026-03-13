@@ -168,6 +168,60 @@ class TestOmegaDetector:
         # Weak mode fires on frequency instability; stable signal → at most a few
         assert alerts < 10, f"Too many weak-mode alerts ({alerts}) on stable frequency"
 
+    def test_stable_oscillation_no_alert_tau10(self):
+        """Stable sinusoid at FRM frequency (tau_gen=10) → no ALERT (regression test).
+
+        tau_gen=10 gives period=40 samples, which is NOT an integer FFT bin in a
+        64-sample window (bin 1.6).  Pure FFT-based estimation returns bin 1 (0.098)
+        giving 37.5% deviation → false ALERT.  The autocorrelation-based estimator
+        used in strong mode returns the correct period (lag=40) → deviation=0% → NORMAL.
+        """
+        tau_gen = 10.0
+        omega = math.pi / (2.0 * tau_gen)
+        rng = random.Random(99)
+        det = OmegaDetector(tau_gen=tau_gen, warmup=80)
+        signal = [3.0 * math.sin(omega * i) + rng.gauss(0, 0.2) for i in range(300)]
+        post_warmup_alerts = sum(
+            1 for r in [det.update(x) for x in signal]
+            if r.status == ScopeStatus.ALERT
+        )
+        assert post_warmup_alerts == 0, (
+            f"Autocorr regression: {post_warmup_alerts} false ALERTs on stable "
+            f"tau_gen=10 signal (non-integer FFT bin 1.6 should not cause FP)."
+        )
+
+    def test_detects_drift_tau10(self):
+        """OmegaDetector detects 10% drift at tau_gen=10 (benchmark standard).
+
+        This is the default benchmark configuration (N=500, tau_gen=10).
+        Detects ≥ 90% of anomaly steps (Signal 8 F-S7 gate requirement).
+        """
+        tau_gen = 10.0
+        signal, flags = _omega_drift_signal(500, tau_gen=tau_gen, drift_frac=0.10)
+        det = OmegaDetector(tau_gen=tau_gen, warmup=80)
+        alerts = [det.update(x).status == ScopeStatus.ALERT for x in signal]
+        tp = sum(a and f for a, f in zip(alerts, flags))
+        pos = sum(flags)
+        tpr = tp / pos
+        assert tpr >= 0.90, (
+            f"OmegaDetector (tau_gen=10) TPR={tpr:.1%} < 90% gate on Signal 8 drift."
+        )
+
+    def test_autocorr_estimator_accuracy(self):
+        """_estimate_omega_autocorr returns accurate omega for non-integer-bin signals."""
+        from fracttalix.frm.omega import _estimate_omega_autocorr
+        tau_gen = 10.0
+        omega_true = math.pi / (2.0 * tau_gen)
+        # Steady-state window: all samples at true frequency
+        rng = random.Random(7)
+        window = [3.0 * math.sin(omega_true * i) + rng.gauss(0, 0.2) for i in range(64)]
+        omega_obs = _estimate_omega_autocorr(window, omega_true, tolerance=0.5)
+        dev = abs(omega_obs - omega_true) / omega_true
+        assert dev < 0.05, (
+            f"_estimate_omega_autocorr returned {omega_obs:.5f} (true {omega_true:.5f}), "
+            f"deviation {dev:.3f} exceeds 5% threshold."
+        )
+
 
 # ---------------------------------------------------------------------------
 # VirtuDetector
