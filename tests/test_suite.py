@@ -133,6 +133,62 @@ class TestHopfDetector:
         assert r1.score == pytest.approx(r2.score, abs=1e-9)
         assert r1.status == r2.status
 
+    def test_invalid_method_raises(self):
+        """Unknown method raises ValueError."""
+        with pytest.raises(ValueError, match="method"):
+            HopfDetector(method='bogus')
+
+
+_frm_available = True
+try:
+    import scipy  # noqa: F401
+    import numpy  # noqa: F401
+except ImportError:
+    _frm_available = False
+
+_skip_frm = pytest.mark.skipif(not _frm_available, reason="FRM method requires scipy + numpy")
+
+
+@_skip_frm
+class TestHopfDetectorFRM:
+    """Tests for HopfDetector(method='frm') — FRM Lambda approach."""
+
+    def test_warmup_returns_warmup_status(self):
+        """FRM method returns WARMUP during warmup period."""
+        det = HopfDetector(method='frm', warmup=60)
+        for i in range(59):
+            r = det.update(math.sin(0.2 * i))
+            assert r.status == ScopeStatus.WARMUP
+
+    def test_white_noise_out_of_scope(self):
+        """White noise has no FRM structure → OUT_OF_SCOPE, no ALERT."""
+        import random as _r
+        rng = _r.Random(0)
+        det = HopfDetector(method='frm', warmup=60)
+        alerts = sum(
+            1 for i in range(400)
+            if det.update(rng.gauss(0, 1)).status == ScopeStatus.ALERT
+        )
+        assert alerts == 0, f"FRM fired {alerts} alerts on white noise"
+
+    def test_stable_oscillation_no_alert(self):
+        """Sustained sinusoid (limit cycle) does not trigger ALERT."""
+        det = HopfDetector(method='frm', warmup=60)
+        alerts = sum(
+            1 for i in range(300)
+            if det.update(3.0 * math.sin(2 * math.pi * 0.1 * i)).status == ScopeStatus.ALERT
+        )
+        assert alerts == 0, f"FRM fired {alerts} alerts on sustained oscillation (limit cycle FP)"
+
+    def test_reset_clears_frm_state(self):
+        """reset() clears FRM lambda history and returns to WARMUP."""
+        det = HopfDetector(method='frm', warmup=60)
+        for i in range(120):
+            det.update(math.sin(0.2 * i))
+        det.reset()
+        r = det.update(0.0)
+        assert r.status == ScopeStatus.WARMUP
+
 
 # ---------------------------------------------------------------------------
 # DiscordDetector
