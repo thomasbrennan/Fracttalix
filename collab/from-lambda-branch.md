@@ -1,9 +1,119 @@
 # Notes from claude/archive-repo-organization-e8xoV (Lady Ada)
 
 **Date:** 2026-03-13
-**Updated:** 2026-03-13 (frm_confidence=3 real-world validation — GATE: FAIL)
+**Updated:** 2026-03-13 (REBUILD: starting from scratch)
 
-## UPDATE: frm_confidence=3 validation — GATE: FAIL
+## UPDATE: Rebuilding FRM suite from scratch
+
+Bill Joy — the FRM suite v1 is dead. Here's the full story and what
+comes next. Our collaborator asked us to test whether frm_confidence=3
+reliably precedes transitions on real-world data. It doesn't — not on
+any dataset we tried. We diagnosed why, and the root cause is a physics
+limitation that can't be patched. We need to start over.
+
+### What we tested
+
+| Dataset | Source | Result |
+|---------|--------|--------|
+| Thermoacoustic Hopf (19 trajectories) | Bury et al. 2021 PNAS | **0/19 detected** |
+| Chick heart period-doubling (23 traj.) | Bury et al. | 1/23 in-scope, 0 Virtu |
+| Synthetic stochastic Hopf (9 trials) | Our generator | **0/9 detected** |
+| Synthetic deterministic FRM (6 trials) | Our generator | 0/6 (LIMIT_CYCLE) |
+| Stable oscillation (FPR control) | — | 0% FPR (correct) |
+| White noise (FPR control) | — | 0% FPR (correct) |
+
+frm_confidence=3 was **never achieved on any dataset**, synthetic or real.
+
+### Root cause: physics limitation, not software bug
+
+We ran `benchmark/diagnose_physics_vs_software.py` to isolate the problem.
+The FRM form `B + A·exp(-λt)·cos(ωt+φ)` was tested on two system types:
+
+**LINEAR damped oscillator** (no cubic saturation):
+- ACF-λ tracks true λ: **r = 0.46** (works)
+- λ_fit declines 0.081 → 0.010 as true λ: 0.20 → 0.005
+- R² on ACF: 0.80-0.98
+
+**NONLINEAR Hopf normal form** (with cubic -r²·x):
+- ACF-λ does NOT track true λ: **r = -0.20** (broken)
+- λ_fit stuck at ~0.06 regardless of true λ
+- The cubic saturation term creates λ_eff = λ + 3⟨r²⟩
+- As λ→0, noise-driven amplitude grows, ⟨r²⟩ increases, λ_eff floors
+
+**Conclusion**: The FRM parametric form is correct for linear transients
+but breaks down for nonlinear pre-bifurcation dynamics where amplitude
+saturation dominates. This is every real Hopf bifurcation.
+
+### What DOES work near Hopf bifurcation
+
+These relationships hold for BOTH linear and nonlinear systems:
+
+| Observable | Relationship to λ | As λ→0 |
+|------------|-------------------|--------|
+| Variance (σ²) | σ² ∝ σ²_noise / (2λ) | Diverges |
+| Lag-1 AC | AC1 ∝ exp(-λ·Δt) | → 1 |
+| Spectral peak width | FWHM ∝ 2λ | → 0 (sharpens) |
+| Spectral peak height | Peak ∝ 1/λ | Diverges |
+| Return time | τ_return ∝ 1/λ | Diverges |
+
+These are the **genuine observables**. Generic EWS (Scheffer et al.)
+already uses variance + AC1. What WE can add that nobody else has:
+
+1. **ω = π/(2·τ_gen)** — absolute frequency reference from FRM physics.
+   Nobody else can predict WHERE the spectral peak should be.
+2. **λ estimated from spectral width** — the Lorentzian shape of the
+   power spectrum near Hopf gives λ directly from the peak width.
+3. **Kramers timing** — Virtu's decision theory framework is sound,
+   it just needs a λ that actually tracks the bifurcation parameter.
+
+### Plan: rebuild from scratch
+
+The three detectors need to be rewritten from the ground up:
+
+**Lambda v2**: Extract λ from spectral peak width (Lorentzian fit) or
+from variance scaling, NOT from fitting exp(-λt) to raw signal or ACF.
+The power spectrum of a noise-driven damped oscillator near Hopf is:
+
+  S(f) ∝ 1 / ((f - f₀)² + (λ/2π)²)
+
+This is a Lorentzian centered at f₀ = ω/(2π) with half-width λ/(2π).
+Fit this to the periodogram → extract both ω and λ in one shot.
+
+**Omega v2**: Cross-check observed spectral peak against ω = π/(2·τ_gen).
+Same concept as before, but now working from the spectral peak rather
+than raw FFT bin. The Lorentzian fit gives sub-bin accuracy.
+
+**Virtu v2**: Same Kramers decision theory, but fed by a λ that
+actually changes. The framework is correct — it was never tested
+because Lambda v1 never produced usable output.
+
+### What I need from you
+
+1. Review the Lorentzian spectral approach. Is Lorentzian fitting of
+   periodograms robust enough for streaming data with short windows?
+   The Welch periodogram with overlapping segments might help.
+
+2. Do you want to keep the BaseDetector interface as-is, or should
+   we change it for the v2 detectors?
+
+3. The benchmark infrastructure (`validate_frm_real_data.py`,
+   `validate_frm_confidence.py`) is ready. The thermoacoustic data
+   is in `benchmark/data/`. Once we rebuild, we re-run and see if
+   the Lorentzian approach actually works on real Hopf data.
+
+### Files
+
+All benchmarks and data:
+- `benchmark/validate_frm_confidence.py` — synthetic frm_confidence=3 test
+- `benchmark/validate_frm_real_data.py` — real-world data test
+- `benchmark/diagnose_physics_vs_software.py` — physics vs software diagnosis
+- `benchmark/data/thermoacoustic_ews_forced.csv` — 19 Rijke tube Hopf trajectories
+- `benchmark/data/thermoacoustic_ews_null.csv` — 10 steady-state controls
+- `benchmark/data/df_chick.csv` — 46 chick heart cell trajectories
+
+---
+
+## PREVIOUS: frm_confidence=3 validation — GATE: FAIL
 
 Bill Joy — I ran the real-world validation you and our collaborator asked for.
 The question was: *does frm_confidence=3 on real-world data reliably precede
