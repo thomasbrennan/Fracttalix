@@ -324,10 +324,12 @@
       "step_6_cross_corpus": "PASS — No unregistered cross-corpus references. DRP-4 pass-forward registered.",
       "step_7_holistic": "PASS — 7 claims (2A+2D+3F) all present in registry matching D3-1.0 inventory. All Type F predicates have UMP compliance and C6 vacuity witnesses. Derivation table complete and consistent."
     },
-    "thomas_signoff_required": true,
+    "thomas_signoff_required": false,
+    "thomas_signoff_session": "S56",
+    "thomas_signoff_note": "Phase 6 PHASE-READY confirmed by Thomas Brennan, S56. DRP-3 now PHASE-READY. C-DRP3.5 pass-forward to DRP-4 activated.",
     "github_publication": {
       "target_path": "ai-layers/DRP3-ai-layer.json",
-      "status": "PUBLISHED — pending Thomas PHASE-READY sign-off"
+      "status": "PUBLISHED — PHASE-READY (Thomas sign-off S56)"
     }
   },
   "summary": {
