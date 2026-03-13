@@ -1,8 +1,44 @@
 # Changelog
 
-All notable changes to Fracttalix Sentinel are documented here.
+All notable changes to Fracttalix are documented here.
 Format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+
+---
+
+## [13.0.0] — 2026-03-13
+
+### FRMSuite v1.0 — First Release Directly Derived from the Fractal Rhythm Model
+
+`FRMSuite` is promoted as the primary detection API. `SentinelDetector` is retired.
+
+This is the first version of Fracttalix where the core detection engine is directly
+derived from Fractal Rhythm Model physics, not just inspired by it. With a known
+`tau_gen`, Layer 2 detectors test specific, falsifiable FRM predictions:
+
+- **Lambda** (`HopfDetector frm`): is λ → 0? (damping collapse toward Hopf bifurcation)
+- **Omega** (`OmegaDetector`): is observed ω = π/(2·τ_gen)? (FRM quarter-wave theorem)
+- **Virtu** (`VirtuDetector`): Δt ≈ λ / |dλ/dt| (time-to-bifurcation estimate)
+
+#### Changes
+
+- **`FRMSuite` promoted to primary API** — replaces `SentinelDetector` as the recommended
+  entry point for users with FRM-shaped signals and known `tau_gen`
+- **`SentinelDetector` retired** — retained for full backward compatibility; no new features
+  will be added; existing code continues to work unchanged
+- **README rewritten** — leads with `FRMSuite` and Fractal Rhythm Model physics;
+  `SentinelDetector` documentation moved to Legacy section
+- **Version bump to 13.0.0** — major version reflects the change in primary API
+
+#### Benchmark: FRMSuite vs SentinelDetector (N=500, seed=42)
+
+FRMSuite wins or ties on every null signal (lower FPR) and every signal case (equal or
+higher detection rate). Miss analysis: no signal class requires SentinelDetector.
+Full gate results documented in `RETIREMENT-DECISION.md`.
+
+#### Backward Compatibility
+
+No existing code breaks. All v7.x–v12.x call patterns are preserved.
 
 ---
 

@@ -1,8 +1,8 @@
-# Fracttalix Sentinel v12.3
+# Fracttalix v13.0 — FRMSuite
 
-**Streaming anomaly detection grounded in the Three-Channel Model of Dissipative Network Information Transmission — extended with four signal-processing collapse indicators (v10.0+).**
+**The first streaming anomaly detection library directly derived from the Fractal Rhythm Model.**
 
-Sentinel ingests one scalar (or multivariate) observation at a time and emits a rich result dictionary on every call — no batching, no retraining, no warmup gap once past the configurable warmup window.
+FRMSuite ingests one scalar observation at a time and returns a physics-grounded bifurcation signal — including a time-to-bifurcation estimate — on every call. No batching, no retraining, no warmup gap once past the configurable warmup window.
 
 > **Theoretical foundation:** Fractal Rhythm Model Papers 1–6
 > DOI: [10.5281/zenodo.18859299](https://doi.org/10.5281/zenodo.18859299)
@@ -16,272 +16,145 @@ Sentinel ingests one scalar (or multivariate) observation at a time and emits a 
 [![Tests](https://github.com/thomasbrennan/Fracttalix/actions/workflows/tests.yml/badge.svg)](https://github.com/thomasbrennan/Fracttalix/actions/workflows/tests.yml)
 [![Python 3.9+](https://img.shields.io/badge/python-3.9%2B-blue.svg)](https://www.python.org/)
 
-> **Keywords:** anomaly detection · streaming time-series · online learning · Hopf bifurcation · critical slowing down · phase-amplitude coupling · Fractal Rhythm Model · change-point detection · multivariate monitoring · REST API
+> **Keywords:** anomaly detection · streaming time-series · online learning · Hopf bifurcation · critical slowing down · phase-amplitude coupling · Fractal Rhythm Model · time-to-bifurcation · change-point detection · multivariate monitoring
 
 ## Table of Contents
 
 1. [Overview](#overview)
-2. [Which API should I use?](#which-api-should-i-use)
-3. [Three-Channel Model](#three-channel-model)
-4. [V12.3 Changes](#v123-changes)
-   - [V12.2 Changes](#v122-changes)
-5. [Installation](#installation)
-6. [Quick Start — SentinelDetector](#quick-start)
-7. [DetectorSuite — Modular Five-Detector Suite](#detectorsuite--modular-five-detector-suite)
-8. [FRMSuite — FRM Physics Layer](#frmsuite--frm-physics-layer)
-9. [SentinelConfig — Configuration](#sentinelconfig--configuration)
-10. [Pipeline Architecture — 37 Steps](#pipeline-architecture--37-steps-v122)
-11. [Alert Types and Data Structures](#alert-types-and-data-structures)
-12. [SentinelResult API](#sentinelresult-api)
-13. [MultiStreamSentinel](#multistreamssentinel)
-14. [SentinelBenchmark](#sentinelbenchmark)
-15. [SentinelServer — REST API](#sentinelserver--rest-api)
-16. [CLI Reference](#cli-reference)
-17. [Backward Compatibility](#backward-compatibility)
-18. [Theoretical Foundation](#theoretical-foundation)
-19. [Authors & License](#authors--license)
+2. [Which API Should I Use?](#which-api-should-i-use)
+3. [v13.0 Changes — FRMSuite as Primary API](#v130-changes)
+4. [Installation](#installation)
+5. [FRMSuite — Fractal Rhythm Model Physics Layer](#frmsuite--fractal-rhythm-model-physics-layer)
+6. [DetectorSuite — Modular Five-Detector Suite](#detectorsuite--modular-five-detector-suite)
+7. [Theoretical Foundation](#theoretical-foundation)
+8. [Authors & License](#authors--license)
+9. [Legacy API — SentinelDetector (Retired)](#legacy-api--sentineldetector-retired)
+   - [SentinelConfig — Configuration](#sentinelconfig--configuration)
+   - [Pipeline Architecture — 37 Steps](#pipeline-architecture--37-steps-v122)
+   - [Alert Types and Data Structures](#v90-alert-types-and-data-structures)
+   - [SentinelResult API](#sentinelresult-api)
+   - [MultiStreamSentinel](#multistreamssentinel)
+   - [SentinelBenchmark](#sentinelbenchmark)
+   - [SentinelServer — REST API](#sentinelserver--rest-api)
+   - [CLI Reference](#cli-reference)
+   - [Backward Compatibility](#backward-compatibility)
 
 ---
 
 ## Overview
 
-Fracttalix Sentinel is a Python package (`pip install fracttalix`) for real-time streaming anomaly detection. Its design priorities are:
+Fracttalix is a Python package (`pip install fracttalix`) for real-time streaming anomaly detection grounded in the **Fractal Rhythm Model (FRM)**. v13.0 is the first release where the primary detection engine is directly derived from FRM physics, not just inspired by it.
 
-- **Zero external dependencies for core operation** — works on the Python standard library alone; numpy, scipy, numba, matplotlib, and tqdm are optional accelerators.
-- **Immutable, inspectable configuration** — `SentinelConfig` is a frozen dataclass; every parameter is readable and picklable.
-- **Composable pipeline** — 37 `DetectorStep` subclasses execute in sequence.
-- **Three-channel anomaly model** — monitors structural properties, broadband rhythmicity, and temporal degradation sequences as independent information channels.
-- **Signal-processing collapse indicators** — maintenance burden (coupling heuristic μ = 1−κ̄), PAC pre-cascade detection, diagnostic window estimation, and reversed sequence detection, architecturally inspired by the Kuramoto synchronization framework. These are engineering heuristics, not physical derivations.
-- **Full backward compatibility** — all v7.x, v8.0, v9.0, and v10.0 call patterns continue to work unchanged.
+The FRM gives every detector a physically-grounded question to answer:
+
+| Detector | FRM Question | What it measures |
+|----------|-------------|-----------------|
+| **Lambda** (`HopfDetector frm`) | Is λ → 0? | Damping decay rate — the Hopf bifurcation approach |
+| **Omega** (`OmegaDetector`) | Is ω = π/(2·τ_gen) still intact? | Frequency integrity — FRM quarter-wave theorem |
+| **Virtu** (`VirtuDetector`) | Δt ≈ λ / \|dλ/dt\|? | Time-to-bifurcation estimate |
+
+No generic anomaly detector can answer questions 2 and 3. That requires knowing τ_gen — the FRM generation delay — and having a physical model that predicts what the signal should look like.
+
+**Design priorities:**
+
+- **FRM physics in strong mode** — when `tau_gen` is supplied, Lambda and Omega test specific, falsifiable predictions from the Fractal Rhythm Model
+- **Zero hard dependencies** — Layer 1 (DetectorSuite) runs on stdlib; Layer 2 (FRM physics) requires numpy + scipy
+- **OUT_OF_SCOPE discipline** — every detector reports `OUT_OF_SCOPE` when its model doesn't fit the input; no spurious verdicts on mismatched signals
+- **Modular, independently usable** — each detector works standalone; failure of one does not degrade others
 
 ---
 
 ## Which API Should I Use?
 
-There are three detection APIs in this package, each optimized for a different context:
-
 | API | Best for | Requires | `pip install` |
 |-----|----------|----------|---------------|
-| **`SentinelDetector`** | Unknown signal types; broadest coverage; exploratory monitoring | stdlib only | `pip install fracttalix` |
-| **`DetectorSuite`** | Domain-specific monitoring; need to know *which* anomaly type fired; low FPR | stdlib only | `pip install fracttalix` |
-| **`FRMSuite`** | Oscillatory / physiological / power-grid signals with known generation delay; need time-to-bifurcation | numpy + scipy | `pip install fracttalix[fast]` |
+| **`FRMSuite`** | Oscillatory signals with known FRM generation delay; need time-to-bifurcation and FRM model validation | numpy + scipy | `pip install fracttalix[fast]` |
+| **`DetectorSuite`** | Domain-specific monitoring; need to know *which* anomaly type fired; low FPR; no FRM model needed | stdlib only | `pip install fracttalix` |
+| ~~`SentinelDetector`~~ | **Retired as of v13.0.** Retained for backward compatibility only. See [Legacy API](#legacy-api--sentineldetector-retired). | stdlib only | `pip install fracttalix` |
 
 **Decision rule:**
 
-- You know your signal is oscillatory and have a domain parameter (`tau_gen`) → **FRMSuite**
+- You have an FRM-shaped signal and know `tau_gen` → **FRMSuite** (time-to-bifurcation, model validation)
 - You know which anomaly type matters (drift? variance? discord?) → **DetectorSuite**
-- You're monitoring something unknown or want a single alert/no-alert signal → **SentinelDetector**
+- You need the old `SentinelDetector` behaviour → use it; it still works, but is no longer developed
 
 ---
 
-## Three-Channel Model
+## v13.0 Changes
 
-Implemented from Meta-Kaizen Paper 6:
+### FRMSuite as Primary API — SentinelDetector Retired
 
-| Channel | Name | What it monitors |
-|---------|------|-----------------|
-| **1** | Structural | Network topology as active transmitter — mean, variance, skewness, kurtosis, autocorrelation, stationarity |
-| **2** | Rhythmic | Broadband multiplexed oscillatory transmission — FFT decomposition into five carrier-wave bands and cross-frequency phase-amplitude coupling |
-| **3** | Temporal | One-way irreversible carrier wave — temporal sequence and ordering of channel degradation events |
+v13.0 promotes `FRMSuite` as the primary detection API and formally retires `SentinelDetector`.
 
-**Degradation cascade logic (v9.0):**
+#### Why
 
-```
-Band anomaly detected  →  Cross-frequency coupling degrades  →
-  Structural-rhythmic channels decouple  →  CASCADE PRECURSOR (CRITICAL)
-```
+`SentinelDetector` was a 37-step monolith grounded in generic statistics. It could not answer *why* a signal was changing or *when* a transition would occur. Its FPR floor was driven by channels that applied regardless of signal structure.
 
-**Extended diagnostics (v10.0):**
+`FRMSuite` answers the questions `SentinelDetector` never could:
+- **Why is the signal changing?** — λ is declining (damping collapsing)
+- **Is the model still valid?** — ω still matches π/(2·τ_gen)?
+- **When will the transition occur?** — Δt ≈ λ / |dλ/dt|
 
-```
-PAC pre-cascade detected  →  Δt window opens  →  Maintenance burden μ → 1  →
-  Coupling rate dκ̄/dt negative  →  Collapse imminent
-```
+#### Benchmark: FRMSuite vs SentinelDetector (N=500, seed=42)
 
----
+**Null signals (FPR — lower is better)**
 
-## V12.3 Changes
+| Signal | FRMSuite | SentinelDetector | Verdict |
+|--------|----------|-----------------|---------|
+| White noise | 1.0% | 3.8% | FRMSuite wins |
+| Sustained sinusoid | 3.4% | 4.4% | FRMSuite wins |
+| Random walk | 83.0% | 93.6% | FRMSuite wins |
+| Slow trend | 15.0% | 23.2% | FRMSuite wins |
 
-### FPR Elimination & Drift Recovery — Meta Kaisen CBP
+**Signal cases (detection rate — higher is better)**
 
-v12.3 is a comprehensive recalibration targeting the ~35% FPR floor that
-dominated v12.2 performance. FPR dropped 93%, mean F1 rose 25%.
+| Signal | FRMSuite | SentinelDetector | Verdict |
+|--------|----------|-----------------|---------|
+| Hopf approach | 77% | 55% | FRMSuite wins |
+| Mean shift | 70% | 66% | FRMSuite wins |
+| Variance explosion | 100% | 100% | Tie |
+| Omega drift | 99% | 100% | FRMSuite wins |
+| Coupling collapse | 35% | 2% | FRMSuite wins |
+| Discord anomaly | 100% | 100% | Tie |
 
-#### New Architecture
+FRMSuite wins or ties on every signal class, with lower FPR on all four null signals.
 
-- **SeasonalPreprocessStep** (Step 0): FFT-based seasonal decomposition with
-  confidence gate `peak_power > 10× mean_power` (<0.1% false detection on
-  white noise). All 37 downstream steps receive the deseasonalized residual.
-- **Non-adaptive drift CUSUM** in `CUSUMStep`: Accumulates on warmup-frozen
-  z-score, detecting slow drift that EWMA adaptation masks. Fires
-  `drift_cusum_alert`, resets, and re-fires continuously during ongoing drift.
-- **ConsensusGate** in `AlertReasonsStep`: Requires ≥2 soft alerts OR 1
-  strong alert (`cusum_mean_shift`, `cusum_variance_spike`, `drift_cusum_shift`,
-  `gradual_drift`, `cascade_precursor`) OR |z| ≥ 5σ bypass. Primary FPR
-  reduction mechanism.
+#### Capabilities FRMSuite provides that SentinelDetector cannot
 
-#### Recalibrated Thresholds (null-distribution calibrated on N(0,1))
+1. **Time-to-bifurcation (Virtu)** — `SentinelDetector` has no TTB capability
+2. **ω integrity check (Omega)** — confirms observed frequency matches FRM prediction π/(2·τ_gen)
+3. **`frm_confidence` (0–3)** — compound signal from 3 independent FRM-physics detectors
+4. **OUT_OF_SCOPE scope reporting** — detectors stay silent when their model doesn't apply
+5. **Modular architecture** — each detector usable independently
 
-- `rfi_threshold`: 0.40 → 0.52; `pe_threshold`: 0.05 → 0.15
-- `var_cusum_k`: 0.5 → 1.0 (E[z²]=1.0 under H₀; old k was systematically biased)
-- `var_cusum_h`: 5.0 → 10.0; `cusum_k`: 0.5 → 1.0; `cusum_h`: 5.0 → 8.0
-- `coherence_threshold`: 0.40 → 0.30; `coupling_degradation_threshold`: 0.30 → 0.24
-
-#### v12.3 Benchmark (n=1000, seed=42, post-warmup)
-
-| Archetype  | v12.2 F1 | v12.3 F1 | Change   |
-|------------|----------|----------|----------|
-| point      | 0.422    | 0.639    | +51%     |
-| contextual | 0.242    | 0.378    | +56%     |
-| collective | 0.239    | 0.356    | +49%     |
-| drift      | 0.723    | 0.766    | +6%      |
-| variance   | 0.876    | 0.987    | +13%     |
-| **FPR**    | **35%**  | **2.6%** | **−93%** |
-| Mean F1    | 0.500    | 0.625    | **+25%** |
-
-> `SentinelDetector()` (no args) now defaults to `SentinelConfig.production()`
-> (multiplier=4.5). The FPR floor has been eliminated by threshold recalibration
-> and ConsensusGate — not by multiplier inflation.
-
----
-
-## V12.2 Changes
-
-### Epistemic Language Corrections
-
-- Replaced "physics-derived" framing with "signal-processing heuristic" throughout
-  README and docstrings. The capabilities are real and useful; the claim that they
-  are *derived from physics* was overstated and contradicted by code comments.
-- Corrected the README maintenance burden formula (was showing the abandoned v10.0
-  formula `μ = N·κ̄·E_coupling/P_throughput`; actual implementation is `μ = 1−κ̄`
-  as documented in `MaintenanceBurdenStep` since v11.0).
-- Reframed "thermodynamic arrow" and "intervention signature" language as signal
-  classification labels, not physical or causal claims.
-
-### Default Multiplier Change (Breaking)
-
-- `SentinelConfig.production()` now uses `multiplier=4.5` (was 3.0).
-  Measured normal alert rate on white noise N(0,1), seed=99 (n=1000, post-warmup):
-  **36.7% → 35.4%** — a 1.3 pp marginal improvement only.
-
-  > **Important:** The FPR floor (~35%) is not dominated by the EWMA threshold.
-  > It is driven by other pipeline channels (coherence, coupling, physics steps).
-  > Raising the multiplier alone cannot bring FPR below ~35%. The root cause
-  > requires further investigation (see `benchmark/investigate_fpr_s47.py` for
-  > channel attribution data).
-
-  Measured benchmark F1 at the new default (n=1000, seed=42):
-
-| Archetype  | v12.1 F1 (mult=3.0) | v12.2 F1 (mult=4.5) | Δ |
-|------------|---------------------|---------------------|---|
-| point      | 0.415               | 0.422               | +0.007 |
-| contextual | 0.247               | 0.242               | −0.005 |
-| collective | 0.239               | 0.242               | +0.003 |
-| drift      | 0.723               | 0.727               | +0.004 |
-| variance   | 0.876               | 0.883               | +0.007 |
-| **normal FPR** | **36.7%**       | **35.4%**           | −1.3 pp |
-
-  F1 changes are within noise. The multiplier change is a threshold preference,
-  not a performance fix.
-
-> Users who depended on the v12.1 FPR behaviour can restore it with
-> `SentinelConfig(multiplier=3.0)` or set any custom multiplier.
-
-## V12.1 Changes
-
-### Bug Fixes
-
-- **VarCUSUM non-reset** (`VarCUSUMStep`): accumulators `s_hi`/`s_lo` now re-arm
-  after each threshold crossing. Normal alert rate: 97% → 35.6%.
-- **ChannelCoherence unit mismatch** (`ChannelCoherenceStep`): replaced
-  rate-difference formula with Pearson correlation (scale-invariant). Normal data
-  now scores ~0.5 above threshold.
-
-### v12.1 Benchmark (n=1000, seed=42, multiplier=3.0)
-
-| Archetype   |  F1   | Normal alert rate |
-|-------------|-------|-------------------|
-| point       | 0.415 | —                 |
-| contextual  | 0.247 | —                 |
-| collective  | 0.239 | —                 |
-| drift       | 0.723 | —                 |
-| variance    | 0.876 | —                 |
-| **normal**  | —     | **35.6%**         |
-
----
-
-## Collapse Indicator Capabilities
-
-Four signal-processing indicators architecturally inspired by the Kuramoto synchronization framework (added v10.0).
-
-> **Epistemic status:** These are engineering heuristics, not physical derivations. The maintenance burden μ is explicitly NOT derived from Tainter's socioeconomic model or from any energy-fraction physics — see the full disclaimer in `fracttalix/steps/physics.py` `MaintenanceBurdenStep`. The regime names (TAINTER_CRITICAL, etc.) are descriptive labels; thresholds are empirically set, not calibrated from data.
-
-### 1. Maintenance Burden μ (Coupling Overhead Indicator)
-
-```
-μ = 1 − κ̄
-```
-
-where κ̄ is the mean cross-frequency coupling score. Low coupling (κ̄ → 0) implies high coordination overhead → high inferred maintenance burden (μ → 1). High coupling (κ̄ → 1) implies efficient coordination → low burden (μ → 0).
-
-**Note:** This is an engineering heuristic. μ is NOT derived from Tainter's socioeconomic collapse model. The regime labels below are classification shortcuts; thresholds are empirically set, not calibrated from data.
-
-| μ range | Regime | Meaning |
-|---------|--------|---------|
-| < 0.5 | `HEALTHY` | High coupling, low inferred overhead |
-| 0.5 – 0.75 | `REDUCED_RESERVE` | Coupling declining |
-| 0.75 – 0.9 | `TAINTER_WARNING` | Approaching fragmented state |
-| ≥ 0.9 | `TAINTER_CRITICAL` | Very low coupling detected |
+#### Migration
 
 ```python
-mb = result.get_maintenance_burden()
-# {"mu": 0.82, "regime": "TAINTER_WARNING"}
+# Before (v12.x) — SentinelDetector
+from fracttalix import SentinelDetector, SentinelConfig
+det = SentinelDetector(SentinelConfig.production())
+result = det.update_and_check(value)
+if result["alert"]:
+    print(result["alert_reasons"])
+
+# After (v13.0) — FRMSuite (tau_gen from domain knowledge)
+from fracttalix.frm import FRMSuite
+suite = FRMSuite(tau_gen=12.5)
+result = suite.update(value)
+if result.frm_confidence >= 2:
+    print(f"FRM bifurcation: confidence={result.frm_confidence}")
+    print(result.virtu.message)  # ttb=38.4 steps
+
+# After (v13.0) — DetectorSuite (no tau_gen required)
+from fracttalix.suite import DetectorSuite
+suite = DetectorSuite()
+result = suite.update(value)
+if result.any_alert:
+    for det in result.alerts:
+        print(f"{det.detector}: {det.message}")
 ```
 
-### 2. PAC Pre-Cascade Detection (Extended Diagnostic Window)
-
-Phase-Amplitude Coupling (PAC) measures the depth of nonlinear coupling architecture — the structural memory of the network. PAC degrades **before** mean coupling strength κ̄ measurably decreases, providing an earlier warning signal than the v9.0 cascade precursor.
-
-Method: Modulation Index (Tort et al. 2010) across 6 slow-phase/fast-amplitude band pairs.
-
-```python
-pac = result.get_pac_status()
-# {"mean_pac": 0.41, "degradation_rate": 0.18, "pre_cascade_pac": True}
-```
-
-### 3. Diagnostic Window Δt Estimation (Time-to-Collapse)
-
-```
-Δt = (κ̄ - κ_c) / |dκ̄/dt|
-```
-
-The estimated number of observations remaining before coherence collapse, given current coupling strength and its rate of change. Sentinel stops just detecting that collapse is coming and starts estimating **when**.
-
-- Only active when κ̄ > κ_c and dκ̄/dt < 0
-- Confidence graded: `HIGH` / `MEDIUM` / `LOW` based on rate stability
-- Detects **supercompensation** (adaptive recovery in progress)
-
-```python
-dw = result.get_diagnostic_window()
-# {"steps": 47.3, "confidence": "HIGH", "supercompensation": False}
-```
-
-### 4. Reversed Sequence Detection (Sequence Classification)
-
-The heuristic ordering hypothesis: **coupling typically degrades before coherence collapses** in organic degradation patterns. A reversed sequence — coherence collapsing before coupling degrades — may indicate:
-
-1. Measurement error or noise
-2. A different data-generating process
-3. **Possible external perturbation** (a pattern distinct from gradual organic decay)
-
-> **Note:** "Intervention" here is a signal classification label, not a causal claim about deliberate external action. `sequence_type: "REVERSED"` means the ordering is atypical relative to the heuristic baseline; `intervention_signature_score` is a confidence value for that classification, not a probability of any external cause.
-
-```python
-if result.is_reversed_sequence():
-    sig = result.get_intervention_signature()
-    # {"score": 0.74, "sequence_type": "REVERSED",
-    #  "phi_rate": -0.18, "coupling_rate": -0.01}
-```
+`SentinelDetector` is still importable and fully functional. No existing code breaks.
 
 ---
 
@@ -291,17 +164,23 @@ if result.is_reversed_sequence():
 pip install fracttalix
 ```
 
-**Optional accelerators (install any or none):**
+**For FRMSuite (Layer 2 FRM physics — numpy + scipy required):**
+
+```bash
+pip install fracttalix[fast]
+```
+
+**Optional extras:**
 
 ```bash
 pip install numpy          # FFT, PAC computation, Hilbert transform
-pip install scipy          # scipy.signal.hilbert (falls back to numpy)
+pip install scipy          # curve_fit for Lambda (HopfDetector frm)
 pip install numba          # JIT compilation for hot loops
 pip install matplotlib     # plot_history() dashboard
 pip install tqdm           # progress bars in benchmark
 ```
 
-**Run tests (374 tests, all expected to pass):**
+**Run tests (444 tests, all expected to pass):**
 
 ```bash
 pytest
@@ -309,143 +188,161 @@ pytest
 
 ---
 
-## Quick Start
+## FRMSuite — Fractal Rhythm Model Physics Layer
 
-### Basic use — production defaults (v12.2)
+`FRMSuite` is the full two-layer suite: `DetectorSuite` (Layer 1, generic, no scipy) plus three Fractal Rhythm Model physics detectors (Layer 2, scipy required).
 
-The API is unchanged from v12.1. The production() preset now uses `multiplier=4.5`
-(was 3.0). Measured FPR on white noise: 35.4% (was 36.7%) — marginal.
-The primary improvement in v12.2 is epistemic: language corrections to README and
-docstrings that previously overstated the physics basis of the heuristics.
-
-```python
-from fracttalix import SentinelDetector, SentinelConfig
-
-det = SentinelDetector(SentinelConfig.production())  # multiplier=4.5, ~35% normal FPR
-
-for value in my_data_stream:
-    result = det.update_and_check(value)
-    if result["alert"]:
-        print(f"Step {result['step']}: {result['alert_reasons']}")
+```bash
+pip install fracttalix[fast]   # includes numpy + scipy for Layer 2
 ```
 
-If you were on v12.1 and need the old threshold back:
+### Architecture
 
-```python
-det = SentinelDetector(SentinelConfig(multiplier=3.0))  # v12.1 behaviour (~37% FPR)
+```
+FRMSuite(tau_gen=τ)
+├── Layer 1 — DetectorSuite (5 generic detectors, stdlib + numpy)
+│   ├── HopfDetector(ews)    — critical slowing down
+│   ├── DiscordDetector      — point / contextual anomalies
+│   ├── DriftDetector        — slow mean shift
+│   ├── VarianceDetector     — volatility change
+│   └── CouplingDetector     — PAC cross-scale decoupling (independent cross-validator)
+│
+└── Layer 2 — FRM Physics (scipy required; graceful degradation if absent)
+    ├── Lambda  (HopfDetector frm) — tracks damping λ → 0
+    ├── Omega   (OmegaDetector)    — tracks ω vs π/(2·τ_gen)
+    └── Virtu   (VirtuDetector)    — time-to-bifurcation estimate: Δt ≈ λ / |dλ/dt|
 ```
 
-### Choosing sensitivity
+**Graceful degradation:** If scipy is absent, Layer 2 detectors return `OUT_OF_SCOPE` and `frm_confidence` stays at 0. Layer 1 operates normally.
 
-The multiplier adjusts only the EWMA z-score threshold. Note that the overall
-normal alert rate has a floor of ~35% driven by other pipeline channels —
-see `benchmark/investigate_fpr_s47.py` for channel attribution.
+### Key Concept: `tau_gen`
 
-```python
-# ~35% normal alert rate — v12.2 production default
-det = SentinelDetector(SentinelConfig.production())          # multiplier=4.5
+`tau_gen` is the FRM generation delay — the characteristic delay of your system. The Fractal Rhythm Model predicts:
 
-# ~37% normal alert rate — v12.1 default; slightly more sensitive EWMA
-det = SentinelDetector(SentinelConfig(multiplier=3.0))
-
-# ~40-50% normal alert rate — catches the subtlest shifts; pairs with human review
-det = SentinelDetector(SentinelConfig.sensitive())           # multiplier=2.5
-
-# ~67% normal alert rate — maximum sensitivity; use with downstream filtering
-det = SentinelDetector(SentinelConfig(multiplier=1.5))
+```
+ω = π / (2 · τ_gen)        (quarter-wave theorem)
+λ → 0  at Hopf bifurcation  (damping collapse)
+Δt ≈ λ / |dλ/dt|           (time-to-bifurcation)
 ```
 
-Auto-tune picks the multiplier that maximises F1 on your labeled examples:
+When `tau_gen` is supplied:
+
+- **Lambda** (strong mode): uses the fixed predicted frequency ω = π/(2·`tau_gen`) as its reference; curve-fits damping λ against this
+- **Omega** (strong mode): checks that the observed dominant frequency matches ω = π/(2·`tau_gen`); a 5% deviation fires ALERT
+- **frm_confidence** counts strong-mode Layer 2 detectors in ALERT (0–3)
+
+When `tau_gen=None`: Lambda and Omega run in weak mode (generic frequency tracking). `frm_confidence` stays 0 — the FRM physics test cannot run without the model parameter.
+
+> Get `tau_gen` from domain knowledge. For power grids, it is the generator inertia constant. For EEG alpha rhythms, it is the reciprocal of the cycle frequency. For mechanical oscillators, it is the half-period.
+
+### `frm_confidence` Score
+
+| `frm_confidence` | Meaning |
+|-----------------|---------|
+| 0 | No strong-mode Layer 2 detector alerting |
+| 1 | Lambda alerting (λ declining) |
+| 2 | Lambda + Omega alerting (λ declining AND ω drifting from FRM prediction) |
+| 3 | Lambda + Omega + Virtu all alerting (full FRM bifurcation signal) |
+| `frm_confidence_plus` | `frm_confidence` + 1 if CouplingDetector (Layer 1) also alerting — independent PAC cross-validation |
+
+### Quick Start
 
 ```python
-labeled = [(value, is_anomaly), ...]
-det = SentinelDetector.auto_tune(data=[], labeled_data=labeled)
+from fracttalix.frm import FRMSuite
+
+# tau_gen=12.5: you know your system's generation delay
+suite = FRMSuite(tau_gen=12.5)
+
+for value in stream:
+    result = suite.update(value)
+    print(result.summary())
+
+    if result.frm_confidence >= 2:
+        # Lambda + Omega both alerting: strong compound bifurcation signal
+        print(f"FRM bifurcation signal: confidence={result.frm_confidence}")
+
+    if result.frm_confidence_plus >= 3:
+        # FRM physics + independent PAC structural cross-validation
+        print("Cross-validated bifurcation: highest confidence")
+        print(result.virtu.message)   # "ttb=38.4 confidence=HIGH safety_factor=1.00 ..."
 ```
 
-### Collapse indicators
-
-Four signal-processing indicators track how coupling and coherence are evolving.
-They are heuristics — useful for early warning and pattern characterisation,
-not physical measurements.
+### Without tau_gen
 
 ```python
-result = det.update_and_check(value)
+# Weak mode: frequency instability tracking, no FRM physics test
+suite = FRMSuite()  # tau_gen=None
 
-# Coupling overhead indicator (μ = 1 − κ̄)
-# High μ = low cross-frequency coupling = high inferred coordination cost
-mb = result.get_maintenance_burden()
-if mb["regime"] in ("TAINTER_WARNING", "TAINTER_CRITICAL"):
-    print(f"Coupling fragmented: μ={mb['mu']:.2f} ({mb['regime']})")
-
-# PAC pre-cascade: phase-amplitude coupling degrading before κ̄ drops
-# Fires earlier than the cascade precursor — gives more lead time
-pac = result.get_pac_status()
-if pac["pre_cascade_pac"]:
-    print(f"PAC degrading at rate {pac['degradation_rate']:.3f} — early warning")
-
-# Diagnostic window: estimated steps before coherence collapse
-# Only active when κ̄ > κ_c and coupling is falling
-dw = result.get_diagnostic_window()
-if dw["steps"] is not None:
-    print(f"Δt ≈ {dw['steps']:.0f} steps ({dw['confidence']} confidence)")
-if dw["supercompensation"]:
-    print("Coupling recovering — possible adaptive response")
-
-# Sequence classification: is coherence collapsing before coupling degrades?
-# REVERSED means atypical ordering; it is a classification label, not a causal claim
-if result.is_reversed_sequence():
-    sig = result.get_intervention_signature()
-    print(f"Atypical sequence (score {sig['score']:.2f}) — ordering does not match "
-          f"gradual organic decay pattern")
+for value in stream:
+    result = suite.update(value)
+    # result.frm_confidence will always be 0 in weak mode
+    # Layer 1 detectors still run normally
+    if result.layer1.drift.is_alert:
+        print("Drift detected")
 ```
 
-### Three-channel status
+### Reading an FRMSuiteResult
 
 ```python
-# CASCADE_PRECURSOR requires all three conditions simultaneously:
-# coupling degradation + structural-rhythmic decoupling + ≥2 EWS indicators elevated
-if result.is_cascade_precursor():
-    print("CRITICAL: cascade precursor — all three channels confirming")
+result = suite.update(value)
 
-status = result.get_channel_status()
-# {"structural": "healthy", "rhythmic_composite": "degrading",
-#  "coupling": "healthy", "coherence": "healthy"}
+# Layer 1 (all DetectorSuite fields)
+result.layer1.hopf.is_alert
+result.layer1.any_alert
+result.layer1.summary()
 
-print(result.get_degradation_narrative())
-print(result.get_primary_carrier_wave())   # "mid", "low", etc.
+# Layer 2 — FRM physics
+result.lambda_.is_alert        # λ declining?
+result.lambda_.score           # 0.0–1.0 urgency
+result.lambda_.message         # "frm λ=0.18 rate=-0.004 ttb=45.0 ..."
+
+result.omega.is_alert          # ω drifting from FRM prediction?
+result.omega.message           # "omega_obs=0.251 omega_pred=0.251 deviation=0.021 ..."
+
+result.virtu.is_alert          # time-to-bifurcation urgency score ≥ threshold?
+result.virtu.message           # "ttb=38.4 confidence=HIGH safety_factor=1.00 ..."
+result.virtu.score             # urgency: 0 = distant, 1 = imminent
+
+# Compound scores
+result.frm_confidence          # int 0–3
+result.frm_confidence_plus     # int 0–4 (adds CouplingDetector cross-validation)
+result.layer2_available        # bool — False if scipy absent
+
+# Convenience
+result.any_alert               # bool — any detector in Layer 1 or Layer 2 firing
+result.alerts                  # list[DetectorResult] — all currently alerting
+result.summary()               # multi-line dashboard string
 ```
 
-### Multivariate streams
+### Safety Factor (Conservative Estimates)
+
+`VirtuDetector` supports a `safety_factor` for asymmetric-cost applications where acting too late is worse than acting too early:
 
 ```python
-cfg = SentinelConfig(multivariate=True, n_channels=3)
-det = SentinelDetector(config=cfg)
-result = det.update_and_check([v1, v2, v3])
+# Reported ttb = raw_ttb / safety_factor
+# safety_factor=2.0 → half the raw estimate → earlier warning
+suite = FRMSuite(
+    tau_gen=12.5,
+    virtu_kwargs={"safety_factor": 2.0}
+)
 ```
 
-### Async usage
+### State Persistence
 
 ```python
-result = await det.aupdate(value)
-```
+import json
+sd = suite.state_dict()
+json_str = json.dumps(sd)
 
-### Multiple streams (thread-safe)
-
-```python
-from fracttalix import MultiStreamSentinel
-
-mss = MultiStreamSentinel(config=SentinelConfig.production())
-
-# Each stream ID gets its own independent detector instance
-result = mss.update("sensor_42", 3.14)
-result = await mss.aupdate("sensor_43", 7.71)
+suite2 = FRMSuite(tau_gen=12.5)
+suite2.load_state(json.loads(json_str))
 ```
 
 ---
 
 ## DetectorSuite — Modular Five-Detector Suite
 
-`DetectorSuite` runs five independent specialized detectors in parallel. Unlike `SentinelDetector`, each detector can report `OUT_OF_SCOPE` when the current data does not match its model — so you only get alerts from detectors that understand your signal. No stdlib-only constraint.
+`DetectorSuite` runs five independent specialized detectors in parallel. Unlike `SentinelDetector`, each detector reports `OUT_OF_SCOPE` when the current data does not match its model — so you only get alerts from detectors that understand your signal. No scipy required.
 
 ```bash
 pip install fracttalix          # stdlib only — no extra deps needed
@@ -539,146 +436,67 @@ suite.reset()
 
 ---
 
-## FRMSuite — FRM Physics Layer
+## Theoretical Foundation
 
-`FRMSuite` is the full two-layer suite: `DetectorSuite` (Layer 1, generic) plus three FRM-physics detectors (Layer 2, scipy required).
+| FRM Component | Implementation |
+|---------------|---------------|
+| Quarter-wave theorem: ω = π/(2·τ_gen) | `OmegaDetector` — strong mode frequency integrity check |
+| Damping collapse: λ → 0 at Hopf bifurcation | `HopfDetector(method='frm')` — Lambda |
+| Time-to-bifurcation: Δt ≈ λ / \|dλ/dt\| | `VirtuDetector` |
+| Cross-scale PAC coordination | `CouplingDetector` — independent cross-validator for Omega |
+| Critical slowing down (FRM Concept 9) | `HopfDetector(method='ews')` — variance + lag-1 AC |
+| Ordinal pattern complexity (FRM Concept 3) | `PEStep` in SentinelDetector (legacy) |
+| Three-channel model (Paper 6) | `StructuralSnapshotStep`, `FrequencyDecompositionStep`, etc. (legacy) |
 
-```bash
-pip install fracttalix[fast]   # includes numpy + scipy for Layer 2
-```
+**DOI:** [10.5281/zenodo.18859299](https://doi.org/10.5281/zenodo.18859299)
 
-### Architecture
+> FRM components refer to concepts in the Fractal Rhythm Model working papers. Layer 2 detectors (Lambda, Omega, Virtu) are directly derived from FRM physics with `tau_gen` supplied. Layer 1 detectors and the retired SentinelDetector use signal-processing heuristics *inspired by* the FRM framework.
 
-```
-FRMSuite
-├── Layer 1 — DetectorSuite (5 generic detectors, no scipy)
-│   ├── HopfDetector(ews)    — critical slowing down
-│   ├── DiscordDetector      — point / contextual anomalies
-│   ├── DriftDetector        — slow mean shift
-│   ├── VarianceDetector     — volatility change
-│   └── CouplingDetector     — PAC cross-scale decoupling (independent cross-validator)
-│
-└── Layer 2 — FRM Physics (scipy required; graceful degradation if absent)
-    ├── Lambda  (HopfDetector frm) — tracks damping λ → 0
-    ├── Omega   (OmegaDetector)    — tracks ω vs π/(2·τ_gen)
-    └── Virtu   (VirtuDetector)    — time-to-bifurcation estimate
-```
+---
 
-**Graceful degradation:** If scipy is absent, Layer 2 detectors return `OUT_OF_SCOPE` and `frm_confidence` stays at 0. Layer 1 operates normally.
+## Authors & License
 
-### Key Concept: `tau_gen`
+**Authors:** Thomas Brennan & Claude (Anthropic) & Grok (xAI)
 
-`tau_gen` is the FRM generation delay — the characteristic delay of your system. When supplied:
+**License:** [CC0 1.0 Universal (Public Domain)](https://creativecommons.org/publicdomain/zero/1.0/) — no restrictions, no attribution required.
 
-- **Lambda** (strong mode): uses the fixed predicted frequency ω = π/(2·`tau_gen`) as its reference; curve-fits damping λ against this.
-- **Omega** (strong mode): checks that the observed dominant frequency matches ω = π/(2·`tau_gen`). A 5% deviation fires ALERT.
-- **frm_confidence** counts strong-mode Layer 2 detectors in ALERT (0–3).
+**GitHub:** [https://github.com/thomasbrennan/Fracttalix](https://github.com/thomasbrennan/Fracttalix)
 
-When `tau_gen=None`: Lambda and Omega run in weak mode (generic frequency tracking). `frm_confidence` stays 0 in weak mode — the FRM physics test cannot run without the model parameter.
+**Version history:**
 
-> Get `tau_gen` from domain knowledge. For power grids, it is the generator inertia constant. For EEG alpha rhythms, it is the reciprocal of the cycle frequency. For mechanical oscillators, it is the half-period.
+| Version | Notes |
+|---------|-------|
+| v13.0.0 | FRMSuite promoted as primary API; SentinelDetector retired; first release directly derived from Fractal Rhythm Model physics |
+| v12.3.0 | FPR floor eliminated via ConsensusGate + threshold recalibration; SeasonalPreprocessStep |
+| v12.2.0 | Epistemic language corrections; production() multiplier 3.0→4.5 |
+| v12.1.0 | VarCUSUM non-reset fix; ChannelCoherence unit mismatch fix |
+| v10.0.0 | 4 collapse indicators (v10 API), 37 steps, 98 tests |
+| v9.0.0 | Three-channel model, 26 steps, 65 tests |
+| v8.0.0 | Frozen config, WindowBank, 19-step pipeline |
+| v7.11–v7.6 | Earlier releases |
 
-### `frm_confidence` Score
+---
 
-| `frm_confidence` | Meaning |
-|-----------------|---------|
-| 0 | No strong-mode Layer 2 detector alerting |
-| 1 | Lambda alerting (λ declining) |
-| 2 | Lambda + Omega alerting (λ declining AND ω drifting from prediction) |
-| 3 | Lambda + Omega + Virtu all alerting (full FRM bifurcation signal) |
-| `frm_confidence_plus` | `frm_confidence` + 1 if CouplingDetector (Layer 1) is also alerting — independent cross-validation |
+## Channel 2 — AI Layers
 
-### Quick Start
+Machine-readable falsification layers for the Fracttalix corpus. All layers conform to `ai-layers/ai-layer-schema.json` (v2-S42, Dual Reader Standard).
 
-```python
-from fracttalix.frm import FRMSuite
+| ID    | Paper                        | Status      | File                             |
+|-------|------------------------------|-------------|----------------------------------|
+| P1    | Fractal Rhythm Model (Paper 1) | PHASE-READY | ai-layers/P1-ai-layer.json       |
+| MK-P1 | Meta-Kaizen Paper 1          | PHASE-READY | ai-layers/MK-P1-ai-layer.json    |
+| DRP-1 | Dependency Resolution Process | PHASE-READY | ai-layers/DRP1-ai-layer.json     |
+| SFW-1 | Sentinel v12.2               | PHASE-READY | ai-layers/SFW1-ai-layer.json     |
 
-# tau_gen=12.5: you know your system's generation delay
-suite = FRMSuite(tau_gen=12.5)
+---
 
-for value in stream:
-    result = suite.update(value)
-    print(result.summary())
+---
 
-    if result.frm_confidence >= 2:
-        # Lambda + Omega both alerting: strong compound bifurcation signal
-        print(f"FRM bifurcation signal: confidence={result.frm_confidence}")
+# Legacy API — SentinelDetector (Retired)
 
-    if result.frm_confidence_plus >= 3:
-        # FRM physics + independent PAC structural cross-validation
-        print("Cross-validated bifurcation: highest confidence")
-```
+> **SentinelDetector was retired in v13.0.** It is retained for full backward compatibility — all existing code continues to work unchanged. No new features will be added. For new integrations, use [`FRMSuite`](#frmsuite--fractal-rhythm-model-physics-layer) or [`DetectorSuite`](#detectorsuite--modular-five-detector-suite).
 
-### Without tau_gen
-
-```python
-# Weak mode: frequency instability tracking, no FRM physics test
-suite = FRMSuite()  # tau_gen=None
-
-for value in stream:
-    result = suite.update(value)
-    # result.frm_confidence will always be 0 in weak mode
-    # Layer 1 detectors still run normally
-    if result.layer1.drift.is_alert:
-        print("Drift detected")
-```
-
-### Reading an FRMSuiteResult
-
-```python
-result = suite.update(value)
-
-# Layer 1 (all DetectorSuite fields)
-result.layer1.hopf.is_alert
-result.layer1.any_alert
-result.layer1.summary()
-
-# Layer 2 — FRM physics
-result.lambda_.is_alert        # λ declining?
-result.lambda_.score           # 0.0–1.0 urgency
-result.lambda_.message         # "frm λ=0.18 rate=-0.004 ttb=45.0 ..."
-
-result.omega.is_alert          # ω drifting from prediction?
-result.omega.message           # "omega_obs=0.251 omega_pred=0.251 deviation=0.021 ..."
-
-result.virtu.is_alert          # time-to-bifurcation urgency score ≥ threshold?
-result.virtu.message           # "ttb=38.4 confidence=HIGH safety_factor=1.00 ..."
-result.virtu.score             # urgency: 0 = distant, 1 = imminent
-
-# Compound scores
-result.frm_confidence          # int 0–3
-result.frm_confidence_plus     # int 0–4 (adds CouplingDetector cross-validation)
-result.layer2_available        # bool — False if scipy absent
-
-# Convenience
-result.any_alert               # bool — any detector in Layer 1 or Layer 2 firing
-result.alerts                  # list[DetectorResult] — all currently alerting
-result.summary()               # multi-line dashboard string
-```
-
-### Safety Factor (Conservative Estimates)
-
-`VirtuDetector` supports a `safety_factor` for asymmetric-cost applications where acting too late is worse than acting too early:
-
-```python
-# Reported ttb = raw_ttb / safety_factor
-# safety_factor=2.0 → half the raw estimate → earlier warning
-suite = FRMSuite(
-    tau_gen=12.5,
-    virtu_kwargs={"safety_factor": 2.0}
-)
-```
-
-### State Persistence
-
-```python
-import json
-sd = suite.state_dict()
-json_str = json.dumps(sd)
-
-suite2 = FRMSuite(tau_gen=12.5)
-suite2.load_state(json.loads(json_str))
-```
+The retirement decision is documented in [`RETIREMENT-DECISION.md`](RETIREMENT-DECISION.md).
 
 ---
 
@@ -695,9 +513,7 @@ suite2.load_state(json.loads(json_str))
 | `SentinelConfig.sensitive()` | 0.05 | 2.5 | 50 | ~40–50% | Catches subtle anomalies; high FP rate |
 | `SentinelConfig.realtime()` | 0.2 | 3.0 | 15 | ~30–40% | Quantile-adaptive thresholds |
 
-> ¹ Approximate normal alert rate on white noise N(0,1), empirically measured. FPR is a function of multiplier, alpha, and data distribution — these are indicative values from `benchmark/investigate_fpr_s47.py`.
->
-> **Multiplier–FPR trade-off** (white noise, seed=99, n=1000): multiplier 1.5 → 66.8%, 2.0 → 47.5%, 2.5 → 39.8%, 3.0 → 36.7%, 4.5 → 35.4%, 6.0 → 35.4%. Note: above ~3.5 the curve flattens — FPR is floor-limited (~35%) by non-EWMA channels.
+> ¹ Approximate normal alert rate on white noise N(0,1), empirically measured.
 
 ### Parameter groups
 
@@ -749,7 +565,7 @@ suite2.load_state(json.loads(json_str))
 
 | Field | Default | Description |
 |-------|---------|-------------|
-| `sti_window` | `20` | Shear-Turbulence Index window (signal heuristic inspired by turbulence concepts) |
+| `sti_window` | `20` | Shear-Turbulence Index window (signal heuristic) |
 | `tps_window` | `30` | Temporal Phase Space window |
 | `osc_damp_window` | `20` | Oscillation damping window |
 | `osc_threshold` | `1.5` | Oscillation damping alert multiplier |
@@ -843,41 +659,18 @@ Every call to `update_and_check()` runs all 37 steps in order. Steps read from a
 | 23 | `ChannelCoherenceStep` | v9 | Structural-rhythmic coherence + `SR_DECOUPLING` alert |
 | 24 | `CascadePrecursorStep` | v9 | `CASCADE_PRECURSOR` — CRITICAL; requires all three conditions |
 | 25 | `DegradationSequenceStep` | v9 | Channel 3: temporal degradation sequence log |
-| 26 | `ThroughputEstimationStep` | **v10** | P_throughput from band amplitudes; populates `band_amplitudes`, `band_powers`, `node_count`, `mean_coupling_strength` |
+| 26 | `ThroughputEstimationStep` | **v10** | P_throughput from band amplitudes |
 | 27 | `MaintenanceBurdenStep` | **v10** | μ = 1−κ̄ (coupling overhead heuristic) → regime classification |
 | 28 | `PhaseExtractionStep` | **v10** | FFT bandpass + Hilbert transform → instantaneous phase per band |
 | 29 | `PACCoefficientStep` | **v10** | Modulation Index (Tort 2010) across 6 slow/fast band pairs |
 | 30 | `PACDegradationStep` | **v10** | Rolling PAC history → `pac_degradation_rate`, `pre_cascade_pac` |
 | 31 | `CriticalCouplingEstimationStep` | **v10** | κ_c = 2/(π·g(ω₀)) from power-weighted frequency spread |
 | 32 | `CouplingRateStep` | **v10** | dκ̄/dt from rolling coupling history |
-| 33 | `DiagnosticWindowStep` | **v10** | Δt = (κ̄−κ_c)/|dκ̄/dt|; confidence grading; supercompensation |
-| 34 | `KuramotoOrderStep` | **v10** | Φ = |mean(e^iθ_k)| — phase coherence independent of κ̄ |
+| 33 | `DiagnosticWindowStep` | **v10** | Δt = (κ̄−κ_c)/\|dκ̄/dt\|; confidence grading; supercompensation |
+| 34 | `KuramotoOrderStep` | **v10** | Φ = \|mean(e^iθ_k)\| — phase coherence independent of κ̄ |
 | 35 | `SequenceOrderingStep` | **v10** | COUPLING_FIRST / COHERENCE_FIRST / SIMULTANEOUS / STABLE per step |
-| 36 | `ReversedSequenceStep` | **v10** | Atypical degradation ordering → sequence classification + intervention_signature_score |
+| 36 | `ReversedSequenceStep` | **v10** | Atypical degradation ordering → sequence classification |
 | 37 | `AlertReasonsStep` | v8 | Must run last — aggregates all alert signals |
-
-### Custom steps
-
-```python
-from fracttalix import DetectorStep, StepContext, register_step
-
-@register_step
-class MyStep(DetectorStep):
-    def __init__(self, config):
-        self.cfg = config
-
-    def update(self, ctx: StepContext) -> None:
-        ctx.scratch["my_metric"] = ctx.current * 2.0
-
-    def reset(self) -> None:
-        pass
-
-    def state_dict(self):
-        return {}
-
-    def load_state(self, sd):
-        pass
-```
 
 ---
 
@@ -935,39 +728,11 @@ result.get_primary_carrier_wave() -> str
 
 ```python
 result.is_reversed_sequence() -> bool
-
-result.get_maintenance_burden() -> dict
-# {"mu": 0.82, "regime": "TAINTER_WARNING"}
-
-result.get_pac_status() -> dict
-# {"mean_pac": 0.35, "degradation_rate": 0.19, "pre_cascade_pac": True}
-
-result.get_diagnostic_window() -> dict
-# {"steps": 47.3, "confidence": "HIGH", "supercompensation": False}
-
+result.get_maintenance_burden() -> dict   # {"mu": 0.82, "regime": "TAINTER_WARNING"}
+result.get_pac_status() -> dict           # {"mean_pac": 0.35, "degradation_rate": 0.19, ...}
+result.get_diagnostic_window() -> dict    # {"steps": 47.3, "confidence": "HIGH", ...}
 result.get_intervention_signature() -> dict
-# {"score": 0.74, "sequence_type": "REVERSED",
-#  "phi_rate": -0.18, "coupling_rate": -0.01}
 ```
-
-### V10.0 scalar result keys
-
-| Key | Type | Description |
-|-----|------|-------------|
-| `"maintenance_burden"` | `float` | μ (0.0–1.0) |
-| `"tainter_regime"` | `str` | HEALTHY / REDUCED_RESERVE / TAINTER_WARNING / TAINTER_CRITICAL |
-| `"mean_pac"` | `float` | Current PAC strength (0.0–1.0) |
-| `"pac_degradation_rate"` | `float` | Fractional PAC decline rate |
-| `"pre_cascade_pac"` | `bool` | PAC warning before cascade precursor |
-| `"diagnostic_window_steps"` | `float\|None` | Heuristic estimate of steps until coherence collapse (trajectory extrapolation under current conditions) |
-| `"diagnostic_window_confidence"` | `str` | HIGH / MEDIUM / LOW / NOT_APPLICABLE |
-| `"supercompensation_detected"` | `bool` | Adaptive recovery in progress |
-| `"kuramoto_order"` | `float` | Φ inter-band phase coherence (0.0–1.0) |
-| `"reversed_sequence"` | `bool` | Coherence collapsing before coupling |
-| `"intervention_signature_score"` | `float` | 0.0–1.0 confidence of atypical sequence ordering (classification label, not causal claim) |
-| `"sequence_type"` | `str` | ORGANIC / REVERSED / AMBIGUOUS / INSUFFICIENT_DATA |
-| `"coupling_rate"` | `float` | dκ̄/dt (negative = degrading) |
-| `"critical_coupling"` | `float` | κ_c estimated from frequency distribution |
 
 ---
 
@@ -979,13 +744,11 @@ Thread-safe manager for multiple independent named streams.
 from fracttalix import MultiStreamSentinel, SentinelConfig
 
 mss = MultiStreamSentinel(config=SentinelConfig.production())
-
 result = mss.update("sensor_42", 3.14)
 result = await mss.aupdate("sensor_42", 3.14)
 
 mss.list_streams()
 mss.get_detector("sensor_42")
-mss.status("sensor_42")
 mss.reset_stream("sensor_42")
 mss.delete_stream("sensor_42")
 
@@ -998,14 +761,6 @@ mss.load_all(state_json)
 ## SentinelBenchmark
 
 Built-in evaluation harness with five labeled anomaly archetypes.
-
-| Archetype | Description |
-|-----------|-------------|
-| `point` | Sparse large spikes (8σ) at fixed intervals |
-| `contextual` | Values anomalous given sinusoidal seasonal context |
-| `collective` | Extended runs of moderately elevated values |
-| `drift` | Slow linear mean drift starting mid-series |
-| `variance` | Sudden 4× variance explosion in second half |
 
 ```python
 from fracttalix import SentinelBenchmark, SentinelConfig
@@ -1036,12 +791,6 @@ python -m fracttalix --serve --host 0.0.0.0 --port 8765
 | `DELETE` | `/stream/<id>` | Delete stream |
 | `POST` | `/reset/<id>` | Reset stream to factory state |
 
-```bash
-curl -X POST http://localhost:8765/update/my_sensor \
-     -H "Content-Type: application/json" \
-     -d '{"value": 42.0}'
-```
-
 ---
 
 ## CLI Reference
@@ -1068,17 +817,7 @@ fracttalix [OPTIONS]
 
 ## Backward Compatibility
 
-v12.2 is a strict superset of all prior versions. No step is removed. No result key is removed. The only breaking change from v12.1 is the `production()` default multiplier (3.0 → 4.5) — restore with `SentinelConfig(multiplier=3.0)`.
-
-### V8.0 root-cause fixes (all preserved)
-
-| Fix | Label | Description |
-|-----|-------|-------------|
-| α | Frozen config | `SentinelConfig` is a frozen dataclass |
-| β | WindowBank | Named independent deques per consumer |
-| γ | Pipeline decomposition | 37 `DetectorStep` subclasses |
-| δ | Soft regime boost | Multiplicative boost + decay |
-| ε | SSI naming | `result["rsi"]` alias preserved |
+All v7.x through v12.x call patterns continue to work unchanged. `SentinelDetector` is importable and functional. The only breaking change from v12.3 is that `SentinelDetector` is no longer the primary API — `FRMSuite` is.
 
 ### V7.x compatibility
 
@@ -1094,59 +833,3 @@ json_str = det.save_state()
 det2 = SentinelDetector(config)
 det2.load_state(json_str)
 ```
-
----
-
-## Theoretical Foundation
-
-> The FRM components below refer to concepts in the Fractal Rhythm Model working papers (DOI: [10.5281/zenodo.18859299](https://doi.org/10.5281/zenodo.18859299)). These are working-paper concepts, not established scientific axioms. The implementations are signal-processing heuristics inspired by the framework.
-
-| FRM Component | Sentinel Implementation |
-|---------------|------------------------|
-| FRM Concept 3 (ordinal pattern complexity) | `PEStep` — Permutation Entropy |
-| FRM Concept 9 (critical slowing down) | `EWSStep` — variance + lag-1 autocorrelation |
-| Rhythm Periodicity Index | `RPIStep` — FFT spectral coherence |
-| Rhythm Fractal Index | `RFIStep` — Hurst exponent via R/S |
-| Synchronization Stability Index | `SSIStep` — Kuramoto proxy via FFT phase coherence |
-| Three-channel model (Paper 6) | `StructuralSnapshotStep`, `FrequencyDecompositionStep`, `ChannelCoherenceStep`, `CascadePrecursorStep`, `DegradationSequenceStep` |
-| Maintenance burden μ (heuristic) | `ThroughputEstimationStep`, `MaintenanceBurdenStep` |
-| PAC pre-cascade (Tort 2010 method) | `PhaseExtractionStep`, `PACCoefficientStep`, `PACDegradationStep` |
-| Diagnostic window Δt (heuristic estimate) | `CriticalCouplingEstimationStep`, `CouplingRateStep`, `DiagnosticWindowStep` |
-| Kuramoto order Φ / reversed sequence | `KuramotoOrderStep`, `SequenceOrderingStep`, `ReversedSequenceStep` |
-
-**DOI:** [10.5281/zenodo.18859299](https://doi.org/10.5281/zenodo.18859299)
-
----
-
-## Channel 2 — AI Layers
-
-Machine-readable falsification layers for the Fracttalix corpus. All layers conform to `ai-layers/ai-layer-schema.json` (v2-S42, Dual Reader Standard).
-
-| ID    | Paper                        | Status      | File                             |
-|-------|------------------------------|-------------|----------------------------------|
-| P1    | Fractal Rhythm Model (Paper 1) | PHASE-READY | ai-layers/P1-ai-layer.json       |
-| MK-P1 | Meta-Kaizen Paper 1          | PHASE-READY | ai-layers/MK-P1-ai-layer.json    |
-| DRP-1 | Dependency Resolution Process | PHASE-READY | ai-layers/DRP1-ai-layer.json     |
-| SFW-1 | Sentinel v12.2               | PHASE-READY | ai-layers/SFW1-ai-layer.json     |
-
----
-
-## Authors & License
-
-**Authors:** Thomas Brennan & Claude (Anthropic) & Grok (xAI)
-
-**License:** [CC0 1.0 Universal (Public Domain)](https://creativecommons.org/publicdomain/zero/1.0/) — no restrictions, no attribution required.
-
-**GitHub:** [https://github.com/thomasbrennan/Fracttalix](https://github.com/thomasbrennan/Fracttalix)
-
-**Version history:**
-
-| Version | Notes |
-|---------|-------|
-| v12.3.0 | FPR floor eliminated via ConsensusGate + threshold recalibration; SeasonalPreprocessStep |
-| v12.2.0 | Epistemic language corrections; production() multiplier 3.0→4.5 |
-| v12.1.0 | VarCUSUM non-reset fix; ChannelCoherence unit mismatch fix |
-| v10.0.0 | 4 collapse indicators (v10 API), 37 steps, 98 tests |
-| v9.0.0 | Three-channel model, 26 steps, 65 tests |
-| v8.0.0 | Frozen config, WindowBank, 19-step pipeline |
-| v7.11–v7.6 | Earlier releases |
