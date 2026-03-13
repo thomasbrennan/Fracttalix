@@ -202,7 +202,7 @@ def submit_hostile_review(
     task_id: str,
     objections: List[Dict[str, str]],
 ) -> Dict[str, Any]:
-    """Phase 2: Verifier submits hostile review objections.
+    """Phase 3: Verifier submits hostile review objections.
 
     Each objection: {"id": "O-1", "text": "...", "severity": "HIGH|MEDIUM|LOW"}
     """
@@ -250,7 +250,7 @@ def submit_response(
     explanation: str,
     changes_made: Optional[str] = None,
 ) -> Dict[str, Any]:
-    """Phase 3: Executor responds to a specific objection.
+    """Phase 4: Executor responds to a specific objection (Second Meta Kaizen).
 
     category must be one of: strengthened, resolved_stronger,
     discipline_enforced, scope_refined, fixed
@@ -290,7 +290,7 @@ def submit_response(
 # ---------------------------------------------------------------------------
 
 def evaluate_review(task_id: str) -> Dict[str, Any]:
-    """Phase 4: Evaluate whether all objections are resolved.
+    """Phase 5: Evaluate whether all objections are resolved (Final Build Plan).
 
     Returns the review with state set to 'accepted' or 'rejected'.
     Rejection happens if any HIGH-severity objection lacks a response.
@@ -410,7 +410,7 @@ def _build_parser() -> argparse.ArgumentParser:
     p_respond.add_argument("--changes", default=None)
 
     # -- evaluate --
-    p_eval = sub.add_parser("evaluate", help="Phase 4: Evaluate review outcome")
+    p_eval = sub.add_parser("evaluate", help="Phase 5: Evaluate review outcome")
     p_eval.add_argument("--task", required=True)
 
     # -- status --
