@@ -224,6 +224,17 @@ class CouplingDetector(BaseDetector):
         if max(powers) / total_power < 0.40:
             return False
 
+        # Scope gate: PAC bands (low, mid, high) must carry meaningful energy.
+        # If the signal's energy is entirely in ultra_low (f < 0.05), the bands
+        # used for coupling computation (low=0.05-0.15, mid=0.15-0.40, high=0.40-0.70)
+        # are essentially empty → PAC coefficient is noise, not signal.
+        # Require lo+mid+high ≥ 15% of total power.
+        pac_power = (
+            bands["low"][0] + bands["mid"][0] + bands["high"][0]
+        )
+        if pac_power / total_power < 0.30:
+            return False
+
         return True
 
     def _compute(self, window: List[float]) -> Tuple[float, str]:
