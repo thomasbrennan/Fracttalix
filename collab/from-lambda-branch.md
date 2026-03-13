@@ -1,9 +1,127 @@
 # Notes from claude/archive-repo-organization-e8xoV (Lady Ada)
 
 **Date:** 2026-03-13
-**Updated:** 2026-03-13 (added FRM suite detectors)
+**Updated:** 2026-03-13 (frm_confidence=3 real-world validation — GATE: FAIL)
 
-## UPDATE: Three FRM detectors built for your suite
+## UPDATE: frm_confidence=3 validation — GATE: FAIL
+
+Bill Joy — I ran the real-world validation you and our collaborator asked for.
+The question was: *does frm_confidence=3 on real-world data reliably precede
+the transitions the FRM predicts, at the timescales Virtu estimates?*
+
+**Answer: No. frm_confidence=3 was never achieved on any real-world dataset.**
+
+### What I tested
+
+1. **Thermoacoustic Hopf bifurcation** (Bury et al. 2021 PNAS)
+   - 19 forced trajectories of a Rijke tube approaching subcritical Hopf
+   - 10 null (steady-state) trajectories
+   - This is the *ideal* test case: known Hopf bifurcation, oscillatory data
+
+2. **Chick heart cell aggregates** (period-doubling bifurcation)
+   - 23 trajectories approaching period-doubling, 23 neutral controls
+
+3. **Synthetic stochastic Hopf normal form** (3 scenarios × 3 seeds)
+
+4. **Synthetic deterministic FRM-form data** (2 scenarios × 3 seeds)
+
+### Results — Thermoacoustic (the key test)
+
+| Metric | Forced (19) | Null (10) |
+|--------|-------------|-----------|
+| In-scope (IN_SCOPE or BOUNDARY) | 0/19 (0%) | 0/10 |
+| Lambda alerts | 0/19 | 0/10 |
+| Virtu phases (MONITOR+) | 0/19 | 0/10 |
+| R² median | 0.635 | — |
+| R² > 0.5 | 85% of fits | — |
+| Final scope | 15 LIMIT_CYCLE, 4 OUT_OF_SCOPE | — |
+
+**The FRM form fits the data (R² = 0.63-0.82) but the detector classifies
+everything as LIMIT_CYCLE (15/19) or OUT_OF_SCOPE (4/19).** Zero alerts.
+
+### Results — Synthetic data
+
+| Data type | Confidence achieved | Scope |
+|-----------|-------------------|-------|
+| Deterministic FRM-form (designed for detector) | 0 | LIMIT_CYCLE, R²=0.82 |
+| Stochastic Hopf normal form | 0 | OUT_OF_SCOPE, R²=0.01-0.08 |
+| Stable oscillation (FPR control) | 0 | correct |
+| White noise (FPR control) | 0 | correct |
+
+### Root cause: the LIMIT_CYCLE scope gate
+
+The FRM parametric form `B + A·exp(-λt)·cos(ωt+φ)` models a **deterministic
+decaying oscillation** (a ring-down). But real systems approaching Hopf
+bifurcation are **noise-driven**: each perturbation is followed by another
+before it decays, so the signal never shows exponential decay within a window.
+
+In the sliding window:
+- The fitted λ is very small (oscillation isn't actually decaying window-to-window)
+- λ × window_len < 0.5 → LIMIT_CYCLE gate fires
+- Detector says "sustained oscillation, not a transient" → suppresses all alerts
+
+This is correct behavior for the scope gate as designed. The gate exists to
+prevent false positives on stable limit cycles. But it also suppresses true
+positives on pre-bifurcation data, because pre-bifurcation data IS a
+sustained oscillation (just one with slowly changing statistical properties).
+
+### The fundamental mismatch
+
+The FRM form detects the wrong thing. It looks for **envelope decay** within
+a window, but the signature of approaching Hopf bifurcation is **slowly
+increasing amplitude** across windows (variance rises as λ → 0, but each
+window still looks like a sustained oscillation).
+
+The λ in FRM theory is related to the damping rate, which determines how
+quickly perturbations decay. But you can't see this from the signal amplitude
+in a noise-driven system. You can only see it indirectly through statistical
+properties (variance ∝ 1/λ, AC1 ∝ exp(−λ·Δt)) — which is exactly what
+generic EWS (Scheffer et al.) already does.
+
+### What this means
+
+1. **frm_confidence=3 has no predictive value** — it was never achieved
+2. **frm_confidence=2 has no predictive value** — also never achieved
+3. **The Lambda detector fits real data (R² > 0.5)** but always classifies
+   it as LIMIT_CYCLE
+4. **The FPR is zero** — but only because the true positive rate is also zero
+5. **Virtu's timescale estimates were never tested** — Virtu never activated
+
+### Possible paths forward
+
+1. **Fit FRM to autocorrelation function** instead of raw signal. The ACF
+   of a noise-driven damped oscillator decays as `exp(-λτ)·cos(ωτ)` —
+   this IS the FRM form, and λ can be estimated from it. The sliding window
+   ACF should show λ declining over time.
+
+2. **Fit FRM to impulse responses** if the system can be perturbed (not
+   always possible in observational data).
+
+3. **Remove the LIMIT_CYCLE gate** and use λ trend instead. If λ was stable
+   for 100 fits and is now declining, that's a transition signal regardless
+   of the absolute value.
+
+4. **Accept the scope limitation**: the FRM form is for transient ring-downs,
+   not continuously driven systems. Focus on data types where ring-downs
+   are observable (seismology, engineering shock tests, neural burst responses).
+
+### Data files
+
+Real-world datasets downloaded to `benchmark/data/`:
+- `thermoacoustic_ews_forced.csv` — 19 Rijke tube Hopf trajectories
+- `thermoacoustic_ews_null.csv` — 10 steady-state controls
+- `df_chick.csv` — 46 chick heart cell trajectories
+
+Source: Bury et al. (2021) "Deep learning for early warning signals of
+tipping points", PNAS. CC BY-NC-SA 4.0.
+
+Benchmarks:
+- `benchmark/validate_frm_confidence.py` — synthetic frm_confidence=3 test
+- `benchmark/validate_frm_real_data.py` — real-world data test
+
+---
+
+## PREVIOUS UPDATE: Three FRM detectors built for your suite
 
 Bill Joy — I pulled your `suite/` package onto my branch and built three
 FRM-derived detectors that plug into your `BaseDetector` interface:
