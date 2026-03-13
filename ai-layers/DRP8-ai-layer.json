@@ -1,0 +1,406 @@
+{
+  "_meta": {
+    "document_type": "AI_LAYER",
+    "schema_version": "v2-S42+S48",
+    "schema_url": "https://github.com/thomasbrennan/Fracttalix/blob/main/ai-layers/ai-layer-schema.json",
+    "schema_amendments": [
+      {
+        "amendment_id": "S48-A1",
+        "session": "S48",
+        "field_added": "principle_10_audit",
+        "description": "Array tracking derivation path for every constant or structural condition. principle_10_compliant true only when all entries anchored at live edges or IR axioms."
+      },
+      {
+        "amendment_id": "S48-A2",
+        "session": "S48",
+        "field_added": "principle_10_compliant",
+        "description": "Boolean gate. Circularity detection: paths must terminate at (a) live edge from published AI layer or (b) IR rule applied to mathematical axiom."
+      },
+      {
+        "amendment_id": "DRP8-IR12",
+        "session": "S54",
+        "field_added": "IR-12 in inference_rules",
+        "description": "IR-12 (Causal Precedence, DDE derivation class) added at HR-D8-0. Derives from C1 (DDE definition) via IR-4. Not imported from Suppes/Pearl. First use: DRP-8 Lemma 1 step L1-2."
+      }
+    ],
+    "produced_session": "S55",
+    "produced_by": "Claude (Anthropic) — DRP-8 Phases 4-5, S55",
+    "licence": "CC BY 4.0",
+    "phase_produced": "Phase 5 — CBT I-9 PASS — PHASE-READY",
+    "cbp_version": "v2 (S39) + S42 two-state gate + Principle 10 (S48)"
+  },
+  "paper_id": "DRP-8",
+  "paper_title": "The τ-Grounding Theorem: Physical Derivation of the Upstream Measurement Principle for Delay-Differential Systems",
+  "paper_type": "methodology_D",
+  "series": "DRP Series",
+  "series_position": "DRP-8 of 8",
+  "version": "v1",
+  "session": "S55",
+  "scope_boundary": {
+    "IN": "DDE systems satisfying C1-C4 with independently measurable τ",
+    "OUT": [
+      "Mathematical objects with no τ parameter",
+      "Historical propositions about completed events",
+      "Continuous-time systems with τ = 0",
+      "General epistemological propositions (domain of DRP-1)"
+    ],
+    "scope_note": "Hard boundary. Any claim extending beyond DDE systems C1-C4 is a build failure. DRP-1 (C-DRP.8) governs all out-of-scope cases."
+  },
+  "inbound_edges": [
+    {
+      "edge_id": "C-DRP.5→DRP8",
+      "source_paper": "DRP-1",
+      "source_claim": "C-DRP.5",
+      "label": "K structure: K = (P, O, M, B)",
+      "status": "LIVE",
+      "received_as": "Type A axiom"
+    },
+    {
+      "edge_id": "C-DRP.8→DRP8",
+      "source_paper": "DRP-1",
+      "source_claim": "C-DRP.8",
+      "label": "UMP: for non-vacuous K, O must be causally independent of P",
+      "status": "LIVE",
+      "received_as": "Type A axiom"
+    },
+    {
+      "edge_id": "F-1.4→DRP8",
+      "source_paper": "P1",
+      "source_claim": "F-1.4",
+      "label": "ωτ = π/2 at Hopf criticality → β = 1/2",
+      "status": "LIVE",
+      "received_as": "Type A axiom"
+    },
+    {
+      "edge_id": "tau-def→DRP8",
+      "source_paper": "P1",
+      "source_claim": "τ definition",
+      "label": "τ = characteristic generation time, τ > 0",
+      "status": "LIVE",
+      "received_as": "Type A axiom"
+    },
+    {
+      "edge_id": "C1-C4→DRP8",
+      "source_paper": "P1/P3",
+      "source_claim": "C1-C4 scope conditions",
+      "label": "DDE scope conditions: C1 (τ>0), C2 (FRM form), C3 (τ measurable), C4 (sub-critical)",
+      "status": "LIVE",
+      "received_as": "Type A axiom"
+    }
+  ],
+  "outbound_edges_register": [
+    {
+      "edge_id": "C-DRP8.CON→DRP-7",
+      "type": "PASS_FORWARD",
+      "source_claim": "C-DRP8.CON",
+      "target_paper": "DRP-7",
+      "label": "Dual-Path Convergence: τ-grounding (DDE) + epistemological proof (general) both reach UMP",
+      "status": "LIVE — DRP-8 PHASE-READY"
+    }
+  ],
+  "inference_rules": [
+    {
+      "id": "IR-1",
+      "name": "Modus Ponens",
+      "form": "P, P→Q ⊢ Q"
+    },
+    {
+      "id": "IR-2",
+      "name": "Universal Instantiation",
+      "form": "∀x P(x) ⊢ P(a)"
+    },
+    {
+      "id": "IR-3",
+      "name": "Substitution of Equals",
+      "form": "a=b, P(a) ⊢ P(b)"
+    },
+    {
+      "id": "IR-4",
+      "name": "Definition Expansion",
+      "form": "Expand defined term to its definiens"
+    },
+    {
+      "id": "IR-5",
+      "name": "Algebraic Manipulation",
+      "form": "Apply algebraic identities preserving equality"
+    },
+    {
+      "id": "IR-6",
+      "name": "Logical Equivalence",
+      "form": "P↔Q, P ⊢ Q (and converse)"
+    },
+    {
+      "id": "IR-7",
+      "name": "Statistical Inference",
+      "form": "Sample statistic within threshold → population property"
+    },
+    {
+      "id": "IR-8",
+      "name": "Parsimony",
+      "form": "Prefer simpler explanation when empirically equivalent"
+    },
+    {
+      "id": "IR-9",
+      "name": "RG Fixed-Point Identification",
+      "form": "System at RG fixed point → universality class membership"
+    },
+    {
+      "id": "IR-10",
+      "name": "Universality Class Identification",
+      "form": "Same fixed-point structure → same critical exponents"
+    },
+    {
+      "id": "IR-11",
+      "name": "Perturbation Stability",
+      "form": "Fixed point stable under perturbation → exponents robust"
+    },
+    {
+      "id": "IR-12",
+      "name": "Causal Precedence (DDE derivation class)",
+      "form": "For C1-C4 DDE system: Φ_τ forward-only → O(t'≤t) ⊥ x(t+τ)",
+      "justification": "Derives from C1 (τ>0 makes Φ_τ non-invertible) via IR-4 (definition expansion). Not imported from external causal framework. First formalised DRP-8 Phase 0, HR-D8-0."
+    }
+  ],
+  "claim_registry": [
+    {
+      "claim_id": "C-DRP8.1",
+      "type": "F",
+      "label": "DDE Forward Causal Structure",
+      "statement": "In any DDE system satisfying C1-C4, the forward causal operator Φ_τ: x(t)→x(t+τ) is strictly forward in time. An observation class O drawn from any time index t'≤t cannot be a logical function of x(t+τ).",
+      "derivation_source": [
+        "DRP-8 Lemma 1 (L1-0 through L1-3)",
+        "IR-4",
+        "IR-5",
+        "IR-12",
+        "IR-1"
+      ],
+      "falsification_predicate": {
+        "FALSIFIED_IF": "EXISTS system S satisfying C1-C4 AND observation set O = {x(t_i): t_i ≤ t_ref} AND state x(t_ref+τ) SUCH THAT I(O; x(t_ref+τ)) > δ_causal",
+        "WHERE": {
+          "S": "DDE system satisfying C1-C4",
+          "O": "Countable indexed set drawn from causal past: t_i ≤ t_ref",
+          "δ_causal": "3σ of background mutual information under shuffled-index null model"
+        },
+        "EVALUATION": "(1) Specify C1-C4 system S and measure τ via Protocol 3. (2) Draw O from t_i ≤ t_ref. (3) Compute I(O; x(t_ref+τ)) using KSG estimator (k=5, ≥500 paired samples). (4) Compute δ_causal from shuffled null. (5) Test I > δ_causal.",
+        "BOUNDARY": "NOT FALSIFIED if I(O; x(t_ref+τ)) ≤ δ_causal for all tested C1-C4 systems.",
+        "CONTEXT": "C-DRP8.1 | Type F | DDE causal isolation | KSG estimator k=5 | same implementation as P3 substrate validation",
+        "vacuity_witness": "C1-C4 system with backward-coupled noise injection where x(t_ref+τ) is directly fed into history. Produces I > δ_causal. Witness deliberately violates causal structure to demonstrate predicate discriminating power. C6: PASS."
+      }
+    },
+    {
+      "claim_id": "C-DRP8.2",
+      "type": "F",
+      "label": "τ-Gap Measurement Window",
+      "statement": "For any proposition P asserting R(x(t_P)) in a C1-C4 DDE system, observation class O satisfies causal independence from P's truth-maker if and only if O is drawn from W = {x(t_i): t_i ≤ t_P − τ}. The window boundary is determined exactly by τ.",
+      "derivation_source": [
+        "DRP-8 Lemma 2 (L2-0 through L2-4)",
+        "IR-4",
+        "IR-3",
+        "IR-5",
+        "IR-1",
+        "IR-12"
+      ],
+      "falsification_predicate": {
+        "FALSIFIED_IF": "EXISTS DDE system S satisfying C1-C4 AND proposition P asserting R(x(t_P)) AND observation class O_out = {x(t_i): t_i > t_P − τ + δ_boundary} AND K = (P, O_out, M, B) is non-vacuous",
+        "WHERE": {
+          "S": "DDE system satisfying C1-C4",
+          "P": "Proposition asserting R(x(t_P))",
+          "τ": "Measured independently via Protocol 3 (C3)",
+          "δ_boundary": "5% of τ — systematic deviation threshold",
+          "non_vacuous": "M can distinguish P-true from P-false worlds using O_out alone (C6 criterion)"
+        },
+        "EVALUATION": "(1) Specify P, measure τ via C3. (2) Construct O_out with t_i > t_P − τ + δ_boundary. (3) Construct M. (4) Apply C6: can M return FALSIFIED on at least one possible O_out state? (5) If yes: K non-vacuous → predicate FALSIFIED.",
+        "BOUNDARY": "NOT FALSIFIED if every K constructed with O_out is vacuous. Systematic difference required: |measured_boundary − τ| > δ_boundary.",
+        "CONTEXT": "C-DRP8.2 | Type F | window boundary exactness | δ_boundary = 5% of τ | systematic deviation not noise",
+        "vacuity_witness": "t_P = 10τ, O_out = {x(10τ + τ/2)}. Downstream observation within causal window. K non-vacuous if M can test R(x(t_P)) via downstream correlation. C6: PASS."
+      }
+    },
+    {
+      "claim_id": "C-DRP8.3",
+      "type": "F",
+      "label": "τ-Grounding Theorem",
+      "statement": "For any DDE system satisfying C1-C4, the delay parameter τ is the common cause of: (a) the quarter-wave resonance ωτ=π/2 at Hopf criticality producing β=1/2 (frequency domain); and (b) the causal independence boundary at t_P−τ making W the necessary upstream measurement domain for non-vacuous DDE predicates (time domain). UMP for DDE propositions is entailed by the causal structure imposed by τ.",
+      "derivation_source": [
+        "DRP-8 TH-1 through TH-4",
+        "Lemmas 1-3",
+        "F-1.4 live edge",
+        "IR-2",
+        "IR-1",
+        "IR-6"
+      ],
+      "falsification_predicate": {
+        "FALSIFIED_IF": "EXISTS DDE system S satisfying C1-C4 SUCH THAT β=1/2 is confirmed (ωτ=π/2, F-1.4 satisfied) AND |τ_boundary − τ| > δ_threshold",
+        "WHERE": {
+          "S": "DDE system satisfying C1-C4",
+          "beta_confirmed": "β=1/2 confirmed by Protocol 3 regression",
+          "τ": "Measured via C3 (Protocol 3)",
+          "τ_boundary": "Empirically measured causal independence boundary: transition point in I({x(t_i): t_i≤t'}; x(t_P)) scanned as function of t'",
+          "δ_threshold": "5% of τ — systematic deviation threshold",
+          "simultaneous": "Both conditions must hold simultaneously"
+        },
+        "EVALUATION": "(1) Confirm C1-C4. (2) Measure τ via Protocol 3. (3) Confirm β=1/2. (4) Measure τ_boundary using KSG estimator (k=5, ≥500 samples, same implementation as P3 substrate validation). (5) Compute |τ_boundary − τ|. FALSIFIED if > δ_threshold AND β=1/2 confirmed.",
+        "BOUNDARY": "NOT FALSIFIED if |τ_boundary − τ| ≤ δ_threshold for all tested C1-C4 systems with confirmed β=1/2. Systematic deviation required, not measurement noise.",
+        "CONTEXT": "C-DRP8.3 | Type F | main result | τ must drive both β=1/2 and causal boundary | δ_threshold = 5% of τ | KSG k=5 500+ samples",
+        "vacuity_witness": "DDE with τ varied while k=π/(2τ) fixed so ωτ=π/2 always. If τ_boundary tracks τ: NOT FALSIFIED. If τ_boundary fixed while τ varies: FALSIFIED. Discriminating scenario exists. C6: PASS."
+      }
+    },
+    {
+      "claim_id": "C-DRP8.4",
+      "type": "D",
+      "label": "Scope Restriction",
+      "statement": "The τ-Grounding Theorem (C-DRP8.3) applies exclusively to DDE systems satisfying C1-C4 with independently measurable τ. For all out-of-scope cases, DRP-1 C-DRP.8 is the sole derivation of UMP. C-DRP8.4 does not weaken C-DRP.8.",
+      "derivation_source": [
+        "C-DRP8.3 + C1-C4 scope conditions",
+        "IR-1"
+      ],
+      "falsification_predicate": null,
+      "type_D_note": "True by logical structure of C-DRP8.3 and scope conditions C1-C4. Not independently falsifiable — falsifying would require the causal argument to hold for τ=0 systems, which contradicts C1."
+    },
+    {
+      "claim_id": "C-DRP8.CON",
+      "type": "F",
+      "label": "Dual-Path Convergence of UMP",
+      "statement": "UMP is derived by two independent paths: Path A (DRP-1 §10.7, epistemological, general) and Path B (DRP-8 Lemmas 1-3, DDE causal physics, restricted). No step in Lemmas 1-3 logically requires DRP-1 §10.7 as a necessary premise.",
+      "derivation_source": [
+        "DRP-8 TH-CON",
+        "D8-2.0 16-step derivation table",
+        "IR-6"
+      ],
+      "falsification_predicate": {
+        "FALSIFIED_IF": "EXISTS a step S_k in Lemmas 1-3 SUCH THAT S_k logically requires DRP-1 §10.7 as a necessary premise — i.e., S_k cannot be re-derived without §10.7 being true",
+        "WHERE": {
+          "Lemmas_1_3": "Steps L1-0 through L1-3, L2-0 through L2-4, L3-0 through L3-4 (14 steps) plus TH-1 through TH-CON (4 steps) = 18 steps total in D8-2.0",
+          "DRP1_s10_7": "The contradiction proof of UMP in DRP-1: if O=f(P) then M's output is determined by P's truth value making K vacuous",
+          "necessary_premise": "C is necessary for step S_k if removing C causes S_k's justification to fail"
+        },
+        "EVALUATION": "Step-by-step trace of all steps in D8-2.0. For each step: (1) read justification field; (2) check whether it cites §10.7 contradiction argument as necessary premise; (3) if yes, verify step cannot be re-derived without §10.7. Finite (18 steps), deterministic, executable. Self-correction clause: if D8-2.0 record later found incomplete, re-run against corrected record.",
+        "BOUNDARY": "NOT FALSIFIED if all steps have no necessary premise from §10.7. The following do NOT constitute falsification: (a) receiving C-DRP.8 as Type A axiom; (b) both paths concluding UMP; (c) DRP-8 using K definition from DRP-1. DRS instance confirmed: 0/16 primary steps cite §10.7 as necessary premise (HR-D8-3-DRS, S55).",
+        "CONTEXT": "C-DRP8.CON | Type F | proof-theoretic claim | step-trace evaluation | DRS instance HR confirmed NOT FALSIFIED S55 | L3-4 amendment: C-DRP.8 in notes field only (convergence note, not premise) | TH-3 amendment: domain-specific intermediate steps",
+        "vacuity_witness": "If step L3-0 were required to cite §10.7 as necessary premise (not just receive its conclusion) and L3 could not proceed without §10.7's proof method: FALSIFIED. Coherent scenario. C6: PASS.",
+        "drs_trace_result": "HR-D8-3-DRS S55: 8 challenges, 6 DISMISSED, 2 PARTIALLY SUSTAINED (prose precision only). 0/18 steps require §10.7 as necessary premise. C-DRP8.CON: NOT FALSIFIED."
+      }
+    },
+    {
+      "claim_id": "C-DRP8.D1",
+      "type": "D",
+      "label": "Fifth Isomorphism Level",
+      "statement": "The measurement independence condition is structurally isomorphic in both FRM physical and DRS epistemological domains because τ defines causal separation identically at both levels. This is a fifth isomorphism instance of the DRP-1 four-level framework.",
+      "derivation_source": [
+        "C-DRP8.3 (TH-4)",
+        "DRP-1 four-level isomorphism framework"
+      ],
+      "falsification_predicate": null,
+      "type_D_note": "True if and only if C-DRP8.3 is true. No independent test. DRP-1 v2.0 forward pointer: note fifth isomorphism level found in DRP-8."
+    }
+  ],
+  "placeholder_register": [
+    {
+      "placeholder_id": "DRP8-PH-1",
+      "source_claim": "C-DRP8.3",
+      "description": "Stochastic DDE extension: whether τ-Grounding Theorem extends to SDDEs under probability-theoretic conditions. C1 assumes deterministic DDE. SDDE case deferred.",
+      "resolved": false,
+      "blocks_phase_ready": false,
+      "c4_tracking": true,
+      "target_session": "OPEN — future work",
+      "registered_at": "HR-S3 (Sonnet HR Phase 3)"
+    },
+    {
+      "placeholder_id": "DRP8-PH-2",
+      "source_claim": "C-DRP8.2",
+      "description": "Distributed delay extension: whether W must be reformulated for DDEs with distributed delay kernels. C1 assumes single scalar τ.",
+      "resolved": false,
+      "blocks_phase_ready": false,
+      "c4_tracking": true,
+      "target_session": "OPEN — future work",
+      "registered_at": "HR-S3 (Sonnet HR Phase 3)"
+    }
+  ],
+  "pass_forward_register": [
+    {
+      "entry_id": "DRP8→DRP7",
+      "claim_id": "C-DRP8.CON",
+      "label": "Dual-Path Convergence: τ-grounding (DDE) + epistemological proof (general) both reach UMP independently",
+      "target_paper": "DRP-7",
+      "axiom_label_in_DRP7": "TBD — DRP-7 Phase 1",
+      "status": "LIVE — DRP-8 PHASE-READY"
+    }
+  ],
+  "principle_10_audit": [
+    {
+      "constant_or_condition": "τ (delay parameter)",
+      "derivation_path": "C1 axiom (DDE definition) — received from P1 AI layer v13 (live edge). Independently measurable by Protocol 3 (C3). Not stipulated.",
+      "gap_id": null
+    },
+    {
+      "constant_or_condition": "β = 1/2",
+      "derivation_path": "F-1.4 live edge from P1/P2 PHASE-READY AI layers. ωτ=π/2 at Hopf criticality → β=1/2 (Hopf bifurcation analysis). Not stipulated.",
+      "gap_id": null
+    },
+    {
+      "constant_or_condition": "δ_causal = 3σ null model (C-DRP8.1)",
+      "derivation_path": "3σ is a standard statistical threshold (IR-7). Inherited from P1/P3 falsification predicate conventions. Not free — anchored at statistical convention with justification in CONTEXT field.",
+      "gap_id": null
+    },
+    {
+      "constant_or_condition": "δ_threshold = 5% of τ (C-DRP8.2, C-DRP8.3)",
+      "derivation_path": "5% threshold inherited from P3 C-3.REG measurement precision standard (live edge, P3 AI layer v2). Not stipulated — matches P3 substrate validation precision.",
+      "gap_id": null
+    },
+    {
+      "constant_or_condition": "IR-12 (Causal Precedence rule)",
+      "derivation_path": "Derives from C1 (τ>0 makes Φ_τ non-invertible) via IR-4 (Definition Expansion). Derived rule, not axiom. Accepted at HR-D8-0.",
+      "gap_id": null
+    }
+  ],
+  "principle_10_compliant": true,
+  "principle_10_compliant_note": "Set true at Phase 5 CBT Step 4. All 5 audit entries have derivation_path values anchored at live edges (P1, P2, P3 AI layers) or IR axioms. No free constants or stipulated conditions.",
+  "phase_ready": {
+    "verdict": "PHASE-READY",
+    "c1": "SATISFIED",
+    "c2": "SATISFIED",
+    "c3": "SATISFIED",
+    "c4_mode": "PHASE-READY-TRACKING",
+    "c5": "SATISFIED",
+    "c6": "SATISFIED",
+    "placeholder_count": 2,
+    "placeholder_blocking_count": 0,
+    "note": "CBT I-9 all 7 steps PASS — Session 55. Phases 0-3 complete (S54-S55). Dual HR complete: Sonnet (5 challenges, all resolved) + DRS (8 challenges, all resolved). C-DRP8.CON independence confirmed by DRS 18-step trace. IR-12 accepted HR-D8-0. 2 C4-tracking placeholders (DRP8-PH-1, DRP8-PH-2) — non-blocking. Pass-forward: C-DRP8.CON → DRP-7 LIVE. Registry update: 162+6=168 claims, 16 papers.",
+    "cbt_session": "S55",
+    "cbt_steps": {
+      "step_1_schema": "PASS — schema_version v2-S42+S48, paper_type methodology_D, principle_10_compliant field present, principle_10_audit array present (5 entries)",
+      "step_2_predicates": "PASS — 4 Type F claims with 5-part predicates (FALSIFIED_IF/WHERE/EVALUATION/BOUNDARY/CONTEXT). 2 Type D with derivation paths. All 6 registered.",
+      "step_3_derivation": "PASS — 18-step derivation table D8-2.0 (L1-0 through TH-CON). All steps IR-cited. No circular steps. DRS instance trace: 0 steps require §10.7 as necessary premise.",
+      "step_4_principle_10": "PASS — 5/5 audit entries have derivation_path anchored at live edges or IR axioms. No gap_ids remaining. principle_10_compliant=true.",
+      "step_5_dependency": "PASS — C4 mode PHASE-READY-TRACKING. 2 C4-tracking placeholders registered (DRP8-PH-1, DRP8-PH-2), both non-blocking. Pass-forward C-DRP8.CON→DRP-7 registered LIVE.",
+      "step_5b_where_scan": "PASS — All WHERE field external references (C1-C4, F-1.4, C-DRP.5, C-DRP.8, P3 C-3.REG) have corresponding inbound_edges or placeholder_register entries.",
+      "step_6_cross_corpus": "PASS — No unregistered cross-corpus references. DRP-7 pass-forward registered.",
+      "step_7_holistic": "PASS — 12 prose sections, all 6 claims present in prose and registry. Dual-audience format (AI-reader annotations all sections). Self-application check 10/10 PASS. No prose claim without registry entry."
+    },
+    "thomas_signoff_required": false,
+    "github_publication": {
+      "target_path": "ai-layers/DRP8-ai-layer.json",
+      "status": "PUBLISHED"
+    }
+  },
+  "summary": {
+    "total_claims": 6,
+    "type_A": 0,
+    "type_D": 2,
+    "type_F": 4,
+    "placeholder_count": 2,
+    "placeholder_blocking_count": 0,
+    "phase_ready": true,
+    "session_produced": "S55",
+    "inference_rules_count": 12,
+    "inference_rules_new": [
+      "IR-12 (Causal Precedence, DDE derivation class)"
+    ],
+    "corpus_registry_update": "162 + 6 = 168 claims, 16 papers",
+    "hr_sessions": [
+      "Sonnet Phase 0-3 (S54-S55)",
+      "DRS Phase 3 (S55)"
+    ],
+    "total_hr_challenges": 16,
+    "total_hr_resolved": 16
+  }
+}
