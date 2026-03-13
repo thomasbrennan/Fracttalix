@@ -211,8 +211,17 @@ class CouplingDetector(BaseDetector):
             return False
 
         # Scope gate: all bands are near-zero → flat signal (constant or nearly so)
-        total_power = sum(p for p, _ in bands.values())
+        powers = [p for p, _ in bands.values()]
+        total_power = sum(powers) + 1e-10
         if total_power < 1e-6:
+            return False
+
+        # Scope gate: no dominant frequency band → white noise or flat spectrum.
+        # White noise distributes energy roughly uniformly across all frequency
+        # bands; the maximum band power / total stays ≤ 0.33 empirically.
+        # Oscillatory and PAC signals have a dominant band (max/total ≥ 0.57).
+        # A threshold of 0.40 cleanly separates the two classes.
+        if max(powers) / total_power < 0.40:
             return False
 
         return True

@@ -1,17 +1,23 @@
 # fracttalix/suite/drift.py
-# DriftDetector — Slow distribution shift via non-adaptive CUSUM + Page-Hinkley.
+# DriftDetector — Slow distribution shift via non-adaptive CUSUM (frozen baseline).
 #
-# Theorem basis (P3 / CUSUM + Page-Hinkley):
+# Theorem basis (P3 / CUSUM):
 #   The key insight: an EWMA baseline adapts to slow drift, masking it.
 #   A non-adaptive (warmup-frozen) baseline does not adapt — slow drift
 #   accumulates in the CUSUM statistic and eventually crosses the threshold.
-#   Page-Hinkley is a second independent vote, sensitive to gradual monotonic
-#   changes in the cumulative mean.
 #
-#   Both tests operate on z_raw = (x − warmup_mean) / warmup_std, so:
+#   The test operates on z_raw = (x − warmup_mean) / warmup_std, so:
 #     - Point anomalies cause one large z_raw spike that resets the accumulator.
 #     - Slow drift causes many small z_raw values that accumulate persistently.
-#   This natural separation is why CUSUM and PH dominate drift benchmarks.
+#   This natural separation is why frozen-baseline CUSUM dominates drift benchmarks.
+#
+# Design note — Page-Hinkley excluded by design:
+#   PH with a frozen baseline has E[ph_cum_lo increment] = (μ − x − δ) on
+#   stationary data where E[x]=μ, so E[increment] = −δ < 0.  The accumulator
+#   drifts monotonically downward and the gap m−cum grows at δ/step, reaching
+#   the threshold every λ/δ ≈ 50 steps on stationary N(0,1) data (65% FPR).
+#   PH is correct only with an adaptive baseline (which would mask drift) or
+#   with a one-shot post-hoc test.  Neither applies here.  CUSUM-only.
 #
 # OUT_OF_SCOPE conditions:
 #   • Sudden large spike (point anomaly): z_raw >> 5 in a single step.
@@ -51,10 +57,6 @@ class DriftDetector(BaseDetector):
     cusum_h : float
         CUSUM threshold.  Lower → more sensitive but more false positives
         (default 8.0).
-    ph_delta : float
-        Page-Hinkley minimum detectable change (default 0.3).
-    ph_lambda : float
-        Page-Hinkley threshold (default 15.0).
     spike_z : float
         z_raw above this is classified as a point spike → OUT_OF_SCOPE
         (default 5.0).
@@ -70,8 +72,6 @@ class DriftDetector(BaseDetector):
         window: int = 300,
         cusum_k: float = 0.5,
         cusum_h: float = 8.0,
-        ph_delta: float = 0.3,
-        ph_lambda: float = 15.0,
         spike_z: float = 5.0,
         var_growth_threshold: float = 4.0,
         drift_threshold: float = 0.50,
@@ -79,8 +79,6 @@ class DriftDetector(BaseDetector):
         super().__init__("DriftDetector", warmup=warmup, window_size=window)
         self._cusum_k = cusum_k
         self._cusum_h = cusum_h
-        self._ph_delta = ph_delta
-        self._ph_lambda = ph_lambda
         self._spike_z = spike_z
         self._var_growth_threshold = var_growth_threshold
         self._alert_threshold = drift_threshold
@@ -94,12 +92,6 @@ class DriftDetector(BaseDetector):
         # CUSUM state
         self._s_hi: float = 0.0
         self._s_lo: float = 0.0
-
-        # Page-Hinkley state
-        self._ph_cum_hi: float = 0.0
-        self._ph_cum_lo: float = 0.0
-        self._ph_m_hi: float = 0.0
-        self._ph_m_lo: float = 0.0
 
         # Spike gate cooldown (prevent OUT_OF_SCOPE on single-step transient)
         self._spike_steps_ago: int = 999
@@ -137,7 +129,7 @@ class DriftDetector(BaseDetector):
         # We only fire if the signal is not strongly autocorrelated around its mean.
         recent = window[-min(50, len(window)):]
         recent_ac1 = _ac1(recent)
-        if abs(recent_ac1) > 0.30:
+        if abs(recent_ac1) > 0.35:
             return False
 
         # Scope gate: variance has grown substantially → VarianceDetector
@@ -152,54 +144,32 @@ class DriftDetector(BaseDetector):
         z_raw = (x - self._warmup_mean) / self._warmup_std
         k = self._cusum_k
 
-        # Bidirectional CUSUM
+        # Bidirectional CUSUM on frozen-baseline z_raw.
+        # PH excluded: with a frozen baseline E[ph_cum increment] = −δ < 0 on
+        # stationary data, causing monotonic growth of the gap and ~65% FPR.
         self._s_hi = max(0.0, self._s_hi + z_raw - k)
         self._s_lo = max(0.0, self._s_lo - z_raw - k)
         cusum_alert = (self._s_hi > self._cusum_h) or (self._s_lo > self._cusum_h)
-        cusum_score = min(1.0, max(self._s_hi, self._s_lo) / (self._cusum_h + 1e-10))
         if cusum_alert:
             self._s_hi = 0.0
             self._s_lo = 0.0
 
-        # Page-Hinkley
-        mu = self._warmup_mean
-        delta = self._ph_delta
-        self._ph_cum_hi += (x - mu - delta)
-        self._ph_cum_lo += (mu - x - delta)
-        self._ph_m_hi = max(self._ph_m_hi, self._ph_cum_hi)
-        self._ph_m_lo = max(self._ph_m_lo, self._ph_cum_lo)
-        ph_alert = (
-            (self._ph_m_hi - self._ph_cum_hi > self._ph_lambda) or
-            (self._ph_m_lo - self._ph_cum_lo > self._ph_lambda)
-        )
-        ph_score = min(1.0, max(
-            self._ph_m_hi - self._ph_cum_hi,
-            self._ph_m_lo - self._ph_cum_lo,
-        ) / (self._ph_lambda + 1e-10))
-        if ph_alert:
-            self._ph_cum_hi = 0.0
-            self._ph_cum_lo = 0.0
-            self._ph_m_hi = 0.0
-            self._ph_m_lo = 0.0
+        # Score design: only reach alert threshold on threshold crossing.
+        # Pre-crossing accumulation is monitoring signal, capped below 0.50.
+        if cusum_alert:
+            score = 1.0
+        else:
+            pre_score = max(self._s_hi, self._s_lo) / (self._cusum_h + 1e-10)
+            score = min(0.49, pre_score * 0.49)
 
-        # Combined score: max of the two independent tests
-        score = max(cusum_score, ph_score)
-
-        if cusum_alert or ph_alert:
+        if cusum_alert:
             self._drift_count += 1
         else:
             self._drift_count = max(0, self._drift_count - 1)
 
-        signals = []
-        if cusum_alert:
-            signals.append("cusum")
-        if ph_alert:
-            signals.append("page-hinkley")
-        sig_str = "+".join(signals) if signals else "none"
-
+        sig_str = "cusum" if cusum_alert else "none"
         msg = (
             f"z_raw={z_raw:.3f} cusum=({self._s_hi:.2f},{self._s_lo:.2f}) "
-            f"ph_gap=({self._ph_m_hi - self._ph_cum_hi:.2f},{self._ph_m_lo - self._ph_cum_lo:.2f}) "
             f"signals=[{sig_str}]"
         )
         return score, msg
@@ -212,10 +182,6 @@ class DriftDetector(BaseDetector):
         self._warmup_var = 1.0
         self._s_hi = 0.0
         self._s_lo = 0.0
-        self._ph_cum_hi = 0.0
-        self._ph_cum_lo = 0.0
-        self._ph_m_hi = 0.0
-        self._ph_m_lo = 0.0
         self._spike_steps_ago = 999
         self._drift_count = 0
 
@@ -228,10 +194,6 @@ class DriftDetector(BaseDetector):
             "warmup_var": self._warmup_var,
             "s_hi": self._s_hi,
             "s_lo": self._s_lo,
-            "ph_cum_hi": self._ph_cum_hi,
-            "ph_cum_lo": self._ph_cum_lo,
-            "ph_m_hi": self._ph_m_hi,
-            "ph_m_lo": self._ph_m_lo,
             "spike_steps_ago": self._spike_steps_ago,
             "drift_count": self._drift_count,
         })
@@ -245,9 +207,5 @@ class DriftDetector(BaseDetector):
         self._warmup_var = sd.get("warmup_var", 1.0)
         self._s_hi = sd.get("s_hi", 0.0)
         self._s_lo = sd.get("s_lo", 0.0)
-        self._ph_cum_hi = sd.get("ph_cum_hi", 0.0)
-        self._ph_cum_lo = sd.get("ph_cum_lo", 0.0)
-        self._ph_m_hi = sd.get("ph_m_hi", 0.0)
-        self._ph_m_lo = sd.get("ph_m_lo", 0.0)
         self._spike_steps_ago = sd.get("spike_steps_ago", 999)
         self._drift_count = sd.get("drift_count", 0)

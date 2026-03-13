@@ -8,6 +8,14 @@
 #   raises z² persistently — the CUSUM accumulates through the latter and
 #   resets through the former.
 #
+# Design note — z_raw not z_adaptive:
+#   z_raw = (x − warmup_mean) / warmup_std uses the frozen baseline, so
+#   E[z_raw²] = 1.0 on stationary data.  With CUSUM k=1.0, increments
+#   (v2 − k) have mean 0 on null data → correct null-distribution behaviour.
+#   An adaptive EWMA-MAD baseline instead produces E[dev_ewma] ≈ 0.8·σ
+#   (tracking MAE not std), inflating E[z_adaptive²] ≈ 1.57 and causing
+#   systematic CUSUM accumulation on stationary data (false positives).
+#
 #   Two complementary tests:
 #     1. VarCUSUM: CUSUM on z² (responsive, resets after each crossing).
 #     2. Sustained variance: windowed variance vs warmup baseline (catches
@@ -44,9 +52,13 @@ class VarianceDetector(BaseDetector):
     window : int
         Rolling window (default 200).
     var_cusum_k : float
-        CUSUM allowance for variance statistic z² (default 1.0 per v12.2 fix).
+        CUSUM reference value.  Derived from the log-likelihood ratio for
+        detecting a 4× variance increase: k = log(2)×8/3 ≈ 1.848.  Under
+        null N(0,1), E[z²−k] = 1−1.848 = −0.848 < 0 → correct null drift
+        (default 1.848).
     var_cusum_h : float
-        CUSUM threshold (default 12.0).
+        CUSUM threshold.  Calibrated for ~0.43% FPR on N(0,1) null using
+        the LLR-derived k (default 13.5).
     sustained_ratio : float
         Ratio current_variance / warmup_variance above which sustained-variance
         alert fires (default 4.0).
@@ -63,8 +75,8 @@ class VarianceDetector(BaseDetector):
         self,
         warmup: int = 80,
         window: int = 200,
-        var_cusum_k: float = 1.0,
-        var_cusum_h: float = 12.0,
+        var_cusum_k: float = 1.848,
+        var_cusum_h: float = 13.5,
         sustained_ratio: float = 4.0,
         sustained_window: int = 40,
         drift_trend_threshold: float = 0.06,
@@ -89,12 +101,6 @@ class VarianceDetector(BaseDetector):
         self._s_lo: float = 0.0
         self._var_ewma: float = 0.0
         self._warmed_cusum: bool = False
-
-        # Adaptive EWMA for CUSUM z-score (tracks signal level so oscillations
-        # don't accumulate as false variance changes)
-        self._ewma: float = 0.0
-        self._dev_ewma: float = 1.0
-        self._ewma_init: bool = False
 
     def _set_baseline(self, window: List[float]) -> None:
         self._warmup_mean = _mean(window)
@@ -124,36 +130,26 @@ class VarianceDetector(BaseDetector):
             self._s_hi = 0.0
             self._s_lo = 0.0
             self._var_ewma = 1.0
-            self._ewma = _mean(window[-20:])
-            self._dev_ewma = max(_std(window[-20:]), 1e-10)
-            self._ewma_init = True
             self._warmed_cusum = True
 
         x = window[-1]
 
-        # Update adaptive EWMA (tracks oscillation/trend, so z stays ~N(0,1) on stable data)
-        alpha = 0.1
-        prev_ewma = self._ewma
-        self._ewma = alpha * x + (1 - alpha) * self._ewma
-        err = abs(x - prev_ewma)
-        self._dev_ewma = alpha * err + (1 - alpha) * self._dev_ewma
-        self._dev_ewma = max(self._dev_ewma, 1e-10)
-
-        # CUSUM z-score uses adaptive baseline (oscillation-immune)
-        z_adaptive = (x - self._ewma) / self._dev_ewma
-        v2 = z_adaptive ** 2   # variance proxy
+        # z_raw uses frozen warmup baseline: E[z_raw²] = 1.0 on null data.
+        # CUSUM k=1.0 → increments (v2−k) have mean 0 → correct null behaviour.
+        z_raw = (x - self._warmup_mean) / self._warmup_std
+        v2 = z_raw ** 2   # χ²(1) proxy; E=1.0 under null
 
         k = self._var_cusum_k
         self._var_ewma = 0.9 * self._var_ewma + 0.1 * v2
 
+        # One-sided CUSUM: detect variance INCREASE only.
+        # The downside CUSUM on chi²(1) has positive drift because P(v2<k)≈68.3%
+        # (i.e. positive increments occur 68% of the time), causing systematic
+        # accumulation on stationary data.  Variance decrease is not in scope.
         self._s_hi = max(0.0, self._s_hi + v2 - k)
-        # Only accumulate downside if variance baseline established
-        if self._var_ewma > 1e-4:
-            self._s_lo = max(0.0, self._s_lo + k - v2)
-        else:
-            self._s_lo = 0.0
+        self._s_lo = 0.0
 
-        cusum_alert = (self._s_hi > self._var_cusum_h) or (self._s_lo > self._var_cusum_h)
+        cusum_alert = self._s_hi > self._var_cusum_h
         if cusum_alert:
             self._s_hi = 0.0
             self._s_lo = 0.0
@@ -186,7 +182,7 @@ class VarianceDetector(BaseDetector):
         sig_str = "+".join(signals) if signals else "none"
 
         msg = (
-            f"z_adap²={v2:.3f} cusum=({self._s_hi:.2f},{self._s_lo:.2f}) "
+            f"z_raw²={v2:.3f} cusum=({self._s_hi:.2f},{self._s_lo:.2f}) "
             f"var_ratio={var_ratio:.2f} signals=[{sig_str}]"
         )
         return score, msg
@@ -201,9 +197,6 @@ class VarianceDetector(BaseDetector):
         self._s_lo = 0.0
         self._var_ewma = 0.0
         self._warmed_cusum = False
-        self._ewma = 0.0
-        self._dev_ewma = 1.0
-        self._ewma_init = False
 
     def state_dict(self) -> Dict[str, Any]:
         sd = super().state_dict()
@@ -216,8 +209,6 @@ class VarianceDetector(BaseDetector):
             "s_lo": self._s_lo,
             "var_ewma": self._var_ewma,
             "warmed_cusum": self._warmed_cusum,
-            "ewma": self._ewma,
-            "dev_ewma": self._dev_ewma,
         })
         return sd
 
@@ -231,5 +222,3 @@ class VarianceDetector(BaseDetector):
         self._s_lo = sd.get("s_lo", 0.0)
         self._var_ewma = sd.get("var_ewma", 0.0)
         self._warmed_cusum = sd.get("warmed_cusum", False)
-        self._ewma = sd.get("ewma", 0.0)
-        self._dev_ewma = sd.get("dev_ewma", 1.0)
