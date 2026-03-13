@@ -54,3 +54,5 @@ site/
 .checkpoint/assignments/
 .checkpoint/completions/
 .checkpoint/reviews/
+.checkpoint/watchdog.log
+.checkpoint/orchestrator.json

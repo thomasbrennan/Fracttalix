@@ -122,3 +122,74 @@ When a coordinator launches workers via the `Agent` tool:
 4. **state.json is ephemeral** — don't commit it; it's runtime state
 5. **The schema is the contract** — `checkpoint-schema.json` is the source of truth
 6. **Validate before handoff** — always run `validate` before `handoff`
+
+---
+
+## Automated Continuity (Orchestrator)
+
+The orchestrator (`scripts/orchestrator.py`) runs **outside** Claude Code and provides
+automated coordinator recovery. It solves the "who watches the watchmen" problem.
+
+### How It Works
+
+```
+┌─────────────┐     monitors      ┌──────────────────┐
+│ Orchestrator │ ──────────────── │ .checkpoint/      │
+│ (Python,     │     state.json   │   state.json      │
+│  runs in     │    mod time      │   (written by     │
+│  terminal)   │                  │    coordinator)   │
+└──────┬──────┘                  └──────────────────┘
+       │
+       │ launches / relaunches
+       ▼
+┌──────────────┐
+│ Claude Code  │
+│ Coordinator  │──► Workers (Agent tool)
+│ (generation  │──► Verifier (Agent tool)
+│  1, 2, 3...) │
+└──────────────┘
+```
+
+1. Orchestrator launches Generation 1 coordinator with the session objective
+2. Coordinator initializes checkpoint, decomposes work, optionally spawns workers
+3. Coordinator updates state.json continuously as it works
+4. If state.json goes stale (default: 300s with no update), orchestrator presumes death
+5. Orchestrator terminates the stale process and launches Generation N+1
+6. New coordinator reads state.json, sees what's done, resumes incomplete work
+7. Repeats until all tasks complete or max generations reached
+
+### Usage
+
+```bash
+# Start automated session (runs in foreground — use tmux/screen for persistence)
+python scripts/orchestrator.py start \
+  --session S57 \
+  --objective "Implement feature X" \
+  --team-size 4 \
+  --stale-seconds 300 \
+  --max-generations 10
+
+# Check status from another terminal
+python scripts/orchestrator.py status
+
+# Stop gracefully
+python scripts/orchestrator.py stop
+```
+
+### Generation Lifecycle
+
+| Generation | Role | Context |
+|------------|------|---------|
+| 1 | Initial coordinator | Fresh start; initializes checkpoint |
+| 2+ | Recovery coordinator | Reads state.json from dead predecessor; resumes |
+
+Each generation inherits the full task graph, all decisions, all discoveries,
+and all completed work from every previous generation. Nothing is lost except
+in-context reasoning that wasn't checkpointed.
+
+### Key Constraint
+
+The orchestrator must run in a persistent terminal (tmux, screen, nohup, or a
+system service). If the orchestrator itself dies, nobody is watching — but the
+checkpoint state is still on disk and a human can restart the orchestrator or
+manually launch a recovery coordinator.
