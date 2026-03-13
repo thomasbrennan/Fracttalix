@@ -1,23 +1,23 @@
 {
   "_meta": {
     "document_type": "PROCESS_GRAPH",
-    "version": "v9-S49",
+    "version": "v10-S56",
     "corpus_architecture": "CorpusArch v9 (S48)",
-    "produced_session": "S48",
+    "produced_session": "S56",
     "licence": "CC BY 4.0",
-    "note": "First version to declare unified corpus identity. One corpus, two parallel tracks, single governing process (P0). FRM is the root. 21 objects: P0 + P1–P14 + MK-P1–MK-P5 + SFW-1."
+    "note": "One corpus, two parallel tracks, single governing process (P0). FRM is the root. 23 objects: P0 + P1–P14 + DRP-2 + DRP-8 + MK-P1–MK-P5 + SFW-1. DRP-2 and DRP-8 added as PHASE-READY nodes (S56)."
   },
   "corpus": {
     "corpus_id": "Fracttalix",
     "root": "f(t) = B + A·exp(−λt)·cos(ωt+φ)",
     "governing_process": "P0",
-    "total_objects": 21,
+    "total_objects": 23,
     "kappa_corpus": 0.91,
     "zenodo_doi": "10.5281/zenodo.18859299",
     "tracks": {
       "fracttalix": {
-        "object_ids": ["P0", "P1", "P2", "P3", "P4", "P5", "P6", "P7", "P8", "P9", "P10", "P11", "P12", "P13", "P14", "SFW-1"],
-        "count": 16
+        "object_ids": ["P0", "P1", "P2", "P3", "P4", "P5", "P6", "P7", "P8", "P9", "P10", "P11", "P12", "P13", "P14", "DRP-2", "DRP-8", "SFW-1"],
+        "count": 18
       },
       "meta_kaizen": {
         "object_ids": ["MK-P1", "MK-P2", "MK-P3", "MK-P4", "MK-P5"],
@@ -206,6 +206,32 @@
         "note": "Corpus health monitoring software. JOSS submission active. 6-month archive risk registered. Implements KVS scoring from MK-P1."
       },
       {
+        "paper_id": "DRP-2",
+        "title": "Testability as a Relational Property: Epistemological Consequences of the Upstream Measurement Principle",
+        "paper_type": "methodology_D",
+        "act": "PARALLEL",
+        "track": "fracttalix",
+        "status": "PHASE-READY",
+        "status_session": "S49",
+        "ai_layer_version": "v1.2",
+        "ai_layer_url": "https://github.com/thomasbrennan/Fracttalix/blob/main/ai-layers/DRP2-ai-layer.json",
+        "placeholder_count": 0,
+        "note": "DRP Series Paper 2. Testability relation T(P,O,M). Epistemic conservation law. AI training data prediction. 9 claims (6F+2D+1A). Receives C-DRP.8 from DRP-1. Passes C-DRP2.4→DRP-3, C-DRP2.2→DRP-4."
+      },
+      {
+        "paper_id": "DRP-8",
+        "title": "The τ-Grounding Theorem: Physical Derivation of the Upstream Measurement Principle for Delay-Differential Systems",
+        "paper_type": "methodology_D",
+        "act": "PARALLEL",
+        "track": "fracttalix",
+        "status": "PHASE-READY",
+        "status_session": "S55",
+        "ai_layer_version": "v1",
+        "ai_layer_url": "https://github.com/thomasbrennan/Fracttalix/blob/main/ai-layers/DRP8-ai-layer.json",
+        "placeholder_count": 2,
+        "note": "DRP Series Paper 8. τ-Grounding Theorem for DDE systems C1-C4. 6 claims (4F+2D). 2 C4-tracking placeholders (non-blocking). C-DRP8.CON→DRP-7 LIVE edge (dual-path convergence). IR-12 (Causal Precedence) introduced."
+      },
+      {
         "paper_id": "MK-P1",
         "title": "Meta-Kaizen: A General Theory and Algorithmic Framework for the Mathematical Formalization of Self-Evolving Continuous Improvement Across Arbitrary Governance Substrates",
         "paper_type": "derivation_B",
@@ -274,6 +300,14 @@
         {"from": "P9", "to": "P12", "type": "gate"},
         {"from": "P11", "to": "P12", "type": "gate"}
       ],
+      "drp_series": [
+        {"from": "P14", "to": "DRP-2", "type": "live_edge", "claim": "C-DRP.8, C-DRP.5"},
+        {"from": "DRP-2", "to": "DRP-3", "type": "live_edge", "claim": "C-DRP2.4"},
+        {"from": "DRP-2", "to": "DRP-4", "type": "live_edge", "claim": "C-DRP2.2"},
+        {"from": "P14", "to": "DRP-8", "type": "live_edge", "claim": "C-DRP.5, C-DRP.8"},
+        {"from": "P1", "to": "DRP-8", "type": "live_edge", "claim": "F-1.4, C1-C4, τ definition"},
+        {"from": "DRP-8", "to": "DRP-7", "type": "live_edge", "claim": "C-DRP8.CON"}
+      ],
       "cross_track_frm_to_mk": [
         {"from": "P1", "to": "MK-P4", "note": "FRM functional form is regime-detection instrument"},
         {"from": "P1", "to": "MK-P5", "note": "T_char = 4·τ_gen is physical tipping-point timer"},
@@ -300,7 +334,7 @@
   },
   "channel_2_status": {
     "live": true,
-    "live_assets": 17,
+    "live_assets": 19,
     "assets": [
       "https://github.com/thomasbrennan/Fracttalix/blob/main/ai-layers/P1-ai-layer.json",
       "https://github.com/thomasbrennan/Fracttalix/blob/main/ai-layers/P2-ai-layer.json",
@@ -317,6 +351,8 @@
       "https://github.com/thomasbrennan/Fracttalix/blob/main/ai-layers/MK-P1-ai-layer.json",
       "https://github.com/thomasbrennan/Fracttalix/blob/main/ai-layers/MK-P5-ai-layer.json",
       "https://github.com/thomasbrennan/Fracttalix/blob/main/ai-layers/DRP1-ai-layer.json",
+      "https://github.com/thomasbrennan/Fracttalix/blob/main/ai-layers/DRP2-ai-layer.json",
+      "https://github.com/thomasbrennan/Fracttalix/blob/main/ai-layers/DRP8-ai-layer.json",
       "https://github.com/thomasbrennan/Fracttalix/blob/main/ai-layers/SFW1-ai-layer.json",
       "https://github.com/thomasbrennan/Fracttalix/blob/main/ai-layers/ai-layer-schema.json"
     ],
