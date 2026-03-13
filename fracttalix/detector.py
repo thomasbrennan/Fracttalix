@@ -176,8 +176,6 @@ class SentinelDetector:
         result.setdefault("critical_coupling", 0.5)
         result.setdefault("critical_coupling_v10", 0.5)
         result.setdefault("maintenance_burden_v10", 0.0)
-        result.setdefault("kuramoto_order_v10", 0.0)
-        result.setdefault("phi_kappa_separation", 0.0)
         result.setdefault("mean_coupling_strength", 0.0)
         result["step"] = self._n
         result["value"] = value if not isinstance(value, (list, tuple)) else list(value)
@@ -188,7 +186,7 @@ class SentinelDetector:
             self._write_csv_row(result)
         return result
 
-    async def aupdate(self, value) -> Dict[str, Any]:
+    async def aupdate(self, value) -> SentinelResult:
         """Async wrapper for update_and_check."""
         return self.update_and_check(value)
 
@@ -295,15 +293,8 @@ class SentinelDetector:
     # Reset
     # ------------------------------------------------------------------
 
-    def reset(self, soft: bool = False) -> None:
-        """Reset detector state.
-
-        Parameters
-        ----------
-        soft:
-            If True, only reset accumulators but keep warmup data.
-            If False (default), full reset to factory state.
-        """
+    def reset(self) -> None:
+        """Reset detector to factory state (full reset)."""
         self._n = 0
         self._history.clear()
         self._bank.reset()
