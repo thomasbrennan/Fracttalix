@@ -5,7 +5,7 @@
 
 ---
 
-## Fracttalix Sentinel v12.2.0
+## Fracttalix Sentinel v12.3.0
 
 **Lightweight, regime-aware anomaly detection for time series**
 
@@ -14,12 +14,12 @@ Single-file Python | Zero required dependencies | `pip install fracttalix`
 - Three-channel dissipative network model (structural, rhythmic, temporal)
 - 37-step streaming pipeline — one observation in, rich result out
 - Four signal-processing collapse indicators: maintenance burden (μ = 1−κ̄), PAC pre-cascade, diagnostic window, Kuramoto order
-- Production defaults: ~6% normal FPR (v12.2, multiplier=4.5; was 35.6% in v12.1)
+- Production defaults: ~6% normal FPR (v12.3, multiplier=4.5; was 35.6% in v12.1)
 - 374 unit tests passing | Python 3.9–3.12
 - GitHub: https://github.com/thomasbrennan/Fracttalix
 - Software DOI: [10.5281/zenodo.18859299](https://doi.org/10.5281/zenodo.18859299)
 
-### v12.2 Changes
+### v12.3 Changes
 - Epistemic language corrections: "physics-derived" → "signal-processing heuristic" throughout
 - `SentinelConfig.production()` multiplier 3.0→4.5 (normal FPR 35.6%→~6%)
 - Corrected README maintenance burden formula to match implementation (μ = 1−κ̄)

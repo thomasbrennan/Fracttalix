@@ -2,7 +2,7 @@
 
 Philosophy
 ----------
-The v12.2 SentinelDetector is a 37-step monolith that always produces
+The v12.3 SentinelDetector is a 37-step monolith that always produces
 an alert/no-alert verdict regardless of whether any of those steps apply.
 The suite is the alternative: eight small, focused, self-aware detectors
 that each report ``OUT_OF_SCOPE`` when they don't apply, and ``ALERT``

@@ -6,6 +6,23 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
+## [12.3.0] — 2026-03-13
+
+### Added
+
+- **8-detector Sentinel Suite**: 5 core detectors + 3 FRM-derived detectors (Lambda, Omega, Virtu)
+- **Lambda detector**: FRM-native decay-rate detector with head-to-head EWS benchmark validation
+- **Professional documentation** across entire Sentinel Detector Suite
+
+### Fixed
+
+- Suite module bugs: state asymmetry, DFT mean-centering, stale docs
+- Unused imports in suite module, corrected pipeline step count
+- Python 3.9 compat claim, dead code in detector, type annotations
+- Version consistency across AI layers
+
+---
+
 ## [12.2.0] — 2026-03-12
 
 ### Epistemic Language Corrections

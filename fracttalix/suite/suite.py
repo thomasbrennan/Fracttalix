@@ -20,7 +20,7 @@ API latency monitoring
 Neural / physiological
     HopfDetector + CouplingDetector
 "I don't know what I'm looking for"
-    Use SentinelDetector (v12.2 pipeline).
+    Use SentinelDetector (v12.3 pipeline).
 """
 
 import dataclasses

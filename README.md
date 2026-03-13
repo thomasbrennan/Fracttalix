@@ -224,10 +224,10 @@ pytest
 
 ## Quick Start
 
-### Basic use — production defaults (v12.2)
+### Basic use — production defaults (v12.3)
 
 In v12.1, `SentinelConfig.production()` alerted on 35.6% of normal observations.
-In v12.2, that default is ~6%. Same API, same one line:
+In v12.3, that default is ~6%. Same API, same one line:
 
 ```python
 from fracttalix import SentinelDetector, SentinelConfig
@@ -362,7 +362,7 @@ result = await mss.aupdate("sensor_43", 7.71)
 | Preset | `alpha` | `multiplier` | `warmup` | Normal FPR¹ | Notes |
 |--------|---------|-------------|----------|-------------|-------|
 | `SentinelConfig.fast()` | 0.3 | 3.0 | 10 | ~60–80% | Fastest response; very high FP rate — use only with downstream filtering |
-| `SentinelConfig.production()` | 0.1 | **4.5** | 30 | ~5–8% | Balanced defaults; v12.2 default |
+| `SentinelConfig.production()` | 0.1 | **4.5** | 30 | ~5–8% | Balanced defaults; v12.3 default |
 | `SentinelConfig.sensitive()` | 0.05 | 2.5 | 50 | ~40–50% | Catches subtle anomalies; high FP rate |
 | `SentinelConfig.realtime()` | 0.2 | 3.0 | 15 | ~30–40% | Quantile-adaptive thresholds |
 
@@ -483,7 +483,7 @@ result = await mss.aupdate("sensor_43", 7.71)
 
 ---
 
-## Pipeline Architecture — 37 Steps (v12.2)
+## Pipeline Architecture — 37 Steps (v12.3)
 
 Every call to `update_and_check()` runs all 37 steps in order. Steps read from and write to a shared `StepContext.scratch` dictionary.
 
@@ -739,7 +739,7 @@ fracttalix [OPTIONS]
 
 ## Backward Compatibility
 
-v12.2 is a strict superset of all prior versions. No step is removed. No result key is removed. The only breaking change from v12.1 is the `production()` default multiplier (3.0 → 4.5) — restore with `SentinelConfig(multiplier=3.0)`.
+v12.3 is a strict superset of all prior versions. No step is removed. No result key is removed. The only breaking change from v12.1 is the `production()` default multiplier (3.0 → 4.5) — restore with `SentinelConfig(multiplier=3.0)`.
 
 ### V8.0 root-cause fixes (all preserved)
 
@@ -947,7 +947,7 @@ Machine-readable claim registries for the Fracttalix working papers. All layers 
 | P1    | Fractal Rhythm Model (Paper 1) | PHASE-READY | ai-layers/P1-ai-layer.json       |
 | MK-P1 | Meta-Kaizen Paper 1          | PHASE-READY | ai-layers/MK-P1-ai-layer.json    |
 | DRP-1 | Dependency Resolution Process | PHASE-READY | ai-layers/DRP1-ai-layer.json     |
-| SFW-1 | Sentinel v12.2               | PHASE-READY | ai-layers/SFW1-ai-layer.json     |
+| SFW-1 | Sentinel v12.3               | PHASE-READY | ai-layers/SFW1-ai-layer.json     |
 
 ---
 
@@ -963,6 +963,7 @@ Machine-readable claim registries for the Fracttalix working papers. All layers 
 
 | Version | Notes |
 |---------|-------|
+| v12.3.0 | 8-detector suite (5 core + 3 FRM-derived), Lambda detector, code quality fixes |
 | v12.2.0 | Replaced physics-derived framing with signal-processing heuristic language; production() multiplier 3.0→4.5 |
 | v12.1.0 | VarCUSUM reset fix, ChannelCoherence Pearson correlation, 374 tests |
 | v12.0.0 | Package restructure, PyPI release, review-driven corrections, ablation study |

@@ -1,8 +1,8 @@
 cff-version: 1.2.0
 message: "If you use this software, please cite it as below."
 title: "Fracttalix Sentinel"
-version: 12.2.0
-date-released: 2026-03-10
+version: 12.3.0
+date-released: 2026-03-13
 license: CC0-1.0
 repository-code: "https://github.com/thomasbrennan/Fracttalix"
 doi: "10.5281/zenodo.18859299"
