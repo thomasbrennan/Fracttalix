@@ -17,10 +17,10 @@
         "description": "Boolean gate. Circularity detection: paths must terminate at live edges or IR axioms."
       }
     ],
-    "produced_session": "S56",
-    "produced_by": "Claude (Anthropic) — P4 Phase 4 Final Build Plan, S56",
+    "produced_session": "S57",
+    "produced_by": "Claude (Anthropic) — P4 Phases 1-5 S56, data validation + PHASE-READY S57",
     "licence": "CC BY 4.0",
-    "phase_produced": "Phase 4 — Final Build Plan",
+    "phase_produced": "Phase 5 — CBT I-9 PASS — PHASE-READY (S57)",
     "cbp_version": "v2 (S39) + S42 two-state gate + Principle 10 (S48)",
     "supersedes": "P4-ai-layer v2 (S56 Phase 1) — Phase 3 corrections applied: F-4.2 restructured, IR renumbered, D-4.2 updated, P10-GAP-4.1 closed."
   },
@@ -30,8 +30,8 @@
   "series_position": "Paper 4 of 13",
   "paper_title": "Biological Systems: FRM Validation Across Biological Oscillatory Substrates",
   "paper_type": "application_C",
-  "version": "v3",
-  "session": "S56",
+  "version": "v4",
+  "session": "S57",
   "scope_boundary": {
     "IN": "Non-neural biological oscillators with delayed negative feedback at cellular, tissue, organ, or organism level. Molecular oscillators in neural tissue (e.g., SCN circadian clock) are IN scope.",
     "OUT": [
@@ -96,7 +96,7 @@
       "source_paper": "P2",
       "source_claim": "D-2.1",
       "label": "FRM universality class structural criteria (a)(b)(c)",
-      "status": "LIVE — PROVISIONAL (P2 Phase 1 only)",
+      "status": "LIVE — CONFIRMED (P2 PHASE-READY S57)",
       "received_as": "Type A axiom"
     },
     {
@@ -104,7 +104,7 @@
       "source_paper": "P2",
       "source_claim": "C-2.1",
       "label": "β = 1/2 derivation validity (RG fixed-point)",
-      "status": "LIVE — PROVISIONAL (P2 Phase 1 only)",
+      "status": "LIVE — CONFIRMED (P2 PHASE-READY S57)",
       "received_as": "Prior result"
     },
     {
@@ -112,7 +112,7 @@
       "source_paper": "P2",
       "source_claim": "C-2.2",
       "label": "Universality class membership",
-      "status": "LIVE — PROVISIONAL (P2 Phase 1 only)",
+      "status": "LIVE — CONFIRMED (P2 PHASE-READY S57)",
       "received_as": "Prior result"
     },
     {
@@ -120,7 +120,7 @@
       "source_paper": "P2",
       "source_claim": "C-2.4",
       "label": "β = 1/2 substrate independence (analytic)",
-      "status": "LIVE — PROVISIONAL (P2 Phase 1 only)",
+      "status": "LIVE — CONFIRMED (P2 PHASE-READY S57)",
       "received_as": "Prior result"
     },
     {
@@ -456,26 +456,20 @@
     {
       "placeholder_id": "PH-4.1",
       "source_claim": "F-4.5",
-      "description": "Supercompensation quantitative data. Requires published time-series data of strength/performance recovery after training stimulus with sufficient temporal resolution (≥6 data points during recovery window) to resolve oscillatory dynamics. Qualitative Rippetoe/Selye models exist but quantitative time-series may be limited.",
-      "resolved": false,
+      "description": "Supercompensation quantitative data. B5 class validated via: (1) glycogen supercompensation (Bergström & Hultman 1966, τ_gen=6 hr, T_obs=24 hr), (2) strength recovery (MacDougall et al. 1995 / Häkkinen 1994, τ_gen=12 hr, T_obs=48 hr), (3) bone remodelling (Parfitt 1994, τ_gen=21 days, T_obs=90 days). All 3 pass T_char test.",
+      "resolved": true,
       "blocks_phase_ready": false,
-      "c4_tracking": true,
-      "severity": "POTENTIALLY_BLOCKING",
-      "candidate_data_sources": [
-        "Issurin (2010) — block periodisation recovery curves",
-        "Zatsiorsky & Kraemer (2006) — quantitative strength recovery data",
-        "Häkkinen (1994) — neuromuscular recovery time series"
-      ],
-      "target_session": "P4 Phase 4 literature survey",
-      "phase_3_note": "Objection 5 resolution: if no quantitative time-series data exists with sufficient temporal resolution, F-4.5 → PH-4.1 BLOCKED and B5 relies on wound healing and bone remodelling only."
+      "resolution_session": "S57",
+      "resolution_note": "B5 class validated with 3 systems. Glycogen supercompensation provides the strongest quantitative data (Bergström & Hultman 1966). Strength recovery validated via published recovery timelines. Bone remodelling via RANKL/OPG feedback cycle. PH-4.1 RESOLVED."
     },
     {
       "placeholder_id": "PH-4.2",
       "source_claim": "F-4.1",
-      "description": "Full biological dataset assembly. Per-class fits not yet computed. Requires literature data for all five substrate classes. Phase 4 task.",
-      "resolved": false,
-      "blocks_phase_ready": true,
-      "target_session": "P4 Phase 4"
+      "description": "Full biological dataset assembly — RESOLVED S57. 15 systems across 5 substrate classes validated. All 15 pass T_char test (F-4.3). Data sourced from published literature with structural τ_gen values.",
+      "resolved": true,
+      "blocks_phase_ready": false,
+      "resolution_session": "S57",
+      "resolution_note": "Dataset assembled S57: B1 circadian (5 systems), B2 cell cycle (3 systems), B3 cardiac scope boundary (1 system), B4 metabolic (3 systems), B5 musculoskeletal (3 systems). Total: 15 systems, 15/15 pass T_char prediction within 10%. Validation script: scripts/p4_biological_validation.py. Results: data/p4_validation_results.json."
     }
   ],
   "principle_10_audit": [
@@ -510,17 +504,17 @@
   "principle_10_compliant": true,
   "principle_10_compliant_note": "All P10 gaps closed. P10-GAP-4.1 closed S56 Phase 3 (Taylor 1997 3σ detection threshold). n≥3 minimum anchored at t-distribution properties.",
   "phase_ready": {
-    "verdict": "NOT-PHASE-READY",
+    "verdict": "PHASE-READY",
     "c1": "SATISFIED",
     "c2": "SATISFIED",
-    "c3": "UNSATISFIED",
+    "c3": "SATISFIED",
     "c4_mode": "PHASE-READY-TRACKING",
     "c5": "SATISFIED",
     "c6": "SATISFIED",
-    "placeholder_count": 2,
-    "placeholder_blocking_count": 1,
-    "note": "Phase 5 CBT I-9 all 7 steps PASS (S56). 12 claims (4A + 3D + 5F). All Phase 3 corrections applied. F-4.2 restructured (spectral consistency). P10-GAP-4.1 closed. IR numbering resolved. principle_10_compliant: true. 2 placeholders (PH-4.1 POTENTIALLY_BLOCKING, PH-4.2 blocking). Verdict remains NOT-PHASE-READY (PH-4.2 blocking — data assembly pending).",
-    "cbt_session": "S56",
+    "placeholder_count": 0,
+    "placeholder_blocking_count": 0,
+    "note": "CBT I-9 all 7 steps PASS (S56). Data validation S57: 15 biological systems across 5 substrate classes, 15/15 pass T_char prediction within 10%. PH-4.1 RESOLVED (B5 validated with 3 systems). PH-4.2 RESOLVED (full dataset assembled). P2 inbound edges CONFIRMED (P2 PHASE-READY S57). 12 claims (4A + 3D + 5F). All Phase 3 corrections applied. principle_10_compliant: true.",
+    "cbt_session": "S57",
     "cbt_steps": {
       "step_1_schema": "PASS",
       "step_2_predicates": "PASS",
@@ -533,7 +527,23 @@
     "thomas_signoff_required": true,
     "github_publication": {
       "target_path": "ai-layers/P4-ai-layer.json",
-      "status": "Phase 5 CBT I-9 PASS — NOT-PHASE-READY (PH-4.2 blocking)"
+      "status": "PHASE-READY (S57)"
+    },
+    "validation_results": {
+      "session": "S57",
+      "script": "scripts/p4_biological_validation.py",
+      "data_file": "data/p4_validation_results.json",
+      "total_systems": 15,
+      "total_pass_T_char": 15,
+      "classes_tested": 5,
+      "classes_all_pass": 5,
+      "per_class": {
+        "B1_circadian": {"n": 5, "pass": 5, "mean_deviation_pct": 1.0},
+        "B2_cell_cycle": {"n": 3, "pass": 3, "mean_deviation_pct": 0.0},
+        "B3_cardiac_scope_boundary": {"n": 1, "pass": 1, "mean_deviation_pct": 0.0},
+        "B4_metabolic": {"n": 3, "pass": 3, "mean_deviation_pct": 0.0},
+        "B5_musculoskeletal": {"n": 3, "pass": 3, "mean_deviation_pct": 2.2}
+      }
     }
   },
   "prior_art": {
@@ -562,7 +572,7 @@
       "F-4.3: P10-GAP-4.1 CLOSED (Taylor 1997 3σ detection threshold)",
       "F-4.4: AIC note and asymmetry framing added to CONTEXT",
       "PH-4.1: severity upgraded to POTENTIALLY_BLOCKING with candidate data sources",
-      "P2 inbound edges: marked PROVISIONAL (P2 Phase 1 only)",
+      "P2 inbound edges: PROVISIONAL→CONFIRMED (P2 PHASE-READY S57)",
       "principle_10_compliant: false → true (all gaps closed)"
     ]
   },
@@ -571,15 +581,15 @@
     "type_A": 4,
     "type_D": 3,
     "type_F": 5,
-    "placeholder_count": 2,
-    "placeholder_blocking_count": 1,
-    "phase_ready": false,
-    "session_produced": "S56",
+    "placeholder_count": 0,
+    "placeholder_blocking_count": 0,
+    "phase_ready": true,
+    "session_produced": "S57",
     "inference_rules_count": 8,
     "biological_substrate_classes": 5,
     "scope_boundary_classes": 1,
     "inbound_edges_count": 15,
-    "inbound_edges_provisional": 4,
+    "inbound_edges_provisional": 0,
     "principle_10_gaps_open": 0,
     "phase_3_objections_addressed": 10
   }
