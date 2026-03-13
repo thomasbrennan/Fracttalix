@@ -78,14 +78,17 @@
       },
       {
         "paper_id": "P4",
-        "title": "Biological Systems",
+        "title": "Biological Systems: FRM Validation Across Biological Oscillatory Substrates",
         "paper_type": "application_C",
         "act": "II",
         "track": "fracttalix",
-        "status": "QUEUED",
-        "gate": "P3 PHASE-READY",
+        "status": "Phase 1 IN BUILD",
+        "status_session": "S56",
+        "gate": "P3 PHASE-READY ✓ (S48)",
+        "ai_layer_version": "v2",
         "ai_layer_url": "https://github.com/thomasbrennan/Fracttalix/blob/main/ai-layers/P4-ai-layer.json",
-        "note": "FRM applied to biological oscillators. Full dataset fitting. Receives C-3.REG as measurement standard."
+        "placeholder_count": 2,
+        "note": "Phase 1 build S56. 5 biological substrate classes (B1-B5). 12 claims (4A+3D+5F). Receives C-3.REG as measurement standard. S48 retroactive AI layer (wrong framing) replaced."
       },
       {
         "paper_id": "P5",
