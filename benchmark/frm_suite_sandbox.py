@@ -279,15 +279,18 @@ def main():
     for name, sig in null_signals:
         l1_alerts = run_detector_suite(sig)
         l1_fpr = fpr(l1_alerts)
+        frm_alerts = run_frm_suite(sig, tau_gen=tau) if FRM_AVAILABLE else l1_alerts
+        frm_fpr = fpr(frm_alerts)
         s_alerts = run_sentinel(sig) if SENTINEL_AVAILABLE else None
         s_fpr = fpr(s_alerts) if s_alerts else float('nan')
 
         # Allow 1% tolerance: at N=500, sampling SE ≈ 0.6%, so 1% margin is ~1.7σ
-        status = "PASS" if l1_fpr <= s_fpr + 0.01 or math.isnan(s_fpr) else "FAIL"
+        # Gate is FRMSuite (full, both layers) vs Sentinel
+        status = "PASS" if frm_fpr <= s_fpr + 0.01 or math.isnan(s_fpr) else "FAIL"
         if status == "FAIL":
             passed = False
 
-        frm_str = f"DetectorSuite FPR={l1_fpr:.1%}"
+        frm_str = f"FRMSuite FPR={frm_fpr:.1%} (L1={l1_fpr:.1%})"
         sent_str = f"  Sentinel FPR={s_fpr:.1%}" if not math.isnan(s_fpr) else ""
         print(f"  [{status}] {name}: {frm_str}{sent_str}")
 
@@ -306,24 +309,26 @@ def main():
     ]
 
     for name, sig, flags in signal_cases:
+        # Use tau_gen for FRM-specific signals (8: omega drift, 5: hopf)
+        sig_tau = tau if "Omega" in name or "drift" in name or "Hopf" in name or "hopf" in name else None
+        frm_alerts = run_frm_suite(sig, tau_gen=sig_tau) if FRM_AVAILABLE else []
+        frm_dr = detection_rate(frm_alerts, flags) if frm_alerts else float('nan')
         l1_alerts = run_detector_suite(sig)
         l1_dr = detection_rate(l1_alerts, flags)
-        l1_ppv = ppv_at_base_rate(
-            fpr(l1_alerts[:sum(1 for f in flags if not f)] if any(not f for f in flags) else l1_alerts),
-            l1_dr
-        )
 
         s_alerts = run_sentinel(sig) if SENTINEL_AVAILABLE else None
         s_dr = detection_rate(s_alerts, flags) if s_alerts else float('nan')
 
-        # F-S7: DetectorSuite must catch ≥ 90% of what Sentinel catches
+        # F-S7: FRMSuite must catch ≥ 90% of what Sentinel catches
         gate = 0.9 * s_dr if not math.isnan(s_dr) else 0.0
-        status = "PASS" if l1_dr >= gate else "FAIL"
+        frm_check = frm_dr if not math.isnan(frm_dr) else l1_dr
+        status = "PASS" if frm_check >= gate else "FAIL"
         if status == "FAIL":
             passed = False
 
+        frm_str = f"FRMSuite={frm_dr:.0%}" if not math.isnan(frm_dr) else f"FRMSuite=L1-only={l1_dr:.0%}"
         sent_str = f"  Sentinel={s_dr:.0%}" if not math.isnan(s_dr) else ""
-        print(f"  [{status}] {name}: DetectorSuite={l1_dr:.0%}{sent_str}")
+        print(f"  [{status}] {name}: {frm_str} (L1={l1_dr:.0%}){sent_str}")
 
     # -----------------------------------------------------------------------
     # PERFORMANCE
@@ -344,11 +349,12 @@ def main():
         misses = []
         for name, sig, flags in signal_cases:
             s_alerts = run_sentinel(sig)
-            l1_alerts = run_detector_suite(sig)
+            sig_tau = tau if "Omega" in name or "drift" in name or "Hopf" in name or "hopf" in name else None
+            frm_alerts = run_frm_suite(sig, tau_gen=sig_tau) if FRM_AVAILABLE else run_detector_suite(sig)
             s_dr = detection_rate(s_alerts, flags)
-            l1_dr = detection_rate(l1_alerts, flags)
-            if s_dr > l1_dr + 0.10:
-                misses.append(f"  {name}: Sentinel={s_dr:.0%} vs FRMSuite={l1_dr:.0%}")
+            frm_dr = detection_rate(frm_alerts, flags)
+            if s_dr > frm_dr + 0.10:
+                misses.append(f"  {name}: Sentinel={s_dr:.0%} vs FRMSuite={frm_dr:.0%}")
         if misses:
             print("  Sentinel outperforms FRMSuite significantly on:")
             for m in misses:

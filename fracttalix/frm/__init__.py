@@ -6,9 +6,12 @@
 #   Omega   (OmegaDetector)            — track ω vs π/(2·τ_gen)
 #   Virtu   (VirtuDetector)            — time-to-bifurcation estimate
 #
-# All require scipy + numpy. Import gracefully degrades: if scipy is absent
-# the Layer 2 detectors raise ImportError on first update(), but FRMSuite
-# continues to operate with Layer 1 only (frm_confidence stays at 0).
+# Dependency notes:
+#   Lambda (HopfDetector frm) requires scipy + numpy.
+#   Omega (OmegaDetector)    requires numpy only.
+#   Virtu (VirtuDetector)    requires neither (reads Lambda/Omega outputs).
+# Import gracefully degrades: Lambda failure does NOT block Omega.
+# FRMSuite tracks per-detector availability independently.
 #
 # Entry point:
 #   from fracttalix.frm import FRMSuite
@@ -18,11 +21,15 @@
 #       handle_frm_alert(result)
 
 from fracttalix.frm.frm_suite import FRMSuite, FRMSuiteResult
+from fracttalix.frm.omega import OmegaDetector
+from fracttalix.frm.virtu import VirtuDetector
 from fracttalix.suite.base import ScopeStatus, DetectorResult
 
 __all__ = [
     "FRMSuite",
     "FRMSuiteResult",
+    "OmegaDetector",
+    "VirtuDetector",
     "ScopeStatus",
     "DetectorResult",
 ]

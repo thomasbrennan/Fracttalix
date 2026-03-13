@@ -125,6 +125,7 @@ class OmegaDetector(BaseDetector):
         window: int = 64,
         deviation_threshold: float = 0.05,
         alert_steps: int = 5,
+        scope_tolerance: float = 0.50,
     ):
         super().__init__("OmegaDetector", warmup=warmup, window_size=max(window, warmup))
         self._tau_gen = tau_gen
@@ -135,18 +136,41 @@ class OmegaDetector(BaseDetector):
             math.pi / (2.0 * tau_gen) if tau_gen is not None and tau_gen > 0 else None
         )
         self._strong_mode = (self._omega_predicted is not None)
+        self._scope_tolerance = scope_tolerance  # OUT_OF_SCOPE if |Δω/ω| > this
         self._consecutive_above: int = 0
         self._omega_history: deque = deque(maxlen=20)
 
     def _check_scope(self, window: List[float]) -> bool:
-        """Return True if FFT has a dominant frequency peak (not flat noise)."""
+        """Return True if FFT has a dominant frequency peak close to omega_predicted.
+
+        Two-gate scope check:
+        1. Signal must have a dominant spectral peak (ratio > 3× mean bin power).
+           Without this, there is no frequency to track — white noise is OUT_OF_SCOPE.
+        2. Strong mode only: the dominant frequency must be within scope_tolerance
+           (default 50%) of omega_predicted.  If the signal oscillates at a
+           completely different frequency (e.g., 4× the FRM-predicted frequency),
+           the signal is not FRM-shaped and OmegaDetector should stay silent.
+           This prevents the detector from alerting on any oscillatory signal that
+           happens to be processed with a mismatched tau_gen.
+        """
         import numpy as np
         fft_window = np.array(window[-self._window_size_fft:], dtype=float)
         if len(fft_window) < 8:
             return False
         ratio = _spectrum_peak_ratio(fft_window)
-        # Require peak at least 3× the mean bin magnitude
-        return ratio > 3.0
+        if ratio <= 3.0:
+            return False
+
+        # Strong mode: initial frequency sanity check
+        if self._strong_mode and self._omega_predicted is not None:
+            omega_obs = _estimate_omega_fft(fft_window)
+            initial_dev = abs(omega_obs - self._omega_predicted) / self._omega_predicted
+            if initial_dev > self._scope_tolerance:
+                # Dominant frequency is too far from FRM prediction.
+                # This signal is not in the FRM frequency domain.
+                return False
+
+        return True
 
     def _compute(self, window: List[float]):
         """Estimate observed ω and compare to FRM prediction.
@@ -211,6 +235,7 @@ class OmegaDetector(BaseDetector):
         sd = super().state_dict()
         sd.update({
             "tau_gen": self._tau_gen,
+            "scope_tolerance": self._scope_tolerance,
             "consecutive_above": self._consecutive_above,
             "omega_history": list(self._omega_history),
         })
@@ -219,4 +244,5 @@ class OmegaDetector(BaseDetector):
     def load_state(self, sd: Dict[str, Any]) -> None:
         super().load_state(sd)
         self._consecutive_above = sd.get("consecutive_above", 0)
+        self._scope_tolerance = sd.get("scope_tolerance", self._scope_tolerance)
         self._omega_history = deque(sd.get("omega_history", []), maxlen=20)

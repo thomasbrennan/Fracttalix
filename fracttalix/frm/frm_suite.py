@@ -13,10 +13,11 @@
 #
 # frm_confidence (0–3):
 #   Counts Layer 2 detectors in ALERT, strong mode only.
-#   frm_confidence = 3 means Lambda + Omega + CouplingDetector all alerting.
-#   Note: CouplingDetector is Layer 1 but acts as independent cross-validator
-#   of Omega; it does NOT add to frm_confidence (it's not FRM-derived).
-#   frm_confidence_plus: frm_confidence + (1 if Coupling alerts).
+#   frm_confidence = 3 means Lambda + Omega + Virtu all alerting simultaneously.
+#   Lambda alone = 1. Lambda + Omega = 2. Lambda + Omega + Virtu = 3.
+#   Note: CouplingDetector is Layer 1; it does NOT add to frm_confidence.
+#   frm_confidence_plus: frm_confidence + (1 if CouplingDetector alerts).
+#   CouplingDetector provides independent structural cross-validation of Omega.
 #
 # Graceful degradation:
 #   Without scipy: Layer 2 raises ImportError on first update().
@@ -174,8 +175,14 @@ class FRMSuite:
 
         self._virtu = VirtuDetector(**(virtu_kwargs or {}))
 
-        self._layer2_available: Optional[bool] = None  # None = not yet tested
+        self._lambda_available: Optional[bool] = None   # None = not yet tested
+        self._omega_available: Optional[bool] = None    # tracked separately
         self._step = 0
+
+    @property
+    def _layer2_available(self) -> bool:
+        """True if at least one Layer 2 detector is available."""
+        return (self._lambda_available is not False) or (self._omega_available is not False)
 
     def update(self, value: float) -> FRMSuiteResult:
         """Feed one observation. Returns FRMSuiteResult."""
@@ -185,9 +192,14 @@ class FRMSuite:
         # Layer 1 always runs
         l1_result = self._layer1.update(value)
 
-        # Layer 2: attempt, catch ImportError on first call
-        lambda_result = self._run_layer2_detector(self._lambda, value)
-        omega_result = self._run_layer2_detector(self._omega, value)
+        # Layer 2: attempt each detector independently; scipy unavailability in
+        # Lambda (curve_fit) must NOT block Omega (numpy-only).
+        lambda_result = self._run_layer2_detector(
+            self._lambda, value, "_lambda_available"
+        )
+        omega_result = self._run_layer2_detector(
+            self._omega, value, "_omega_available"
+        )
 
         # Virtu reads Lambda/Omega outputs via update_frm
         virtu_result = self._run_virtu(lambda_result, omega_result, step)
@@ -214,31 +226,40 @@ class FRMSuite:
             virtu=virtu_result,
             frm_confidence=frm_conf,
             frm_confidence_plus=frm_conf_plus,
-            layer2_available=(self._layer2_available is not False),
+            layer2_available=(
+                self._lambda_available is not False
+                or self._omega_available is not False
+            ),
         )
 
-    def _run_layer2_detector(self, detector, value: float) -> DetectorResult:
-        """Run a Layer 2 detector, catching ImportError if scipy absent."""
-        if self._layer2_available is False:
+    def _run_layer2_detector(
+        self, detector, value: float, avail_attr: str
+    ) -> DetectorResult:
+        """Run one Layer 2 detector, tracking its own ImportError state.
+
+        Each detector tracks availability independently: Lambda requires scipy,
+        Omega requires only numpy.  A failed Lambda must not block Omega.
+        """
+        if getattr(self, avail_attr) is False:
             return DetectorResult(
                 detector=detector._name,
                 status=ScopeStatus.OUT_OF_SCOPE,
                 score=0.0,
-                message="scipy not available",
+                message="optional dependency not available",
                 step=self._step - 1,
             )
         try:
             result = detector.update(value)
-            if self._layer2_available is None:
-                self._layer2_available = True
+            if getattr(self, avail_attr) is None:
+                setattr(self, avail_attr, True)
             return result
-        except ImportError:
-            self._layer2_available = False
+        except ImportError as exc:
+            setattr(self, avail_attr, False)
             return DetectorResult(
                 detector=detector._name,
                 status=ScopeStatus.OUT_OF_SCOPE,
                 score=0.0,
-                message="scipy not available",
+                message=f"optional dependency not available: {exc}",
                 step=self._step - 1,
             )
 
@@ -249,12 +270,13 @@ class FRMSuite:
         step: int,
     ) -> DetectorResult:
         """Run VirtuDetector with Lambda/Omega outputs."""
-        if self._layer2_available is False:
+        if self._lambda_available is False:
+            # Virtu requires Lambda output (time_to_bif, lam_rate)
             return DetectorResult(
                 detector="VirtuDetector",
                 status=ScopeStatus.OUT_OF_SCOPE,
                 score=0.0,
-                message="scipy not available",
+                message="Lambda unavailable (scipy required for time-to-bifurcation)",
                 step=step,
             )
 
@@ -297,7 +319,8 @@ class FRMSuite:
         self._omega.reset()
         self._virtu.reset()
         self._step = 0
-        self._layer2_available = None
+        self._lambda_available = None
+        self._omega_available = None
 
     def state_dict(self) -> Dict[str, Any]:
         return {
@@ -306,7 +329,8 @@ class FRMSuite:
             "omega": self._omega.state_dict(),
             "virtu": self._virtu.state_dict(),
             "step": self._step,
-            "layer2_available": self._layer2_available,
+            "lambda_available": self._lambda_available,
+            "omega_available": self._omega_available,
         }
 
     def load_state(self, sd: Dict[str, Any]) -> None:
@@ -319,4 +343,7 @@ class FRMSuite:
         if "virtu" in sd:
             self._virtu.load_state(sd["virtu"])
         self._step = sd.get("step", 0)
-        self._layer2_available = sd.get("layer2_available", None)
+        # Back-compat: old state_dicts use "layer2_available" (single flag)
+        _old = sd.get("layer2_available", None)
+        self._lambda_available = sd.get("lambda_available", _old)
+        self._omega_available = sd.get("omega_available", _old)
