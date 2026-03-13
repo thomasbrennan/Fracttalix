@@ -213,7 +213,7 @@ pip install matplotlib     # plot_history() dashboard
 pip install tqdm           # progress bars in benchmark
 ```
 
-**Run tests (405 tests, all expected to pass):**
+**Run tests (434 tests, all expected to pass):**
 
 ```bash
 pip install fracttalix[dev]       # pytest, ruff, mypy, mkdocs
@@ -903,7 +903,7 @@ Three CI workflows run automatically on every push:
 
 | Workflow | What it checks |
 |----------|---------------|
-| [`tests.yml`](.github/workflows/tests.yml) | 374 tests across Python 3.9–3.12 |
+| [`tests.yml`](.github/workflows/tests.yml) | 434 tests across Python 3.10–3.12 |
 | [`ai-layer-validation.yml`](.github/workflows/ai-layer-validation.yml) | AI layer schema compliance and cross-reference integrity |
 | [`release.yml`](.github/workflows/release.yml) | PyPI release pipeline |
 
@@ -929,7 +929,7 @@ docs/                Build table, bootstrap doc, API docs, theory docs
 examples/            Tutorials and usage examples
 scripts/             Validation and status reporting tools
 journal/             Session notes — what was built and why
-tests/               374 tests across 12 test files
+tests/               434 tests across 16 test files
 benchmark/           Performance evaluation suite
 legacy/              Pre-refactor archive
 legal/               Disclaimer

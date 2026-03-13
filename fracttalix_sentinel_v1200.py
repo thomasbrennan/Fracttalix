@@ -1,7 +1,7 @@
 # fracttalix_sentinel_v1200.py
-# Fracttalix Sentinel v12.1 — Three-Channel Extension
+# Fracttalix Sentinel v12.2 — Three-Channel Extension
 #
-# V12.1 extends the v8.0 detection architecture to implement the
+# V12.2 extends the v8.0 detection architecture to implement the
 # three-channel model of dissipative network information transmission
 # derived in the Meta-Kaizen Paper 6 theoretical framework.
 #
@@ -40,7 +40,7 @@
 # DOI: 10.5281/zenodo.18859299
 # GitHub: https://github.com/thomasbrennan/Fracttalix
 
-__version__ = "12.1.0"
+__version__ = "12.2.0"
 __author__ = "Thomas Brennan & Claude (Anthropic) & Grok (xAI)"
 __license__ = "CC0"
 
@@ -543,8 +543,12 @@ class SentinelConfig:
 
     @classmethod
     def production(cls) -> "SentinelConfig":
-        """Balanced defaults — suitable for most production deployments."""
-        return cls()
+        """Balanced defaults — suitable for most production deployments.
+
+        Uses multiplier=4.5, which gives approximately 5–8% normal alert rate
+        on white noise N(0,1). Changed in v12.2: multiplier raised from 3.0 → 4.5.
+        """
+        return cls(multiplier=4.5)
 
     @classmethod
     def sensitive(cls) -> "SentinelConfig":

@@ -49,16 +49,20 @@ class TestLegacyKwargs:
 
 
 class TestProductionDefault:
-    def test_production_is_default(self):
-        """SentinelConfig.production() should equal the default SentinelConfig()."""
+    def test_production_has_raised_multiplier(self):
+        """v12.2: production() uses multiplier=4.5 (was 3.0)."""
         prod = SentinelConfig.production()
-        default = SentinelConfig()
-        assert prod == default
+        assert prod.multiplier == 4.5
 
-    def test_default_detector_uses_production_config(self):
+    def test_bare_default_has_original_multiplier(self):
+        """SentinelConfig() retains the original multiplier=3.0."""
+        default = SentinelConfig()
+        assert default.multiplier == 3.0
+
+    def test_default_detector_uses_bare_config(self):
+        """SentinelDetector() defaults to SentinelConfig() (multiplier=3.0)."""
         det = SentinelDetector()
-        prod = SentinelConfig.production()
-        assert det.config == prod
+        assert det.config == SentinelConfig()
 
 
 class TestV9ConvenienceMethods:

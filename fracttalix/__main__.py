@@ -29,9 +29,9 @@ def main(argv=None):
                          warmup_periods=args.warmup)
 
     if args.benchmark:
-        from fracttalix.extras.benchmark import SentinelBenchmark
-        bench = SentinelBenchmark(config=cfg)
-        bench.run_suite()
+        from benchmark import SentinelBenchmark
+        bench = SentinelBenchmark()
+        bench.run_suite(config=cfg)
         return
 
     if args.serve:

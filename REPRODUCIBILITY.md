@@ -19,11 +19,11 @@ Python 3.9+ required. Zero external runtime dependencies.
 ### 1. Run the full test suite
 
 ```bash
-pytest tests/ -v                # 405 tests
+pytest tests/ -v                # 434 tests
 python fracttalix/detector.py   # 65 built-in smoke tests
 ```
 
-Expected: 470/470 pass.
+Expected: 499/499 pass.
 
 ### 2. Validate AI layers
 
@@ -133,7 +133,7 @@ Each claim in the AI layers carries three v3 fields: `tier`, `test_bindings`, `v
 ## Verification pipeline
 
 ```
-Source code → pytest (405 tests)
+Source code → pytest (434 tests)
                 ↓
 AI layers  → validate_ai_layers.py (schema compliance)
                 ↓
