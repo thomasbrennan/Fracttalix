@@ -54,7 +54,7 @@
       "type": "D",
       "label": "[TYPE:D]",
       "name": "Package version",
-      "statement": "This AI layer describes Fracttalix Sentinel v12.2.0 as defined by __version__ = '12.2.0' in fracttalix/__init__.py (lines 4–11, with importlib.metadata fallback). v12.2.0 adds epistemic language corrections and a production() multiplier change (3.0→4.5); no new falsifiable claims added since v12.1.0.",
+      "statement": "This AI layer describes Fracttalix Sentinel v12.3.0 as defined by __version__ = '12.3.0' in fracttalix/__init__.py (lines 4–11, with importlib.metadata fallback). v12.2.0 adds epistemic language corrections and a production() multiplier change (3.0→4.5); v12.3.0 supersedes v12.2.0; no new falsifiable claims added since v12.1.0.",
       "source": "fracttalix/__init__.py lines 4–11",
       "falsification_predicate": null
     },
@@ -218,7 +218,7 @@
   ],
   "software_metadata": {
     "package_name": "fracttalix",
-    "version": "12.2.0",
+    "version": "12.3.0",
     "language": "Python 3",
     "test_count": 374,
     "test_framework": "pytest",
@@ -228,7 +228,7 @@
     "dependencies_required": "none (stdlib only)",
     "dependencies_optional": ["numpy", "scipy", "matplotlib", "numba", "tqdm"],
     "install": "pip install -e .",
-    "version_confirmed": "python -c \"from fracttalix import __version__; print(__version__)\" → 12.2.0",
+    "version_confirmed": "python -c \"from fracttalix import __version__; print(__version__)\" → 12.3.0",
     "git_commit_main": "105c775 (merge f34b7a3 — Merge V12 package into main)"
   },
   "summary": {

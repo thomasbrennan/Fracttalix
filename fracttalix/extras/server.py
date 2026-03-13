@@ -12,7 +12,7 @@ from fracttalix.multistream import MultiStreamSentinel
 try:
     from fracttalix import __version__
 except Exception:
-    __version__ = "12.0.0"
+    __version__ = "12.3.0"
 
 
 class SentinelServer:

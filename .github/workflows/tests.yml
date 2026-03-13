@@ -59,7 +59,7 @@ jobs:
         run: |
           python -c "
           import fracttalix
-          assert fracttalix.__version__ == '12.1.0', f'Expected 12.1.0 got {fracttalix.__version__}'
+          assert fracttalix.__version__ == '12.3.0', f'Expected 12.3.0 got {fracttalix.__version__}'
           print('Version check OK:', fracttalix.__version__)
           "
 
