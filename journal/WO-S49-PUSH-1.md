@@ -13,7 +13,7 @@ Executor:        Claude Code
 Authorised by:   Thomas Brennan (verbal instruction, Session 49)
 Repository:      github.com/thomasbrennan/Fracttalix
 Target branch:   main
-Status:          BLOCKED — see Section 2a
+Status:          COMPLETE — S55 (see Section 8a)
 
 ## 2. SCOPE
 
@@ -165,6 +165,63 @@ falsifiability standard amendment).
 This work order is complete when deposit (Section 2a) is confirmed,
 all three pushes are confirmed, and post-push verification passes.
 Claude Code to report completion with commit hashes.
+
+## 8a. COMPLETION LOG — Session 55
+
+Executor:       Claude Code (Archive instance, S55)
+Date:           13 March 2026
+
+### Execution history
+
+PR3-1 (P3 AI Layer):  Completed by prior frozen session.
+  Repo file: ai-layers/P3-ai-layer.json
+  Version: v2, produced_session S48, PHASE-READY, placeholder_count=0.
+  Status: VERIFIED — matches target state.
+
+PR3-3 (P2 AI Layer):  Completed by prior frozen session.
+  Repo file: ai-layers/P2-ai-layer.json
+  Version: v4, produced_session S48, PHASE-READY, placeholder_count=0.
+  Status: VERIFIED — matches target state.
+
+PR3-2 (P1 AI Layer):  NOT completed by prior frozen session (session froze
+  mid-execution). Stale S44 version remained in repo with:
+  - produced_session: S44 (should be S49+)
+  - series_position: "Paper 1 of 12" (should be "1 of 13")
+  - PH-1.1: resolved=true (false — Thomas PR-1 not yet given at S44)
+
+  Resolution: Thomas Brennan deposited canonical P1-ai-layer-v13.json
+  (S55, post-PHASE-READY PR-1 update) directly. Claude Code (Archive
+  instance) wrote deposited file to ai-layers/P1-ai-layer.json.
+
+  Final repo state:
+  - produced_session: S55
+  - version: v13
+  - series_position: "Paper 1 of 13"
+  - PH-1.1: resolved=true (legitimately — Thomas PR-1 sign-off S55)
+  - PH-1.2: resolved=true (P3 C-3.REG, S48)
+  - PH-1.3: resolved=true (P3 C-3.REG, S48)
+  - placeholder_count: 0
+  - PHASE-READY verdict: maintained
+  - CBT Step 7 re-run S55: PASS (PR-2)
+
+### Supersession note
+
+The deposited P1 file is S55, not the S49 version originally scoped by
+this work order. S55 supersedes S49: it includes the S49 corrections
+(series_position, D-1.4, F-1.2 name) plus the PR-1 additive update
+(PH-1.1/1.2/1.3 resolved, Thomas sign-off confirmed). This is a
+strict superset — no WO-S49-PUSH-1 requirement is left unmet.
+
+### Open items from Section 7 — updated status
+
+PR-1 (P1 PH-1.1):   CLOSED — Thomas sign-off confirmed S55.
+PR-2 (P1 CBT re-run): CLOSED — CBT Step 7 re-run PASS S55.
+PR-4 (TRF review):   OPEN — non-blocking, unchanged.
+T15 (CBP v2):        OPEN — unchanged.
+
+### Commit hashes
+
+[To be filled after commit]
 
 # ========================================================================
 # END  |  WO-S49-PUSH-1  |  Session 49  |  12 March 2026
