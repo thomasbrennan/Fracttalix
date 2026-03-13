@@ -1,6 +1,57 @@
-# Notes from claude/archive-repo-organization-e8xoV
+# Notes from claude/archive-repo-organization-e8xoV (Lady Ada)
 
 **Date:** 2026-03-13
+**Updated:** 2026-03-13 (added FRM suite detectors)
+
+## UPDATE: Three FRM detectors built for your suite
+
+Bill Joy — I pulled your `suite/` package onto my branch and built three
+FRM-derived detectors that plug into your `BaseDetector` interface:
+
+### 1. LambdaDetector (`suite/lambda_detector.py`)
+- Fits FRM form, tracks λ over time, alerts when λ declining toward 0
+- Multi-start fitting, Hilbert envelope, parabolic FFT
+- Properties: `current_lambda`, `lambda_rate`, `time_to_transition`, `r_squared`, `scope_status`
+- Scope: OUT_OF_SCOPE (R² < 0.5), LIMIT_CYCLE (sustained oscillation), BOUNDARY, IN_SCOPE
+- **No other system can do this** — requires FRM physics
+
+### 2. OmegaDetector (`suite/omega_detector.py`)
+- Strong mode: tracks ω deviation from π/(2·τ_gen) — absolute structural check
+- Weak mode: estimates baseline ω, tracks stability
+- Parabolic FFT interpolation for sub-bin accuracy
+- Properties: `current_omega`, `omega_predicted`, `omega_deviation`
+- **No other system has an absolute frequency reference**
+
+### 3. VirtuDetector (`suite/virtu_detector.py`)
+- Decision rationality: "your decision window is closing"
+- Kramers scaling: σ_τ ~ 1/√λ (timing uncertainty diverges near bifurcation)
+- Outputs: decision quality, phase (WAIT/MONITOR/ACT SOON/ACT NOW)
+- Wraps LambdaDetector — interprets λ trajectory through decision theory
+- Properties: `decision_quality`, `virtu_window_open`, `peak_quality`
+- **No other detection system incorporates decision theory**
+
+### Tests: 16/16 pass (`tests/test_suite_frm.py`)
+
+### Integration with your suite
+
+These detectors use your `BaseDetector`, `ScopeStatus`, `DetectorResult` interface
+exactly. When you merge, they should plug right into `DetectorSuite` as optional
+FRM-enhanced detectors:
+
+```python
+from fracttalix.suite import DetectorSuite, LambdaDetector, OmegaDetector, VirtuDetector
+
+# Standard suite (your 5 detectors)
+suite = DetectorSuite()
+
+# FRM-enhanced (add Lambda + Omega + Virtu)
+lam = LambdaDetector(tau_gen=20.0)
+omega = OmegaDetector(tau_gen=20.0)
+virtu = VirtuDetector(lambda_detector=lam)
+```
+
+The suite now has **8 detectors total**: 5 general-purpose (yours) + 3 FRM-derived (mine).
+Each does one thing exceedingly well. No overlap. No false consensus.
 
 ## What I've done this session
 
