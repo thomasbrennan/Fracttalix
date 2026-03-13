@@ -7,7 +7,7 @@
 **Series:** DRP Series — Paper 4 of 8
 **AI layer:** `ai-layers/DRP4-ai-layer.json` v1 (S56)
 **CBT I-9:** 7/7 PASS (S56)
-**Phase gate:** PHASE-READY (pending Thomas sign-off)
+**Phase gate:** PHASE-READY (Thomas sign-off S56)
 
 ---
 
@@ -275,7 +275,7 @@ C-DRP4.3 + C-DRP4.5 → C-DRP4.7 (exhaustive coverage)
 | D4-3.0 Falsification Predicates | COMPLETE (S56) |
 | Phase 4 — AI Layer | COMPLETE (S56) |
 | Phase 5 — CBT I-9 | PASS 7/7 (S56) |
-| Phase 6 — Thomas Sign-off | PENDING |
+| Phase 6 — Thomas Sign-off | CONFIRMED (S56) |
 
 ### Principle 10 Audit Summary
 
