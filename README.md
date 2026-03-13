@@ -10,25 +10,36 @@ Sentinel ingests one scalar (or multivariate) observation at a time and emits a 
 
 ---
 
+[![PyPI](https://img.shields.io/pypi/v/fracttalix)](https://pypi.org/project/fracttalix/)
+[![License: CC0-1.0](https://img.shields.io/badge/License-CC0_1.0-lightgrey.svg)](https://creativecommons.org/publicdomain/zero/1.0/)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.18859299.svg)](https://doi.org/10.5281/zenodo.18859299)
+[![Tests](https://github.com/thomasbrennan/Fracttalix/actions/workflows/tests.yml/badge.svg)](https://github.com/thomasbrennan/Fracttalix/actions/workflows/tests.yml)
+[![Python 3.9+](https://img.shields.io/badge/python-3.9%2B-blue.svg)](https://www.python.org/)
+
+> **Keywords:** anomaly detection · streaming time-series · online learning · Hopf bifurcation · critical slowing down · phase-amplitude coupling · Fractal Rhythm Model · change-point detection · multivariate monitoring · REST API
+
 ## Table of Contents
 
 1. [Overview](#overview)
-2. [Three-Channel Model](#three-channel-model)
-3. [V12.3 Changes](#v123-changes)
-3a. [V12.2 Changes](#v122-changes)
-4. [Installation](#installation)
-5. [Quick Start](#quick-start)
-6. [SentinelConfig — Configuration](#sentinelconfig--configuration)
-7. [Pipeline Architecture — 37 Steps](#pipeline-architecture--37-steps-v122)
-8. [Alert Types and Data Structures](#alert-types-and-data-structures)
-9. [SentinelResult API](#sentinelresult-api)
-10. [MultiStreamSentinel](#multistreamssentinel)
-11. [SentinelBenchmark](#sentinelbenchmark)
-12. [SentinelServer — REST API](#sentinelserver--rest-api)
-13. [CLI Reference](#cli-reference)
-14. [Backward Compatibility](#backward-compatibility)
-15. [Theoretical Foundation](#theoretical-foundation)
-16. [Authors & License](#authors--license)
+2. [Which API should I use?](#which-api-should-i-use)
+3. [Three-Channel Model](#three-channel-model)
+4. [V12.3 Changes](#v123-changes)
+   - [V12.2 Changes](#v122-changes)
+5. [Installation](#installation)
+6. [Quick Start — SentinelDetector](#quick-start)
+7. [DetectorSuite — Modular Five-Detector Suite](#detectorsuite--modular-five-detector-suite)
+8. [FRMSuite — FRM Physics Layer](#frmsuite--frm-physics-layer)
+9. [SentinelConfig — Configuration](#sentinelconfig--configuration)
+10. [Pipeline Architecture — 37 Steps](#pipeline-architecture--37-steps-v122)
+11. [Alert Types and Data Structures](#alert-types-and-data-structures)
+12. [SentinelResult API](#sentinelresult-api)
+13. [MultiStreamSentinel](#multistreamssentinel)
+14. [SentinelBenchmark](#sentinelbenchmark)
+15. [SentinelServer — REST API](#sentinelserver--rest-api)
+16. [CLI Reference](#cli-reference)
+17. [Backward Compatibility](#backward-compatibility)
+18. [Theoretical Foundation](#theoretical-foundation)
+19. [Authors & License](#authors--license)
 
 ---
 
@@ -42,6 +53,24 @@ Fracttalix Sentinel is a Python package (`pip install fracttalix`) for real-time
 - **Three-channel anomaly model** — monitors structural properties, broadband rhythmicity, and temporal degradation sequences as independent information channels.
 - **Signal-processing collapse indicators** — maintenance burden (coupling heuristic μ = 1−κ̄), PAC pre-cascade detection, diagnostic window estimation, and reversed sequence detection, architecturally inspired by the Kuramoto synchronization framework. These are engineering heuristics, not physical derivations.
 - **Full backward compatibility** — all v7.x, v8.0, v9.0, and v10.0 call patterns continue to work unchanged.
+
+---
+
+## Which API Should I Use?
+
+There are three detection APIs in this package, each optimized for a different context:
+
+| API | Best for | Requires | `pip install` |
+|-----|----------|----------|---------------|
+| **`SentinelDetector`** | Unknown signal types; broadest coverage; exploratory monitoring | stdlib only | `pip install fracttalix` |
+| **`DetectorSuite`** | Domain-specific monitoring; need to know *which* anomaly type fired; low FPR | stdlib only | `pip install fracttalix` |
+| **`FRMSuite`** | Oscillatory / physiological / power-grid signals with known generation delay; need time-to-bifurcation | numpy + scipy | `pip install fracttalix[fast]` |
+
+**Decision rule:**
+
+- You know your signal is oscillatory and have a domain parameter (`tau_gen`) → **FRMSuite**
+- You know which anomaly type matters (drift? variance? discord?) → **DetectorSuite**
+- You're monitoring something unknown or want a single alert/no-alert signal → **SentinelDetector**
 
 ---
 
@@ -410,6 +439,245 @@ mss = MultiStreamSentinel(config=SentinelConfig.production())
 # Each stream ID gets its own independent detector instance
 result = mss.update("sensor_42", 3.14)
 result = await mss.aupdate("sensor_43", 7.71)
+```
+
+---
+
+## DetectorSuite — Modular Five-Detector Suite
+
+`DetectorSuite` runs five independent specialized detectors in parallel. Unlike `SentinelDetector`, each detector can report `OUT_OF_SCOPE` when the current data does not match its model — so you only get alerts from detectors that understand your signal. No stdlib-only constraint.
+
+```bash
+pip install fracttalix          # stdlib only — no extra deps needed
+```
+
+### The Five Detectors
+
+| Detector | Question answered | Null FPR target |
+|----------|------------------|-----------------|
+| `HopfDetector` | Is critical slowing down occurring? (EWS) | 0% on N(0,1) |
+| `DiscordDetector` | Is this point anomalous vs. its context? | ≤ 1% on N(0,1) |
+| `DriftDetector` | Has the mean shifted slowly over time? | ≤ 0.5% on N(0,1) |
+| `VarianceDetector` | Has volatility suddenly changed? | ≤ 1% on N(0,1) |
+| `CouplingDetector` | Is cross-scale coordination degrading? | 0% on N(0,1) |
+
+### Quick Start
+
+```python
+from fracttalix.suite import DetectorSuite
+
+suite = DetectorSuite()
+
+for value in stream:
+    result = suite.update(value)
+    print(result.summary())
+    # e.g. "Hopf:ok(0.12) | Disc:ok(0.04) | Drif:ok(0.00) | Vari:ok(0.01) | Coup:ok(0.00)"
+
+    if result.any_alert:
+        for det in result.alerts:
+            print(f"{det.detector}: {det.message}")
+```
+
+### Reading a SuiteResult
+
+```python
+result = suite.update(value)
+
+# Individual detector access
+result.hopf.is_alert        # bool
+result.drift.status         # ScopeStatus.NORMAL / ALERT / OUT_OF_SCOPE / WARMUP
+result.variance.score       # float 0.0–1.0
+result.discord.message      # diagnostic string
+
+# Collection helpers
+result.any_alert            # bool — at least one detector firing
+result.alerts               # list[DetectorResult] — only firing detectors
+result.in_scope             # list[DetectorResult] — detectors whose model applies
+result.out_of_scope         # list[DetectorResult] — detectors that declared OOS
+result.summary()            # one-line dashboard string
+```
+
+### Recommended Combinations
+
+```python
+# Power grid / AC motor monitoring
+suite = DetectorSuite(hopf_kwargs={"method": "ews"})
+# → HopfDetector catches pre-transition slowing; VarianceDetector catches fault spikes
+
+# API / service latency monitoring
+suite = DetectorSuite()
+# → DiscordDetector catches unusual request latencies; DriftDetector catches gradual regression
+
+# Neural / physiological signals (EEG, HRV)
+suite = DetectorSuite()
+# → HopfDetector + CouplingDetector together = compound oscillation-degradation signal
+
+# Use individual detectors independently
+from fracttalix.suite import HopfDetector, DriftDetector
+
+hopf = HopfDetector()
+drift = DriftDetector()
+for v in stream:
+    h = hopf.update(v)
+    d = drift.update(v)
+```
+
+### State Persistence
+
+```python
+import json
+sd = suite.state_dict()
+json_str = json.dumps(sd)
+
+# Restore
+suite2 = DetectorSuite()
+suite2.load_state(json.loads(json_str))
+
+# Reset to factory state
+suite.reset()
+```
+
+---
+
+## FRMSuite — FRM Physics Layer
+
+`FRMSuite` is the full two-layer suite: `DetectorSuite` (Layer 1, generic) plus three FRM-physics detectors (Layer 2, scipy required).
+
+```bash
+pip install fracttalix[fast]   # includes numpy + scipy for Layer 2
+```
+
+### Architecture
+
+```
+FRMSuite
+├── Layer 1 — DetectorSuite (5 generic detectors, no scipy)
+│   ├── HopfDetector(ews)    — critical slowing down
+│   ├── DiscordDetector      — point / contextual anomalies
+│   ├── DriftDetector        — slow mean shift
+│   ├── VarianceDetector     — volatility change
+│   └── CouplingDetector     — PAC cross-scale decoupling (independent cross-validator)
+│
+└── Layer 2 — FRM Physics (scipy required; graceful degradation if absent)
+    ├── Lambda  (HopfDetector frm) — tracks damping λ → 0
+    ├── Omega   (OmegaDetector)    — tracks ω vs π/(2·τ_gen)
+    └── Virtu   (VirtuDetector)    — time-to-bifurcation estimate
+```
+
+**Graceful degradation:** If scipy is absent, Layer 2 detectors return `OUT_OF_SCOPE` and `frm_confidence` stays at 0. Layer 1 operates normally.
+
+### Key Concept: `tau_gen`
+
+`tau_gen` is the FRM generation delay — the characteristic delay of your system. When supplied:
+
+- **Lambda** (strong mode): uses the fixed predicted frequency ω = π/(2·`tau_gen`) as its reference; curve-fits damping λ against this.
+- **Omega** (strong mode): checks that the observed dominant frequency matches ω = π/(2·`tau_gen`). A 5% deviation fires ALERT.
+- **frm_confidence** counts strong-mode Layer 2 detectors in ALERT (0–3).
+
+When `tau_gen=None`: Lambda and Omega run in weak mode (generic frequency tracking). `frm_confidence` stays 0 in weak mode — the FRM physics test cannot run without the model parameter.
+
+> Get `tau_gen` from domain knowledge. For power grids, it is the generator inertia constant. For EEG alpha rhythms, it is the reciprocal of the cycle frequency. For mechanical oscillators, it is the half-period.
+
+### `frm_confidence` Score
+
+| `frm_confidence` | Meaning |
+|-----------------|---------|
+| 0 | No strong-mode Layer 2 detector alerting |
+| 1 | Lambda alerting (λ declining) |
+| 2 | Lambda + Omega alerting (λ declining AND ω drifting from prediction) |
+| 3 | Lambda + Omega + Virtu all alerting (full FRM bifurcation signal) |
+| `frm_confidence_plus` | `frm_confidence` + 1 if CouplingDetector (Layer 1) is also alerting — independent cross-validation |
+
+### Quick Start
+
+```python
+from fracttalix.frm import FRMSuite
+
+# tau_gen=12.5: you know your system's generation delay
+suite = FRMSuite(tau_gen=12.5)
+
+for value in stream:
+    result = suite.update(value)
+    print(result.summary())
+
+    if result.frm_confidence >= 2:
+        # Lambda + Omega both alerting: strong compound bifurcation signal
+        print(f"FRM bifurcation signal: confidence={result.frm_confidence}")
+
+    if result.frm_confidence_plus >= 3:
+        # FRM physics + independent PAC structural cross-validation
+        print("Cross-validated bifurcation: highest confidence")
+```
+
+### Without tau_gen
+
+```python
+# Weak mode: frequency instability tracking, no FRM physics test
+suite = FRMSuite()  # tau_gen=None
+
+for value in stream:
+    result = suite.update(value)
+    # result.frm_confidence will always be 0 in weak mode
+    # Layer 1 detectors still run normally
+    if result.layer1.drift.is_alert:
+        print("Drift detected")
+```
+
+### Reading an FRMSuiteResult
+
+```python
+result = suite.update(value)
+
+# Layer 1 (all DetectorSuite fields)
+result.layer1.hopf.is_alert
+result.layer1.any_alert
+result.layer1.summary()
+
+# Layer 2 — FRM physics
+result.lambda_.is_alert        # λ declining?
+result.lambda_.score           # 0.0–1.0 urgency
+result.lambda_.message         # "frm λ=0.18 rate=-0.004 ttb=45.0 ..."
+
+result.omega.is_alert          # ω drifting from prediction?
+result.omega.message           # "omega_obs=0.251 omega_pred=0.251 deviation=0.021 ..."
+
+result.virtu.is_alert          # time-to-bifurcation urgency score ≥ threshold?
+result.virtu.message           # "ttb=38.4 confidence=HIGH safety_factor=1.00 ..."
+result.virtu.score             # urgency: 0 = distant, 1 = imminent
+
+# Compound scores
+result.frm_confidence          # int 0–3
+result.frm_confidence_plus     # int 0–4 (adds CouplingDetector cross-validation)
+result.layer2_available        # bool — False if scipy absent
+
+# Convenience
+result.any_alert               # bool — any detector in Layer 1 or Layer 2 firing
+result.alerts                  # list[DetectorResult] — all currently alerting
+result.summary()               # multi-line dashboard string
+```
+
+### Safety Factor (Conservative Estimates)
+
+`VirtuDetector` supports a `safety_factor` for asymmetric-cost applications where acting too late is worse than acting too early:
+
+```python
+# Reported ttb = raw_ttb / safety_factor
+# safety_factor=2.0 → half the raw estimate → earlier warning
+suite = FRMSuite(
+    tau_gen=12.5,
+    virtu_kwargs={"safety_factor": 2.0}
+)
+```
+
+### State Persistence
+
+```python
+import json
+sd = suite.state_dict()
+json_str = json.dumps(sd)
+
+suite2 = FRMSuite(tau_gen=12.5)
+suite2.load_state(json.loads(json_str))
 ```
 
 ---

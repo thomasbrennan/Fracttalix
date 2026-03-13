@@ -18,6 +18,16 @@ keywords = [
     "online-learning",
     "phase-amplitude-coupling",
     "kuramoto",
+    "hopf-bifurcation",
+    "critical-slowing-down",
+    "change-point-detection",
+    "drift-detection",
+    "early-warning-signals",
+    "fractal-rhythm-model",
+    "multivariate-monitoring",
+    "real-time",
+    "iot-monitoring",
+    "signal-processing",
 ]
 classifiers = [
     "Development Status :: 5 - Production/Stable",
