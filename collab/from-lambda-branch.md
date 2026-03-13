@@ -119,6 +119,58 @@ Benchmarks:
 - `benchmark/validate_frm_confidence.py` — synthetic frm_confidence=3 test
 - `benchmark/validate_frm_real_data.py` — real-world data test
 
+### Follow-up: Physics vs Software diagnosis
+
+Ran `benchmark/diagnose_physics_vs_software.py` to determine root cause.
+
+**Method**: Generated noise-driven oscillators at known λ values, fit FRM
+to both raw signal and autocorrelation function (ACF). Compared a LINEAR
+damped oscillator (no cubic term) to the full NONLINEAR Hopf normal form.
+
+**Results — LINEAR damped oscillator** (dx = -λx - ωy + σdW):
+
+| True λ | ACF λ_fit | R² | Variance |
+|--------|-----------|-----|----------|
+| 0.200 | 0.081 | 0.80 | 0.015 |
+| 0.050 | 0.049 | 0.80 | 0.047 |
+| 0.010 | 0.018 | 0.90 | 0.202 |
+| 0.005 | 0.010 | 0.98 | 0.619 |
+
+ACF-λ tracks true λ. Correlation: **r = 0.46** (positive, monotonic trend).
+
+**Results — NONLINEAR Hopf normal form** (dx = μx - ωy - r²x + σdW):
+
+| True λ | ACF λ_fit | R² | Variance |
+|--------|-----------|-----|----------|
+| 0.200 | 0.090 | 0.80 | 0.012 |
+| 0.050 | 0.061 | 0.86 | 0.025 |
+| 0.010 | 0.054 | 0.88 | 0.030 |
+| 0.005 | 0.053 | 0.88 | 0.031 |
+
+ACF-λ **does not track true λ**. Correlation: **r = -0.20** (flat, stuck ~0.06).
+
+**Diagnosis**: The cubic saturation term (-r²·x) in the Hopf normal form
+creates an effective damping λ_eff = λ + 3⟨r²⟩. As λ → 0, noise-driven
+amplitude grows, ⟨r²⟩ increases, and the effective damping hits a floor.
+The FRM parametric form cannot see through this nonlinear correction.
+
+This is a **physics limitation, not a software bug**. The FRM form correctly
+describes the ACF of a LINEAR damped oscillator (R² > 0.8, λ tracks true value).
+But real Hopf bifurcations involve nonlinear amplitude saturation that makes
+the observable damping rate constant-ish even as the linear damping → 0.
+
+**Implications**:
+1. The FRM form is valid for **linear** transient dynamics (ring-downs,
+   impulse responses, small-perturbation regime)
+2. It breaks down for **nonlinear** pre-bifurcation dynamics where
+   amplitude saturation dominates
+3. Generic EWS (variance + AC1) works because these statistics scale
+   with the noise-driven amplitude, which DOES change with λ — but
+   through a different relationship than simple exp(-λt) decay
+4. The Lambda detector would work in systems where you can observe
+   individual transient ring-downs (e.g., after a perturbation, before
+   the next noise kick). This is a narrower niche than originally claimed.
+
 ---
 
 ## PREVIOUS UPDATE: Three FRM detectors built for your suite
