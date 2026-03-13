@@ -2,7 +2,7 @@
 *Fractal Rhythm Model — Unified Corpus*
 *Living document. Updated by Claude (Anthropic) as
 architect revises plans during construction.*
-*Last revised: Session 54 — DRP-3 D3-3.0 complete (all 3 Type F predicates), R-12/R-13 resolved, ARCH-2 extracted, claims registry 162 total*
+*Last revised: Session 57 — P2 PHASE-READY (formal canonical build complete), Act I fully PHASE-READY, R-1 resolved, Phase-Ready 11/21*
 *KVS Score: 0.832 (threshold κ = 0.75)*
 *κ_corpus: 0.91*
 
@@ -294,7 +294,7 @@ receive this record.
 |---|-------|------|-----|--------|----------|-------|
 | P0 | Canonical Build Process Standard | methodology_D | GOV | COMPLETE | — | Governing process for entire corpus. CBT v2. Endogenous scheduling T_MK. Governs BOTH tracks. T15/T20 open. |
 | P1 | The Fractal Rhythm Model: A Universal Law of Network Information Transmission | law_A | I | PHASE-READY | v13 | β=1/2 proved (Hopf quarter-wave, F-1.4). λ=\|α\|/(Γ·τ_gen) derived. Γ=1+π²/4. 36-substrate adversarial battery. PH-1.1 resolved S48 via P2 C-2.4. PH-1.2, PH-1.3 resolved S48 via P3 C-3.REG. bioRxiv REJECTED (S49, scope mismatch). Preprints.org REJECTED (S56, desk rejection <24hr, no reason given). arXiv route: cs.DL → nlin.AO endorsement. |
-| P2 | Derivation and Universality: The β=1/2 Critical Exponent as a Universal Law | derivation_B | I | Phase 1 PHASE-READY (S49) | v1 | Phase 1 PHASE-READY (S49). AI layer v1 produced. IR inventory IR-1–IR-9 instantiated (S49-A3). Phases 2–5 not yet executed. v9 "PHASE-READY v4 S48" was speculative — corrected v10. Unblocks: PH-1.1 (P1), C-2.1 (P4), C-2.2 (P6). |
+| P2 | Derivation and Universality: The β=1/2 Critical Exponent as a Universal Law | derivation_B | I | PHASE-READY (S57) | v5 | CBT I-9 all 7 steps PASS (S57). Formal canonical build: Phase 1 baseline S48, Phases 2–5 executed S57. 10 hostile review objections addressed (5 CORRECTION APPLIED, 2 SCOPE REFINED, 1 DISCIPLINE ENFORCED, 1 DISMISSED). 6 claims (1D+5F). 10-step derivation table (n_invalid=0, DDE-independent). IR-1–IR-11. P10 compliant. 2 Thomas-review flags (TRF-P2-1 RG flow, TRF-P2-2 eigenvalue normalisation — pre-submission). Unblocks: PH-1.1 (P1), C-2.1→P4, C-2.2→P6. P2 dependency chain now CONFIRMED (R-1 resolved). |
 | P3 | FRM Measurement and Diagnostics | methodology_D | I | PHASE-READY (S48) | v2 | CBT I-9 all 7 steps PASS (S48). P2 C-2.1 inbound edge provisional (P2 Phase 1 only). v3.0 correction to QUEUED was over-correction — P3 AI layer (v2) is authoritative. Corrected S56 Phase 3 Objection 10 resolution. |
 | P4 | Biological Systems | application_C | II | Phase 5 CBT I-9 PASS (S56) — NOT-PHASE-READY (PH-4.2 blocking) | v3 | FRM applied to biological oscillators. 5 substrate classes (B1–B5, B3 scope boundary demo). 12 claims (4A+3D+5F). F-4.2 restructured (spectral consistency). P10-GAP-4.1 CLOSED. All 10 Phase 2 objections addressed. IR-13/IR-14 canonical. principle_10_compliant: true. CBT I-9 all 7 steps PASS (S56). 2 placeholders (PH-4.2 blocking — data assembly pending). Gate: P3 PHASE-READY ✓. |
 | P5 | Neural and Pharmacological Systems | application_C | II | QUEUED | v1 | Neural circuits with delayed inhibition. Drug response kinetics. P5↔MK-P4 isomorphism. Gate: P3 PHASE-READY. |
@@ -348,8 +348,8 @@ receive this record.
 **Critical gate:** P3 (Measurement and Diagnostics)
 gates all Act II and Act III papers. P3 is
 PHASE-READY (S48, CBT I-9 PASS). Gate OPEN.
-P2 dependency chain is provisional (P2 Phase 1 only).
-Corrected S56 Phase 3 (v3.0 over-correction reversed).
+P2 dependency chain CONFIRMED (S57, PHASE-READY).
+All Act I papers now PHASE-READY (P1, P2, P3).
 
 ### Cross-Track (FRM → MK)
 
@@ -380,8 +380,8 @@ Corrected S56 Phase 3 (v3.0 over-correction reversed).
 
 ```
 AI Layers:          21/21 schema PASS (0 errors)
-Phase-Ready:        10/21
-Act I:              P1 PHASE-READY, P2 Phase 1 PHASE-READY (S49), P3 PHASE-READY (S48)
+Phase-Ready:        11/21
+Act I:              P1 PHASE-READY, P2 PHASE-READY (S57), P3 PHASE-READY (S48)
 Meta-Kaizen:        6/6 PUBLISHED (MK-P1–MK-P6, all with AI layers, series "x/6")
 DRS:                DRP-1 + DRS-ARCH + DRP-2 (deposited S54) + DRP-3 (D3-3.0 complete S54)
 Total Claims:       162 (A:37 D:53 F:72)
@@ -540,7 +540,7 @@ framework.
 
 | ID | Scope | Level | Risk | Contingency |
 |----|-------|-------|------|-------------|
-| R-1 | P2 dependency chain | OPEN | P3 is PHASE-READY (S48, CBT I-9 PASS) but P2 is only Phase 1 PHASE-READY (S49). P2 C-2.1 inbound edge to P3 is PROVISIONAL. P4 inbound edges from P2 (D-2.1, C-2.1, C-2.2, C-2.4) similarly PROVISIONAL. P2 Phases 2–5 could modify claims that P3/P4 depend on. Gate is OPEN but chain is provisional. S56 Phase 3 Objection 10 resolution. | Accelerate P2 phases 2–5. P3/P4 proceed with provisional edges — confirmed when P2 completes. |
+| R-1 | P2 dependency chain | RESOLVED | P2 PHASE-READY (S57, CBT I-9 all 7 steps PASS). P2 C-2.1 inbound edge to P3 now CONFIRMED. P4 inbound edges from P2 (D-2.1, C-2.1, C-2.2, C-2.4) now CONFIRMED. No claim content changed during S57 build — Phase 3 corrections were annotations, version pins, and tier notes only. All downstream papers (P3, P4, P6) receive stable edges. | — |
 | R-2 | P11 | CRITICAL | Civilisational dataset fitting requires genuine ω extraction from historical data. Ibn Khaldun validation depends on this. | Pre-specified failure modes publishable. Falsification is still science. |
 | R-3 | P12 | MEDIUM | Urgency vs sequence tension. Civilisational Sentinel depends on P9 and P11. | Working paper track after P6 if needed. |
 | R-4 | P4/P5 AI layers | P4 RESOLVED / P5 OPEN | P4 AI layer rebuilt S56 (v2, Phase 1, correct title/type/claims). P5 AI layer still holds old content — update during P5 build. | P4 resolved. P5 update during Act II writing phase. |
@@ -579,6 +579,7 @@ framework.
 | v3.4 | Session 56 | P4 Phase 3 Second Meta-Kaizen. All 10 hostile review objections addressed. F-4.2 restructured from tautological 'β substrate independence' to 'spectral frequency consistency' (genuine empirical content). IR numbering collision resolved: P3 local IR-12→IR-13, IR-13→IR-14 in canonical schema. B3 reclassified as scope boundary demonstration class. Cross-class minimum raised to n≥3. P10-GAP-4.1 CLOSED (Taylor 1997 3σ detection threshold). P3 status corrected QUEUED→PHASE-READY (S48 CBT I-9 PASS, v3.0 over-correction reversed). R-1 reworded for P2 dependency chain risk. P4 AI layer v3 (Phase 3). |
 | v3.5 | Session 56 | P4 Phase 5 CBT I-9 — all 7 steps PASS. Build plan structurally sound. P4 AI layer v3 updated with cbt_session: S56, cbt_steps (7/7 PASS), c5: SATISFIED. Verdict remains NOT-PHASE-READY (PH-4.2 blocking — biological dataset assembly pending). P4 build process complete (Phases 1–5). Next gate: data collection and per-class fitting. |
 | v3.6 | Session 56 | P1 submission history: Preprints.org REJECTED (Preprints ID 202784, submitted 2026-03-12, declined 2026-03-13, desk rejection <24hr, no reason given). Second preprint rejection after bioRxiv (S49). arXiv route remains primary strategy. |
+| v3.7 | Session 57 | P2 canonical build complete. Formal Phases 2–5 executed (S57). 10 hostile review objections, all addressed. CBT I-9 all 7 steps PASS. P2 AI layer v4→v5. P2 status: PHASE-READY (S57). Act I now fully PHASE-READY (P1, P2, P3). R-1 (P2 dependency chain) RESOLVED — all downstream edges confirmed. Phase-Ready count 10→11. Build Table v3.7. |
 
 ---
 

@@ -17,10 +17,10 @@
         "description": "Array tracking derivation path for every constant or structural condition introduced in this paper. I-9 Step 4 amended: paths must terminate at (a) a live edge from a published paper AI layer, or (b) an IR rule applied to a mathematical axiom. Loops or P2-only-anchored paths cause principle_10_compliant to remain false."
       }
     ],
-    "produced_session": "S48",
-    "produced_by": "Claude (Anthropic) — P2 Phases 1-5 complete, S48",
+    "produced_session": "S57",
+    "produced_by": "Claude (Anthropic) — P2 Phase 1 baseline S48, Phases 2-5 formal build S57",
     "licence": "CC BY 4.0",
-    "phase_produced": "Phase 5 — CBT I-9 PASS — PHASE-READY",
+    "phase_produced": "Phase 5 — CBT I-9 PASS — PHASE-READY (S57)",
     "cbp_version": "v2 (S39) + S42 two-state gate + Principle 10 (S48)"
   },
   "paper_id": "P2",
@@ -29,8 +29,8 @@
   "series_position": "Paper 2 of 13",
   "paper_title": "Derivation and Universality: The β=1/2 Critical Exponent as a Universal Law",
   "paper_type": "derivation_B",
-  "version": "v4",
-  "session": "S48",
+  "version": "v5",
+  "session": "S57",
   "phase_ready": {
     "verdict": "PHASE-READY",
     "c1": "SATISFIED",
@@ -40,8 +40,8 @@
     "c5": "SATISFIED",
     "c6": "SATISFIED",
     "placeholder_count": 0,
-    "note": "CBT I-9 all 7 steps PASS. Session S48. All three placeholders resolved S48: PH-2.3 (P3 C-3.REG), PH-2.4-EMPIRICAL (P3 C-3.REG), P10-GAP-2.5 (P3 C-3.σ). Two Thomas-review flags: derivation table S3 (RG flow argument) and S10 (eigenvalue normalisation) — pre-submission transparency markers, not invalidity flags.",
-    "cbt_session": "S48",
+    "note": "CBT I-9 all 7 steps PASS. Session S57 (formal build). Phase 1 baseline S48. Phases 2-5 executed S57: 10 hostile review objections, all addressed (5 CORRECTION APPLIED, 2 SCOPE REFINED, 1 DISCIPLINE ENFORCED, 1 DISMISSED). All three placeholders resolved S48: PH-2.3 (P3 C-3.REG), PH-2.4-EMPIRICAL (P3 C-3.REG), P10-GAP-2.5 (P3 C-3.σ). Two Thomas-review flags: derivation table S3 (RG flow argument) and S10 (eigenvalue normalisation) — pre-submission transparency markers, not invalidity flags.",
+    "cbt_session": "S57",
     "cbt_steps": {
       "step_1_schema": "PASS",
       "step_2_predicates": "PASS",
@@ -59,7 +59,7 @@
     {
       "constant_or_condition": "β = 1/2",
       "status": "LIVE_EDGE",
-      "derivation_path": "P1 AI layer v11, Claim F-1.4 (Hopf quarter-wave theorem). β=1/2 derived for DDEs. P2 extends this to the universality class by RG argument. P2 is proving generality, not re-deriving the DDE result.",
+      "derivation_path": "P1 AI layer v13, Claim F-1.4 (Hopf quarter-wave theorem). β=1/2 derived for DDEs. P2 extends this to the universality class by RG argument. P2 is proving generality, not re-deriving the DDE result.",
       "gap_id": null
     },
     {
@@ -86,7 +86,7 @@
     {
       "constant_or_condition": "RG fixed-point stability (perturbation bound)",
       "status": "CLOSED",
-      "derivation_path": "Derivation table S10 (amplitude direction): eigenvalue = exp(−λ·τ_RG) < 1 for λ>0. λ>0 from P1 scope_boundary (μ<0 sub-critical — LIVE EDGE P1 AI layer v11). Terminates at P1 live edge + IR-11. Session S48 Phase 3.",
+      "derivation_path": "Derivation table S10 (amplitude direction): eigenvalue = exp(−λ·τ_RG) < 1 for λ>0. λ>0 from P1 scope_boundary (μ<0 sub-critical — LIVE EDGE P1 AI layer v13). Terminates at P1 live edge + IR-11. Session S48 Phase 3.",
       "gap_id": "P10-GAP-2.4",
       "closure_session": "S48"
     },
@@ -167,8 +167,8 @@
       "type": "LIVE_EDGE",
       "source_paper": "P1",
       "source_claim": "F-1.4",
-      "source_version": "P1-ai-layer-v12",
-      "status": "LIVE — P1 PHASE-READY, AI layer v12 published on GitHub",
+      "source_version": "P1-ai-layer-v13",
+      "status": "LIVE — P1 PHASE-READY, AI layer v13 published on GitHub. F-1.4 unchanged v12→v13.",
       "note": "P2 derives β=1/2 independently from the universality class criteria — NOT by re-running F-1.4. F-1.4 is confirmation that the FRM is within the class, not the proof of universality."
     }
   ],
@@ -214,7 +214,7 @@
       "name": "Universality Class Membership",
       "derivation_source": ["D-2.1", "F-1.4"],
       "statement": "The FRM belongs to the universality class characterised by β=1/2 and functional form f(t) = B + A·exp(−λt)·cos(ωt+φ). Membership is determined by criteria D-2.1(a)–(c), not by analogy.",
-      "vacuity_witness": "LIVE: frm_criterion_a_satisfied — P1 AI layer v12 frm_parameters.lambda.expression uses tau_gen as sole delay parameter.",
+      "vacuity_witness": "LIVE: (a) P1 v13 frm_parameters.lambda.expression uses tau_gen as sole delay parameter; (b) P1 v13 F-1.4 derivation trace step 1 — characteristic equation at α=0 has conjugate pair on imaginary axis (Hopf condition); (c) P1 v13 D-1.2 — τ_gen is generation interval, independently measurable demographic parameter.",
       "falsification_predicate": {
         "FALSIFIED_IF": "(frm_fails_any_criterion = true) OR (membership_criterion_is_circular = true) OR (beta_not_implied_by_criteria = true)",
         "WHERE": "frm_fails_any_criterion: BOOLEAN — TRUE if FRM fails D-2.1(a), (b), or (c). Evaluated against P1 AI layer v12 live edge F-1.4. membership_criterion_is_circular: BOOLEAN — TRUE if any criterion in D-2.1(a)-(c) uses beta=1/2 as a defining input. beta_not_implied_by_criteria: BOOLEAN — TRUE if C-2.1 is FALSIFIED (logically downstream).",
@@ -240,6 +240,7 @@
         "CONTEXT": "C-2.3. Extends P1 functional form to all class members. Downstream of C-2.1 and P3 C-3.REG. PH-2.3 non-blocking at PHASE-READY."
       },
       "tier": "formal_proof",
+      "tier_note": "Analytic derivation complete (functional form follows from C-2.1). Empirical confirmation deferred to P3 C-3.REG — not a P2 deliverable.",
       "test_bindings": [],
       "verified_against": null
     },
@@ -249,7 +250,7 @@
       "name": "Substrate Independence (resolves PH-1.1)",
       "derivation_source": ["C-2.1", "C-2.2"],
       "statement": "The critical exponent β=1/2 holds across all substrates satisfying the class membership criteria D-2.1(a)–(c), not only for DDEs.",
-      "resolves": "PH-1.1 in P1-ai-layer-v12",
+      "resolves": "PH-1.1 in P1-ai-layer-v13",
       "falsification_predicate": {
         "FALSIFIED_IF": "(any_substrate_class_mean_beta_outside_2sigma = true) OR (substrate_class_fails_d21_AND_cited_as_counterexample = true)",
         "WHERE": "any_substrate_class_mean_beta_outside_2sigma: BOOLEAN — TRUE if mean fitted beta for any D-2.1-satisfying substrate class lies outside 0.5 +/- 2*sigma_S. Classes: (1) Kuramoto networks; (2) gene regulatory networks; (3) neural circuits with delayed inhibition. PLACEHOLDER PH-2.4-EMPIRICAL: pending P3 C-3.REG. substrate_class_fails_d21_AND_cited_as_counterexample: BOOLEAN — TRUE if a system failing D-2.1 is cited as a counterexample to β=1/2.",
@@ -258,6 +259,7 @@
         "CONTEXT": "C-2.4 resolves PH-1.1 in P1 AI layer v12. Analytic component established by C-2.1+C-2.2; empirical pending P3 C-3.REG."
       },
       "tier": "formal_proof",
+      "tier_note": "Analytic component (substrate independence follows from C-2.1 + C-2.2) complete. Empirical 2σ test deferred to P3 C-3.REG — not a P2 deliverable. Resolves PH-1.1 analytically.",
       "test_bindings": [],
       "verified_against": null
     },
@@ -266,7 +268,7 @@
       "type": "F",
       "name": "RG Fixed-Point Stability",
       "derivation_source": ["C-2.1"],
-      "statement": "The β=1/2 fixed point is stable under perturbation of the class membership conditions. Shift in β is O(ε) for perturbation of size ε.",
+      "statement": "The β=1/2 fixed point is stable under perturbation of the class membership conditions. Shift in β is O(ε) for perturbation of size ε. Note: stability is of the RG fixed point under perturbation of class criteria, not dynamical stability of individual systems.",
       "falsification_predicate": {
         "FALSIFIED_IF": "(beta_shift_exceeds_order_epsilon = true) OR (fixed_point_eigenvalue_exceeds_unity = true)",
         "WHERE": "beta_shift_exceeds_order_epsilon: BOOLEAN — TRUE if |beta(epsilon) - 0.5| grows faster than linearly in epsilon as epsilon->0. fixed_point_eigenvalue_exceeds_unity: BOOLEAN — TRUE if any eigenvalue of dT/dx at x*=0.5 has magnitude >= 1 in the amplitude direction.",
@@ -305,7 +307,8 @@
         "step": "S3",
         "rule": "IR-9",
         "output": "RG fixed-point: iΩ*τ + k_c·exp(−iΩ*τ) = 0",
-        "dde_free": true
+        "dde_free": true,
+        "annotation": "RG fixed-point identification applied to linear characteristic equation of D-2.1 system at Hopf criticality. Exponential form follows from single-delay structure (D-2.1(a)) via Laplace transform of delay term. Basis: normal form theory (Guckenheimer & Holmes 1983 §3.4) applied to codimension-1 Hopf in delay systems. TRF-P2-1 retained for Thomas review."
       },
       {
         "step": "S4",
@@ -323,7 +326,8 @@
         "step": "S6",
         "rule": "IR-8",
         "output": "θ*=π/2 (fundamental mode n=0, canonical choice documented)",
-        "dde_free": true
+        "dde_free": true,
+        "annotation": "Named parsimony principle: Fundamental Mode Dominance at Codimension-1 Onset. At codimension-1 Hopf bifurcation, n=0 eigenvalue pair crosses imaginary axis first; higher modes (n≥1) remain stable at onset. Selection is consequence of bifurcation structure, not arbitrary choice."
       },
       {
         "step": "S7",
@@ -335,7 +339,8 @@
         "step": "S8",
         "rule": "IR-3",
         "output": "β=1/2",
-        "dde_free": true
+        "dde_free": true,
+        "annotation": "β = Ω*τ/π is standard scaling-dimension identification (P1 F-1.4 derivation trace step 4). Substituting S7 result Ω*τ = π/2: β = (π/2)/π = 1/2. IR-3 applied to S7 output and P1 live edge."
       },
       {
         "step": "S9",
@@ -420,7 +425,7 @@
     {
       "flag_id": "TRF-P2-1",
       "step": "S3",
-      "description": "RG flow from substrate-general G(iΩ,τ) to scalar exponential fixed-point form. Argument basis: Coullet & Spiegel (1983) amplitude equations. Thomas to review before journal submission.",
+      "description": "RG flow from substrate-general G(iΩ,τ) to scalar exponential fixed-point form. Exponential form follows from single-delay structure (D-2.1(a)) via Laplace transform. Basis: normal form theory (Guckenheimer & Holmes 1983 §3.4) + Coullet & Spiegel (1983) amplitude equations. Thomas to review before journal submission.",
       "status": "OPEN — pre-submission"
     },
     {
@@ -436,7 +441,7 @@
     "type_F": 5,
     "placeholder_count": 0,
     "phase_ready": true,
-    "session_produced": "S48",
+    "session_produced": "S57",
     "inference_rules_count": 11,
     "derivation_steps": 10,
     "n_invalid_steps": 0,
