@@ -221,7 +221,7 @@ T15 (CBP v2):        OPEN — unchanged.
 
 ### Commit hashes
 
-[To be filled after commit]
+684ee24 — WO-S49-PUSH-1 PR3-2: Deposit canonical P1 AI layer (S55) and close work order
 
 # ========================================================================
 # END  |  WO-S49-PUSH-1  |  Session 49  |  12 March 2026
