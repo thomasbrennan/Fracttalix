@@ -1,0 +1,53 @@
+# Fracttalix Team Orchestrator — systemd user service
+#
+# Runs the orchestrator as a persistent daemon that survives reboots.
+#
+# Installation:
+#   mkdir -p ~/.config/systemd/user/
+#   cp scripts/fracttalix-team.service ~/.config/systemd/user/
+#   systemctl --user daemon-reload
+#
+# Configure (edit the service file or use an override):
+#   systemctl --user edit fracttalix-team
+#   # Set Environment lines for SESSION, OBJECTIVE, etc.
+#
+# Usage:
+#   systemctl --user start fracttalix-team    # Start
+#   systemctl --user stop fracttalix-team     # Stop
+#   systemctl --user status fracttalix-team   # Status
+#   journalctl --user -u fracttalix-team -f   # Follow logs
+#   systemctl --user enable fracttalix-team   # Auto-start on login
+#
+# Session S56 — 2026-03-13
+
+[Unit]
+Description=Fracttalix Team Orchestrator
+Documentation=https://github.com/thomasbrennan/Fracttalix
+
+[Service]
+Type=simple
+WorkingDirectory=%h/Fracttalix
+Environment=SESSION=S57
+Environment=OBJECTIVE=Default objective — edit this service file
+Environment=TEAM_SIZE=4
+Environment=STALE_SECONDS=300
+Environment=MAX_GENERATIONS=10
+
+ExecStart=/usr/bin/python3 %h/Fracttalix/scripts/orchestrator.py start \
+    --session ${SESSION} \
+    --objective "${OBJECTIVE}" \
+    --team-size ${TEAM_SIZE} \
+    --stale-seconds ${STALE_SECONDS} \
+    --max-generations ${MAX_GENERATIONS}
+
+ExecStop=/usr/bin/python3 %h/Fracttalix/scripts/orchestrator.py stop
+
+Restart=on-failure
+RestartSec=30
+
+# Logging
+StandardOutput=append:%h/Fracttalix/.checkpoint/watchdog.log
+StandardError=append:%h/Fracttalix/.checkpoint/watchdog.log
+
+[Install]
+WantedBy=default.target

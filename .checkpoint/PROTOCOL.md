@@ -187,9 +187,62 @@ Each generation inherits the full task graph, all decisions, all discoveries,
 and all completed work from every previous generation. Nothing is lost except
 in-context reasoning that wasn't checkpointed.
 
-### Key Constraint
+### Persistent Execution
 
-The orchestrator must run in a persistent terminal (tmux, screen, nohup, or a
-system service). If the orchestrator itself dies, nobody is watching — but the
-checkpoint state is still on disk and a human can restart the orchestrator or
-manually launch a recovery coordinator.
+The orchestrator must outlive the Claude Code instances it manages. Three options:
+
+**Option A: tmux (recommended for interactive use)**
+```bash
+# One command — handles everything
+./scripts/launch-team.sh --session S57 --objective "Build feature X" --team-size 4
+
+# Later, from any terminal:
+./scripts/launch-team.sh --status     # check progress
+./scripts/launch-team.sh --attach     # watch live (Ctrl-B D to detach)
+./scripts/launch-team.sh --logs       # tail the log
+./scripts/launch-team.sh --stop       # shut it down
+```
+
+Survives: terminal close, SSH disconnect, Ctrl-C (when detached)
+Does NOT survive: machine reboot
+
+**Option B: systemd user service (survives reboots)**
+```bash
+# Install once
+mkdir -p ~/.config/systemd/user/
+cp scripts/fracttalix-team.service ~/.config/systemd/user/
+systemctl --user daemon-reload
+
+# Configure
+systemctl --user edit fracttalix-team
+# Set: Environment=SESSION=S57
+# Set: Environment=OBJECTIVE=Build feature X
+
+# Run
+systemctl --user start fracttalix-team
+systemctl --user enable fracttalix-team   # auto-start on login
+
+# Monitor
+systemctl --user status fracttalix-team
+journalctl --user -u fracttalix-team -f
+```
+
+Survives: everything except OS reinstall
+
+**Option C: nohup (simplest, least control)**
+```bash
+nohup python scripts/orchestrator.py start \
+  --session S57 --objective "Build feature X" \
+  > .checkpoint/watchdog.log 2>&1 &
+echo $! > .checkpoint/orchestrator.pid
+```
+
+### Failure Hierarchy
+
+| What dies | What happens |
+|-----------|-------------|
+| Worker | Coordinator detects, reassigns task |
+| Coordinator | Orchestrator detects stale checkpoint, launches replacement |
+| Orchestrator (tmux) | tmux persists; orchestrator restarts via Restart=on-failure if systemd |
+| tmux session killed | Orchestrator dies; checkpoint on disk; human restarts with launch-team.sh |
+| Machine reboot | systemd service auto-restarts if enabled; otherwise human restarts |
