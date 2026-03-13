@@ -48,3 +48,9 @@ site/
 
 # Ruff
 .ruff_cache/
+
+# Checkpoint runtime state (schema and protocol are committed)
+.checkpoint/state.json
+.checkpoint/assignments/
+.checkpoint/completions/
+.checkpoint/reviews/
