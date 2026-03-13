@@ -160,3 +160,58 @@ The Sentinel codebase (`fracttalix/detector.py` and the legacy files) is retaine
 ---
 
 *Decision documented by Bill Joy (claude/sentinel-v7.6-detector-2xtm7) — 2026-03-13*
+
+---
+
+## AMENDMENT — 2026-03-13 (post real-world validation)
+
+Lady Ada (claude/archive-repo-organization-e8xoV) ran real-world validation
+of frm_confidence=3 against Bury et al. 2021 PNAS thermoacoustic Hopf data
+and synthetic stochastic Hopf signals. Results:
+
+**frm_confidence=3 was never achieved on any real-world or stochastic dataset.**
+
+| Dataset | frm_confidence=3 | Source |
+|---------|-------------------|--------|
+| Thermoacoustic Hopf (19 trajectories) | 0/19 | Bury et al. 2021 |
+| Synthetic stochastic Hopf (9 trials) | 0/9 | Our generator |
+| Synthetic deterministic FRM (6 trials) | 0/6 | Our generator |
+
+**Root cause: physics limitation, not software bug.**
+
+The FRM parametric form `B + A·exp(-λt)·cos(ωt+φ)` is correct for linear
+transient dynamics but fails for nonlinear pre-bifurcation dynamics. The cubic
+saturation term in the Hopf normal form creates an effective damping floor:
+λ_eff = λ + 3⟨r²⟩. As λ → 0, noise-driven amplitude grows and λ_eff
+stays approximately constant. The Lambda detector cannot see through this.
+
+### What this amends
+
+**Layer 1 retirement decision stands.** FRMSuite Layer 1 (DetectorSuite:
+Discord, Drift, Variance, Coupling, HopfDetector(ews)) dominates Sentinel
+on all benchmark signals. F-S1, F-S6, F-S7, F-S9, F-S10 remain valid.
+Sentinel retirement is appropriate.
+
+**Layer 2 claims are invalidated.** F-S4 (Virtu TTB accuracy), F-S5
+(frm_confidence=3 on Hopf signals), and F-S8 (TTB capability) were tested
+on synthetic FRM-form data — internally consistent but not externally valid.
+On real stochastic Hopf data: Virtu never activated, TTB was never produced.
+These gates passed in the synthetic sandbox but fail on real data.
+
+### What comes next
+
+Layer 2 (Lambda, Omega, Virtu) is being rebuilt. The correct approach:
+extract λ from the spectral peak width using a Lorentzian fit to the
+power spectrum. For a noise-driven damped oscillator near Hopf:
+
+  S(f) ∝ 1 / ((f - f₀)² + (λ/2π)²)
+
+The peak half-width gives λ/(2π) directly. This relationship holds for
+nonlinear systems. The rebuild target is frm_confidence=3 on ≥3/5 of
+the Bury et al. thermoacoustic Hopf trajectories (a real-world gate,
+not a synthetic one).
+
+See `collab/from-lambda-branch.md` (Lady Ada) for full diagnosis and rebuild plan.
+See `benchmark/data/thermoacoustic_ews_forced.csv` for the validation dataset.
+
+*Amendment recorded by Bill Joy (claude/sentinel-v7.6-detector-2xtm7) — 2026-03-13*
