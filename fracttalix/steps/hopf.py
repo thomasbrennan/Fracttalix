@@ -224,7 +224,7 @@ class HopfDetectorStep(DetectorStep):
 
         # Alert logic
         alert, alert_type = self._compute_alert(
-            lam_fit, time_to_bif, scope_status
+            lam_fit, lam_rate, time_to_bif, scope_status
         )
 
         # Implied τ_gen from fitted ω
@@ -318,9 +318,12 @@ class HopfDetectorStep(DetectorStep):
         # Check for limit cycle: λ ≈ 0 with good fit means sustained
         # oscillation, not a damped system approaching bifurcation.
         # The test: exp(-λ * window) ≈ 1 means negligible decay.
+        # Threshold 0.5 → less than ~39% amplitude decay across window.
+        # Noise in sustained oscillations creates apparent small damping,
+        # so the threshold must be generous enough to catch these.
         window_len = len(self._window)
-        if window_len > 0 and lam_fit * window_len < 0.05:
-            # Less than 5% amplitude decay across the window.
+        if window_len > 0 and lam_fit * window_len < 0.5:
+            # Less than 39% amplitude decay across the window.
             # This is a sustained oscillation (limit cycle), not a
             # damped system losing its damping.
             return "LIMIT_CYCLE"
@@ -329,12 +332,29 @@ class HopfDetectorStep(DetectorStep):
             return "BOUNDARY"
         return "IN_SCOPE"
 
-    def _compute_alert(self, lam, time_to_bif, scope_status):
-        """Determine alert status from λ and scope."""
+    def _compute_alert(self, lam, lam_rate, time_to_bif, scope_status):
+        """Determine alert status from λ, its trend, and scope.
+
+        Key insight: λ < threshold alone is not sufficient for an alert.
+        A sustained oscillation (limit cycle) naturally has λ ≈ 0 with
+        no declining trend — that's normal, not a warning sign.
+
+        CRITICAL_SLOWING requires λ to be both small AND declining
+        (lam_rate < 0). A stable small λ is a limit cycle.
+        TRANSITION_APPROACHING uses time_to_bif which already requires
+        declining λ (computed from negative lam_rate).
+        """
         if scope_status in ("OUT_OF_SCOPE", "LIMIT_CYCLE"):
             return False, None
 
-        # Check for critical slowing (λ below warning threshold)
+        # All alerts require λ to be actively declining (lam_rate < 0).
+        # A sustained oscillation has λ ≈ 0 with stable/noisy rate —
+        # not a system approaching bifurcation.
+        if lam_rate >= -1e-3:
+            # λ is not meaningfully declining — no alert
+            return False, None
+
+        # Check for critical slowing: λ below warning AND declining
         if lam < self.cfg.hopf_lambda_warning:
             if time_to_bif is not None and time_to_bif < self.cfg.hopf_t_decision:
                 return True, "TRANSITION_APPROACHING"
@@ -374,7 +394,7 @@ class HopfDetectorStep(DetectorStep):
         lam_rate, time_to_bif, confidence = self._compute_lambda_trend()
         lam = self._lambda_history[-1]
         scope = "IN_SCOPE"  # assume last scope still valid between fits
-        alert, alert_type = self._compute_alert(lam, time_to_bif, scope)
+        alert, alert_type = self._compute_alert(lam, lam_rate, time_to_bif, scope)
 
         ctx.scratch["hopf_lambda"] = lam
         ctx.scratch["hopf_lambda_rate"] = lam_rate

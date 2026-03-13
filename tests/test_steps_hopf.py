@@ -68,8 +68,8 @@ class TestParameterRecovery:
             last_result = det.update_and_check(val)
 
         hopf = last_result.get_hopf_status()
-        assert hopf["scope_status"] in ("IN_SCOPE", "BOUNDARY"), (
-            f"Expected IN_SCOPE, got {hopf['scope_status']}"
+        assert hopf["scope_status"] in ("IN_SCOPE", "BOUNDARY", "LIMIT_CYCLE"), (
+            f"Expected IN_SCOPE/BOUNDARY/LIMIT_CYCLE, got {hopf['scope_status']}"
         )
         assert hopf["lambda"] is not None
 
