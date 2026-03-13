@@ -1,0 +1,464 @@
+{
+  "schema_version": "v2-S42+S48",
+  "paper_id": "DRP-8",
+  "paper_title": "τ-Grounding Theorem: Physical Derivation of the Upstream Measurement Principle",
+  "paper_type": "derivation_B",
+  "version": "v1",
+  "session": "S54",
+  "author": "Thomas Brennan",
+  "series": "DRP",
+  "series_position": 8,
+  "phase_ready": false,
+  "phase_ready_gate": "pending Phase 3 prose + CBT I-9",
+  "current_phase": "4 — AI layer initialisation",
+  "doi": null,
+  "biorxiv_id": null,
+  "zenodo_id": null,
+  "github_ai_layer_url": "pending",
+
+  "drp7_gate_update": {
+    "registered": true,
+    "session": "S54",
+    "confirmed_by": "Thomas Brennan",
+    "note": "DRP-7 gate now requires DRP-1 through DRP-6 AND DRP-8 all PHASE-READY"
+  },
+
+  "scope_boundary": {
+    "signed_by": "Thomas Brennan",
+    "signed_session": "S54",
+    "in_scope": [
+      "DDE systems satisfying C1-C4 with measurable τ",
+      "Sub-critical systems (μ < 0)"
+    ],
+    "out_of_scope": [
+      "Mathematical objects without measurable τ",
+      "Historical propositions",
+      "Systems with τ = 0",
+      "General epistemological claims not specific to DDE systems",
+      "DDE systems where τ is not independently measurable"
+    ]
+  },
+
+  "inference_rules": [
+    {
+      "id": "IR-1",
+      "name": "Modus Ponens",
+      "source": "Standard logic"
+    },
+    {
+      "id": "IR-2",
+      "name": "Hopf Bifurcation Characteristic Equation",
+      "source": "P1 F-1.4 derivation chain"
+    },
+    {
+      "id": "IR-3",
+      "name": "Boundary Exactness",
+      "source": "Measure theory / Lebesgue boundary"
+    },
+    {
+      "id": "IR-4",
+      "name": "Definition Expansion",
+      "source": "Standard logic"
+    },
+    {
+      "id": "IR-5",
+      "name": "Forward Evolution Operator Properties",
+      "source": "DDE theory (Hale & Verduyn Lunel 1993)"
+    },
+    {
+      "id": "IR-6",
+      "name": "Path Independence / Disjoint Derivation",
+      "source": "Proof theory"
+    },
+    {
+      "id": "IR-12",
+      "name": "Causal Precedence",
+      "source": "Suppes 1970; Pearl 2009",
+      "logical_form": "In a causal system, state at t' cannot depend on events at t when t' < t. Causal influence propagates strictly forward.",
+      "accepted_at": "HR-D8-0",
+      "derives_from": "C1 (DDE definition) via IR-4. Contains no §10.7 content. HR-D3: DISMISSED."
+    }
+  ],
+
+  "inbound_dependencies": [
+    {
+      "claim_id": "C-DRP.8",
+      "source_paper": "DRP-1",
+      "source_version": "v1.1",
+      "claim_type": "A",
+      "role": "UMP statement. Received as Type A axiom — conclusion only. Proof method (§10.7) is not a premise. HR-D1: DISMISSED.",
+      "status": "LIVE"
+    },
+    {
+      "claim_id": "C-DRP.5",
+      "source_paper": "DRP-1",
+      "source_version": "v1.1",
+      "claim_type": "A",
+      "role": "Falsification Kernel K=(P,O,M,B) definition. Required for C6 vacuity condition.",
+      "status": "LIVE"
+    },
+    {
+      "claim_id": "F-1.4",
+      "source_paper": "P1",
+      "source_version": "v12",
+      "claim_type": "F",
+      "role": "β=1/2 Hopf quarter-wave theorem. Live edge for TH-1 frequency-domain derivation path.",
+      "status": "LIVE"
+    }
+  ],
+
+  "pass_forward_register": [
+    {
+      "claim_id": "C-DRP8.CON",
+      "placeholder_id": "PH-D8-CON-1",
+      "destination_paper": "DRP-7",
+      "destination_role": "Type A axiom — dual-path convergence corroborates DRP-7 self-application",
+      "status": "PLACEHOLDER",
+      "resolution_condition": "DRP-8 reaches PHASE-READY"
+    }
+  ],
+
+  "placeholder_count": 1,
+  "placeholder_register": [
+    {
+      "id": "PH-D8-CON-1",
+      "claim_id": "C-DRP8.CON",
+      "description": "Pass-forward to DRP-7 as Type A axiom pending DRP-8 PHASE-READY",
+      "blocking": false,
+      "resolution_condition": "DRP-8 PHASE-READY gate fires"
+    }
+  ],
+
+  "principle_10_compliant": false,
+  "principle_10_compliant_note": "Set false pending CBT I-9 Step 4 audit. All entries assessed below; all LIVE_EDGE or CLOSED.",
+  "principle_10_audit": [
+    {
+      "constant_or_condition": "C-DRP.8 (UMP)",
+      "status": "LIVE_EDGE",
+      "derivation_path": "DRP-1 v1.1 C-DRP.8 — received as Type A axiom",
+      "gap_id": null
+    },
+    {
+      "constant_or_condition": "C-DRP.5 (Falsification Kernel K)",
+      "status": "LIVE_EDGE",
+      "derivation_path": "DRP-1 v1.1 C-DRP.5 — received as Type A axiom",
+      "gap_id": null
+    },
+    {
+      "constant_or_condition": "F-1.4 (β=1/2 Hopf quarter-wave)",
+      "status": "LIVE_EDGE",
+      "derivation_path": "P1 v12 F-1.4 — live edge for TH-1 frequency-domain path",
+      "gap_id": null
+    },
+    {
+      "constant_or_condition": "IR-12 (Causal Precedence)",
+      "status": "CLOSED",
+      "derivation_path": "Accepted HR-D8-0. Derives from C1 (DDE forward evolution) via IR-4. Justified: Suppes 1970; Pearl 2009. No §10.7 content. HR-D3: DISMISSED.",
+      "gap_id": null
+    },
+    {
+      "constant_or_condition": "τ (delay parameter)",
+      "status": "CLOSED",
+      "derivation_path": "Definitional. τ is the DDE delay constant defined by C1 scope conditions. Independently measurable per scope boundary.",
+      "gap_id": null
+    },
+    {
+      "constant_or_condition": "C-DRP8.CON independence (logical, not genetic)",
+      "status": "CLOSED",
+      "derivation_path": "HR-D8-3-DRS step-trace: 0/16 steps require §10.7 as necessary premise. HR-D4 and HR-D6 prose fixes applied. Independence: CONFIRMED.",
+      "gap_id": null
+    }
+  ],
+
+  "claims": [
+    {
+      "claim_id": "C-DRP8.D1",
+      "claim_type": "D",
+      "title": "DDE Proposition",
+      "statement": "A proposition P is a DDE proposition if and only if: (i) P concerns the state of a system satisfying C1-C4; (ii) P's truth-maker is a state variable x(t_P) of that system at a determinate time t_P; (iii) the system's evolution is governed by a DDE with delay τ > 0, independently measurable.",
+      "predicate": null,
+      "note": "Type D — definitional. No falsification predicate required. Establishes the subject domain of the τ-Grounding Theorem. Justifies the restriction to DDE propositions in all downstream claims."
+    },
+    {
+      "claim_id": "C-DRP8.D2",
+      "claim_type": "D",
+      "title": "τ-Grounded Measurement Window",
+      "statement": "For a DDE proposition P with truth-maker x(t_P) and system delay τ, the τ-grounded measurement window is W = {x(t_i) : t_i ≤ t_P − τ}. W is the maximal set of observations that are causally independent of x(t_P) under the forward evolution operator Φ_τ. Maximality follows from IR-3 boundary exactness: the boundary t_i = t_P − τ is inclusive and exact.",
+      "predicate": null,
+      "note": "Type D — definitional. No falsification predicate required. Established by L2 derivation chain (L2-1 through L2-4). 'Maximal' qualified by IR-3: the boundary is not a conservative approximation but the exact causal independence limit under Φ_τ."
+    },
+    {
+      "claim_id": "C-DRP8.1",
+      "claim_type": "F",
+      "title": "DDE Forward Causal Structure",
+      "statement": "For any DDE system satisfying C1-C4, the forward evolution operator Φ_τ is non-invertible: no observation O(t') with t' ≤ t can causally depend on x(t + τ). Backward causal paths are structurally absent.",
+      "predicate": {
+        "FALSIFIED_IF": "There exists a C1-C4 DDE system and a time pair (t, t') with t' ≤ t such that the measured mutual information I(O(t'); x(t + τ)) exceeds δ_causal",
+        "WHERE": {
+          "Φ_τ": {
+            "type": "operator",
+            "definition": "Forward evolution map of the C1-C4 DDE: x(t + τ) = Φ_τ[x(t), history on [t − τ, t]]",
+            "units": "dimensionless"
+          },
+          "O(t')": {
+            "type": "observation set",
+            "definition": "Set of system state observations recorded at time t'",
+            "units": "system-specific"
+          },
+          "x(t + τ)": {
+            "type": "state variable",
+            "definition": "System state at time t + τ, determined by Φ_τ acting on history",
+            "units": "system-specific"
+          },
+          "I(·;·)": {
+            "type": "mutual information",
+            "definition": "Shannon mutual information between observation set and future state, computed by standard estimator",
+            "units": "bits"
+          },
+          "δ_causal": {
+            "type": "threshold",
+            "definition": "Causal independence threshold: maximum mutual information attributable to measurement noise and finite-sample estimator variance, determined from baseline measurement at system equilibrium",
+            "units": "bits"
+          }
+        },
+        "EVALUATION": "1. Select C1-C4 system with independently measured τ. 2. Record observations O(t') at time t' ≤ t. 3. Record x(t + τ) at time t + τ. 4. Compute I(O(t'); x(t + τ)) using standard mutual information estimator. 5. Determine δ_causal from equilibrium baseline. 6. If I > δ_causal: FALSIFIED. If I ≤ δ_causal for all tested pairs: NOT FALSIFIED. Procedure terminates in finite steps.",
+        "BOUNDARY": "δ_causal is an exclusive upper bound. I > δ_causal (strictly greater) constitutes falsification. δ_causal is substrate-specific and must be determined from equilibrium baseline prior to evaluation. Justified: causal independence admits measurement noise; the threshold accounts for finite-sample mutual information estimator variance and must not be set to zero.",
+        "CONTEXT": "C1-C4 DDE systems with measurable τ > 0. Sub-critical (μ < 0). Systems where τ is not independently measurable are out of scope per D8-0.1."
+      },
+      "derivation_steps": ["L1-0", "L1-1", "L1-2", "L1-3"],
+      "inference_rules_used": ["IR-1", "IR-4", "IR-5", "IR-12"],
+      "sample_falsification_observation": "A C1-C4 delayed feedback network where upstream observations at t' < t_P − τ show I > δ_causal with the future state x(t_P + τ), indicating backward causal coupling. This would require Φ_τ to be invertible, contradicting the DDE forward evolution structure.",
+      "hostile_review_notes": [
+        "HR-D8 (HR-D8-3-DRS): vacuity witness uses backward-coupled noise injection violating C1. DISMISSED — witness is the counterexample demonstrating predicate discriminating power; it need not satisfy C1-C4 well-behavedness. C6: PASS."
+      ]
+    },
+    {
+      "claim_id": "C-DRP8.2",
+      "claim_type": "F",
+      "title": "τ-Gap Measurement Window",
+      "statement": "For a DDE proposition P with truth-maker x(t_P) and delay τ, the maximal causally independent observation window is W = {x(t_i) : t_i ≤ t_P − τ}. Observations from {t_i > t_P − τ} may be causally downstream of x(t_P) and cannot be guaranteed causally independent.",
+      "predicate": {
+        "FALSIFIED_IF": "There exists a C1-C4 DDE proposition P and a set of observations {x(t_j)} with t_j ∈ (t_P − τ, t_P] such that I(x(t_j); x(t_P)) ≤ δ_causal for all t_j in this interval — i.e., observations outside W are empirically indistinguishable from causally independent observations",
+        "WHERE": {
+          "P": {
+            "type": "proposition",
+            "definition": "DDE proposition per C-DRP8.D1 with truth-maker x(t_P)",
+            "units": "logical"
+          },
+          "t_P": {
+            "type": "time",
+            "definition": "Time at which truth-maker x(t_P) is determined",
+            "units": "system time units"
+          },
+          "τ": {
+            "type": "delay parameter",
+            "definition": "DDE delay, independently measured per C1-C4 scope conditions. Not inferred from P.",
+            "units": "system time units"
+          },
+          "t_j": {
+            "type": "time",
+            "definition": "Observation time constrained to t_j ∈ (t_P − τ, t_P]",
+            "units": "system time units"
+          },
+          "W": {
+            "type": "set",
+            "definition": "τ-grounded measurement window per C-DRP8.D2: W = {x(t_i) : t_i ≤ t_P − τ}",
+            "units": "dimensionless (index set)"
+          },
+          "I(·;·)": {
+            "type": "mutual information",
+            "definition": "Shannon mutual information, computed by standard estimator",
+            "units": "bits"
+          },
+          "δ_causal": {
+            "type": "threshold",
+            "definition": "Causal independence threshold as defined in C-DRP8.1",
+            "units": "bits"
+          }
+        },
+        "EVALUATION": "1. Select C1-C4 DDE system with independently measured τ. 2. Identify proposition P with truth-maker x(t_P). 3. Select observations x(t_j) with t_j ∈ (t_P − τ, t_P]. 4. Compute I(x(t_j); x(t_P)) for each t_j. 5. If I ≤ δ_causal for all t_j in this interval: FALSIFIED (the W boundary is over-restrictive; observations outside W are also causally independent, contradicting the claim). If I > δ_causal for at least one t_j: NOT FALSIFIED. Procedure terminates in finite steps.",
+        "BOUNDARY": "Boundary at t_i = t_P − τ is exact and inclusive (IR-3). Observations at t_i = t_P − τ are included in W. The boundary is determined by τ, not by measurement resolution. Justified: Φ_τ's domain is history on [t − τ, t]; the causal independence boundary is a consequence of the operator's definition, not a conservative approximation.",
+        "CONTEXT": "C1-C4 DDE systems with measurable τ. τ must be independently measured and must not be inferred from the proposition P being evaluated. Inference of τ from P would violate UMP (C-DRP.8)."
+      },
+      "derivation_steps": ["L2-0", "L2-1", "L2-2", "L2-3", "L2-4"],
+      "inference_rules_used": ["IR-1", "IR-3", "IR-4", "IR-5", "IR-12"],
+      "inbound_axiom_receipts": [
+        "C-DRP.8 received at L2-0 as Type A axiom — conclusion only, not §10.7 proof method. Axiom receipt does not constitute dependence on proof method. HR-D1: DISMISSED."
+      ],
+      "sample_falsification_observation": "A DDE oscillator where observations at t_j ∈ (t_P − τ, t_P) show mutual information with x(t_P) indistinguishable from equilibrium baseline, demonstrating that the W boundary is over-restrictive and the causal window extends further than τ predicts."
+    },
+    {
+      "claim_id": "C-DRP8.3",
+      "claim_type": "F",
+      "title": "UMP Necessity for DDE Propositions",
+      "statement": "For any DDE proposition P satisfying C1-C4 and C6 (non-vacuity), the Falsification Kernel K=(P,O,M,B) is non-vacuous only if O ⊆ W, where W is the τ-grounded measurement window. Any K with O ⊄ W is vacuous for DDE propositions: M cannot distinguish P-true from P-false states because observations within the causal window of x(t_P) are dynamically consistent with both truth values.",
+      "predicate": {
+        "FALSIFIED_IF": "There exists a C1-C4 DDE proposition P and a Falsification Kernel K=(P,O,M,B) with O ⊄ W such that M(O) reliably distinguishes P-true from P-false states — i.e., M's output differs between P-true and P-false presentations in a statistically significant and repeatable manner",
+        "WHERE": {
+          "P": {
+            "type": "proposition",
+            "definition": "DDE proposition per C-DRP8.D1",
+            "units": "logical"
+          },
+          "K": {
+            "type": "Falsification Kernel",
+            "definition": "K=(P,O,M,B) per C-DRP.5 (DRP-1 v1.1)",
+            "units": "structured tuple"
+          },
+          "O": {
+            "type": "observation set",
+            "definition": "Set of observations supplied to M for evaluation",
+            "units": "system-specific"
+          },
+          "W": {
+            "type": "set",
+            "definition": "τ-grounded measurement window per C-DRP8.D2",
+            "units": "dimensionless"
+          },
+          "M": {
+            "type": "procedure",
+            "definition": "Measurement procedure operating on O, returning FALSIFIED / NOT FALSIFIED / INDETERMINATE",
+            "units": "logical"
+          },
+          "vacuity": {
+            "type": "condition",
+            "definition": "K is vacuous if M returns NOT FALSIFIED under all states consistent with P regardless of P's truth value. Per C6 from C-DRP.5.",
+            "units": "logical"
+          },
+          "O ⊄ W": {
+            "type": "set relation",
+            "definition": "O contains at least one observation x(t_j) with t_j > t_P − τ",
+            "units": "logical"
+          }
+        },
+        "EVALUATION": "1. Construct C1-C4 DDE system. 2. Define DDE proposition P with truth-maker x(t_P). 3. Construct K with O ⊄ W (at least one observation at t_j > t_P − τ). 4. Present system in P-true state; run M(O); record output. 5. Present system in P-false state; run M(O); record output. 6. Repeat across N trials. 7. If M(O) output differs reliably between P-true and P-false states (statistical test at α = 0.05, N ≥ 30): FALSIFIED. If M(O) output is statistically indistinguishable: NOT FALSIFIED. Procedure terminates in finite steps.",
+        "BOUNDARY": "O ⊄ W is a sufficient condition for vacuity in DDE propositions — at least one observation outside W suffices. The claim does not assert that O ⊆ W guarantees non-vacuity (other conditions may also be required). The mechanism is physical: observations within the causal window of x(t_P) are dynamically consistent with both truth values under the DDE's forward evolution (L3-2), making discrimination impossible regardless of M's design.",
+        "CONTEXT": "C1-C4 DDE systems with measurable τ. C6 (non-vacuity requirement) from C-DRP.5 is a live inbound edge. Scope is DDE propositions only. General epistemological claims and non-DDE systems are out of scope per D8-0.1."
+      },
+      "derivation_steps": ["L3-0", "L3-1", "L3-2", "L3-3", "L3-4", "TH-2"],
+      "inference_rules_used": ["IR-1", "IR-3", "IR-4", "IR-12"],
+      "inbound_axiom_receipts": [
+        "C-DRP.8 received at L3-0 as Type A axiom — conclusion only. HR-D1: DISMISSED.",
+        "C-DRP.5 K structure required for C6 vacuity definition.",
+        "HR-D4 fix: C-DRP.8 reference at L3-4 moved to notes field — convergence note only, not premise. L3-4 follows from L3-3 + C6 alone. Independence preserved."
+      ],
+      "sample_falsification_observation": "A DDE proposition evaluated with observations drawn from within the causal window of x(t_P) — t_j ∈ (t_P − τ, t_P) — where M's output reliably tracks P's truth value across repeated trials. This would demonstrate that observations outside W can discriminate, falsifying the necessity claim.",
+      "hostile_review_notes": [
+        "HR-D5 (HR-D8-3-DRS): L3-3 does not address model-based inference. DISMISSED — K structure (C-DRP.5) defines M as operating on O (measurement procedure, not simulator). Model-based inference from observations in the causal window cannot disambiguate P because those observations are dynamically consistent with both truth values (L3-2)."
+      ]
+    },
+    {
+      "claim_id": "C-DRP8.CON",
+      "claim_type": "F",
+      "title": "Dual-Path Convergence: τ as Common Cause of β=1/2 and UMP Necessity",
+      "statement": "The delay parameter τ is the common physical cause of two independently derived results: (i) β=1/2, established by TH-1 via the frequency-domain characteristic equation of the DDE at Hopf criticality (receiving F-1.4 as live edge); and (ii) UMP necessity for DDE propositions, established by TH-2 via the causal graph of Φ_τ and the L1-L3 derivation chain. The two paths share no domain-specific intermediate steps and converge on τ as their common structural constraint. This constitutes structural, not analogical, convergence.",
+      "predicate": {
+        "FALSIFIED_IF": "For any step S_k in derivation D8-2.0 (steps L1-0 through TH-CON): S_k logically requires, as a necessary premise, a claim originating from DRP-1 §10.7's contradiction proof — where logical necessity means S_k cannot be derived from its remaining premises and inference rules without that claim",
+        "WHERE": {
+          "S_k": {
+            "type": "derivation step",
+            "definition": "Any of the 16 indexed steps in D8-2.0: L1-0 through TH-CON",
+            "units": "indexed steps"
+          },
+          "D8-2.0": {
+            "type": "derivation record",
+            "definition": "The complete Phase 2 derivation table for DRP-8, a fixed artifact produced at S54 prior to PHASE-READY evaluation",
+            "units": "document"
+          },
+          "necessary_premise": {
+            "type": "logical relation",
+            "definition": "Claim X is a necessary premise of step S_k if removing X from S_k's justification set renders S_k underivable from remaining premises and inference rules. Logical necessity, not genetic necessity.",
+            "units": "logical"
+          },
+          "DRP-1_§10.7": {
+            "type": "source section",
+            "definition": "The contradiction proof in DRP-1 establishing UMP by assuming O=f(P) and deriving contradiction with non-vacuity requirement C6",
+            "units": "document section"
+          },
+          "independence": {
+            "type": "property",
+            "definition": "No step in the TH-2 derivation path (L1-0 through TH-2) has §10.7 content as a logically necessary premise",
+            "units": "logical"
+          }
+        },
+        "EVALUATION": "1. Obtain D8-2.0 derivation record (fixed artifact). 2. For each step S_k (16 steps), extract justification field and inference rules cited. 3. Determine whether §10.7 contradiction argument appears as necessary (not merely confirming): attempt re-derivation of S_k without §10.7. 4. If S_k cannot be re-derived: FALSIFIED. 5. If all 16 steps are re-derivable without §10.7: NOT FALSIFIED. Step-trace is finite (16 steps). Procedure terminates. Current result: HR-D8-3-DRS step-trace found 0/16 steps requiring §10.7. Status: NOT FALSIFIED.",
+        "BOUNDARY": "(a) Necessary premise excludes: sharing common axioms (C1-C4 scope, IR-1 Modus Ponens), receiving C-DRP.8 as Type A axiom conclusion. (b) Axiom receipt at L2-0 and L3-0 is not dependence on §10.7 proof method — the axiom's justification is external to derivations that use it. HR-D1: DISMISSED. (c) Structural similarity of conclusions (both paths reach UMP necessity) does not constitute dependence. Convergence requires same conclusion from different premises. HR-D2: DISMISSED. (d) TH-3 qualification (HR-D6 fix): TH-1 and TH-2 share no domain-specific intermediate steps. Both receive C1 as common axiom but proceed through disjoint technical machinery: TH-1 via characteristic equation at Hopf criticality; TH-2 via causal graph of Φ_τ. No domain-specific step from either path appears in the other.",
+        "CONTEXT": "Scope: DDE systems satisfying C1-C4. The convergence claim is structural: τ appears as a necessary parameter in both derivation paths. 'Common cause' means structural necessity, not analogical resemblance or isomorphism."
+      },
+      "derivation_steps": ["TH-1", "TH-2", "TH-3", "TH-CON"],
+      "inference_rules_used": ["IR-1", "IR-2", "IR-6"],
+      "independence_status": "CONFIRMED",
+      "independence_basis": "HR-D8-3-DRS PASS. Step-trace of all 16 derivation steps: 0/16 require §10.7 as necessary premise.",
+      "sample_falsification_observation": "Identification of a step in D8-2.0 where removing the §10.7 contradiction argument leaves the step underivable from remaining premises and inference rules. For example: if L3-2's dynamic consistency argument required §10.7's epistemological framing as a necessary premise, removing §10.7 would leave L3-2 unsupported. HR-D8-3-DRS found no such step across all 16.",
+      "pass_forward": {
+        "destination_paper": "DRP-7",
+        "destination_role": "Type A axiom — dual-path convergence corroborates DRP-7 self-application",
+        "placeholder_id": "PH-D8-CON-1",
+        "status": "PLACEHOLDER — activates at DRP-8 PHASE-READY"
+      },
+      "hostile_review_record": {
+        "review_id": "HR-D8-3-DRS",
+        "reviewer": "DRS Instance (Claude Code)",
+        "work_order": "WO-D8-3-DRS",
+        "date": "2026-03-13",
+        "verdict": "PASS",
+        "total_challenges": 8,
+        "dismissed": 6,
+        "partially_sustained": 2,
+        "sustained": 0,
+        "fixes_applied": [
+          "HR-D4: C-DRP.8 moved from L3-4 justification field to notes field. Labelled convergence note only, not premise. L3-4 follows from L3-3 + C6 alone.",
+          "HR-D6: TH-3 statement qualified to 'no domain-specific intermediate steps beyond common axioms and standard inference rules.'"
+        ]
+      }
+    }
+  ],
+
+  "cbp_gate_record": {
+    "phase_0": "COMPLETE S54 — scope boundary signed (Thomas Brennan), IR audit complete, IR-12 accepted at HR-D8-0, DRP-7 gate update registered and confirmed",
+    "phase_1": "COMPLETE S54 — claim set confirmed: 4F + 2D = 6 claims",
+    "phase_2": "COMPLETE S54 — derivation table: 16 steps, all IR-cited, n_invalid_steps=0, DDE-independent=true",
+    "phase_3": "PENDING — prose draft not yet written",
+    "phase_4": "IN PROGRESS — this document (D8-4.0 initialisation)",
+    "phase_5": "PENDING — CBT I-9 (7-step verification)",
+    "phase_6": "PENDING — PHASE-READY gate",
+    "cbt_i9_status": "PENDING"
+  },
+
+  "self_application_check": {
+    "performed": true,
+    "performed_at": "D8-4.0 initialisation",
+    "results": [
+      {
+        "item": "(a) All Type F claims have complete 5-part predicate (FALSIFIED_IF / WHERE / EVALUATION / BOUNDARY / CONTEXT)",
+        "status": "PASS",
+        "note": "C-DRP8.1, C-DRP8.2, C-DRP8.3, C-DRP8.CON — all 4 Type F claims carry full predicates."
+      },
+      {
+        "item": "(b) All Type D claims have null predicate with justification",
+        "status": "PASS",
+        "note": "C-DRP8.D1, C-DRP8.D2 — both Type D, both null predicate with note."
+      },
+      {
+        "item": "(c) All inference rules cited exist in the IR inventory",
+        "status": "PASS",
+        "note": "IR-1 through IR-6, IR-12. All present in inference_rules array. IR-12 accepted HR-D8-0."
+      },
+      {
+        "item": "(d) All O in Type F predicates are upstream of their respective truth-makers",
+        "status": "PASS",
+        "note": "C-DRP8.1: O(t') at t' ≤ t, upstream of x(t+τ). C-DRP8.2: W = {x(t_i): t_i ≤ t_P−τ}, upstream of x(t_P). C-DRP8.3: O evaluated against fixed P-state presentations. C-DRP8.CON: O is derivation record D8-2.0, fixed artifact prior to PHASE-READY evaluation. HR-D7: DISMISSED."
+      },
+      {
+        "item": "(e) principle_10_audit complete — all entries LIVE_EDGE or CLOSED",
+        "status": "PASS pending CBT Step 4",
+        "note": "6 entries: 3 LIVE_EDGE, 3 CLOSED. No OPEN_C4_TRACKING entries. principle_10_compliant set false pending formal CBT I-9 Step 4 execution."
+      },
+      {
+        "item": "(f) sample_falsification_observation present for all Type F claims",
+        "status": "PASS",
+        "note": "All 4 Type F claims carry vacuity witness."
+      }
+    ]
+  }
+}
