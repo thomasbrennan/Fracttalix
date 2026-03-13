@@ -31,55 +31,100 @@ def _frm_model(t, B, A, lam, phi, omega):
 
 
 def _estimate_omega_from_fft(data):
-    """Estimate dominant frequency from FFT peak."""
+    """Estimate dominant frequency from FFT with parabolic interpolation.
+
+    Sub-bin resolution via Jacobsen/Quinn-style parabolic interpolation
+    around the spectral peak gives ~10x better frequency accuracy than
+    raw bin index alone. This matters for short windows where bin width
+    is large relative to the true frequency.
+    """
     import numpy as np
 
     n = len(data)
     centered = data - np.mean(data)
-    fft_vals = np.abs(np.fft.rfft(centered))
-    # Skip DC component (index 0)
-    if len(fft_vals) <= 1:
+    # Apply Hann window to reduce spectral leakage
+    window = np.hanning(n)
+    windowed = centered * window
+    fft_vals = np.abs(np.fft.rfft(windowed))
+
+    if len(fft_vals) <= 2:
         return 0.1  # fallback
+
+    # Find peak in magnitudes (skip DC)
     peak_idx = np.argmax(fft_vals[1:]) + 1
-    omega = 2.0 * math.pi * peak_idx / n
-    return max(omega, 0.01)  # avoid zero
+
+    # Parabolic interpolation for sub-bin accuracy
+    if 1 < peak_idx < len(fft_vals) - 1:
+        alpha = fft_vals[peak_idx - 1]
+        beta = fft_vals[peak_idx]
+        gamma = fft_vals[peak_idx + 1]
+        denom = alpha - 2.0 * beta + gamma
+        if abs(denom) > 1e-12:
+            delta = 0.5 * (alpha - gamma) / denom
+            refined_idx = peak_idx + delta
+        else:
+            refined_idx = float(peak_idx)
+    else:
+        refined_idx = float(peak_idx)
+
+    omega = 2.0 * math.pi * refined_idx / n
+    return max(omega, 0.01)
 
 
 def _estimate_lambda_from_envelope(data):
-    """Estimate decay rate from log of peak envelope."""
+    """Estimate decay rate from analytic signal envelope (Hilbert transform).
+
+    Uses the Hilbert transform to extract the instantaneous amplitude
+    envelope, then fits an exponential decay via log-linear regression.
+    Much more robust than naive peak-picking, especially with noise.
+    """
     import numpy as np
 
     n = len(data)
-    centered = data - np.mean(data)
-    abs_vals = np.abs(centered)
-
-    # Find local maxima (peaks)
-    peaks = []
-    for i in range(1, n - 1):
-        if abs_vals[i] > abs_vals[i - 1] and abs_vals[i] > abs_vals[i + 1]:
-            peaks.append((i, abs_vals[i]))
-
-    if len(peaks) < 2:
-        return 0.1  # fallback
-
-    peak_times = np.array([p[0] for p in peaks], dtype=float)
-    peak_vals = np.array([p[1] for p in peaks], dtype=float)
-
-    # Log-linear fit: log(envelope) = -λt + const
-    mask = peak_vals > 0
-    if mask.sum() < 2:
+    if n < 8:
         return 0.1
-    log_vals = np.log(peak_vals[mask])
-    t_vals = peak_times[mask]
 
-    # Simple OLS
-    t_mean = np.mean(t_vals)
-    log_mean = np.mean(log_vals)
-    numer = np.sum((t_vals - t_mean) * (log_vals - log_mean))
-    denom = np.sum((t_vals - t_mean) ** 2)
+    centered = data - np.mean(data)
+
+    # Hilbert transform for analytic signal envelope
+    try:
+        from scipy.signal import hilbert
+        analytic = hilbert(centered)
+        envelope = np.abs(analytic)
+    except ImportError:
+        # Fallback: simple absolute value smoothed
+        envelope = np.abs(centered)
+
+    # Smooth envelope to suppress noise (moving average, width ~1/8 of window)
+    smooth_width = max(3, n // 8)
+    if smooth_width % 2 == 0:
+        smooth_width += 1
+    kernel = np.ones(smooth_width) / smooth_width
+    envelope_smooth = np.convolve(envelope, kernel, mode="same")
+
+    # Log-linear regression on smoothed envelope: log(A(t)) = -λt + c
+    # Skip edges (convolution artifacts) and zero/near-zero values
+    margin = smooth_width // 2
+    t_vals = np.arange(margin, n - margin, dtype=float)
+    env_vals = envelope_smooth[margin : n - margin]
+
+    # Require envelope above noise floor (10% of max)
+    noise_floor = 0.1 * np.max(env_vals) if np.max(env_vals) > 1e-12 else 1e-12
+    mask = env_vals > noise_floor
+    if mask.sum() < 4:
+        return 0.1
+
+    log_env = np.log(env_vals[mask])
+    t_fit = t_vals[mask]
+
+    # OLS: log(env) = slope * t + intercept
+    t_mean = np.mean(t_fit)
+    log_mean = np.mean(log_env)
+    numer = np.sum((t_fit - t_mean) * (log_env - log_mean))
+    denom = np.sum((t_fit - t_mean) ** 2)
     if abs(denom) < 1e-12:
         return 0.1
-    slope = numer / denom
+    slope = float(numer / denom)
     return max(-slope, 0.0)  # λ ≥ 0
 
 
@@ -180,32 +225,49 @@ class HopfDetectorStep(DetectorStep):
                 omega_predicted * t_arr + phi
             )
 
-        try:
-            popt, pcov = curve_fit(
-                model,
-                t,
-                data,
-                p0=[B_init, A_init, lam_init, phi_init],
-                bounds=(
-                    [-np.inf, -np.inf, 0.0, -2 * math.pi],
-                    [np.inf, np.inf, 50.0, 2 * math.pi],
-                ),
-                maxfev=2000,
-            )
-            B_fit, A_fit, lam_fit, phi_fit = popt
+        bounds = (
+            [-np.inf, -np.inf, 0.0, -2 * math.pi],
+            [np.inf, np.inf, 50.0, 2 * math.pi],
+        )
+
+        # Multi-start fitting: try primary initialization + 2 alternative
+        # starts to avoid local minima. Keep the best fit by R².
+        starts = [(B_init, A_init, lam_init, phi_init)]
+        # Alternative: opposite amplitude sign, different phase
+        starts.append((B_init, -A_init, lam_init * 0.5, math.pi / 2))
+        # Alternative: zero damping start (for near-limit-cycle cases)
+        starts.append((B_init, A_init, 0.01, -math.pi / 4))
+
+        best_popt = None
+        best_r2 = -np.inf
+        any_converged = False
+
+        ss_tot = np.sum((data - np.mean(data)) ** 2)
+        if ss_tot < 1e-12:
+            ss_tot = 1.0  # constant data edge case
+
+        for p0 in starts:
+            try:
+                popt, _ = curve_fit(
+                    model, t, data, p0=list(p0),
+                    bounds=bounds, maxfev=2000,
+                )
+                y_pred = model(t, *popt)
+                ss_res = np.sum((data - y_pred) ** 2)
+                r2 = 1.0 - ss_res / ss_tot
+                if r2 > best_r2:
+                    best_r2 = r2
+                    best_popt = popt
+                    any_converged = True
+            except (RuntimeError, ValueError):
+                continue
+
+        if any_converged:
+            B_fit, A_fit, lam_fit, phi_fit = best_popt
+            r_squared = best_r2
             converged = True
-
-            # Compute R²
-            y_pred = model(t, *popt)
-            ss_res = np.sum((data - y_pred) ** 2)
-            ss_tot = np.sum((data - np.mean(data)) ** 2)
-            r_squared = 1.0 - ss_res / ss_tot if ss_tot > 1e-12 else 0.0
-
-            # Warm-start for next fit
             self._prev_params = [B_fit, A_fit, lam_fit, phi_fit]
-
-        except (RuntimeError, ValueError):
-            # Fit failed — use last known values or defaults
+        else:
             lam_fit = self._prev_params[2] if self._prev_params else 0.1
             B_fit = self._prev_params[0] if self._prev_params else 0.0
             A_fit = self._prev_params[1] if self._prev_params else 1.0
@@ -250,7 +312,12 @@ class HopfDetectorStep(DetectorStep):
         ctx.scratch["hopf_baseline"] = B_fit
 
     def _compute_lambda_trend(self):
-        """Compute dλ/dt and time-to-bifurcation from λ history."""
+        """Compute dλ/dt and time-to-bifurcation from λ history.
+
+        Uses median-based outlier rejection before OLS regression.
+        Lambda values that jump due to fitting artifacts (local minima,
+        noise bursts) should not corrupt the trend estimate.
+        """
         history = list(self._lambda_history)
         if len(history) < 3:
             return 0.0, None, "LOW"
@@ -260,11 +327,28 @@ class HopfDetectorStep(DetectorStep):
         lams = np.array(history, dtype=float)
         t = np.arange(len(lams), dtype=float)
 
-        # OLS for dλ/dt
-        t_mean = np.mean(t)
-        lam_mean = np.mean(lams)
-        numer = np.sum((t - t_mean) * (lams - lam_mean))
-        denom = np.sum((t - t_mean) ** 2)
+        # Outlier rejection: remove λ values > 3 MAD from median
+        # This protects the trend from fitting artifacts
+        median_lam = np.median(lams)
+        mad = np.median(np.abs(lams - median_lam))
+        if mad > 1e-12:
+            threshold = 3.0 * mad / 0.6745  # MAD-based robust std
+            inlier_mask = np.abs(lams - median_lam) < threshold
+            if inlier_mask.sum() >= 3:
+                lams_clean = lams[inlier_mask]
+                t_clean = t[inlier_mask]
+            else:
+                lams_clean = lams
+                t_clean = t
+        else:
+            lams_clean = lams
+            t_clean = t
+
+        # OLS for dλ/dt on cleaned data
+        t_mean = np.mean(t_clean)
+        lam_mean = np.mean(lams_clean)
+        numer = np.sum((t_clean - t_mean) * (lams_clean - lam_mean))
+        denom = np.sum((t_clean - t_mean) ** 2)
         if abs(denom) < 1e-12:
             return 0.0, None, "LOW"
 
@@ -275,19 +359,19 @@ class HopfDetectorStep(DetectorStep):
         time_to_bif = None
         if lam_rate < -1e-8 and current_lam > 0:
             time_to_bif = current_lam / abs(lam_rate)
-            # Scale by fit_interval (we fit every N steps)
             time_to_bif *= self.cfg.hopf_fit_interval
 
-        # Confidence from coefficient of variation of rate
-        if len(lams) >= 4:
-            diffs = np.diff(lams)
-            rate_std = float(np.std(diffs))
-            rate_mean = abs(float(np.mean(diffs)))
-            if rate_mean > 1e-10:
-                cv = rate_std / rate_mean
-                if cv < 0.3:
+        # Confidence: uses R² of the trend line itself
+        # High R² = consistent decline, Low R² = noisy/uncertain
+        if len(lams_clean) >= 4:
+            predicted = lam_mean + lam_rate * (t_clean - t_mean)
+            ss_res = np.sum((lams_clean - predicted) ** 2)
+            ss_tot = np.sum((lams_clean - lam_mean) ** 2)
+            if ss_tot > 1e-12:
+                trend_r2 = 1.0 - ss_res / ss_tot
+                if trend_r2 > 0.6:
                     confidence = "HIGH"
-                elif cv < 0.7:
+                elif trend_r2 > 0.3:
                     confidence = "MEDIUM"
                 else:
                     confidence = "LOW"
