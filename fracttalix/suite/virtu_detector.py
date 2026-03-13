@@ -1,21 +1,27 @@
-# fracttalix/suite/virtu_detector.py
-# VirtuDetector — FRM-derived decision rationality via Kramers scaling.
-#
-# What makes this unique:
-#   - Every other detector outputs "alert" or "no alert"
-#   - Virtu outputs "your decision window is closing"
-#   - Based on Kramers scaling: σ_τ ~ (μ_c - μ)^(-1/2)
-#     As the system approaches bifurcation, the uncertainty in
-#     timing diverges. Early action has lower uncertainty but may
-#     be premature. Late action has higher urgency but worse odds.
-#   - Virtu tracks the RATIO of actionable information to timing
-#     uncertainty — the "decision quality" metric
-#
-# No other detection system incorporates decision theory.
-# Requires: Lambda detector output (λ, dλ/dt, time-to-transition)
-#
-# Design: Virtu wraps a LambdaDetector. It doesn't fit data itself —
-# it interprets Lambda's output through the lens of decision theory.
+"""FRM-derived decision rationality via Kramers scaling.
+
+What makes this unique:
+
+- Every other detector outputs "alert" or "no alert".
+- Virtu outputs "your decision window is closing".
+- Based on Kramers scaling: ``sigma_tau ~ (mu_c - mu)^(-1/2)``.
+  As the system approaches bifurcation, the uncertainty in timing
+  diverges.  Early action has lower uncertainty but may be premature.
+  Late action has higher urgency but worse odds.
+- Virtu tracks the *ratio* of actionable information to timing
+  uncertainty -- the "decision quality" metric.
+
+No other detection system incorporates decision theory.
+
+Requires
+--------
+Lambda detector output (lambda, d(lambda)/dt, time-to-transition).
+
+Design
+------
+Virtu wraps a ``LambdaDetector``.  It does not fit data itself -- it
+interprets Lambda's output through the lens of decision theory.
+"""
 
 import math
 from collections import deque
@@ -75,7 +81,22 @@ class VirtuDetector(BaseDetector):
         self._peak_quality = 0.0
 
     def _check_scope(self, window: List[float]) -> bool:
-        # Virtu is in scope only when Lambda is in scope and producing values
+        """Determine whether Virtu has enough upstream data to operate.
+
+        Virtu is in scope only when the wrapped Lambda detector is itself
+        in scope and actively producing eigenvalue estimates.
+
+        Parameters
+        ----------
+        window : list of float
+            Current data window (unused; scope depends on Lambda state).
+
+        Returns
+        -------
+        bool
+            ``True`` if Lambda is in scope and ``current_lambda`` is not
+            ``None``; ``False`` otherwise.
+        """
         if self._lambda_det is None:
             return False
         scope = self._lambda_det.scope_status
@@ -86,6 +107,42 @@ class VirtuDetector(BaseDetector):
         return True
 
     def _compute(self, window: List[float]) -> Tuple[float, str]:
+        """Transform Lambda detector output into a decision quality score.
+
+        The pipeline is:
+
+        1. **Kramers scaling** -- timing uncertainty is estimated as
+           ``sigma_tau = 1 / sqrt(lambda)``.  As lambda approaches zero
+           the uncertainty diverges.
+        2. **Urgency** -- magnitude of the lambda decay rate, gated by
+           ``urgency_floor``.
+        3. **Time pressure** -- fraction of the decision horizon already
+           consumed, derived from time-to-transition.
+        4. **Decision quality** -- combines urgency, time pressure, and
+           timing uncertainty into a 0-to-1 score.
+
+        The score is mapped to four phases:
+
+        * **WAIT** (quality < 0.2): too early to act; low urgency.
+        * **MONITOR** (0.2 <= quality < 0.4): situation developing.
+        * **ACT SOON** (0.4 <= quality < 0.7): window is open; plan action.
+        * **ACT NOW** (quality >= 0.7): optimal window is closing fast.
+
+        Parameters
+        ----------
+        window : list of float
+            Current data window (unused; inputs come from Lambda).
+
+        Returns
+        -------
+        decision_quality : float
+            Value in [0, 1] indicating how favourable the current moment
+            is for acting.
+        message : str
+            Human-readable status string including phase label, lambda,
+            rate, time-to-transition, timing uncertainty, quality, and
+            whether the Virtu window is open.
+        """
         lam = self._lambda_det.current_lambda
         rate = self._lambda_det.lambda_rate
         ttb = self._lambda_det.time_to_transition
@@ -168,17 +225,52 @@ class VirtuDetector(BaseDetector):
 
     @property
     def decision_quality(self) -> float:
+        """Most recent decision quality score.
+
+        Returns
+        -------
+        float
+            Value in [0, 1].  Returns 0.0 when no quality estimates have
+            been computed yet.
+        """
         return self._decision_quality_history[-1] if self._decision_quality_history else 0.0
 
     @property
     def virtu_window_open(self) -> bool:
+        """Whether the Virtu decision window is currently open.
+
+        Returns
+        -------
+        bool
+            ``True`` while decision quality remains above the closing
+            threshold (0.1) after having exceeded the opening threshold
+            (0.3).  ``False`` before the window opens or after it closes.
+        """
         return self._virtu_window_open
 
     @property
     def peak_quality(self) -> float:
+        """Highest decision quality observed during the current window.
+
+        Returns
+        -------
+        float
+            Peak value in [0, 1] since the Virtu window last opened.
+            Resets to 0.0 when the detector is reset or before the first
+            window opens.
+        """
         return self._peak_quality
 
     def reset(self) -> None:
+        """Reset all decision state and clear quality history.
+
+        Calls the parent ``reset`` and then clears the quality history
+        deque, closes the Virtu window, and zeros peak quality.
+
+        See Also
+        --------
+        BaseDetector.reset : Parent reset that clears shared state.
+        """
         super().reset()
         self._decision_quality_history.clear()
         self._virtu_window_open = False
@@ -186,6 +278,19 @@ class VirtuDetector(BaseDetector):
         self._peak_quality = 0.0
 
     def state_dict(self) -> Dict[str, Any]:
+        """Serialize Virtu-specific state for checkpointing.
+
+        Returns
+        -------
+        dict
+            Parent state dict augmented with ``decision_quality_history``,
+            ``virtu_window_open``, ``window_opened_at``, and
+            ``peak_quality``.
+
+        See Also
+        --------
+        load_state : Restore state from a dict produced by this method.
+        """
         sd = super().state_dict()
         sd.update({
             "decision_quality_history": list(self._decision_quality_history),
@@ -196,6 +301,18 @@ class VirtuDetector(BaseDetector):
         return sd
 
     def load_state(self, sd: Dict[str, Any]) -> None:
+        """Restore Virtu state from a previously saved dict.
+
+        Parameters
+        ----------
+        sd : dict
+            State dict as produced by :meth:`state_dict`.  Missing keys
+            fall back to safe defaults.
+
+        See Also
+        --------
+        state_dict : Produce the dict consumed by this method.
+        """
         super().load_state(sd)
         self._decision_quality_history = deque(
             sd.get("decision_quality_history", []), maxlen=20

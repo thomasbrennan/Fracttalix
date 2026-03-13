@@ -1,36 +1,48 @@
-# fracttalix/suite/drift.py
-# DriftDetector — Slow distribution shift via non-adaptive CUSUM (frozen baseline).
-#
-# Theorem basis (P3 / CUSUM):
-#   The key insight: an EWMA baseline adapts to slow drift, masking it.
-#   A non-adaptive (warmup-frozen) baseline does not adapt — slow drift
-#   accumulates in the CUSUM statistic and eventually crosses the threshold.
-#
-#   The test operates on z_raw = (x − warmup_mean) / warmup_std, so:
-#     - Point anomalies cause one large z_raw spike that resets the accumulator.
-#     - Slow drift causes many small z_raw values that accumulate persistently.
-#   This natural separation is why frozen-baseline CUSUM dominates drift benchmarks.
-#
-# Design note — Page-Hinkley excluded by design:
-#   PH with a frozen baseline has E[ph_cum_lo increment] = (μ − x − δ) on
-#   stationary data where E[x]=μ, so E[increment] = −δ < 0.  The accumulator
-#   drifts monotonically downward and the gap m−cum grows at δ/step, reaching
-#   the threshold every λ/δ ≈ 50 steps on stationary N(0,1) data (65% FPR).
-#   PH is correct only with an adaptive baseline (which would mask drift) or
-#   with a one-shot post-hoc test.  Neither applies here.  CUSUM-only.
-#
-# OUT_OF_SCOPE conditions:
-#   • Sudden large spike (point anomaly): z_raw >> 5 in a single step.
-#     The CUSUM accumulator resets, so individual spikes don't fool us, but
-#     we explicitly declare OUT_OF_SCOPE so the user knows this is Discord's job.
-#   • High baseline variance (signal was already noisy at warmup): the warmup
-#     std absorbs the noise and z_raw is well-behaved; this is fine.  We only
-#     go OUT_OF_SCOPE if variance has grown >4× since warmup (VarianceDetector).
-#   • Insufficient warmup to freeze a reliable baseline.
-#
-# Best at: slow monotonic mean shifts (μ changes by 0.5–2σ over 50–500 steps).
-# Mediocre at: oscillating mean (CUSUM and PH cancel out).
-# Useless at: point anomalies (resets the accumulator; DiscordDetector handles).
+"""DriftDetector -- Slow distribution shift via non-adaptive CUSUM (frozen baseline).
+
+Theorem basis (P3 / CUSUM)
+--------------------------
+The key insight: an EWMA baseline adapts to slow drift, masking it.  A
+non-adaptive (warmup-frozen) baseline does not adapt -- slow drift
+accumulates in the CUSUM statistic and eventually crosses the threshold.
+
+The test operates on ``z_raw = (x - warmup_mean) / warmup_std``, so:
+
+- Point anomalies cause one large z_raw spike that resets the accumulator.
+- Slow drift causes many small z_raw values that accumulate persistently.
+
+This natural separation is why frozen-baseline CUSUM dominates drift
+benchmarks.
+
+Design note -- Page-Hinkley excluded by design
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+PH with a frozen baseline has ``E[ph_cum_lo increment] = -delta < 0`` on
+stationary data, so the accumulator drifts monotonically downward and the
+gap grows at ``delta/step``, reaching the threshold every ~50 steps on
+stationary N(0,1) data (65 % FPR).  PH is correct only with an adaptive
+baseline (which would mask drift) or with a one-shot post-hoc test.
+Neither applies here.  CUSUM-only.
+
+OUT_OF_SCOPE conditions
+-----------------------
+- Sudden large spike (point anomaly): ``|z_raw| >> 5`` in a single step.
+  The CUSUM accumulator resets; we declare OUT_OF_SCOPE so the user knows
+  this is DiscordDetector's job.
+- High baseline variance: if variance has grown >4x since warmup,
+  VarianceDetector owns it.
+- Strongly autocorrelated / oscillatory signal: CUSUM accumulates on
+  half-periods of a sinusoid; HopfDetector + CouplingDetector handle these.
+- Insufficient warmup to freeze a reliable baseline.
+
+Strengths and limitations
+-------------------------
+Best at
+    Slow monotonic mean shifts (mu changes by 0.5-2 sigma over 50-500 steps).
+Mediocre at
+    Oscillating mean (CUSUM cancels out).
+Useless at
+    Point anomalies (resets the accumulator; DiscordDetector handles).
+"""
 
 import math
 from collections import deque
@@ -100,12 +112,44 @@ class DriftDetector(BaseDetector):
         self._drift_count: int = 0
 
     def _set_baseline(self, window: List[float]) -> None:
+        """Freeze the warmup mean, std, and variance as the CUSUM reference.
+
+        All subsequent z_raw values are computed relative to this frozen
+        baseline so that slow drift accumulates rather than being absorbed.
+
+        Parameters
+        ----------
+        window : list of float
+            The warmup observations to compute the baseline from.
+        """
         self._warmup_mean = _mean(window)
         self._warmup_std = max(_std(window), 1e-10)
         self._warmup_var = max(_variance(window), 1e-10)
         self._baseline_set = True
 
     def _check_scope(self, window: List[float]) -> bool:
+        """Determine whether the signal is suitable for drift detection.
+
+        Scope gates
+        -----------
+        1. Single-step spike: ``|z_raw| > spike_z`` -- point anomaly;
+           DiscordDetector owns that.  Stays out of scope for 3 steps after.
+        2. Strongly autocorrelated signal: ``|AC(1)| > 0.35`` -- oscillatory
+           data causes false CUSUM accumulation on half-periods;
+           HopfDetector + CouplingDetector own that.
+        3. Variance has grown > ``var_growth_threshold`` * warmup variance --
+           VarianceDetector owns that.
+
+        Parameters
+        ----------
+        window : list of float
+            Current rolling window.
+
+        Returns
+        -------
+        bool
+            True if the signal is in scope for drift analysis.
+        """
         if not self._baseline_set:
             self._set_baseline(window[:self._warmup])
 
@@ -140,6 +184,29 @@ class DriftDetector(BaseDetector):
         return True
 
     def _compute(self, window: List[float]) -> Tuple[float, str]:
+        """Compute the drift score via bidirectional CUSUM on frozen-baseline z_raw.
+
+        Algorithm:
+        1. Compute ``z_raw = (x - warmup_mean) / warmup_std``.
+        2. Update bidirectional CUSUM accumulators (s_hi, s_lo) with
+           allowance ``cusum_k``.
+        3. If either accumulator exceeds ``cusum_h``, fire a CUSUM alert
+           and reset both accumulators.
+        4. Score = 1.0 on threshold crossing; pre-crossing score is capped
+           at 0.49 (monitoring signal only).
+
+        Parameters
+        ----------
+        window : list of float
+            Current rolling window.
+
+        Returns
+        -------
+        score : float
+            Drift score in [0, 1].
+        msg : str
+            Diagnostic string with z_raw, CUSUM accumulators, and signal type.
+        """
         x = window[-1]
         z_raw = (x - self._warmup_mean) / self._warmup_std
         k = self._cusum_k
@@ -175,6 +242,7 @@ class DriftDetector(BaseDetector):
         return score, msg
 
     def reset(self) -> None:
+        """Clear all state, including frozen baseline, CUSUM accumulators, and spike cooldown."""
         super().reset()
         self._baseline_set = False
         self._warmup_mean = 0.0
@@ -186,6 +254,14 @@ class DriftDetector(BaseDetector):
         self._drift_count = 0
 
     def state_dict(self) -> Dict[str, Any]:
+        """Return a JSON-serialisable snapshot of all detector state.
+
+        Returns
+        -------
+        dict
+            Contains baseline, CUSUM accumulators, spike cooldown, and
+            base-class state.
+        """
         sd = super().state_dict()
         sd.update({
             "baseline_set": self._baseline_set,
@@ -200,6 +276,13 @@ class DriftDetector(BaseDetector):
         return sd
 
     def load_state(self, sd: Dict[str, Any]) -> None:
+        """Restore detector state from a snapshot produced by ``state_dict``.
+
+        Parameters
+        ----------
+        sd : dict
+            Snapshot dictionary.
+        """
         super().load_state(sd)
         self._baseline_set = sd.get("baseline_set", False)
         self._warmup_mean = sd.get("warmup_mean", 0.0)

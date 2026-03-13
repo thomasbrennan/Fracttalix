@@ -1,20 +1,20 @@
-# fracttalix/suite/omega_detector.py
-# OmegaDetector — FRM-derived timescale integrity monitoring.
-#
-# What makes this unique:
-#   - The FRM derives ω = π/(2·τ_gen) at Hopf criticality
-#   - This is an ABSOLUTE frequency reference, not a relative one
-#   - Every other frequency-change detector (BOCPD, spectral CUSUM,
-#     wavelet decomposition) detects change relative to the data's own
-#     history — they can tell you "frequency changed" but not "frequency
-#     is wrong"
-#   - Omega can tell you "the observed frequency has deviated from the
-#     physics-predicted value" — a structural integrity violation
-#
-# When τ_gen is unknown (weak mode), Omega estimates it from data and
-# tracks frequency stability — which is less unique but still useful.
-#
-# Requires: numpy (no scipy needed)
+"""OmegaDetector -- FRM-derived timescale integrity monitoring.
+
+What makes this unique:
+
+- The FRM derives omega = pi / (2 * tau_gen) at Hopf criticality.
+- This is an **absolute** frequency reference, not a relative one.
+- Every other frequency-change detector (BOCPD, spectral CUSUM, wavelet
+  decomposition) detects change relative to the data's own history -- they
+  can tell you "frequency changed" but not "frequency is wrong".
+- OmegaDetector can tell you "the observed frequency has deviated from
+  the physics-predicted value" -- a structural integrity violation.
+
+When tau_gen is unknown (weak mode), OmegaDetector estimates it from
+data and tracks frequency stability -- less unique but still useful.
+
+Requires: numpy (no scipy needed).
+"""
 
 import math
 from collections import deque
@@ -76,6 +76,22 @@ class OmegaDetector(BaseDetector):
         self._fit_counter = 0
 
     def _check_scope(self, window: List[float]) -> bool:
+        """Determine whether the current window contains analysable oscillatory content.
+
+        The detector is out of scope when the window is too short (< 32 samples)
+        or has negligible variance (constant / near-silent signal), since
+        frequency estimation would be meaningless.
+
+        Parameters
+        ----------
+        window : list of float
+            Recent sample values from the sliding window.
+
+        Returns
+        -------
+        bool
+            ``True`` if spectral analysis should proceed, ``False`` otherwise.
+        """
         if len(window) < 32:
             return False
         # Check for spectral content — white noise / constant → OUT_OF_SCOPE
@@ -85,6 +101,38 @@ class OmegaDetector(BaseDetector):
         return True
 
     def _compute(self, window: List[float]) -> Tuple[float, str]:
+        """Estimate the dominant oscillation frequency and score its deviation.
+
+        The pipeline is:
+
+        1. Mean-centre the window and apply a Hann taper.
+        2. Compute the magnitude spectrum via real FFT.
+        3. Verify that the spectral peak exceeds ``min_spectral_snr`` times
+           the mean magnitude; reject low-SNR windows early.
+        4. Refine the peak location to sub-bin accuracy using three-point
+           parabolic interpolation on the magnitude spectrum.
+        5. Convert the refined bin index to angular frequency
+           (omega = 2 * pi * bin / N).
+        6. In **strong mode** (tau_gen provided), compare the observed omega
+           against the physics-predicted absolute reference
+           omega_predicted = pi / (2 * tau_gen). In **weak mode** (tau_gen=0),
+           compare against the median of the first few observations (baseline).
+        7. Return a score in [0, 1] proportional to the fractional deviation,
+           plus a human-readable diagnostic string.
+
+        Parameters
+        ----------
+        window : list of float
+            Recent sample values from the sliding window.
+
+        Returns
+        -------
+        score : float
+            Anomaly score between 0.0 (nominal) and 1.0 (severe deviation).
+        detail : str
+            Diagnostic message including observed omega, reference omega,
+            deviation percentage, and trend information.
+        """
         import numpy as np
 
         data = np.array(window, dtype=float)
@@ -180,14 +228,46 @@ class OmegaDetector(BaseDetector):
 
     @property
     def current_omega(self) -> Optional[float]:
+        """Most recent observed angular frequency estimate.
+
+        Returns
+        -------
+        float or None
+            The latest omega value from the rolling history, or ``None``
+            if no frequency estimate has been computed yet.
+        """
         return self._omega_history[-1] if self._omega_history else None
 
     @property
     def omega_predicted(self) -> Optional[float]:
+        """Physics-predicted angular frequency from the FRM.
+
+        In strong mode this equals pi / (2 * tau_gen) -- the absolute
+        Hopf-criticality reference. In weak mode (tau_gen=0) this is
+        ``None`` because no physics prediction is available.
+
+        Returns
+        -------
+        float or None
+            The predicted omega, or ``None`` in weak mode.
+        """
         return self._omega_predicted
 
     @property
     def omega_deviation(self) -> float:
+        """Fractional deviation of the latest omega from the reference.
+
+        Computed as ``|omega_obs - omega_ref| / omega_ref``. Returns 0.0
+        when the baseline has not yet been established or no observations
+        exist. In strong mode the reference is the physics-predicted value;
+        in weak mode it is the data-derived baseline.
+
+        Returns
+        -------
+        float
+            Non-negative fractional deviation (e.g. 0.15 means 15%).
+            Zero when the detector is still in warmup or has no data.
+        """
         if not self._baseline_set or not self._omega_history:
             return 0.0
         ref = self._baseline_omega
@@ -195,6 +275,13 @@ class OmegaDetector(BaseDetector):
         return abs(obs - ref) / ref if ref > 1e-12 else 0.0
 
     def reset(self) -> None:
+        """Reset the detector to its initial state.
+
+        Clears the omega history, baseline, and fit counter while also
+        resetting the base-class sliding window and warmup counters.
+        After a reset the detector re-enters warmup / baseline-collection
+        before scoring resumes.
+        """
         super().reset()
         self._omega_history.clear()
         self._baseline_omega = None
@@ -202,6 +289,21 @@ class OmegaDetector(BaseDetector):
         self._fit_counter = 0
 
     def state_dict(self) -> Dict[str, Any]:
+        """Serialize internal state for checkpointing.
+
+        Extends the base-class snapshot with omega-specific fields so the
+        detector can be restored later via :meth:`load_state`.
+
+        Returns
+        -------
+        dict
+            Dictionary containing base-class state plus ``omega_history``,
+            ``baseline_omega``, and ``baseline_set``.
+
+        See Also
+        --------
+        load_state : Restore from a previously saved state dict.
+        """
         sd = super().state_dict()
         sd.update({
             "omega_history": list(self._omega_history),
@@ -211,6 +313,20 @@ class OmegaDetector(BaseDetector):
         return sd
 
     def load_state(self, sd: Dict[str, Any]) -> None:
+        """Restore detector state from a previously saved snapshot.
+
+        Re-populates the omega history deque, baseline, and base-class
+        internals so that scoring can resume exactly where it left off.
+
+        Parameters
+        ----------
+        sd : dict
+            State dictionary produced by :meth:`state_dict`.
+
+        See Also
+        --------
+        state_dict : Produce the snapshot consumed by this method.
+        """
         super().load_state(sd)
         self._omega_history = deque(
             sd.get("omega_history", []), maxlen=self._omega_history_size

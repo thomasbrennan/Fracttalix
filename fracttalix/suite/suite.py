@@ -1,21 +1,27 @@
-# fracttalix/suite/suite.py
-# DetectorSuite — runs all 5 detectors in parallel.
-#
-# The suite is not a consensus machine.  It is a dashboard.
-# Each detector gives an independent opinion.  The user decides
-# which opinions matter for their domain.
-#
-# Architecture:
-#   - Detectors run in parallel (all see the same value).
-#   - No blending, no averaging, no consensus gate.
-#   - Each detector can be OUT_OF_SCOPE when data does not fit its model.
-#   - SuiteResult contains all 5 individual results + a summary.
-#
-# Recommended combos (from the design conversation):
-#   Power grid monitoring → HopfDetector + VarianceDetector
-#   API latency monitoring → DiscordDetector + DriftDetector
-#   Neural/physiological → HopfDetector + CouplingDetector
-#   "I don't know what I'm looking for" → use SentinelDetector (v12.2 pipeline)
+"""DetectorSuite -- runs all 5 detectors in parallel.
+
+The suite is not a consensus machine.  It is a dashboard.  Each detector
+gives an independent opinion.  The user decides which opinions matter for
+their domain.
+
+Architecture
+------------
+- Detectors run in parallel (all see the same value).
+- No blending, no averaging, no consensus gate.
+- Each detector can be OUT_OF_SCOPE when data does not fit its model.
+- ``SuiteResult`` contains all 5 individual results plus a summary.
+
+Recommended combos
+------------------
+Power grid monitoring
+    HopfDetector + VarianceDetector
+API latency monitoring
+    DiscordDetector + DriftDetector
+Neural / physiological
+    HopfDetector + CouplingDetector
+"I don't know what I'm looking for"
+    Use SentinelDetector (v12.2 pipeline).
+"""
 
 import dataclasses
 from typing import Any, Dict, Iterator, List, Optional, Tuple
@@ -52,25 +58,61 @@ class SuiteResult:
 
     @property
     def alerts(self) -> List[DetectorResult]:
-        """Detectors currently firing (status == ALERT)."""
+        """Return the list of detectors currently firing (status == ALERT).
+
+        Returns
+        -------
+        list of DetectorResult
+            Only results whose status is ``ScopeStatus.ALERT``.
+        """
         return [r for r in self if r.is_alert]
 
     @property
     def in_scope(self) -> List[DetectorResult]:
-        """Detectors whose model applies to the current data."""
+        """Return detectors whose model applies to the current data.
+
+        Includes results with status OK or ALERT (i.e. not WARMUP and not
+        OUT_OF_SCOPE).
+
+        Returns
+        -------
+        list of DetectorResult
+            Results where ``in_scope`` is True.
+        """
         return [r for r in self if r.in_scope]
 
     @property
     def out_of_scope(self) -> List[DetectorResult]:
-        """Detectors that have declared this data is not their domain."""
+        """Return detectors that have declared this data outside their domain.
+
+        Returns
+        -------
+        list of DetectorResult
+            Results whose status is ``ScopeStatus.OUT_OF_SCOPE``.
+        """
         return [r for r in self if r.status == ScopeStatus.OUT_OF_SCOPE]
 
     @property
     def any_alert(self) -> bool:
+        """Check whether at least one detector is in ALERT status.
+
+        Returns
+        -------
+        bool
+            True if any detector is currently alerting.
+        """
         return len(self.alerts) > 0
 
     def summary(self) -> str:
-        """One-line dashboard string."""
+        """Build a one-line dashboard string showing all 5 detector statuses.
+
+        Format: ``Hopf:ok(0.12) | Disc:OOS | Drif:ALERT(0.87) | ...``
+
+        Returns
+        -------
+        str
+            Pipe-delimited status string with 4-char detector abbreviations.
+        """
         parts = []
         for r in self:
             if r.status == ScopeStatus.WARMUP:

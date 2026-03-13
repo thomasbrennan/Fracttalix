@@ -1,25 +1,35 @@
-# fracttalix/suite/hopf.py
-# HopfDetector — Pre-transition early warning via critical slowing down.
-#
-# Theorem basis (P1 / EWS):
-#   Near a Hopf bifurcation (or any fold/transcritical transition), the system
-#   loses its ability to recover from perturbations.  This manifests as:
-#     1. Rising variance (the noise is amplified more).
-#     2. Rising lag-1 autocorrelation (recovery takes longer → memory builds).
-#   Both signals rise before the transition, not at it — that's the early warning.
-#
-# OUT_OF_SCOPE conditions:
-#   • White noise: AC(1) is persistently near zero → slowing-down signal
-#     is indistinguishable from baseline; report nothing.
-#   • Sustained mean shift: the signal has already jumped → that's a regime
-#     change, not an approach to one.  DiscordDetector / DriftDetector see it.
-#   • Variance already high at warmup end: we have no pre-transition baseline
-#     to compare against → insufficient scope.
-#
-# Best at: oscillatory or autocorrelated signals approaching a qualitative
-#          state change (oscillation onset, equilibrium loss, phase transition).
-# Mediocre at: step functions (reports OUT_OF_SCOPE after the jump).
-# Useless at: pure white noise (always OUT_OF_SCOPE by design).
+"""HopfDetector -- Pre-transition early warning via critical slowing down.
+
+Theorem basis (P1 / EWS)
+------------------------
+Near a Hopf bifurcation (or any fold/transcritical transition), the system
+loses its ability to recover from perturbations.  This manifests as:
+
+1. Rising variance (the noise is amplified more).
+2. Rising lag-1 autocorrelation (recovery takes longer, memory builds).
+
+Both signals rise *before* the transition, not at it -- that is the early
+warning.
+
+OUT_OF_SCOPE conditions
+-----------------------
+- White noise: AC(1) is persistently near zero; the slowing-down signal is
+  indistinguishable from baseline -- report nothing.
+- Sustained mean shift: the signal has already jumped; that is a regime
+  change, not an approach to one.  DiscordDetector / DriftDetector see it.
+- Variance already high at warmup end: no pre-transition baseline to
+  compare against -- insufficient scope.
+
+Strengths and limitations
+-------------------------
+Best at
+    Oscillatory or autocorrelated signals approaching a qualitative state
+    change (oscillation onset, equilibrium loss, phase transition).
+Mediocre at
+    Step functions (reports OUT_OF_SCOPE after the jump).
+Useless at
+    Pure white noise (always OUT_OF_SCOPE by design).
+"""
 
 import math
 from collections import deque
@@ -78,6 +88,16 @@ class HopfDetector(BaseDetector):
         self._ac1_ewma: float = 0.0
 
     def _set_baseline(self, window: List[float]) -> None:
+        """Freeze the warmup baseline for variance, AC(1), mean, and std.
+
+        Called once at end of warmup.  All subsequent scores are measured
+        relative to these frozen values so that slow changes are detectable.
+
+        Parameters
+        ----------
+        window : list of float
+            The warmup observations to compute the baseline from.
+        """
         self._warmup_mean = _mean(window)
         self._warmup_std = max(_std(window), 1e-10)
         self._warmup_var = _variance(window)
@@ -87,6 +107,25 @@ class HopfDetector(BaseDetector):
         self._baseline_set = True
 
     def _check_scope(self, window: List[float]) -> bool:
+        """Determine whether the signal is suitable for Hopf detection.
+
+        Scope gates
+        -----------
+        1. Baseline AC(1) < ``ac1_min`` -- signal is white noise; slowing-down
+           is indistinguishable from baseline.
+        2. Current mean has shifted > ``mean_shift_z`` sigma from warmup mean --
+           the transition already happened; this is DriftDetector's domain.
+
+        Parameters
+        ----------
+        window : list of float
+            Current rolling window of observations.
+
+        Returns
+        -------
+        bool
+            True if the signal is in scope for Hopf analysis.
+        """
         if not self._baseline_set:
             self._set_baseline(window[-self._ews_window:])
 
@@ -105,6 +144,27 @@ class HopfDetector(BaseDetector):
         return True
 
     def _compute(self, window: List[float]) -> Tuple[float, str]:
+        """Compute the early-warning score via EWMA blending of variance ratio and AC(1) delta.
+
+        Algorithm:
+        1. Compute current variance and AC(1) over the EWS window.
+        2. Update EWMA trackers for both statistics.
+        3. ``var_score``: maps variance ratio (current / warmup) from [1, 4] to [0, 1].
+        4. ``ac1_score``: maps AC(1) delta (current - warmup) from [0, 0.3] to [0, 1].
+        5. Final EWS score = 0.5 * var_score + 0.5 * ac1_score.
+
+        Parameters
+        ----------
+        window : list of float
+            Current rolling window of observations.
+
+        Returns
+        -------
+        score : float
+            EWS score in [0, 1].
+        msg : str
+            Diagnostic string with component values and regime label.
+        """
         recent = window[-self._ews_window:]
         alpha = 0.15
 
@@ -141,6 +201,7 @@ class HopfDetector(BaseDetector):
         return ews_score, msg
 
     def reset(self) -> None:
+        """Clear all state, including the frozen warmup baseline and EWMA trackers."""
         super().reset()
         self._baseline_set = False
         self._warmup_var = 0.0
@@ -151,6 +212,13 @@ class HopfDetector(BaseDetector):
         self._ac1_ewma = 0.0
 
     def state_dict(self) -> Dict[str, Any]:
+        """Return a JSON-serialisable snapshot of all detector state.
+
+        Returns
+        -------
+        dict
+            Contains baseline values, EWMA trackers, and base-class state.
+        """
         sd = super().state_dict()
         sd.update({
             "baseline_set": self._baseline_set,
@@ -164,6 +232,13 @@ class HopfDetector(BaseDetector):
         return sd
 
     def load_state(self, sd: Dict[str, Any]) -> None:
+        """Restore detector state from a snapshot produced by ``state_dict``.
+
+        Parameters
+        ----------
+        sd : dict
+            Snapshot dictionary.
+        """
         super().load_state(sd)
         self._baseline_set = sd.get("baseline_set", False)
         self._warmup_var = sd.get("warmup_var", 0.0)

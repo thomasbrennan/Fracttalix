@@ -1,31 +1,42 @@
-# fracttalix/suite/coupling.py
-# CouplingDetector — Cross-frequency decoupling via phase-amplitude coupling.
-#
-# Theorem basis (MK-P5 / PAC):
-#   In a healthy oscillatory system, lower-frequency bands modulate higher-
-#   frequency amplitudes (phase-amplitude coupling, PAC).  This cross-scale
-#   coordination degrades before the system transitions — the heterodyned
-#   information channel degrades first.
-#
-#   Measurement:
-#     1. FFT decompose the rolling window into 5 bands (ultra-low, low, mid,
-#        high, ultra-high).
-#     2. For each adjacent pair, compute PAC strength as the correlation between
-#        low-band phase and high-band magnitude across the window.
-#     3. Track the composite coupling score and its trend.
-#     4. Alert if coupling is declining (coupling_trend < threshold) and the
-#        composite score falls below a critical level.
-#
-# OUT_OF_SCOPE conditions:
-#   • Signal has insufficient oscillatory content (noise floor dominates):
-#     ultra-high power > 70% of total spectrum → pure noise, no bands to couple.
-#   • Signal is too short for reliable FFT (< min_window).
-#   • Signal has no meaningful frequency structure (all bands equally flat).
-#
-# Best at: oscillatory systems losing cross-scale coordination before collapse
-#          (neural signals, power grids, physiological rhythms, market microstructure).
-# Mediocre at: non-oscillatory signals (random walks, pure step functions).
-# Useless at: white noise (always OUT_OF_SCOPE by design — no bands to couple).
+"""CouplingDetector -- Cross-frequency decoupling via phase-amplitude coupling.
+
+Theorem basis (MK-P5 / PAC)
+----------------------------
+In a healthy oscillatory system, lower-frequency bands modulate higher-
+frequency amplitudes (phase-amplitude coupling, PAC).  This cross-scale
+coordination degrades before the system transitions -- the heterodyned
+information channel degrades first.
+
+Measurement algorithm:
+
+1. FFT-decompose the rolling window into 5 bands (ultra-low, low, mid,
+   high, ultra-high).
+2. For each adjacent pair, compute PAC strength as the correlation between
+   low-band phase and high-band magnitude across the window.
+3. Track the composite coupling score and its trend.
+4. Alert if coupling is declining (coupling_trend < threshold) and the
+   composite score falls below a critical level.
+
+OUT_OF_SCOPE conditions
+-----------------------
+- Signal has insufficient oscillatory content (noise floor dominates):
+  ultra-high power > 70 % of total spectrum -- pure noise, no bands to
+  couple.
+- Signal is too short for reliable FFT (< min_window).
+- Signal has no meaningful frequency structure (all bands equally flat).
+- PAC bands (low, mid, high) carry < 30 % of total power.
+
+Strengths and limitations
+-------------------------
+Best at
+    Oscillatory systems losing cross-scale coordination before collapse
+    (neural signals, power grids, physiological rhythms, market
+    microstructure).
+Mediocre at
+    Non-oscillatory signals (random walks, pure step functions).
+Useless at
+    White noise (always OUT_OF_SCOPE by design -- no bands to couple).
+"""
 
 import math
 from collections import deque
@@ -176,7 +187,22 @@ class CouplingDetector(BaseDetector):
         self._baseline_set: bool = False
 
     def _compute_coupling(self, bands: Dict[str, Tuple[float, float]]) -> float:
-        """Composite coupling score from PAC between adjacent band pairs."""
+        """Compute composite PAC score from adjacent band pairs (low-mid, mid-high).
+
+        Appends the current step's phase and magnitude values to the PAC
+        history buffers, then computes the PAC coefficient for each adjacent
+        band pair and returns their average.
+
+        Parameters
+        ----------
+        bands : dict
+            Band name to (power, phase) tuple, as returned by ``_fft_bands``.
+
+        Returns
+        -------
+        float
+            Mean PAC coefficient across the low-mid and mid-high pairs.
+        """
         _, lo_ph = bands["low"]
         hi_mid_mag, _ = bands["mid"]
         _, mid_ph = bands["mid"]
@@ -194,11 +220,50 @@ class CouplingDetector(BaseDetector):
         return (pac_lo_mid + pac_mid_hi) / 2.0
 
     def _noise_fraction(self, bands: Dict[str, Tuple[float, float]]) -> float:
+        """Compute the fraction of total spectral power in the ultra-high band.
+
+        A high noise fraction (> ``noise_floor_threshold``) indicates the
+        signal is dominated by noise with no meaningful frequency structure.
+
+        Parameters
+        ----------
+        bands : dict
+            Band name to (power, phase) tuple, as returned by ``_fft_bands``.
+
+        Returns
+        -------
+        float
+            Ultra-high power / total power.
+        """
         total = sum(p for p, _ in bands.values()) + 1e-10
         uh_power = bands["ultra_high"][0]
         return uh_power / total
 
     def _check_scope(self, window: List[float]) -> bool:
+        """Determine whether the signal is suitable for coupling detection.
+
+        Scope gates
+        -----------
+        1. Window too short for reliable FFT (< ``min_fft_window``).
+        2. FFT unavailable (numpy fallback also failed).
+        3. Noise floor dominates: ultra-high power > ``noise_floor_threshold``
+           of total -- pure noise, no bands to couple.
+        4. Total spectral power near zero -- flat / constant signal.
+        5. No dominant frequency band: ``max(band_power) / total < 0.40`` --
+           energy is uniformly distributed (white noise).
+        6. PAC bands (low + mid + high) carry < 30 % of total power -- the
+           bands used for coupling computation are essentially empty.
+
+        Parameters
+        ----------
+        window : list of float
+            Current rolling window.
+
+        Returns
+        -------
+        bool
+            True if the signal is in scope for coupling analysis.
+        """
         if len(window) < self._min_fft_window:
             return False
 
@@ -238,6 +303,31 @@ class CouplingDetector(BaseDetector):
         return True
 
     def _compute(self, window: List[float]) -> Tuple[float, str]:
+        """Compute the coupling score via PAC drop and trend analysis.
+
+        Algorithm:
+        1. FFT-decompose the window into 5 frequency bands.
+        2. Compute composite PAC coupling via ``_compute_coupling``.
+        3. Update coupling EWMA; freeze baseline after 10 post-warmup steps.
+        4. ``drop_score``: how much coupling has fallen from the warmup
+           baseline, mapped to [0, 1] via ``coupling_drop_threshold``.
+        5. ``trend_score``: linear slope of coupling history, mapped to
+           [0, 1] via ``trend_threshold``.
+        6. Final score = max(drop_score, trend_score).
+
+        Parameters
+        ----------
+        window : list of float
+            Current rolling window.
+
+        Returns
+        -------
+        score : float
+            Coupling score in [0, 1].
+        msg : str
+            Diagnostic string with coupling value, baseline, trend, and
+            noise fraction.
+        """
         bands = _fft_bands(window)
         if bands is None:
             return 0.0, "fft unavailable"
@@ -298,6 +388,7 @@ class CouplingDetector(BaseDetector):
         return score, msg
 
     def reset(self) -> None:
+        """Clear all state, including PAC history buffers, coupling EWMA, and baseline."""
         super().reset()
         self._lo_phases.clear()
         self._hi_mags.clear()
@@ -310,6 +401,14 @@ class CouplingDetector(BaseDetector):
         self._baseline_set = False
 
     def state_dict(self) -> Dict[str, Any]:
+        """Return a JSON-serialisable snapshot of all detector state.
+
+        Returns
+        -------
+        dict
+            Contains coupling EWMA, baseline, coupling history, and
+            base-class state.
+        """
         sd = super().state_dict()
         sd.update({
             "coupling_ewma": self._coupling_ewma,
@@ -321,6 +420,13 @@ class CouplingDetector(BaseDetector):
         return sd
 
     def load_state(self, sd: Dict[str, Any]) -> None:
+        """Restore detector state from a snapshot produced by ``state_dict``.
+
+        Parameters
+        ----------
+        sd : dict
+            Snapshot dictionary.
+        """
         super().load_state(sd)
         self._coupling_ewma = sd.get("coupling_ewma", 0.0)
         self._coupling_n = sd.get("coupling_n", 0)
