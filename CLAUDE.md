@@ -86,24 +86,41 @@ python scripts/checkpoint.py discover --summary "Found that X implies Y"
 python scripts/checkpoint.py task-complete --id T-XXX --note "Done. Committed as abc123."
 ```
 
-## Team Communication
+## Cross-Instance Communication (MANDATORY)
 
-If working as part of a team (multiple Claude instances):
-
-- **Message bus**: `scripts/message_bus.py` — hub-and-spoke, all messages route through coordinator
-- **Role registry**: `scripts/team_registry.py` — register, heartbeat, check team status
-- **Topology**: 1 coordinator + N executors + 1 verifier
+**On first startup, every instance MUST register with the comms network.**
+This uses git as the transport — works across all environments.
 
 ```bash
-# Register your role
-python scripts/team_registry.py register --role executor-1
+# 1. Register yourself (do this FIRST)
+python scripts/comms.py register --role executor --session SXX --objective "what you're working on"
 
-# Send heartbeat (do this regularly)
-python scripts/team_registry.py heartbeat --role executor-1
+# 2. Discover other instances (scans all remote branches)
+python scripts/comms.py discover
 
-# Read messages for your role
-python scripts/message_bus.py read --for executor-1
+# 3. Check for messages
+python scripts/comms.py receive
+
+# 4. Send heartbeat periodically
+python scripts/comms.py heartbeat
+
+# 5. Broadcast to all instances
+python scripts/comms.py broadcast --type status_update --payload '{"progress": "50%"}'
+
+# 6. Send to specific instance
+python scripts/comms.py send --to cc-session_01CC --type question --payload '{"text": "..."}'
 ```
+
+**How it works**: Comms live in `.comms/` directory, committed to your branch.
+Cross-branch discovery fetches all `origin/claude/*` branches and reads their
+roster files, so instances on different branches find each other automatically.
+
+### Local Team Communication (same filesystem)
+
+For subagents sharing the same filesystem:
+
+- **Message bus**: `scripts/message_bus.py` — hub-and-spoke, filesystem JSON
+- **Role registry**: `scripts/team_registry.py` — heartbeats and liveness
 
 ## Key Files
 
@@ -115,8 +132,9 @@ python scripts/message_bus.py read --for executor-1
 | `.checkpoint/PROTOCOL.md` | Checkpoint protocol spec |
 | `scripts/checkpoint.py` | Checkpoint CLI |
 | `scripts/cbp_review.py` | CBP five-phase review CLI |
-| `scripts/message_bus.py` | Team message bus CLI |
-| `scripts/team_registry.py` | Team role registry CLI |
+| `scripts/comms.py` | **Cross-instance comms network (git-based)** |
+| `scripts/message_bus.py` | Local team message bus CLI |
+| `scripts/team_registry.py` | Local team role registry CLI |
 | `scripts/orchestrator.py` | External team orchestrator |
 | `ai-layers/` | Machine-readable claim registries (JSON) |
 
