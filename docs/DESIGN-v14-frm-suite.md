@@ -596,3 +596,441 @@ Gamma = 1 + pi^2/4
 Four detectors. Four radically different functions. One theorem.
 
 Nobody else has the theorem. Nobody else can build the suite.
+
+---
+
+## CBT v2 — Phase 1: Meta-Kaizen (KVS Scoring)
+
+KVS scoring of the v14 Suite Design as an improvement candidate,
+per MK-P1 D-MK1.2: KVS = N x I' x C' x T.
+
+### N (Novelty)
+
+```
+N = 1 - max_{tau} Jaccard(K_j, K_tau)
+```
+
+K_j (v14 suite concepts): {FRM-native suite, Omega detector, Virtu
+detector, Kramers scaling, decision window, frequency integrity,
+scope infrastructure, timescale regime change, conservative time
+estimation}
+
+K_tau (v13, most recent): {FRM-native, Lambda detector, Hopf
+bifurcation, curve fitting, scope detection, time-to-bifurcation,
+R-squared monitoring}
+
+Shared concepts: {FRM-native, scope} → |intersection| = 2
+Union: 14 distinct concepts → |union| = 14
+Jaccard(K_j, K_v13) = 2/14 = 0.143
+
+**N = 1 - 0.143 = 0.857**
+
+### I' (Impact)
+
+```
+I' = min(1, mu_j / I_max)
+```
+
+I_max = 0.50 (DORA: 50% improvement target for software, per D-MK1.4)
+
+mu_j: The suite is unvalidated. Lambda has 12 synthetic tests and
+zero real-world tests. The FRM form has never been fitted to real
+streaming data in this codebase. Honest estimate of annualized
+detection improvement on FRM-applicable data: speculative.
+
+Best case (FRM validates, suite outperforms EWS on real data): 40%
+specificity improvement → I' = 0.80
+
+Honest case (unvalidated): 10% improvement credible with current
+evidence → I' = 0.20
+
+**I' = 0.20** (using honest case; speculative impact cannot be
+scored at best-case)
+
+### C' (Inverse Complexity)
+
+```
+C' = (2.0 - C_j) / 1.0,  C_j in {1.0, 1.2, 1.4, 1.6, 1.8, 2.0}
+```
+
+Three detectors + shared infrastructure. ~600 LOC new code.
+Requires scipy, nonlinear curve fitting, Kramers scaling theory,
+decision-theoretic framework. But each detector is well-scoped
+(~200 lines), opt-in, and independently testable.
+
+C_j = 1.4 (moderate complexity)
+
+**C' = (2.0 - 1.4) / 1.0 = 0.60**
+
+### T (Timeliness)
+
+```
+T = max(0, 1 - h_j / H_max),  H_max = 60 months
+```
+
+h_j = 0 months. JOSS submission active. Zero competition in
+FRM-native streaming detection. Relevant immediately.
+
+**T = 1.0**
+
+### KVS Computation
+
+```
+KVS = N x I' x C' x T
+    = 0.857 x 0.20 x 0.60 x 1.0
+    = 0.103
+```
+
+**KVS = 0.103. Below threshold kappa = 0.50.**
+
+The bottleneck is Impact (I' = 0.20). The suite is novel, timely,
+and moderately complex — but its impact is speculative because the
+foundational detector (Lambda) has never been validated on real data.
+
+**KVS sensitivity to Lambda validation:**
+
+| Scenario | I' | KVS | vs kappa |
+|----------|-----|------|---------|
+| Current (unvalidated) | 0.20 | 0.103 | BELOW |
+| Lambda validates, modest gains | 0.60 | 0.309 | BELOW |
+| Lambda validates, significant gains | 0.80 | 0.411 | BELOW |
+| Lambda validates + suite simplifies (C'=0.80) | 0.80 | 0.549 | ABOVE |
+| Full validation + high impact | 0.95 | 0.489 | BELOW |
+| Full validation + high impact + simplified | 0.95 | 0.652 | ABOVE |
+
+**Conclusion from KVS:** The suite cannot reach threshold at current
+complexity (C' = 0.60) regardless of how well Lambda validates. To
+exceed kappa = 0.50, either:
+- Simplify the suite (raise C' to 0.80+), OR
+- Achieve extraordinary validated impact (I' > 0.97, unrealistic)
+
+The KVS mathematically directs us to: **validate Lambda first AND
+simplify the suite.**
+
+---
+
+## CBT v2 — Phase 2: Hostile Review
+
+Six objections raised against the design. Adversarial, not friendly.
+
+### HR-1: Omega Detector is circular when tau_gen is unknown
+
+The design claims "absolute reference" as the competitive advantage.
+But when `tau_gen` is not supplied, `omega_predicted` comes from the
+FFT peak of the data itself. The Omega detector then compares FFT peak
+against... FFT peak. There is no theoretical prediction to compare
+against.
+
+The "absolute reference" advantage only exists in the strong mode
+(`tau_gen` supplied by user with domain knowledge). In weak mode
+(`tau_gen` estimated from FFT), Omega is just tracking frequency
+stability over time — which spectral CUSUM already does.
+
+**Severity: HIGH.** The "Why Best-in-World" section is misleading.
+It presents the strong-mode advantage as if it's always available.
+
+### HR-2: Scope Detector is redundant with Lambda's existing scope monitoring
+
+Lambda already computes R-squared, classifies as
+IN_SCOPE/BOUNDARY/OUT_OF_SCOPE, suppresses alerts when out of scope.
+The design says "extract and strengthen" but the proposed additions
+(residual autocorrelation, amplitude SNR, diagnostic categories) are
+incremental improvements to Lambda's scope logic, not a "radically
+different function."
+
+Making Scope a separate detector inflates the suite count from 3 to 4
+without adding a genuinely distinct detection capability. The KVS
+confirms: complexity is the binding constraint (C' = 0.60 blocks
+threshold regardless of impact).
+
+**Severity: HIGH.** Scope inflates complexity and suppresses KVS. The
+KVS mathematically directs us to simplify.
+
+### HR-3: Virtu requires cost parameters users cannot quantify
+
+MK-P5 Theorem 1 requires `C_fp` and `C_late`. In practice, users
+almost never know these quantitatively. "What's the cost of a false
+positive?" is a question most engineers can't answer with a number.
+
+The symmetric case (`C_fp = C_late`) reduces Theorem 1 to
+`W_v > T_decision` — a simple threshold. At that point Virtu is just
+Lambda with a safety margin, not a "radically different function."
+
+**Severity: MEDIUM.** The decision-theoretic framework is elegant but
+may collapse to a simple threshold in practice.
+
+### HR-4: Four detectors before one is validated on real data
+
+Lambda has 12 synthetic tests and zero real-world tests. The entire
+FRM functional form has never been fitted to real streaming data in
+this codebase.
+
+Designing three more detectors before validating the first one is
+architecture-astronautics — the same pattern that produced v12.2's
+38-step pipeline. Adding complexity before validating foundations.
+
+The KVS confirms: I' = 0.20 because impact is speculative. This
+single factor kills the score (KVS = 0.103 vs threshold 0.50).
+
+**Severity: CRITICAL.** This is the strongest objection. The KVS
+mathematically confirms that building without validation is below
+threshold for justified work.
+
+### HR-5: Omega and Scope detect the same underlying phenomenon
+
+When `omega_observed != omega_predicted`, either:
+- (a) `tau_gen` changed (Omega alert: RHYTHM_SHIFT), or
+- (b) The FRM model doesn't apply (Scope: EXCLUDED)
+
+Case (b) IS scope failure. The Omega detector's failure mode and the
+Scope detector's failure mode overlap significantly. "The frequency
+doesn't match the prediction" and "the model doesn't fit" are often
+the same event viewed from two angles.
+
+**Severity: LOW-MEDIUM.** There is a genuine distinction (tau_gen
+drift with high R-squared vs. complete model failure) but it's
+narrower than the design implies.
+
+### HR-6: "Nobody else has the theorem" is not a competitive moat
+
+The FRM theorem set is published (CC0 license). Anyone can read it.
+Anyone can implement the lambda detector. The moat isn't theorem
+possession — it's whether the theorem works on real data.
+
+If the theorem works, others will implement it (and the CC0 license
+encourages this). If it doesn't, nobody else *wanting* to build it is
+irrelevant. Claiming competitive advantage from theorem access is a
+category error for open-source work.
+
+**Severity: LOW.** But the rhetoric throughout the design needs
+correction. "Nobody else can" → "Nobody else has."
+
+---
+
+## CBT v2 — Phase 3: Second Meta-Kaizen (Resolution)
+
+KVS-informed resolution of each hostile review objection.
+
+### HR-1 Resolution: Discipline enforced
+
+The design overclaims. Omega's "absolute reference" advantage exists
+**only** when `tau_gen` is independently supplied by the user. When
+`tau_gen` is estimated from data (FFT), Omega is a competent frequency
+stability tracker — useful, but not fundamentally different from
+spectral change detection methods.
+
+**Action:** The design must explicitly state two operating modes:
+- **Strong mode** (`tau_gen` supplied): Genuine absolute reference.
+  Best-in-world claim justified. Detects slow drift that relative
+  methods miss.
+- **Weak mode** (`tau_gen` from FFT): Frequency stability tracker.
+  Useful but not uniquely FRM-derived. Competitive with spectral CUSUM,
+  not clearly superior.
+
+The "Why Best-in-World" section must be rewritten to be honest about
+this distinction. Strong mode is the selling point. Weak mode is the
+fallback.
+
+### HR-2 Resolution: Scope refined → Scope becomes shared infrastructure
+
+The objection is correct and the KVS confirms it: C' = 0.60 is the
+binding constraint. Adding a fourth detector when KVS demands
+simplification is building in the wrong direction.
+
+The resolution: Scope is **not** a fourth detector. It is enhanced
+scope logic inside Lambda (and later Omega/Virtu). Specifically:
+
+- Residual autocorrelation and amplitude SNR checks added to Lambda's
+  existing `_compute_scope()` method
+- Diagnostic categories (LOW_R_SQUARED, STRUCTURED_RESIDUALS, etc.)
+  added as a `hopf_scope_diagnosis` result key
+- No new step class. No new config section. No new result API method.
+- Lambda's existing `get_hopf_status()` gains one key: `"diagnosis"`
+
+**KVS effect:** C_j drops from 1.4 to 1.2. C' rises to 0.80.
+This alone raises post-validation KVS from 0.411 to 0.549 (above
+threshold).
+
+**Revised suite: Three detectors. Scope is Lambda's job.**
+
+### HR-3 Resolution: Resolved stronger
+
+The objection about unknowable cost parameters is valid for the
+general case. But it misses the real contribution of Virtu: **Kramers
+scaling**.
+
+Even in the symmetric case (`C_fp = C_late`), the rationality
+condition is `W_v > T_decision`, where:
+
+```
+W_v = mu_tau - sigma_tau * z_alpha
+sigma_tau ~ (mu_c - mu)^(-1/2)    [Kramers scaling]
+```
+
+This is NOT the same as Lambda's naive `dt = lambda / |d_lambda/dt|`.
+Lambda gives you the mean time. Virtu gives you the *conservative*
+time, accounting for the fact that uncertainty in tipping time
+**diverges** as the system approaches criticality.
+
+This is the real contribution: not asymmetric cost (which is nice but
+requires user parameterization), but the Kramers correction to the
+time estimate. Lambda says "you have 50 steps." Virtu says "you have
+50 steps on average but uncertainty is growing — the conservative
+estimate is 23 steps."
+
+**Action:** Default to symmetric case. Remove `C_fp`/`C_late` from
+required config (keep as advanced overrides). Lead with Kramers
+correction, not decision theory. The title shifts from "Decision
+Rationality" to "Conservative Time Estimation."
+
+### HR-4 Resolution: Discipline enforced — Validation gate added
+
+This is the strongest objection. The KVS confirms it mathematically:
+I' = 0.20 kills the score. No amount of novelty, simplicity, or
+timeliness can compensate for unvalidated impact.
+
+**Action:** Implementation of Omega and Virtu is **gated** on Lambda
+demonstrating value on real-world data. Specifically:
+
+**Gate condition:** Before building Omega or Virtu, Lambda must be
+tested on at least one real dataset where:
+1. The FRM form fits (R-squared > 0.7)
+2. Lambda produces meaningful time-to-transition estimates
+3. Lambda gives earlier or more specific warning than the v12.2
+   pipeline's EWS step on the same data
+
+Design is approved now. Implementation sequence:
+1. Lambda (done)
+2. Lambda real-world validation (MUST PASS before continuing)
+3. Omega (only if Lambda validates)
+4. Virtu (only if Lambda validates AND Omega validates)
+
+**KVS effect:** When Lambda validates, I' rises from 0.20 to
+0.60-0.80. Combined with HR-2 simplification (C' = 0.80), the suite
+crosses threshold: KVS = 0.857 x 0.60 x 0.80 x 1.0 = 0.411 (modest
+validation) or 0.857 x 0.80 x 0.80 x 1.0 = **0.549** (strong
+validation, above kappa).
+
+### HR-5 Resolution: Strengthened
+
+The objection identified an overlap but the distinction holds under
+closer examination:
+
+- **Omega drift + high R-squared:** `tau_gen` is changing but the
+  FRM form still applies. The system is still a damped oscillator —
+  just with a different characteristic timescale. This is a timescale
+  regime change, not a model failure.
+
+- **Scope failure (low R-squared) + stable omega:** The data has
+  become non-oscillatory or noisy while the dominant frequency hasn't
+  changed. The model has broken but the frequency component persists.
+
+- **Both failing:** The system has fundamentally changed. Both
+  detectors agree.
+
+The orthogonality isn't perfect but it's real. Omega answers "same
+system, different timescale?" Scope answers "still the right model at
+all?" These can have different answers simultaneously.
+
+### HR-6 Resolution: Discipline enforced
+
+Correct. Open-source work cannot claim competitive moat from theorem
+access. The real advantage is:
+
+1. First-mover implementation
+2. Deepest understanding (we derived the theorems)
+3. Integrated suite (theorems applied together, not piecemeal)
+
+**Action:** Replace all instances of "nobody else can build" with
+"first implementation of." Remove possessive moat language. The
+suite's value comes from whether it works, not from who has access to
+the math.
+
+---
+
+## CBT v2 — Phase 4: Revised Build Plan
+
+### What Changed (Hostile Review + KVS-Directed)
+
+| Design element | Before | After | Source |
+|----------------|--------|-------|--------|
+| Suite size | 4 detectors | 3 detectors (scope absorbed) | HR-2 + KVS (C' binding) |
+| Complexity | C_j=1.4, C'=0.60 | C_j=1.2, C'=0.80 | KVS directs simplification |
+| Implementation gate | Build all four | Lambda must validate first | HR-4 + KVS (I'=0.20 kills score) |
+| Omega claim | "Best-in-world always" | "Best-in-world with tau_gen" | HR-1 |
+| Virtu framing | Decision theory | Kramers-corrected time estimate | HR-3 |
+| Virtu config | C_fp, C_late required | Symmetric default | HR-3 |
+| Competitive language | "Nobody else can" | "First implementation of" | HR-6 |
+
+### Revised KVS (Post-Resolution)
+
+Pre-validation (current):
+```
+KVS = 0.857 x 0.20 x 0.80 x 1.0 = 0.137
+```
+
+Still below threshold. Impact unvalidated. **Do not build Omega/Virtu.**
+
+Post-validation (if Lambda validates with strong results):
+```
+KVS = 0.857 x 0.80 x 0.80 x 1.0 = 0.549
+```
+
+**Above kappa = 0.50. Proceed with Omega and Virtu.**
+
+### Revised Suite
+
+| # | Detector | Question | Gate |
+|---|----------|----------|------|
+| 1 | **Lambda** | Is damping disappearing? | Done (v13) |
+| 2 | **Omega** | Has the fundamental rhythm changed? | Gated: Lambda real-world validation |
+| 3 | **Virtu** | How much actionable time remains? | Gated: Lambda + Omega validation |
+
+Scope is Lambda's enhanced scope logic, not a separate detector.
+
+### Implementation Sequence (Revised)
+
+```
+Phase 1: VALIDATE LAMBDA (current priority — MUST PASS)
+  - Find or generate a real-world dataset where FRM form fits
+  - Run Lambda detector, compare against v12.2 EWS
+  - Document results honestly (pass or fail)
+  - If fail: diagnose why. Fix Lambda. Do not proceed.
+  - Recompute KVS with validated I'
+
+Phase 2: ENHANCE LAMBDA SCOPE (no gate)
+  - Add residual autocorrelation check to _compute_scope()
+  - Add amplitude SNR check
+  - Add hopf_scope_diagnosis result key
+  - ~30 lines added to hopf.py, 2 additional tests
+
+Phase 3: OMEGA DETECTOR (gated on Phase 1 pass)
+  - OmegaDetectorStep
+  - Strong mode (tau_gen supplied): absolute reference
+  - Weak mode (tau_gen from FFT): frequency stability tracking
+  - Honest documentation of which mode is active
+  - ~180 lines, 6 tests
+
+Phase 4: VIRTU DETECTOR (gated on Phase 3 validation)
+  - VirtuDetectorStep reading Lambda output
+  - Kramers-corrected conservative time estimate
+  - Symmetric case as default
+  - Optional asymmetric cost override
+  - ~200 lines, 6 tests
+```
+
+### The Thesis (Revised)
+
+Three detectors. Three radically different functions. One theorem.
+
+Each uses the FRM functional form and its derived constants. Each
+answers a question that generic detectors cannot answer as well —
+because generic detectors don't have a parametric model with predicted
+frequency and derived decay rate.
+
+This is the first implementation of FRM-native detection. Whether it
+outperforms existing methods depends on validation — and the KVS
+correctly blocks further building until that validation exists.
+
+KVS = 0.137 (pre-validation). Implementation of Omega and Virtu is
+justified only when I' rises above 0.60 through real-world evidence.
