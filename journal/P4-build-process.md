@@ -669,3 +669,260 @@ hostile-reviewed. This means:
 - R-1 reworded for P2 chain risk
 
 *Phase 3 complete S56. All 10 objections addressed. Proceeding to Phase 4.*
+
+---
+
+## Phase 4: Final Build Plan
+
+*Consolidation of Phases 1–3. This is the authoritative build plan for P4.
+All Phase 2 objections have been addressed. All Phase 3 corrections are applied.
+This section is the definitive reference for P4 construction.*
+
+### 4.1 Paper Identity (Final)
+
+| Field | Value |
+|-------|-------|
+| Paper ID | P4 |
+| Title | Biological Systems: FRM Validation Across Biological Oscillatory Substrates |
+| Type | application_C |
+| Act | II |
+| Track | Fracttalix |
+| Status | Phase 4 FINAL BUILD PLAN |
+| Gate | P3 PHASE-READY ✓ (S48, CBT I-9 PASS) |
+| Depends on | P1 (D-1.1, D-1.2, D-1.3, F-1.4, F-1.6, A-1.5), P2 (D-2.1, C-2.1, C-2.2, C-2.4 — PROVISIONAL), P3 (C-3.REG, D-3.1, D-3.2, C-3.ALT, C-3.DIAG) |
+| Enables | P6 (integration consistency — Act II claims) |
+| AI Layer | v3 (Phase 3 corrections applied) |
+
+### 4.2 Core Question (Unchanged from Phase 1)
+
+Does the FRM functional form f(t) = B + A·e^(−λt)·cos(ωt + φ) accurately describe
+the dynamics of biological oscillatory systems across multiple independent biological
+substrate classes, when measured using the P3 standard protocol with zero free parameters?
+
+### 4.3 Thesis (Final — Incorporates Phase 3 Corrections)
+
+**F-4.1:** The FRM predicts the dynamics of biological oscillators with R²≥0.85
+(per C-3.REG R4 threshold) across at least 3 independent biological substrate classes,
+using zero fitted parameters. Systems with R²<0.85 using α=−1 default undergo
+α-diagnostic before ANOMALOUS classification.
+
+**F-4.2 (restructured):** The observed dominant oscillation frequency ω_spectral
+matches ω_predicted = π/(2·τ_gen) within 2σ_ω across all qualifying classes
+(≥3 CONFIRMED systems, non-scope-boundary).
+
+**F-4.3:** T_char = 4·τ_gen matches T_obs within 10% (Taylor 1997 3σ detection
+threshold) across all qualifying classes.
+
+**Falsification conditions:** Any qualifying class with mean R²_frm < 0.85
+(F-4.1); any qualifying class with |ω_spectral − ω_predicted| > 2σ_ω (F-4.2);
+any qualifying system with |T_char − T_obs|/T_obs > 0.10 (F-4.3); any class
+with Δ < −0.05 vs pre-specified alternative (F-4.4).
+
+### 4.4 Scope Boundary (Final — Unchanged)
+
+**P4 scope:** Non-neural biological oscillators. All biological systems where the
+oscillatory dynamics arise from delayed negative feedback at the cellular, tissue,
+organ, or organism level — excluding neural circuits.
+
+**P5 scope:** Neural and pharmacological systems.
+
+**Boundary rule:** If primary feedback mechanism is synaptic → P5. If molecular → P4.
+Molecular oscillators in neural tissue (e.g., SCN circadian) → P4.
+
+### 4.5 Biological Substrate Classes (Final — Phase 3 Corrections Applied)
+
+**Class B1: Circadian oscillators** — VALIDATION CLASS
+- 5 systems: Mammalian SCN (CONFIRMED P1), Cyanobacterial KaiABC (CONFIRMED P1),
+  Drosophila per/tim, Neurospora FRQ, Arabidopsis CCA1/LHY
+- Mechanism: TTFL
+- τ_gen: STRUCTURAL (gene expression delay)
+- Role: Within-class replication (extends P1 from 2 to 5 systems). Cross-class
+  independence via comparison with B2, B4, B5 (different mechanisms).
+- Qualifies for cross-class analysis: YES (5 systems, non-scope-boundary)
+
+**Class B2: Cell cycle oscillators** — VALIDATION CLASS
+- 3 systems: Xenopus laevis (P3 vacuity witness), S. cerevisiae, S. pombe
+- Mechanism: CDK/cyclin APC-mediated degradation
+- τ_gen: STRUCTURAL (CDK1/APC feedback delay)
+- Qualifies for cross-class analysis: YES (3 systems, non-scope-boundary)
+
+**Class B3: Cardiac oscillators** — SCOPE BOUNDARY DEMONSTRATION CLASS
+- 3 systems: SA node pacemaker, Purkinje fibers, APD restitution
+- Mechanism: Ion channel delayed negative feedback
+- τ_gen: STRUCTURAL (refractory period)
+- Pre-specified: SA node + Purkinje → EXCLUDED (μ>0, limit cycle). APD restitution
+  → IN SCOPE (μ<0, perturbation response).
+- Primary contribution: Demonstrates C-3.DIAG correctly classifies limit cycles
+  as OUT of scope.
+- Qualifies for cross-class analysis: NO (scope boundary class, most systems
+  expected EXCLUDED)
+
+**Class B4: Metabolic oscillators** — VALIDATION CLASS (CONDITIONAL)
+- 2 systems: Yeast glycolytic (PFK), Calcium (IP3R)
+- Mechanism: Enzymatic delayed negative feedback
+- τ_gen: STRUCTURAL or SPECTRAL
+- Qualifies for cross-class analysis: NO at n=2. If additional systems identified
+  during literature survey and ≥3 CONFIRMED: YES.
+- Individual fits count toward F-4.1.
+
+**Class B5: Musculoskeletal adaptation** — VALIDATION CLASS
+- 3 systems: Supercompensation (DATA-CONTINGENT, PH-4.1), wound healing,
+  bone remodelling
+- Mechanism: Tissue/organism-level delayed negative feedback
+- τ_gen: STRUCTURAL (recovery time)
+- Qualifies for cross-class analysis: CONDITIONAL on PH-4.1 resolution. If
+  supercompensation data unavailable: B5 has n=2 (wound healing + bone
+  remodelling) → excluded from cross-class. If data available: n=3 → qualifies.
+
+**Cross-class analysis participation summary:**
+
+| Class | n_systems | Scope boundary? | Cross-class eligible? |
+|-------|-----------|-----------------|----------------------|
+| B1 | 5 | No | YES |
+| B2 | 3 | No | YES |
+| B3 | 3 | YES | NO (unless ≥3 CONFIRMED) |
+| B4 | 2 | No | NO (unless n raised to ≥3) |
+| B5 | 3 | No | CONDITIONAL (PH-4.1) |
+
+**Minimum guaranteed qualifying classes for cross-class analysis:** 2 (B1, B2).
+**Expected qualifying classes:** 2–3 (B1, B2, possibly B5).
+**Required for F-4.2/F-4.3 cross-class claims:** ≥3 qualifying classes.
+
+**Note:** If only 2 classes qualify for cross-class analysis, F-4.2 and F-4.3
+cross-class claims are weakened but not falsified — the paper reports individual
+class results and notes insufficient cross-class sample. This is scope-honest,
+not scope-inflating.
+
+### 4.6 Claim Registry (Final)
+
+**12 claims: 4A + 3D + 5F** (unchanged count from Phase 1)
+
+**Type A (received axioms):**
+
+| Claim ID | Label | Source | Status |
+|----------|-------|--------|--------|
+| A-4.1 | FRM functional form | P1 D-1.1–D-1.3, F-1.4 | LIVE |
+| A-4.2 | Universality class criteria | P2 D-2.1 | LIVE — PROVISIONAL |
+| A-4.3 | Substrate independence of β | P2 C-2.1, C-2.4 | LIVE — PROVISIONAL |
+| A-4.4 | Measurement protocol | P3 C-3.REG, C-3.ALT, C-3.DIAG | LIVE |
+
+**Type D (definitions):**
+
+| Claim ID | Label | Phase 3 Changes |
+|----------|-------|-----------------|
+| D-4.1 | Biological substrate class definition | None |
+| D-4.2 | Biological validation set | Updated: n≥3 for cross-class, scope boundary class flag, B3 reclassification |
+| D-4.3 | Biological τ_gen instantiation | None |
+
+**Type F (falsifiable claims):**
+
+| Claim ID | Label | Phase 3 Changes |
+|----------|-------|-----------------|
+| F-4.1 | Biological FRM goodness of fit | α-diagnostic added (Obj 7) |
+| F-4.2 | Spectral frequency consistency | RESTRUCTURED from β substrate independence (Obj 1). New empirical content. |
+| F-4.3 | Biological T_char prediction | P10-GAP-4.1 CLOSED (Obj 8). n≥3 qualifier (Obj 6). |
+| F-4.4 | Biological alt model comparison | AIC note added (Obj 9). |
+| F-4.5 | Supercompensation as FRM instance | DATA-CONTINGENT (PH-4.1, Obj 5). |
+
+### 4.7 Inference Rules (Final — Canonical Numbering)
+
+| IR | Name | Usage in P4 |
+|----|------|-------------|
+| IR-1 | Modus Ponens | Standard deduction |
+| IR-2 | Universal Instantiation | Applying A-4.1 to specific biological systems |
+| IR-3 | Substitution of Equals | τ_gen → ω, λ computation |
+| IR-5 | Algebraic Manipulation | R², T_char, Δ computation |
+| IR-7 | Statistical Inference | 2σ test, R² threshold, bootstrap |
+| IR-8 | Parsimony | τ_gen extraction hierarchy justification |
+| IR-13 | Protocol Specification | C-3.REG step validity (renamed from P3-local IR-12) |
+| IR-14 | Statistical Standard Anchoring | R² threshold, 2σ, 10%, Δ anchoring (renamed from P3-local IR-13) |
+
+### 4.8 Paper Structure (Final — Section Mapping)
+
+| # | Section | Content | Claims Tested |
+|---|---------|---------|---------------|
+| 1 | Introduction | FRM applied to biology. Core question. Gate from P3. | — |
+| 2 | Scope and definitions | D-4.1 scope boundary (P4 vs P5). D-4.2 validation set with scope boundary class designation. D-4.3 τ_gen instantiation. | D-4.1, D-4.2, D-4.3 |
+| 3 | Methods | P3 C-3.REG protocol application. τ_gen extraction per class. α-diagnostic procedure. Alternative model selection (C-3.ALT Section 5 mapping). Spectral analysis method for F-4.2. | A-4.4 |
+| 4 | Results: Circadian (B1) | Per-system fits. R²_frm. ω_spectral vs ω_predicted. T_char vs T_obs. Alt comparison. Within-class replication analysis. | F-4.1, F-4.2, F-4.3, F-4.4 |
+| 5 | Results: Cell cycle (B2) | Per-system fits. R²_frm. ω_spectral vs ω_predicted. T_char vs T_obs. Alt comparison. | F-4.1, F-4.2, F-4.3, F-4.4 |
+| 6 | Results: Cardiac (B3) | Scope boundary demonstration. Per-system C-3.DIAG classification. EXCLUDED systems documented. Any CONFIRMED systems reported. | F-4.1 (if CONFIRMED), C-3.DIAG validation |
+| 7 | Results: Metabolic (B4) | Per-system fits. Scope boundary analysis (μ<0 check). | F-4.1, F-4.4 |
+| 8 | Results: Musculoskeletal (B5) | Supercompensation (if PH-4.1 resolved). Wound healing. Bone remodelling. | F-4.1, F-4.5, F-4.4 |
+| 9 | Cross-class analysis | F-4.2 spectral consistency across qualifying classes. F-4.3 T_char prediction. Summary table. Power limitation note if <3 qualifying classes. | F-4.2, F-4.3 |
+| 10 | Discussion | Scope boundaries confirmed. α-diagnostic cases. Anomalous cases flagged. Implications for P5 and P6. Cross-class evidence strength assessment. | — |
+| 11 | Claim registry | Full AI layer embedded. Phase 3 corrections documented. | All |
+
+### 4.9 Principle 10 Status (Final)
+
+| Constant/Condition | Status | Anchor |
+|--------------------|---------|----|
+| R² threshold (0.85) | CLOSED | Kvålseth (1985) via P3 |
+| 2σ spectral consistency | CLOSED | Bevington & Robinson (2003) §3.2 via P3 |
+| 10% T_char deviation | CLOSED S56 | Taylor (1997) §4.1 3σ detection threshold |
+| Δ ≥ −0.05 alt model | CLOSED | Burnham & Anderson (2002) §2.5 via P3 |
+| n ≥ 3 cross-class minimum | CLOSED S56 | t-distribution properties (df=2 threshold) |
+
+**principle_10_compliant: true** — all gaps closed.
+
+### 4.10 Placeholders (Final)
+
+| PH ID | Source | Description | Blocking? | Severity |
+|-------|--------|-------------|-----------|----------|
+| PH-4.1 | F-4.5 | Supercompensation quantitative data | No (C4 tracking) | POTENTIALLY_BLOCKING |
+| PH-4.2 | F-4.1 | Full biological dataset assembly | Yes | — |
+
+**PH-4.1:** Requires published time-series data with ≥6 points during recovery
+window. Candidate sources: Issurin (2010), Zatsiorsky & Kraemer (2006),
+Häkkinen (1994). If no data: F-4.5 BLOCKED, B5 relies on wound healing +
+bone remodelling only.
+
+**PH-4.2:** Per-class fits not yet computed. Requires literature data for all
+five substrate classes. Blocks PHASE-READY.
+
+### 4.11 Inbound Edge Provenance (Final)
+
+| Source | Claims | Status |
+|--------|--------|--------|
+| P1 | D-1.1, D-1.2, D-1.3, F-1.4, F-1.6, A-1.5 | LIVE (P1 PHASE-READY) |
+| P2 | D-2.1, C-2.1, C-2.2, C-2.4 | LIVE — PROVISIONAL (P2 Phase 1 only, Phases 2–5 pending) |
+| P3 | C-3.REG, D-3.1, D-3.2, C-3.ALT, C-3.DIAG | LIVE (P3 PHASE-READY S48) |
+
+**P2 provisional edge risk:** P2's claims are structurally validated (Phase 1
+PHASE-READY S49) but not hostile-reviewed. P2 Phases 2–5 could modify claims.
+P4 proceeds with provisional edges. Confirmed when P2 completes. Risk R-1.
+
+### 4.12 Risk Assessment (Final — Phase 3 Updated)
+
+| Risk | Level | Phase 3 Resolution |
+|------|-------|-------------------|
+| Cardiac B3 empty class | RESOLVED | B3 = scope boundary demo. Not in cross-class minimum. |
+| Metabolic B4 insufficient data | LOW | n=2 qualifies for individual fits. Additional systems sought during literature survey. |
+| Supercompensation qualitative data | MEDIUM | PH-4.1 POTENTIALLY_BLOCKING. Candidate sources identified. |
+| P2 dependency chain provisional | MEDIUM | R-1 registered. P4 proceeds; confirmed when P2 completes Phases 2–5. |
+| Cross-class sample too small | MEDIUM | Guaranteed: 2 qualifying classes (B1, B2). Expected: 2–3. Required: ≥3. If <3: cross-class claims weakened, not falsified. |
+| α uncertainty in R² | LOW | α-diagnostic separates form failure from parameter uncertainty. |
+
+### 4.13 Deliverables (Final)
+
+1. **P4-ai-layer.json** — v3 (Phase 3 corrections applied). Phase 4 update to follow.
+2. **P4-build-process.md** — this document (Phases 1–4 complete).
+3. **Updated Build Table** — v3.4 (P3 status corrected, R-1 updated, P4 Phase 4).
+4. **Next gate:** Phase 5 (CBT I-9 7-step PASS).
+
+### 4.14 Phase 4 Verdict
+
+The P4 build plan is structurally complete:
+- 12 claims (4A + 3D + 5F) with all Phase 3 corrections applied
+- All 10 hostile review objections addressed and resolved
+- F-4.2 restructured with genuine empirical content (spectral frequency consistency)
+- IR numbering collision resolved (IR-13, IR-14 canonical)
+- All P10 gaps closed (principle_10_compliant: true)
+- Scope boundary class (B3) honestly designated
+- Cross-class participation rules tightened (n≥3)
+- Provisional edges from P2 honestly declared
+- 2 placeholders remaining (PH-4.1 data-contingent, PH-4.2 blocking)
+
+**Ready for Phase 5 (CBT I-9 7-step PASS).**
+
+*Phase 4 complete S56.*

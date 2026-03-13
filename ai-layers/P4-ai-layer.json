@@ -18,9 +18,9 @@
       }
     ],
     "produced_session": "S56",
-    "produced_by": "Claude (Anthropic) — P4 Phase 3 Second Meta-Kaizen, S56",
+    "produced_by": "Claude (Anthropic) — P4 Phase 4 Final Build Plan, S56",
     "licence": "CC BY 4.0",
-    "phase_produced": "Phase 3 — Second Meta-Kaizen",
+    "phase_produced": "Phase 4 — Final Build Plan",
     "cbp_version": "v2 (S39) + S42 two-state gate + Principle 10 (S48)",
     "supersedes": "P4-ai-layer v2 (S56 Phase 1) — Phase 3 corrections applied: F-4.2 restructured, IR renumbered, D-4.2 updated, P10-GAP-4.1 closed."
   },
@@ -519,12 +519,12 @@
     "c6": "SATISFIED",
     "placeholder_count": 2,
     "placeholder_blocking_count": 1,
-    "note": "Phase 3 Second Meta-Kaizen complete S56. 12 claims (4A + 3D + 5F). F-4.2 restructured (spectral consistency). P10-GAP-4.1 closed. IR numbering resolved. 2 placeholders (PH-4.1 C4 tracking with POTENTIALLY_BLOCKING severity, PH-4.2 blocking). Phases 4–5 pending.",
+    "note": "Phase 4 Final Build Plan complete S56. 12 claims (4A + 3D + 5F). All Phase 3 corrections applied. F-4.2 restructured (spectral consistency). P10-GAP-4.1 closed. IR numbering resolved. principle_10_compliant: true. 2 placeholders (PH-4.1 POTENTIALLY_BLOCKING, PH-4.2 blocking). Phase 5 (CBT I-9) pending.",
     "cbt_session": null,
     "thomas_signoff_required": true,
     "github_publication": {
       "target_path": "ai-layers/P4-ai-layer.json",
-      "status": "Phase 3 — NOT YET PUBLISHABLE"
+      "status": "Phase 4 — NOT YET PUBLISHABLE (Phase 5 CBT I-9 pending)"
     }
   },
   "prior_art": {
