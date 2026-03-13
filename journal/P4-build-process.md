@@ -215,4 +215,155 @@ are superseded. Self-similarity is a property of the FRM law (P1), not a P4-spec
 
 ---
 
-*Phase 1 produced S56. Phases 2–5 pending.*
+## Phase 2: Hostile Review
+
+*Adversarial review of P4 Phase 1 build plan. All objections must be addressed
+in Phase 3 before the build can proceed.*
+
+### Objection 1: "F-4.2 (β substrate independence) is testing a tautology"
+
+**Attack:** P3 HR-3.1 resolution established that β_measured = ω·τ_gen/π = 1/2
+analytically — always, by construction. The C-3.REG R5 step extracts β = 0.5 as
+a model-confirmed identity, not an empirical measurement. So F-4.2 claims to test
+"β = 1/2 holds across all biological substrate classes within 2σ" — but β is
+*defined* to be 1/2 by the FRM. What is being tested? The 2σ test against 0.5
+will always pass because the protocol always returns 0.5. F-4.2 as stated has
+zero empirical content. It's vacuous.
+
+**Severity:** HIGH — the claim is structurally vacuous. It always returns NOT FALSIFIED
+regardless of the system, violating C6.
+
+### Objection 2: "IR numbering collision — P3's IR-12/IR-13 vs schema IR-12"
+
+**Attack:** The P4 AI layer lists IR-12 as "Protocol Specification" and IR-13
+as "Statistical Standard Anchoring" — both inherited from P3 (S48). But the
+canonical schema (ai-layer-schema.json, updated S56) now defines IR-12 as
+"Causal Precedence (DDE derivation class)" from DRP-8. These are completely
+different inference rules with the same identifier. P3's local IR-12 and the
+schema's IR-12 are incompatible. Any derivation trace citing "IR-12" is
+ambiguous — does it mean Protocol Specification or Causal Precedence?
+
+**Severity:** HIGH — IR numbering integrity is foundational. Ambiguous rule
+references undermine all derivation traces that use them.
+
+### Objection 3: "Cardiac oscillators (B3) may be an empty class"
+
+**Attack:** The plan acknowledges that sustained pacemaking (SA node, Purkinje
+fibres) is a limit cycle (μ>0) and therefore OUT of FRM scope. The only remaining
+in-scope system is "cardiac action potential recovery (APD restitution)" — a niche
+phenomenon that is a perturbation response, not a natural cardiac oscillation.
+If the most prominent systems in a class are excluded by the scope boundary,
+the class is effectively empty or trivially small. Including B3 inflates the
+class count to make "5 biological substrate classes" look impressive while
+potentially delivering only 1 system. This is scope dressing.
+
+**Severity:** MEDIUM-HIGH — inflated class count weakens the cross-class analysis
+(F-4.2, F-4.3). If B3 reduces to 0–1 valid systems, it should not count as a class.
+
+### Objection 4: "Circadian class (B1) adds no new empirical content over P1"
+
+**Attack:** P1 already CONFIRMED the mammalian circadian system (F-1.6: T = 24 hr
+from τ_gen = 6 hr, no fitting) and the cyanobacterial circadian system. P4
+proposes to test the same systems plus 3 more circadian oscillators. But all
+circadian oscillators share the same fundamental mechanism (TTFL) — they're not
+independent substrates, they're variants of the same system. Adding Drosophila,
+Neurospora, and Arabidopsis circadian clocks is scope padding, not independent
+validation. The "5 systems in B1" could be viewed as 1 substrate tested 5 times.
+
+**Severity:** MEDIUM — the independence of systems within a class needs formal
+justification. Different organisms ≠ independent substrates if the mechanism
+is identical.
+
+### Objection 5: "Supercompensation data is qualitative — F-4.5 may be untestable"
+
+**Attack:** Rippetoe's Starting Strength model describes supercompensation
+qualitatively: "train, recover, come back stronger." The actual published data
+from exercise science consists of (a) pre/post strength measurements at discrete
+time points, not continuous time series; (b) highly variable individual responses;
+(c) confounded by nutrition, sleep, training history. There may be no published
+dataset with sufficient temporal resolution (multiple measurements during the
+recovery window at fine-grained intervals) to fit an oscillatory model.
+If the data doesn't exist, F-4.5 is not empirical_pending — it's
+empirical_impossible. The placeholder PH-4.1 should be flagged as potentially
+blocking, not C4-tracking.
+
+**Severity:** MEDIUM — the claim is well-motivated but may lack testable data.
+Should be assessed during Phase 3 with a concrete literature survey.
+
+### Objection 6: "n=2 minimum per class has no statistical power"
+
+**Attack:** D-4.2 says "minimum 2 systems per class for inclusion." But F-4.2
+tests β within 2σ across classes. With n=2 per class, the standard error σ_β
+is computed from 2 data points — the 95% confidence interval will be enormous.
+The test has essentially zero statistical power to detect a real deviation from
+0.5. A class could have β = 0.3 and still pass the 2σ test because σ is
+inflated by small n. This makes F-4.2 non-falsifiable in practice for small classes.
+
+**Severity:** MEDIUM — the minimum should be raised or the predicate should
+explicitly acknowledge the power limitation.
+
+### Objection 7: "α parameter uncertainty dominates R² for most biological systems"
+
+**Attack:** The FRM λ expression is λ ≈ |α|/(Γ·τ_gen). C-3.REG R3 specifies
+α=−1 as default when α is unavailable from literature. For most biological
+systems, α (the normalised distance from Hopf bifurcation) is unknown and
+possibly unknowable from experimental data. Using α=−1 for all systems means
+the decay rate λ is wrong by an unknown factor. This propagates directly into R²:
+a wrong λ means wrong envelope, which means wrong fit. The R² test (F-4.1) is
+therefore testing the quality of the α=−1 default, not the quality of the FRM.
+Any system where α≠−1 could fail the R² test even though the FRM form is correct.
+
+**Severity:** MEDIUM — the R² test conflates model adequacy with parameter
+uncertainty. The note in C-3.REG R3 acknowledges this ("lower R² for systems
+with unknown α is expected and correct") but F-4.1 doesn't.
+
+### Objection 8: "P10-GAP-4.1: the 10% T_char threshold is unjustified"
+
+**Attack:** The principle_10_audit flags this: "10% threshold for T_char deviation"
+has derivation_path "Conservative threshold for biological variability" but no
+formal anchor. The derivation_path says "Natural circadian period ranges
+23.5–24.5 hr (±2%) in controlled conditions. 10% = 5× natural variation."
+But this logic is circular — it derives the threshold from circadian data and
+then applies it to all biological classes. What if cell cycle period variability
+is ±20%? Then 10% is too tight and will falsely reject. The threshold needs
+to be anchored at a class-independent standard, or be class-specific.
+
+**Severity:** MEDIUM — P10-GAP-4.1 is correctly flagged but the proposed
+resolution ("exercise science measurement precision standards") is vague.
+Needs a concrete anchoring strategy.
+
+### Objection 9: "Alternative model comparison (F-4.4) is methodologically unfair"
+
+**Attack:** The pre-specified alternative models have fitted parameters:
+Goodwin oscillator (multiple), Novak-Tyson ODE (10+), FitzHugh-Nagumo (several),
+Goldbeter allosteric (multiple). The FRM has zero fitted parameters. Comparing
+R² directly between a zero-parameter model and a multi-parameter model is
+methodologically asymmetric — the fitted model will *always* have higher R²
+given enough parameters. The threshold Δ≥−0.05 is generous to FRM but the
+comparison is still fundamentally flawed. The paper should use AIC or BIC
+(which penalise parameter count) or explicitly state that this comparison
+tests whether the FRM's *derived* form competes with *fitted* alternatives,
+which is a stronger result than R² alone suggests.
+
+**Severity:** LOW-MEDIUM — the comparison is valid as a practical test (does
+FRM keep up?) but the interpretation must be framed correctly. The zero-parameter
+advantage is a *feature* not a confounder.
+
+### Objection 10: "Build Table inconsistency — P2/P3 status"
+
+**Attack:** The Build Table (v3.3) says P2 is "Phase 1 PHASE-READY (S49)" and
+P3 is "QUEUED." But the S55 handoff says both are PHASE-READY, and the
+process-graph has P3 as PHASE-READY with AI layer v2 (S48). P4 claims to receive
+live edges from P2 (C-2.1, C-2.4) and P3 (C-3.REG). If the Build Table is
+correct that P2 is only Phase 1 PHASE-READY (not fully PHASE-READY), then
+P2's claims are provisional and should not be received as stable live edges.
+The Build Table R-1 still says "P3 is QUEUED" and "Gate NOT yet open." Which
+source is authoritative? The handoff, the process-graph, or the Build Table?
+
+**Severity:** HIGH — if P2 or P3 are not fully PHASE-READY, P4's inbound edge
+register is built on unverified foundations. This must be reconciled before
+P4 can proceed.
+
+---
+
+*Phase 2 produced S56. 10 objections. Phase 3 (Second Meta-Kaizen) pending.*
