@@ -228,11 +228,36 @@ class CouplingDetector(BaseDetector):
         # If the signal's energy is entirely in ultra_low (f < 0.05), the bands
         # used for coupling computation (low=0.05-0.15, mid=0.15-0.40, high=0.40-0.70)
         # are essentially empty → PAC coefficient is noise, not signal.
-        # Require lo+mid+high ≥ 15% of total power.
-        pac_power = (
-            bands["low"][0] + bands["mid"][0] + bands["high"][0]
-        )
+        # Require lo+mid+high ≥ 30% of total power.
+        pac_bands = {k: bands[k][0] for k in ("low", "mid", "high")}
+        pac_power = sum(pac_bands.values())
         if pac_power / total_power < 0.30:
+            return False
+
+        # Scope gate: multi-band energy required for meaningful PAC.
+        # PAC requires a modulating (phase) band AND a separate carrier
+        # (amplitude) band, both with real signal energy.
+        #
+        # A single-tone sinusoid concentrates all PAC-band energy in ONE
+        # band (e.g., low=71%, mid=10%, high=8%). The other bands contain
+        # only FFT leakage and noise. Coupling between a structured phase
+        # and a noise amplitude is meaningless — the warmup calibrates to
+        # noise, and subsequent noise fluctuations trigger false alerts.
+        #
+        # Test: if the dominant PAC band holds > 65% of PAC-band power AND
+        # the secondary PAC band holds < 20% of PAC-band power, the signal
+        # is effectively single-band → OUT_OF_SCOPE.
+        #
+        # For multi-band PAC signals (carrier + modulator in different bands):
+        #   dominant band ≈ 40–75% (carrier), secondary ≈ 15–40% (modulator)
+        # For a single-tone sinusoid:
+        #   dominant band ≈ 70–80%, secondary ≈ 10–15% (all leakage)
+        sorted_pac = sorted(pac_bands.values(), reverse=True)
+        dominant_frac = sorted_pac[0] / (pac_power + 1e-10)
+        secondary_frac = sorted_pac[1] / (pac_power + 1e-10)
+        if dominant_frac > 0.65 and secondary_frac < 0.20:
+            # One band dominates and the others are weak → single-tone signal
+            # whose inter-band PAC is just noise. No meaningful coupling to lose.
             return False
 
         return True

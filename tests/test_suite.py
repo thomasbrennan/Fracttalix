@@ -382,6 +382,24 @@ class TestCouplingDetector:
         in_scope = sum(1 for s in post_warmup if s != ScopeStatus.OUT_OF_SCOPE)
         assert in_scope > 0, "Expected some in-scope steps on f=0.20 signal"
 
+    def test_no_alert_single_tone_sinusoid(self):
+        """Single-tone sinusoid f=0.10 → OUT_OF_SCOPE or NORMAL, never ALERT.
+
+        A sustained sinusoid has energy in one PAC band only; the other bands
+        contain only FFT leakage and noise.  PAC between a structured phase
+        and a noise amplitude is spurious.  The multi-band scope gate must
+        suppress false alerts.
+        """
+        signal = _sinusoid(500, freq=0.10, noise=0.3)
+        det = CouplingDetector()
+        statuses = [det.update(x).status for x in signal]
+        post_warmup = statuses[150:]
+        alerts = sum(1 for s in post_warmup if s == ScopeStatus.ALERT)
+        assert alerts == 0, (
+            f"Got {alerts} false alerts on sustained sinusoid f=0.10 "
+            f"(single-tone FP regression)."
+        )
+
     def test_reset_clears_state(self):
         signal = _sinusoid(200, freq=0.15)
         det = CouplingDetector()
