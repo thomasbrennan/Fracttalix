@@ -82,7 +82,9 @@ All candidates pass KVS ≥ 0.50.
 - **DRP-5:** PHASE-READY (pending Thomas sign-off)
 - **Claims registered:** 7 (1A + 2D + 4F)
 - **Corpus total:** 182 + 7 = 189 claims, 19 papers
-- **New IR rules:** 3 (IR-DRP5-1/2/3)
+- **IR rules:** 2 genuinely new (IR-DRP5-1, IR-DRP5-3), 1 extension (IR-DRP5-2 extends IR-DRP4-3; HR-D5 #8)
+- **HR-D5:** 10 objections (5 HIGH, 2 MEDIUM-HIGH, 3 MEDIUM), 10 addressed (3 strengthened, 1 resolved-stronger, 3 discipline-enforced, 3 scope-refined)
+- **Canonical Build Process:** MK-1 (MK-OPEN) → Build Table → HR → MK-2 → Final Build
 - **Pass-forward activated:** C-DRP5.7 → DRP-6 (LIVE)
 - **CONFIRMATION EVENT:** DRP-2 §8 DQ gap CLOSED
 

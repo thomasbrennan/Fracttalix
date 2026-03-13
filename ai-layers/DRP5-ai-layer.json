@@ -27,6 +27,8 @@
       "journal/DRP5-D5-0.0-IR-precheck-S57.md",
       "journal/DRP5-D5-build-S57.md",
       "journal/DRP5-HR-D5-S57.md",
+      "journal/DRP5-MK2-S57.md",
+      "journal/DRP5-final-build-S57.md",
       "journal/DRP5-prose-v1.md"
     ]
   },
@@ -45,9 +47,11 @@
       "Empirical testing of DQ predictions (deferred to DRP-6)",
       "Self-application argument (DRP-7 scope)",
       "Resolution of Agrippa's trilemma or epistemic regress in general",
-      "Existence of theory-free observation"
+      "Existence of theory-free observation",
+      "Quinean global underdetermination (theory-evidence relation at programme level)",
+      "Theory choice between rival research programmes (Lakatos 1970; Laudan 1990; Stanford 2006)"
     ],
-    "scope_note": "DRP-5 engages DQ only to the extent needed to state precise boundary conditions. UMP is epistemically prior to DQ — this is the structural result. The paper does not resolve DQ in general; it proves that under UMP compliance, the DQ problem reduces to a precise, tractable condition on background theories (T2 ⊥ P). HR-D5 scope note: DRP-5 reduces DQ to a checkable structural condition, it does not dissolve DQ."
+    "scope_note": "DRP-5 addresses Duhemian (local) underdetermination — the test-level attribution problem — not Quinean (global) underdetermination. DRP-5 provides a reduction of the local DQ problem to a checkable structural condition (T2 ⊥ P), not a dissolution. All measurement is theory-laden (Hanson 1958, Kuhn 1962); DRP-5 claims contextual independence (T_n independent of P in the context of testing P), not absolute independence. HR-D5: 10 objections, 10 addressed (3 strengthened, 1 resolved-stronger, 3 discipline-enforced, 3 scope-refined)."
   },
   "inbound_edges": [
     {
@@ -113,13 +117,13 @@
       "id": "IR-DRP5-2",
       "name": "Causal Independence Transfer",
       "form": "If T2 is causally independent of P, and O is constructed solely from T2-governed measurements with no step introducing a dependency on P, then O is causally independent of P.",
-      "justification": "Extends IR-DRP4-3 (Composition Preservation) to causal chain analysis. First formalised DRP-5 Phase 0, D5-0.0."
+      "justification": "Extension of IR-DRP4-3 (Composition Preservation), not entirely new. Extends deterministic function composition to causal chain analysis. HR-D5 #8: reclassified as extension. First formalised DRP-5 Phase 0, D5-0.0."
     },
     {
       "id": "IR-DRP5-3",
       "name": "Causal Grounding",
       "form": "If T_n is grounded in direct physical measurement whose value is determined independently of P, and T_n's theoretical foundations have been independently validated in contexts where P is not at issue, the causal independence chain terminates at T_n.",
-      "justification": "Well-foundedness argument. Amended per HR-D5 Challenge 2: practical termination criterion, not foundationalist. First formalised DRP-5 Phase 0, D5-0.0; amended Phase 3."
+      "justification": "Well-foundedness argument. Amended per HR-D5 #2: practical termination criterion, not foundationalist. All measurement is theory-laden (Hanson 1958, Kuhn 1962); termination is contextual independence (independent of P), not absolute independence. First formalised DRP-5 Phase 0, D5-0.0; amended Final Build."
     },
     {
       "id": "IR-DRP5-4",
@@ -166,7 +170,7 @@
       "claim_id": "C-DRP5.2",
       "type": "F",
       "label": "UMP epistemically prior to DQ",
-      "statement": "UMP compliance (condition (a) of T(P,O,M): O causally independent of P) is epistemically prior to the Duhem-Quine problem. If O = f(P), the test has zero epistemic information (C-DRP5.1), so the DQ attribution problem — which presupposes non-zero information — does not arise. UMP must be satisfied before DQ is well-posed.",
+      "statement": "UMP compliance (condition (a) of T(P,O,M): O causally independent of P) is epistemically prior to the Duhemian local DQ problem. If O = f(P), the test has zero epistemic information (C-DRP5.1), so the DQ attribution problem — which presupposes non-zero information — does not arise. UMP must be satisfied before DQ is well-posed. Scope: DRP-5 provides a reduction of the DQ problem to a checkable structural condition, not a dissolution (HR-D5 #1).",
       "derivation_source": [
         "C-DRP5.1",
         "C-DRP2.4 (structural reference)",
@@ -218,7 +222,7 @@
       "claim_id": "C-DRP5.4",
       "type": "D",
       "label": "Regress termination condition",
-      "statement": "The causal independence chain T2 → T3 → ... terminates at T_n when: (a) T_n is a measurement protocol whose outputs are determined by physical processes that do not reference P in their causal mechanism; and (b) T_n's own theoretical foundations have been independently validated in contexts where P is not at issue. This is a practical termination criterion, not a foundationalist claim about theory-free observation.",
+      "statement": "The causal independence chain T2 → T3 → ... terminates at T_n when: (a) T_n is a measurement protocol whose outputs are determined by physical processes that do not reference P in their causal mechanism; and (b) T_n's own theoretical foundations have been independently validated in contexts where P is not at issue. This is contextual independence (independent of P in the context of testing P), not absolute independence. All measurement is theory-laden (Hanson 1958, Kuhn 1962); the termination criterion is practical, not foundationalist. DRP-5 resolves the DQ attribution problem (local, specific) not the epistemic regress problem (global, foundational) — these are different problems (HR-D5 #2, #4).",
       "derivation_source": [
         "C-DRP5.3",
         "D5-1.2 Steps 1-4",
@@ -264,7 +268,7 @@
       "claim_id": "C-DRP5.6",
       "type": "F",
       "label": "Auxiliary hypothesis protocol completeness",
-      "statement": "The auxiliary hypothesis protocol (C-DRP5.7) is complete: every proposed (O, M) with background theory T2 receives a determinate PASS/FAIL verdict via the three-step procedure. The protocol is third-party constructable: a researcher unfamiliar with DRP-5 can apply it from the description alone.",
+      "statement": "The auxiliary hypothesis protocol (C-DRP5.7) is complete: every proposed (O, M) with background theory T2 receives a determinate PASS/FAIL verdict via the three-step procedure. The protocol is third-party constructable by a researcher with relevant domain expertise — Step 2 requires domain knowledge to assess causal independence, but this is domain expertise, not protocol-author judgment (HR-D5 #6).",
       "derivation_source": [
         "C-DRP5.3",
         "C-DRP5.4",
@@ -277,7 +281,7 @@
           "n_indeterminate": "integer, dimensionless. Count of proposed (O, M, T2) triples where the protocol produces neither PASS nor FAIL — i.e., the three steps do not resolve to a determinate verdict.",
           "n_judgment_steps": "integer, dimensionless. Count of protocol steps (across all three steps) that require the protocol author's judgment rather than the applying researcher's judgment. A step requiring DRP-5-specific knowledge not stated in the protocol description is a judgment step."
         },
-        "EVALUATION": "1. Present the protocol text to a researcher unfamiliar with DRP-5. 2. Provide a set of 5+ test cases (mix of PASS and FAIL expected). 3. Researcher applies protocol independently. 4. Count cases where verdict is indeterminate (n_indeterminate) and steps where researcher required external guidance (n_judgment_steps). Finite procedure.",
+        "EVALUATION": "1. Present the protocol text to a researcher with relevant domain expertise but unfamiliar with DRP-5. 2. Provide a set of 5+ test cases (mix of PASS and FAIL expected). 3. Researcher applies protocol independently using domain knowledge. 4. Count cases where verdict is indeterminate (n_indeterminate) and steps where researcher required DRP-5-specific guidance beyond domain expertise (n_judgment_steps). Finite procedure.",
         "BOUNDARY": "n_indeterminate = 0 AND n_judgment_steps = 0 → NOT FALSIFIED. Either > 0 → FALSIFIED.",
         "CONTEXT": "C-DRP5.6 · Type F · Protocol completeness. Third-party constructability standard from DRP Series Build Plan D5-2.1. Critical for DRP-6: if protocol is ambiguous, empirical results are uncheckable. UMP SATISFIED: O (protocol text + test cases) fixed before P (completeness claim). C6 SATISFIED: indeterminate verdict or researcher needing author guidance → FALSIFIED."
       },
@@ -406,7 +410,7 @@
     "c6": "SATISFIED",
     "placeholder_count": 5,
     "placeholder_blocking_count": 0,
-    "note": "CBT I-9 all 7 steps PASS — Session S57. Phases 0-3 complete (S57). HR-D5 complete: 5 challenges, 5 resolved. 4 blocking placeholders resolved (PH-DRP5.DQ, PH-DRP5.REG, PH-DRP5.C3, PH-DRP5.AUX). 1 C4-tracking placeholder (PH-DRP5.OUT: C-DRP5.7 → DRP-6), non-blocking. All 4 Type F claims have full 5-part predicates with vacuity witnesses and UMP compliance. All inbound edges LIVE. Principle 10 audit: 5 entries, all anchored. 3 new IR rules (IR-DRP5-1/2/3). Pass-forward: C-DRP5.7 → DRP-6 LIVE. Registry update: 182 + 7 = 189 claims, 19 papers.",
+    "note": "CBT I-9 all 7 steps PASS — Session S57. Canonical Build (P0 CBT v2): Phase 1 (First Build Plan / MK-OPEN) → Phase 2 (Hostile Review: 10 objections, 5 HIGH / 2 MEDIUM-HIGH / 3 MEDIUM) → Phase 3 (Second Meta-Kaizen: 3 strengthened, 1 resolved-stronger, 3 discipline-enforced, 3 scope-refined) → Phase 4 (Final Build: revised architecture incorporating all 10 HR corrections). 4 blocking placeholders resolved. 1 C4-tracking placeholder (PH-DRP5.OUT: C-DRP5.7 → DRP-6), non-blocking. All 4 Type F claims have full 5-part predicates. All inbound edges LIVE. Principle 10 audit: 5 entries, all anchored. IR inventory: 2 new rules (IR-DRP5-1, IR-DRP5-3), 1 extension (IR-DRP5-2 extends IR-DRP4-3). Pass-forward: C-DRP5.7 → DRP-6 LIVE. Registry update: 182 + 7 = 189 claims, 19 papers.",
     "cbt_session": "S57",
     "cbt_steps": {
       "step_1_schema": "PASS — schema_version v2-S42+S48, paper_type derivation_B, principle_10_compliant field present, principle_10_audit array present (5 entries)",
@@ -416,7 +420,7 @@
       "step_5_dependency": "PASS — C4 mode PHASE-READY-TRACKING. 1 C4-tracking placeholder (PH-DRP5.OUT), non-blocking. Pass-forward C-DRP5.7→DRP-6 registered LIVE.",
       "step_5b_where_scan": "PASS — All WHERE field external references (T(P,O,M), DRP-2 §5.3, P3 D-3.1, P3 D-3.2, C-DRP4.5) have corresponding inbound edges or are evaluation procedure references.",
       "step_6_cross_corpus": "PASS — No unregistered cross-corpus references. DRP-6 pass-forward registered.",
-      "step_7_holistic": "PASS — 7 claims (1A+2D+4F) all present in registry matching D5-1.0 inventory. All Type F predicates have UMP compliance and C6 vacuity witnesses. HR-D5 amendments incorporated (scope note in C-DRP5.2, termination criterion in C-DRP5.4, falsifiability structure in C-DRP5.5). Self-application check 4/4 PASS."
+      "step_7_holistic": "PASS — 7 claims (1A+2D+4F) all present in registry matching D5-1.0 inventory. All Type F predicates have UMP compliance and C6 vacuity witnesses. Canonical Build Process: MK-1 (MK-OPEN) → Build Table → HR (10 objections) → MK-2 (corrections table) → Final Build (revised architecture). MK-2 corrections incorporated: scope refinement (C-DRP5.2), theory-ladenness (C-DRP5.4), falsifiability structure (C-DRP5.5), domain expertise (C-DRP5.6), IR reclassification (IR-DRP5-2), Duhem/Quine distinction, positioning citations. Consistency check 4/4 PASS (renamed from self-application per HR-D5 #10)."
     },
     "thomas_signoff_required": true,
     "github_publication": {
@@ -435,15 +439,16 @@
     "session_produced": "S57",
     "inference_rules_count": 9,
     "inference_rules_new": [
-      "IR-DRP5-1 (Epistemological Ordering)",
-      "IR-DRP5-2 (Causal Independence Transfer)",
-      "IR-DRP5-3 (Causal Grounding)"
+      "IR-DRP5-1 (Epistemological Ordering) — genuinely new",
+      "IR-DRP5-2 (Causal Independence Transfer) — extension of IR-DRP4-3 (HR-D5 #8)",
+      "IR-DRP5-3 (Causal Grounding) — genuinely new"
     ],
     "corpus_registry_update": "182 + 7 = 189 claims, 19 papers",
     "hr_sessions": [
       "HR-D5 (S57)"
     ],
-    "total_hr_challenges": 5,
-    "total_hr_resolved": 5
+    "total_hr_challenges": 10,
+    "total_hr_resolved": 10,
+    "hr_effects": "3 strengthened, 1 resolved-stronger, 3 discipline-enforced, 3 scope-refined"
   }
 }

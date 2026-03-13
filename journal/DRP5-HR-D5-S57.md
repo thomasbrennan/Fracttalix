@@ -4,104 +4,107 @@
 **Session:** S57
 **Date:** 2026-03-13
 **Review scope:** Full build (Phases 1-2)
-**Review questions (from build plan):**
-1. Does DRP-5 resolve the DQ problem or relocate it?
-2. Does the regress termination argument hold under adversarial pressure?
-3. Is C-DRP5.5 (C3 as DQ solution) falsifiable independently of C-DRP5.3?
-4. Core adversarial challenge: if T2 must satisfy UMP, and T2 is theory-laden with respect to T3, is the regress actually terminated — or merely deferred one level?
 
 ---
 
-## Challenge 1: Resolution vs Relocation
+### Objection 1: "DRP-5 relocates the DQ problem, it doesn't resolve it"
 
-**Challenge:** DRP-5 claims to give precise DQ boundary conditions. But does it resolve the DQ problem or merely relocate it? The answer "T2 must satisfy UMP with respect to P" just pushes the question one level up: instead of "is this test of P valid?", we now ask "is this test of T2's independence valid?" The DQ problem reappears at the meta-level.
+**Attack:** DRP-5 claims to give precise DQ boundary conditions. But "T2 must satisfy UMP with respect to P" just pushes the question one level up: instead of "is this test of P valid?", we now ask "is T2 independent of P?" The DQ problem reappears at the meta-level. This is a shell game, not a resolution.
 
-**Assessment:** This challenge is **partially sustained**. DRP-5 does relocate the DQ problem — but it relocates it to a *tractable* location. The original DQ problem is stated at the level of "can we attribute a test failure to P vs auxiliary hypotheses?" — an intractable attribution problem. DRP-5 relocates it to "is T2 causally independent of P?" — a structural question about the test construction, not about interpreting a failure. The relocation is not a defect; it is the contribution.
-
-**Resolution:** Add explicit scope statement to C-DRP5.2: "DRP-5 does not claim to dissolve the DQ problem. It reduces the DQ problem to a precise, checkable structural condition on T2. The philosophical question of whether auxiliary hypotheses can be fully eliminated is out of scope. DRP-5 provides the *boundary condition* under which the DQ problem is tractable."
-
-**Status: RESOLVED — scope statement added to C-DRP5.2 below.**
+**Severity:** HIGH — this is the most natural first reaction. If not addressed, the paper reads as an elaborate restatement of the problem.
 
 ---
 
-## Challenge 2: Regress Termination Under Adversarial Pressure
+### Objection 2: "The regress terminates at 'direct physical measurement' — but all measurement is theory-laden"
 
-**Challenge:** The regress argument (D5-1.2) claims the chain terminates at "direct physical measurement independent of P." But what counts as "direct physical measurement"? A thermometer reading relies on theories of thermal expansion. A spectrometer relies on theories of electromagnetic radiation. Every measurement is theory-laden (Hanson 1958, Kuhn 1962). IR-DRP5-3 (Causal Grounding) may be question-begging: it defines "grounded" as "independent of P," which is the condition to be established.
+**Attack:** The regress argument (D5-1.2) claims the chain terminates at "direct physical measurement independent of P." But what counts as "direct"? A thermometer reading relies on theories of thermal expansion. A spectrometer relies on electromagnetic theory. Every measurement is theory-laden (Hanson 1958, Kuhn 1962). IR-DRP5-3 (Causal Grounding) may be question-begging: it defines "grounded" as "independent of P," which is the condition to be established.
 
-**Assessment:** This challenge is **sustained**. The regress argument must acknowledge theory-ladenness of measurement and provide a non-circular termination criterion.
-
-**Resolution:** Amend C-DRP5.4 to include an explicit termination criterion:
-
-The chain terminates at T_n when:
-(a) T_n is a measurement protocol whose outputs are determined by physical processes that do not reference P in their causal mechanism, AND
-(b) T_n's own theoretical foundations (thermodynamics, electromagnetism, etc.) have been independently validated in contexts where P is not at issue.
-
-Condition (b) is the answer to theory-ladenness: the theories underlying the measurement instrument are not tested by this particular test of P — they are validated independently in their own domain. The thermometer's theory of thermal expansion is not at issue when we use the thermometer to measure tau_gen.
-
-This is a *practical* termination criterion, not a foundationalist claim about theory-free observation. The regress terminates not because we reach bedrock, but because we reach a level where the theories in play have been independently validated and are not at issue in the current test.
-
-**Status: RESOLVED — C-DRP5.4 amended below.**
+**Severity:** HIGH — the regress is the structural core. If the termination argument is circular, the paper collapses.
 
 ---
 
-## Challenge 3: Independent Falsifiability of C-DRP5.5
+### Objection 3: "C-DRP5.5 is not independently falsifiable from C-DRP5.3"
 
-**Challenge:** Is C-DRP5.5 (C3 as DQ solution) independently falsifiable from C-DRP5.3 (T2 ⊥ P requirement)? If C-DRP5.5 is just "C3 satisfies C-DRP5.3," then falsifying C-DRP5.3 automatically falsifies C-DRP5.5. They would not be independently falsifiable.
+**Attack:** C-DRP5.5 (C3 as DQ solution) just says "C3 satisfies C-DRP5.3." If C-DRP5.3 is wrong, C-DRP5.5 is automatically wrong. If C-DRP5.3 is right, C-DRP5.5 is just an application. Either way, C-DRP5.5 has no independent empirical content. You're counting one claim twice to inflate the registry.
 
-**Assessment:** This challenge is **partially sustained**. C-DRP5.5 is logically dependent on C-DRP5.3 (it applies C-DRP5.3 to the specific case of FRM C3). However, C-DRP5.5 has independent empirical content: it claims that the specific measurement protocols in P3 D-3.2 actually achieve T2 ⊥ P. This is falsifiable by finding a P3 measurement protocol where tau_gen extraction depends on the FRM prediction.
-
-**Resolution:** State the joint/independent falsifiability structure explicitly:
-- C-DRP5.3 falsified → C-DRP5.5 falsified (logical dependency: if the condition is wrong, the instance is wrong)
-- C-DRP5.5 falsified ↛ C-DRP5.3 falsified (C3 could fail the condition without the condition being wrong)
-- Independent path for C-DRP5.5: find a P3 tau_gen extraction where the output depends on whether the FRM prediction is true. E.g., if spectral sub-protocol uses T_obs/4 and T_obs is selected based on FRM prediction rather than observed dominant peak, C3 fails.
-
-**Status: RESOLVED — falsifiability structure stated below.**
+**Severity:** HIGH — claim independence is a DRS structural requirement. If C-DRP5.5 is parasitic on C-DRP5.3, the paper has 6 claims not 7.
 
 ---
 
-## Challenge 4: Core Adversarial — Is the Regress Deferred, Not Terminated?
+### Objection 4: "Is the regress actually terminated or merely deferred?"
 
-**Challenge:** Even with the amended termination criterion, consider: the structural sub-protocol in P3 D-3.2 uses "published system architecture" to determine tau_gen. But the published system architecture relies on biological theory (T3). Biological theory relies on biochemical theory (T4). This is exactly the regress. Is it actually terminated, or have we just given it a name ("Causal Grounding") and declared victory?
+**Attack:** The structural sub-protocol in P3 D-3.2 uses "published system architecture" to determine tau_gen. Published system architecture relies on biological theory (T3). Biological theory relies on biochemistry (T4). Biochemistry relies on quantum mechanics (T5). This IS the regress. Naming it "Causal Grounding" and attaching an inference rule doesn't terminate it — it just declares victory at an arbitrary point.
 
-**Assessment:** This challenge is the strongest and is **partially sustained**. The answer must be honest: the regress is terminated *for practical purposes* by the amended criterion (Challenge 2 resolution), not by foundationalist argument. DRP-5 does not claim to solve the philosophical problem of infinite regress in scientific knowledge. It claims that the *DQ attribution problem* — which DRP paper P or which background theory T2 is responsible for a test failure — is resolved once T2 is grounded in independently validated measurement.
-
-The key insight: the DQ problem is not "is all science ultimately justified?" It is "can we attribute this specific test failure?" DRP-5 resolves the specific problem, not the general one.
-
-**Resolution:** Add scope limitation to Section 6 (Scope and Limitations):
-
-"DRP-5 does not resolve the general philosophical problem of epistemic regress (Agrippa's trilemma). The regress termination argument (C-DRP5.4) is a practical criterion for the specific DQ attribution problem: given a test failure, can we determine whether P or T2 is responsible? The criterion terminates the regress at independently validated measurement protocols — not at theory-free observation (which DRP-5 does not claim to exist). The criterion is sufficient for the DQ attribution problem because the attribution question is finite and specific: it asks about a particular test, not about the foundations of all empirical knowledge."
-
-**Status: RESOLVED — scope limitation stated.**
+**Severity:** HIGH — the strongest adversarial challenge. This is where the paper's epistemic honesty is tested.
 
 ---
 
-## Challenge 5: Spectral Sub-Protocol Circularity Risk
+### Objection 5: "Spectral sub-protocol is tautological"
 
-**Challenge:** P3 D-3.2 spectral sub-protocol: tau_gen = T_obs/4 where T_obs is the dominant period from the power spectrum. But T_char = 4·tau_gen IS the FRM prediction. So if tau_gen = T_obs/4, then T_char = T_obs — i.e., the measurement is tautologically equal to the prediction. Does this make the spectral sub-protocol circular?
+**Attack:** P3 D-3.2 spectral sub-protocol: tau_gen = T_obs/4. But T_char = 4·tau_gen IS the FRM prediction. So T_char = T_obs — the prediction equals the measurement by construction. The spectral sub-protocol doesn't test anything; it defines tau_gen to make the prediction true. This is exactly the kind of circularity DRP-5 is supposed to detect.
 
-**Assessment:** This challenge is **dismissed after analysis**. The spectral sub-protocol does not use the FRM prediction; it measures T_obs from the raw power spectrum independently. T_obs is an empirical observable. tau_gen = T_obs/4 is a definition (the quarter-wave relationship). The FRM prediction is then T_char = 4·tau_gen = T_obs. The *test* is whether this relationship holds for other substrates, not whether it holds tautologically for the system used to extract tau_gen. The P3 protocol explicitly states "tau_gen is never fitted to O(t)" — the spectral sub-protocol extracts tau_gen from the time series, then the FRM prediction is compared to independent data.
+**Severity:** MEDIUM-HIGH — this directly tests whether C-DRP5.5 (C3 as DQ solution) can survive scrutiny of its own exemplar.
 
-However, there is a genuine concern: if the spectral sub-protocol is the ONLY available method for a given system, and the test compares T_char to T_obs from the SAME system, the test is tautological. P3 addresses this via the sub-protocol hierarchy (structural > spectral > mechanistic) — the spectral sub-protocol is a fallback when independent structural measurement is unavailable.
+---
 
-**Resolution:** Note in C-DRP5.5 that the spectral sub-protocol is the weakest of the three for DQ purposes and that structural sub-protocol is preferred precisely because it provides the strongest T2 ⊥ P guarantee. This is already implicit in D-3.2's hierarchy ordering but should be made explicit in DRP-5 prose.
+### Objection 6: "The auxiliary hypothesis protocol is subjective"
 
-**Status: RESOLVED — noted for prose Section 5.**
+**Attack:** Step 2 of the protocol says "determine whether T2's measurement outputs are causally independent of P." But causality is notoriously hard to establish. How does a third-party researcher determine causal independence without domain expertise? The protocol's PASS/FAIL conditions are deterministic in form but require judgment calls in practice. "Third-party constructable" is aspirational, not achieved.
+
+**Severity:** HIGH — the protocol is the critical deliverable for DRP-6. If it requires implicit judgment, DRP-6 inherits that ambiguity.
+
+---
+
+### Objection 7: "UMP-prior-to-DQ is philosophically naive"
+
+**Attack:** The claim that UMP is "epistemically prior" to DQ assumes that the DQ problem only arises when a test has non-zero information content. But the DQ literature (Quine 1951, Laudan 1990, Stanford 2006) concerns underdetermination of theory by evidence *in general* — not just within a single test. Even if one test has I=0, the broader evidential relationship between P and the total evidence base may still be DQ-underdetermined. DRP-5 conflates the local DQ problem (single test) with the global DQ problem (theory-evidence relation).
+
+**Severity:** MEDIUM-HIGH — this requires careful philosophical scoping. If DRP-5 is read as addressing the global DQ problem, it fails. If it addresses the local DQ problem, it succeeds but with more modest ambitions.
+
+---
+
+### Objection 8: "Three new inference rules in one paper is excessive"
+
+**Attack:** IR-DRP5-1 (Epistemological Ordering), IR-DRP5-2 (Causal Independence Transfer), IR-DRP5-3 (Causal Grounding) — that's three new inference rules for a single paper. Previous papers introduced 0-2 new rules. Are these genuinely new, or are they just named instances of existing rules? IR-DRP5-1 looks like a special case of IR-1 (Modus Ponens). IR-DRP5-2 looks like IR-DRP4-3 (Composition Preservation) restated. Only IR-DRP5-3 seems genuinely novel.
+
+**Severity:** MEDIUM — if IR count is inflated, the paper's claim to introduce new structural content is weakened.
+
+---
+
+### Objection 9: "No engagement with actual DQ literature"
+
+**Attack:** DRP-5 cites Duhem (1906) and Quine (1951) but doesn't engage with Lakatos (1970) on research programmes, Laudan (1990) on underdetermination, or Stanford (2006) on unconceived alternatives. The philosophical positioning is a caricature: "DQ says you can't test anything; UMP says you can." The actual DQ literature is far more nuanced. A derivation paper in a formal series still needs to position itself correctly against the philosophical tradition it claims to advance.
+
+**Severity:** MEDIUM — this is a scope/framing issue, not a structural flaw. But it affects credibility.
+
+---
+
+### Objection 10: "Self-application check is circular"
+
+**Attack:** Section 9 (Self-Application) claims DRP-5 passes its own standards. But the paper defines the standards it's checking against. Self-application is only meaningful if the standards are externally validated. Checking your own homework with your own answer key proves nothing. The self-application section should either be dropped or reframed as a consistency check, not a validation.
+
+**Severity:** MEDIUM — the self-application is a nice touch but shouldn't be claimed as evidence of correctness.
 
 ---
 
 ## HR-D5 Summary
 
-| # | Challenge | Verdict | Resolution |
-|---|-----------|---------|------------|
-| 1 | Resolution vs relocation | Partially sustained | Scope statement: DRP-5 reduces DQ to tractable condition, does not dissolve it |
-| 2 | Regress under adversarial pressure | Sustained | Amended termination criterion: practical, not foundationalist |
-| 3 | Independent falsifiability of C-DRP5.5 | Partially sustained | Joint/independent structure stated explicitly |
-| 4 | Core adversarial: regress deferred? | Partially sustained | Honest scope limitation: practical resolution of DQ attribution, not epistemic regress |
-| 5 | Spectral sub-protocol circularity | Dismissed | Hierarchy ordering is the DQ defence; noted for prose |
+| # | Objection | Severity |
+|---|-----------|----------|
+| 1 | Resolution vs relocation | HIGH |
+| 2 | Theory-laden measurement | HIGH |
+| 3 | C-DRP5.5 independence | HIGH |
+| 4 | Regress deferred not terminated | HIGH |
+| 5 | Spectral tautology | MEDIUM-HIGH |
+| 6 | Protocol subjectivity | HIGH |
+| 7 | Local vs global DQ | MEDIUM-HIGH |
+| 8 | IR inflation | MEDIUM |
+| 9 | No DQ literature engagement | MEDIUM |
+| 10 | Self-application circularity | MEDIUM |
 
-**5 challenges raised, 5 resolved. 0 unresolved.**
+**10 objections raised. 5 HIGH, 2 MEDIUM-HIGH, 3 MEDIUM. 0 LOW.**
 
-**HR-D5 VERDICT: PASS — proceed to Phase 3.**
+**HR-D5 VERDICT: Proceed to Second Meta-Kaizen.**
 
 ---
 

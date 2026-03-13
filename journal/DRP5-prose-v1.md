@@ -24,11 +24,15 @@ DRP-5 also draws structural reference from:
 
 ## 2. The Duhem-Quine Problem
 
-The Duhem-Quine thesis (Duhem 1906, Quine 1951) states: no hypothesis can be tested in isolation. Every empirical test relies on auxiliary hypotheses — background theories governing instrument calibration, experimental conditions, and the interpretation of observations. If a test produces a result inconsistent with the hypothesis P, the failure could be attributed to P or to any auxiliary hypothesis T2 used in constructing the test.
+The Duhem-Quine thesis has two distinct formulations that are frequently conflated:
 
-This poses a fundamental problem for falsificationism: if a test failure can always be deflected to an auxiliary hypothesis, no hypothesis is genuinely falsifiable.
+**Duhemian underdetermination (local):** No single hypothesis can be tested in isolation. Every empirical test relies on auxiliary hypotheses — background theories governing instrument calibration, experimental conditions, and the interpretation of observations. If a test produces a result inconsistent with P, the failure could be attributed to P or to any auxiliary hypothesis T2 (Duhem 1906). This is a *local* attribution problem: which component of a specific test is responsible for a specific failure?
 
-DRP-5 does not attempt to resolve this problem in its full philosophical generality. Instead, it proves that under UMP compliance, the DQ problem reduces to a precise, checkable structural condition.
+**Quinean underdetermination (global):** The totality of evidence underdetermines the totality of theory. Any body of evidence is compatible with multiple, mutually incompatible theoretical frameworks (Quine 1951). This is a *global* problem about the theory-evidence relation, not about individual tests.
+
+DRP-5 addresses the **Duhemian local problem** — the test-level attribution question. It does not address Quinean global underdetermination, which concerns theory choice at the level of entire research programmes (Lakatos 1970) and unconceived alternatives (Stanford 2006). Laudan (1990) distinguishes multiple formulations of underdetermination; DRP-5 engages only the Duhemian version as described above.
+
+DRP-5 provides a *reduction* of the local DQ problem, not a dissolution. It proves that under UMP compliance, the DQ attribution problem reduces to a precise, checkable structural condition on background theories.
 
 ---
 
@@ -42,7 +46,7 @@ Therefore: UMP compliance — condition (a) of T(P,O,M) — must be satisfied be
 
 **AI-reader annotation:** C-DRP5.2 is the central structural result of DRP-5. It establishes the epistemological ordering: first ensure O ⊥ P (UMP), then address auxiliary hypothesis management (DQ). The ordering is not a convention; it follows from the conservation law.
 
-**Scope note (HR-D5 Challenge 1):** DRP-5 does not claim to dissolve the DQ problem. It reduces the DQ problem to a precise, checkable structural condition on T2. The philosophical question of whether auxiliary hypotheses can be fully eliminated is out of scope. DRP-5 provides the *boundary condition* under which the DQ problem is tractable.
+**Scope note (HR-D5 #1):** DRP-5 provides a *reduction* of the DQ problem, not a dissolution. It reduces the Duhemian attribution problem to a precise, checkable structural condition on T2. The philosophical question of whether auxiliary hypotheses can be fully eliminated (Quinean global underdetermination) is out of scope. DRP-5 provides the *boundary condition* under which the local DQ attribution problem is tractable.
 
 ---
 
@@ -68,9 +72,9 @@ The chain terminates when T_n satisfies both:
 (a) T_n is a measurement protocol whose outputs are determined by physical processes that do not reference P in their causal mechanism.
 (b) T_n's own theoretical foundations have been independently validated in contexts where P is not at issue.
 
-This is a *practical* termination criterion, not a foundationalist claim about theory-free observation. DRP-5 does not claim that theory-free observation exists. It claims that the DQ attribution problem — which is a specific, finite question about a particular test — is resolved once the background theory chain reaches independently validated measurement.
+This is a *practical* termination criterion, not a foundationalist claim about theory-free observation. All measurement is theory-laden (Hanson 1958, Kuhn 1962) — DRP-5 does not dispute this. What DRP-5 claims is *contextual independence*: T_n's theories are independent of P in the context of testing P, not independent of all theory whatsoever. The thermometer's theory of thermal expansion is not at issue when we use the thermometer to measure tau_gen for an FRM test.
 
-**Scope limitation (HR-D5 Challenge 4):** DRP-5 does not resolve the general philosophical problem of epistemic regress (Agrippa's trilemma). C-DRP5.4 is a practical criterion for the specific DQ attribution problem: given a test failure, can we determine whether P or T2 is responsible? The criterion terminates the regress at independently validated measurement protocols — not at theory-free observation (which DRP-5 does not claim to exist). The criterion is sufficient because the attribution question is finite and specific.
+**DQ-attribution vs epistemic-regress (HR-D5 #4, #2):** DRP-5 resolves the DQ *attribution problem* (local, specific: "given this test failure, is P or T2 responsible?") — not the *epistemic regress problem* (global, foundational: "is all science ultimately justified?"). These are different problems. The attribution question is finite and specific; it asks about a particular test construction, not about the foundations of all empirical knowledge. The regress terminates for attribution purposes at independently validated measurement protocols. DRP-5 does not resolve Agrippa's trilemma and does not claim that theory-free observation exists.
 
 ---
 
@@ -113,7 +117,7 @@ Given a proposed falsification predicate K = (P, O, M, B) with background theory
 
 All 3 steps PASS → T2 satisfies UMP-DQ. Any step FAIL → redesign test.
 
-Each step specifies operator, inputs, operation, outputs, and PASS/FAIL conditions. No step requires the protocol author's judgment. Third-party constructable.
+Each step specifies operator, inputs, operation, outputs, and PASS/FAIL conditions. No step requires the protocol author's judgment. Third-party constructable by a researcher with relevant domain expertise — Step 2 requires domain knowledge to assess causal independence, but this is domain expertise, not protocol-author judgment (HR-D5 #6).
 
 ---
 
@@ -127,10 +131,11 @@ Each step specifies operator, inputs, operation, outputs, and PASS/FAIL conditio
 5. A third-party-constructable protocol for verifying T2-independence (C-DRP5.6, C-DRP5.7).
 
 ### What DRP-5 does NOT prove:
-- Resolution of DQ in full philosophical generality.
-- Existence of theory-free observation.
-- Resolution of Agrippa's trilemma.
+- Resolution of DQ in full philosophical generality (Quinean global underdetermination).
+- Existence of theory-free observation (all measurement is theory-laden; Hanson 1958, Kuhn 1962).
+- Resolution of Agrippa's trilemma (epistemic regress in general).
 - Empirical validation of any prediction (deferred to DRP-6).
+- Theory choice between rival research programmes (Lakatos 1970; Laudan 1990).
 
 ### Dependency impact:
 If C-DRP5.2 is wrong (UMP is not prior to DQ), the entire DQ boundary analysis collapses — DRP-5 has no independent content without this ordering result. DRP-6 would need to redesign its empirical programme to test DQ conditions independently of UMP.
@@ -139,9 +144,9 @@ If C-DRP5.5 is wrong (C3 does not satisfy T2-independence), the FRM's DQ complia
 
 ---
 
-## 9. Self-Application
+## 9. Consistency Check
 
-DRP-5 is a DRS paper. Its claims must satisfy its own standards.
+DRP-5 is a DRS paper. This section verifies internal consistency — that DRP-5's claims satisfy the standards it invokes. This is a consistency check, not a validation. External validation of DRP-5's claims requires the DRP-6 empirical programme (HR-D5 #10).
 
 ### Check 1: All claims registered?
 7 claims: C-DRP5.1 through C-DRP5.7. All in AI layer claim_registry. **PASS.**
