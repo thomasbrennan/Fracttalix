@@ -58,9 +58,10 @@ DOI = "https://doi.org/10.5281/zenodo.18859299"
 
 [project.scripts]
 fracttalix = "fracttalix.__main__:main"
+fracttalix-ddn = "network.distributed_docs:main"
 
 [tool.setuptools.packages.find]
-include = ["fracttalix*", "benchmark*"]
+include = ["fracttalix*", "benchmark*", "network*"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
