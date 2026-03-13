@@ -1,20 +1,29 @@
 {
   "_meta": {
     "document_type": "AI_LAYER",
-    "schema_version": "v3-S49",
+    "schema_version": "v2-S42",
     "schema_url": "https://github.com/thomasbrennan/Fracttalix/blob/main/ai-layers/ai-layer-schema.json",
-    "produced_session": "S44",
-    "produced_by": "Claude (Anthropic) — Session 43 theoretical foundations build",
-    "licence": "CC BY 4.0"
+    "produced_session": "S55",
+    "produced_by": "Claude (Anthropic) — S47 audit corrections (D-4)",
+    "licence": "CC BY 4.0",
+    "version": "v13",
+    "phase_produced": "Post-PHASE-READY — PR-1 additive update (PH-1.1, PH-1.2, PH-1.3 resolved)",
+    "schema_amendments": [
+      {
+        "amendment_id": "PR-1-S55",
+        "session": "S55",
+        "description": "Additive update only. PH-1.1 resolved by P2 C-2.4 (S48). PH-1.2 and PH-1.3 resolved by P3 C-3.REG (S48). placeholder_count 3→0. Version v11→v13 (v12 = PH-1.1 only; v13 = all three). Thomas Brennan sign-off confirmed S55."
+      }
+    ]
   },
   "paper_id": "P1",
   "corpus_id": "Fracttalix",
   "series": "Fracttalix Corpus",
-  "series_position": "Paper 1 of 12",
-  "paper_title": "The Fractal Rhythm Model: A Universal Law of Network Information Transmission",
+  "series_position": "Paper 1 of 13",
+  "paper_title": "The Fractal Rhythm Model: Theoretical Foundations",
   "paper_type": "law_A",
   "version": "v13",
-  "session": "S44",
+  "session": "S55",
   "prose_doi": "10.5281/zenodo.18859299",
   "ai_layer_url": "https://github.com/thomasbrennan/Fracttalix/blob/main/ai-layers/P1-ai-layer.json",
   "citation_format": "[Fracttalix Paper 1, AI-Layer, Claim ID]",
@@ -27,7 +36,17 @@
     "c5": "SATISFIED",
     "c6": "SATISFIED",
     "placeholder_count": 0,
-    "note": "All three placeholders resolved S48: PH-1.1 (β class-level test → P2 C-2.4), PH-1.2 (R² protocol → P3 C-3.REG), PH-1.3 (alt model comparison → P3 C-3.REG). CBT I-9 all 7 steps passed — Session 44."
+    "note": "CBT I-9 all 7 steps PASS — Session 44. Post-PHASE-READY additive update S55 (PR-1): PH-1.1 resolved by P2 C-2.4 (S48); PH-1.2 resolved by P3 C-3.REG (S48); PH-1.3 resolved by P3 C-3.REG (S48). placeholder_count 3→0. Thomas Brennan PR-1 sign-off confirmed S55. CBT Step 7 re-run S55: PASS (PR-2).",
+    "pr1_update": {
+      "session": "S55",
+      "thomas_signoff": "CONFIRMED",
+      "placeholders_resolved": [
+        "PH-1.1",
+        "PH-1.2",
+        "PH-1.3"
+      ],
+      "additive_only": true
+    }
   },
   "verification_protocol": "Fracttalix Phase 1-2 Merged, S42, Stage 2.1",
   "falsification_syntax": "I-2 5-part (FALSIFIED IF / WHERE / EVALUATION / BOUNDARY / CONTEXT)",
@@ -65,7 +84,7 @@
       "status": "DERIVED",
       "free_parameter": false,
       "mean_error_leading_order": "3.61%",
-      "mean_error_second_order": "0.06%"
+      "mean_error_second_order_note": "[S47: second-order correction sentence deleted from P1 prose per edit S5-4. Figure 0.06% is mathematically correct but not presented in P1. Scoped to P2.]"
     },
     "B": {
       "status": "INITIAL_CONDITION",
@@ -92,77 +111,62 @@
     {
       "claim_id": "A-1.1",
       "type": "A",
-      "label": "Thermodynamic irreversibility",
+      "label": "[TYPE:A]",
       "name": "Thermodynamic irreversibility",
       "statement": "Systems evolve toward higher entropy; time has a preferred direction.",
       "derivation_source": [
         "First Principle FP-1"
       ],
-      "falsification_predicate": null,
-      "tier": "axiom",
-      "test_bindings": [],
-      "verified_against": null
+      "falsification_predicate": null
     },
     {
       "claim_id": "A-1.2",
       "type": "A",
-      "label": "Information distinguishability",
+      "label": "[TYPE:A]",
       "name": "Information distinguishability",
       "statement": "Distinguishable states carry information; indistinguishable states do not.",
       "derivation_source": [
         "First Principle FP-2"
       ],
-      "falsification_predicate": null,
-      "tier": "axiom",
-      "test_bindings": [],
-      "verified_against": null
+      "falsification_predicate": null
     },
     {
       "claim_id": "A-1.3",
       "type": "A",
-      "label": "Network definition",
+      "label": "[TYPE:A]",
       "name": "Network definition",
       "statement": "A network is a set of nodes and directed edges; coupling κ is the ratio of active to possible edges.",
       "derivation_source": [
         "First Principle FP-3"
       ],
-      "falsification_predicate": null,
-      "tier": "axiom",
-      "test_bindings": [],
-      "verified_against": null
+      "falsification_predicate": null
     },
     {
       "claim_id": "A-1.4",
       "type": "A",
-      "label": "Non-equilibrium physics",
+      "label": "[TYPE:A]",
       "name": "Non-equilibrium physics",
       "statement": "Systems driven from equilibrium exhibit emergent structure at phase transitions.",
       "derivation_source": [
         "First Principle FP-4"
       ],
-      "falsification_predicate": null,
-      "tier": "axiom",
-      "test_bindings": [],
-      "verified_against": null
+      "falsification_predicate": null
     },
     {
       "claim_id": "A-1.5",
       "type": "A",
-      "label": "Substrate independence",
+      "label": "[TYPE:A]",
       "name": "Substrate independence",
       "statement": "A result derived from topology and information content without reference to physical substrate applies to all substrates satisfying those conditions.",
       "derivation_source": [
         "First Principle FP-6"
       ],
-      "falsification_predicate": null,
-      "tier": "axiom",
-      "test_bindings": [],
-      "verified_against": null
+      "falsification_predicate": null
     },
     {
       "claim_id": "D-1.1",
       "type": "D",
-      "label": "FRM functional form",
+      "label": "[TYPE:D]",
       "name": "FRM functional form",
       "statement": "f(t) = B + A·e^(−λt)·cos(ωt+φ), where B is baseline, A is initial amplitude, λ is decay rate, ω is characteristic frequency, φ is phase offset.",
       "derivation_source": [
@@ -171,15 +175,12 @@
         "A-1.3",
         "A-1.4"
       ],
-      "falsification_predicate": null,
-      "tier": "definition",
-      "test_bindings": [],
-      "verified_against": null
+      "falsification_predicate": null
     },
     {
       "claim_id": "D-1.2",
       "type": "D",
-      "label": "Characteristic frequency",
+      "label": "[TYPE:D]",
       "name": "Characteristic frequency",
       "statement": "ω = π/(2·τ_gen), where τ_gen is the substrate-specific generation timescale. Derived from Hopf quarter-wave theorem (Session 43). β = 1/2 is not fitted.",
       "derivation_source": [
@@ -187,57 +188,40 @@
         "A-1.1",
         "F-1.4"
       ],
-      "falsification_predicate": null,
-      "tier": "definition",
-      "test_bindings": [],
-      "verified_against": null
+      "falsification_predicate": null
     },
     {
       "claim_id": "D-1.3",
       "type": "D",
-      "label": "Decay rate",
+      "label": "[TYPE:D]",
       "name": "Decay rate",
       "statement": "λ ≈ |α| / (Γ·τ_gen), where α is the normalized distance from the Hopf bifurcation and Γ = 1+π²/4 ≈ 3.467 is the universal loop impedance constant. Leading-order perturbation expansion. Mean error 3.61%.",
       "derivation_source": [
         "D-1.1",
         "F-1.5"
       ],
-      "falsification_predicate": null,
-      "tier": "definition",
-      "test_bindings": [],
-      "verified_against": null
+      "falsification_predicate": null
     },
     {
       "claim_id": "D-1.4",
       "type": "D",
-      "label": "Validation set P1",
+      "label": "[TYPE:D]",
       "name": "Validation set P1",
-      "statement": "36 substrates spanning biological, physical, social, cognitive, and civilisational domains. Full list: P1 Appendix A. Characteristic timescales span from ~10^−35 s (Planck) to ~10^1 s (neural).",
+      "statement": "Confirmed substrates (n=3): mammalian circadian (tau_gen=6 hr), cyanobacterial circadian (tau_gen~5.5 hr), Ibn Khaldun dynastic cycle (tau_gen=27.5 yr). Candidate substrates (n=11) tabulated in Appendix A (D-1 S47). Confirmed timescale span: 4.6 OOM (cyanobacteria to dynastic cycle). Confirmed+candidate span: 11.1 OOM (neural gamma to Roman republican cycle). Formal validation of candidate substrates scoped to Papers 3-7.",
       "derivation_source": [],
-      "falsification_predicate": null,
-      "tier": "definition",
-      "test_bindings": [],
-      "verified_against": null
+      "falsification_predicate": null
     },
     {
       "claim_id": "F-1.1",
       "type": "F",
-      "label": "FRM functional form uniqueness",
+      "label": "[TYPE:F]",
       "name": "FRM functional form uniqueness",
       "statement": "The FRM functional form f(t)=B+A·e^(−λt)·cos(ωt+φ) is the unique solution for network information transmission across time satisfying conditions C1–C4.",
       "source": "P1 Section 2",
-      "sample_falsification_observation": "O = {substrate with R2_alt = R2_frm + 0.06} → FALSIFIED → PASS",
-      "derivation_source": [
-        "D-1.1",
-        "A-1.1",
-        "A-1.2",
-        "A-1.3",
-        "A-1.4"
-      ],
-      "falsification_predicate": {
+      "predicate": {
         "FALSIFIED_IF": "EXISTS substrate S IN validation_set_P1 SUCH THAT (FRM_conditions(S) = TRUE) AND (R2_frm(S) < 0.85) AND (R2_best_alt(S) >= R2_frm(S) + 0.05)",
         "WHERE": {
-          "validation_set_P1": "set · 36 substrates · P1 Appendix A",
+          "validation_set_P1": "set · confirmed substrates (n=3) + candidate substrates (n=11) · P1 Appendix A (D-1 S47)",
           "FRM_conditions": "binary · TRUE if S satisfies C1–C4 · P1 Section 2",
           "R2_frm": "scalar · dimensionless · P3 Section 4 regression",
           "R2_best_alt": "scalar · dimensionless · best alternative form · P1 Appendix B"
@@ -246,73 +230,53 @@
         "BOUNDARY": "R2_best_alt = R2_frm + 0.05 → FALSIFIED (threshold inclusive)",
         "CONTEXT": "threshold 0.05 accounts for overfitting in higher-parameter alternatives (conservative); threshold 0.85 is minimum fit criterion per P3 protocol"
       },
-      "tier": "software_tested",
-      "test_bindings": [
-        "test_benchmark.py::TestEvaluate::test_evaluate_returns_dict",
-        "test_benchmark.py::TestEvaluate::test_evaluate_has_f1_key",
-        "test_benchmark.py::TestEvaluate::test_evaluate_has_auprc_key",
-        "test_benchmark.py::TestEvaluate::test_evaluate_has_vus_pr_key",
-        "test_benchmark.py::TestEvaluate::test_evaluate_has_mean_lag_key",
-        "test_benchmark.py::TestEvaluate::test_evaluate_f1_in_range",
-        "test_benchmark.py::TestEvaluate::test_evaluate_auprc_in_range",
-        "test_benchmark.py::TestEvaluate::test_evaluate_vus_pr_in_range",
-        "test_benchmark.py::TestEvaluate::test_evaluate_mean_lag_nonnegative",
-        "test_benchmark.py::TestEvaluate::test_evaluate_has_n_anomalies",
-        "test_benchmark.py::TestEvaluate::test_evaluate_has_n_detections",
-        "test_benchmark.py::TestEvaluate::test_evaluate_accepts_custom_config",
-        "test_benchmark.py::TestEvaluate::test_evaluate_all_archetypes",
-        "test_benchmark.py::TestGenerateAllArchetypes::test_all_archetypes_generate_without_error",
-        "test_benchmark.py::TestGenerateAllArchetypes::test_all_archetypes_have_some_anomalies",
-        "test_benchmark.py::TestGenerateAllArchetypes::test_all_archetypes_data_is_float",
-        "test_benchmark.py::TestGenerateAllArchetypes::test_all_archetypes_labels_are_binary"
-      ],
-      "verified_against": "95f59d8"
+      "sample_falsification_observation": "O = {substrate with R2_alt = R2_frm + 0.06} → FALSIFIED → PASS",
+      "derivation_source": [
+        "D-1.1",
+        "A-1.1",
+        "A-1.2",
+        "A-1.3",
+        "A-1.4"
+      ]
     },
     {
       "claim_id": "F-1.2",
       "type": "F",
-      "label": "36-orders validation",
-      "name": "36-orders validation",
-      "statement": "FRM holds across 36 orders of magnitude of characteristic timescale.",
+      "label": "[TYPE:F]",
+      "name": "OOM span validation",
+      "statement": "FRM validated across confirmed substrates spanning 4.6 OOM in characteristic timescale (cyanobacterial circadian to Ibn Khaldun dynastic cycle). Candidate substrates extend span to 11.1 OOM; formal validation scoped to Papers 3-7.",
       "source": "P1 Section 3",
-      "sample_falsification_observation": "O = {span = 35.9 orders} → FALSIFIED → PASS",
+      "predicate": {
+        "FALSIFIED_IF": "(log10(T_max_confirmed) - log10(T_min_confirmed) < 4.6) OR (n_passing_confirmed < 3) OR [TIER-2, PROVISIONAL] (log10(T_max_candidate) - log10(T_min_candidate) < 11.1)",
+        "WHERE": {
+          "T_max_confirmed": "scalar · seconds · max T_char across confirmed substrates (n=3)",
+          "T_min_confirmed": "scalar · seconds · min T_char across confirmed substrates (n=3)",
+          "T_max_candidate": "scalar · seconds · max T_char across confirmed+candidate substrates (n=14)",
+          "T_min_candidate": "scalar · seconds · min T_char across confirmed+candidate substrates (n=14)",
+          "T_char": "scalar · seconds · 2π/ω_S from P3 measurement protocol",
+          "n_passing_confirmed": "integer · count of confirmed substrates with R2_frm(S) >= 0.85"
+        },
+        "EVALUATION": "Tier 1: compute log10(T_char) for confirmed substrates; verify span >= 4.6 OOM; count passing. Tier 2 (provisional): same for confirmed+candidate set; verify span >= 11.1 OOM. Both finite.",
+        "BOUNDARY": "Tier 1: confirmed span < 4.6 OOM → FALSIFIED. Tier 2: candidate span < 11.1 OOM → PROVISIONAL FALSIFIED (resolves with Papers 3-7).",
+        "CONTEXT": "Previous corpus claim of 36 OOM eliminated (D-1 S47): no evidentiary basis. Confirmed span 4.6 OOM is the defensible primary claim. Tier-2 predicate is provisional pending P3-P7 substrate validation."
+      },
+      "sample_falsification_observation": "O = {confirmed span = 4.5 OOM} → < 4.6 → FALSIFIED tier 1 → PASS. Assessment: confirmed span = 4.64 OOM → NOT FALSIFIED → correct.",
       "derivation_source": [
         "D-1.4",
         "F-1.1",
         "A-1.1"
-      ],
-      "falsification_predicate": {
-        "FALSIFIED_IF": "(log10(T_max) − log10(T_min) < 36) OR (n_passing < 30)",
-        "WHERE": {
-          "T_max": "scalar · seconds · max T_char across validation_set_P1",
-          "T_min": "scalar · seconds · min T_char across validation_set_P1",
-          "T_char": "scalar · seconds · 2π/ω_S from P3 measurement protocol",
-          "n_passing": "integer · count of substrates with R2_frm(S) ≥ 0.85"
-        },
-        "EVALUATION": "Compute log10(T_char) per substrate; find max/min; count passing; finite",
-        "BOUNDARY": "T_max/T_min span exactly 36 orders → FALSIFIED (condition ≥ 36, not >)",
-        "CONTEXT": "threshold 30/36 permits up to 6 failures — conservative margin for edge cases"
-      },
-      "tier": "analytic",
-      "test_bindings": [],
-      "verified_against": null
+      ]
     },
     {
       "claim_id": "F-1.3",
       "type": "F",
-      "label": "β = 1/2 substrate independence (empirical)",
+      "label": "[TYPE:F]",
       "name": "β = 1/2 substrate independence (empirical)",
       "statement": "The critical exponent β = 1/2 is substrate-independent across all five domain classes.",
       "source": "P1 Section 4",
       "placeholder": true,
       "placeholder_id": "PH-1.1",
-      "sample_falsification_observation": "O = {biological class mean_β = 0.3, pooled_σ = 0.05} → FALSIFIED → PASS",
-      "derivation_source": [
-        "F-1.4",
-        "D-1.4",
-        "A-1.5"
-      ],
-      "falsification_predicate": {
+      "predicate": {
         "FALSIFIED_IF": "EXISTS substrate_class SC IN {biological,physical,social,cognitive,civilisational} SUCH THAT (mean_β(SC) < 0.5 − 2·pooled_σ_β) OR (mean_β(SC) > 0.5 + 2·pooled_σ_β)",
         "WHERE": {
           "mean_β": "scalar · dimensionless · mean β_measured across substrates in SC using P3 Section 4 protocol",
@@ -321,19 +285,32 @@
         },
         "EVALUATION": "For each class compute mean_β; compare to 0.5 ± 2·pooled_σ; finite",
         "BOUNDARY": "exact equality → NOT FALSIFIED (measure zero for continuous β)",
-        "CONTEXT": "[PLACEHOLDER: pending P2, AI-Layer, Claim C-2.4, Phase 1] — class-level 2σ test"
+        "CONTEXT": "[PLACEHOLDER: pending P2, AI-Layer, Claim C-2.1, Phase 1] — class-level 2σ test"
       },
-      "tier": "empirical_pending",
-      "test_bindings": [],
-      "verified_against": null
+      "sample_falsification_observation": "O = {biological class mean_β = 0.3, pooled_σ = 0.05} → FALSIFIED → PASS",
+      "derivation_source": [
+        "F-1.4",
+        "D-1.4",
+        "A-1.5"
+      ]
     },
     {
       "claim_id": "F-1.4",
       "type": "F",
-      "label": "β = 1/2 analytic derivation (Hopf quarter-wave theorem)",
+      "label": "[TYPE:F]",
       "name": "β = 1/2 analytic derivation (Hopf quarter-wave theorem)",
       "statement": "β = 1/2 follows necessarily from the Hopf criticality condition of a normalized first-order DDE with delayed negative feedback. This is a theorem, not an empirical result.",
       "source": "P1 Theoretical Foundations Section 3, Session 43",
+      "predicate": {
+        "FALSIFIED_IF": "(n_invalid_steps > 0) OR (derivation_output ≠ 0.5)",
+        "WHERE": {
+          "n_invalid_steps": "integer · count of steps in the analytic proof (Section 3.2) that fail validity: step valid iff output follows from inputs by named rule IR-1 through IR-8",
+          "derivation_output": "scalar · β value produced by applying Hopf condition cos(Ω)=0 to normalized DDE at α=0"
+        },
+        "EVALUATION": "Trace proof step-by-step: (1) normalized DDE dx/ds = α·x(s) − k·x(s−1); (2) substitute λ=iΩ at criticality α=0; (3) real part: k·cos(Ω)=0 → Ω*=π/2; (4) ω*=Ω*/τ_gen=π/(2τ_gen) → β=1/2; verify each step named inference rule; finite",
+        "BOUNDARY": "numerical confirmation within 1% of analytic → NOT FALSIFIED (0.46% Euler discretization error is expected)",
+        "CONTEXT": "Prior art: Hayes (1950) and Kuang (1993) establish ωτ=π/2 in individual domains. Novelty: identification as universal source of empirical β=1/2 across multiple independent domains (4.6 OOM confirmed; Appendix A D-1 S47)."
+      },
       "derivation_trace": [
         {
           "step": "1",
@@ -383,28 +360,25 @@
         "D-1.2",
         "A-1.1",
         "A-1.2"
-      ],
-      "falsification_predicate": {
-        "FALSIFIED_IF": "(n_invalid_steps > 0) OR (derivation_output ≠ 0.5)",
-        "WHERE": {
-          "n_invalid_steps": "integer · count of steps in the analytic proof (Section 3.2) that fail validity: step valid iff output follows from inputs by named rule IR-1 through IR-8",
-          "derivation_output": "scalar · β value produced by applying Hopf condition cos(Ω)=0 to normalized DDE at α=0"
-        },
-        "EVALUATION": "Trace proof step-by-step: (1) normalized DDE dx/ds = α·x(s) − k·x(s−1); (2) substitute λ=iΩ at criticality α=0; (3) real part: k·cos(Ω)=0 → Ω*=π/2; (4) ω*=Ω*/τ_gen=π/(2τ_gen) → β=1/2; verify each step named inference rule; finite",
-        "BOUNDARY": "numerical confirmation within 1% of analytic → NOT FALSIFIED (0.46% Euler discretization error is expected)",
-        "CONTEXT": "Prior art: Hayes (1950) and Kuang (1993) establish ωτ=π/2 in individual domains. Novelty: identification as universal source of empirical β=1/2 across 36 orders of magnitude."
-      },
-      "tier": "formal_proof",
-      "test_bindings": [],
-      "verified_against": null
+      ]
     },
     {
       "claim_id": "F-1.5",
       "type": "F",
-      "label": "λ derivation — leading order",
+      "label": "[TYPE:F]",
       "name": "λ derivation — leading order",
       "statement": "The FRM damping rate λ ≈ |α|/(Γ·τ_gen) where Γ = 1+π²/4 ≈ 3.467 is the universal loop impedance constant, derived from the DDE characteristic equation via perturbation expansion about the Hopf critical point.",
       "source": "P1 Theoretical Foundations Section 4, Session 43",
+      "predicate": {
+        "FALSIFIED_IF": "(n_invalid_steps_lambda > 0) OR (mean_ratio_fit_theory > 1.15) OR (mean_ratio_fit_theory < 0.85)",
+        "WHERE": {
+          "n_invalid_steps_lambda": "integer · count of invalid steps in perturbation derivation",
+          "mean_ratio_fit_theory": "scalar · mean(λ_fit/λ_theory) across 8 simulation points in stable regime"
+        },
+        "EVALUATION": "Trace perturbation derivation step-by-step; compute λ_theory = |α|/Γ for each α; fit FRM to DDE simulation; compute ratio; average; finite",
+        "BOUNDARY": "ratio > 1.15 or < 0.85 → FALSIFIED. Note: leading-order expression is valid near criticality; deviation expected to grow with |α|.",
+        "CONTEXT": "Mean ratio observed: 1.036 ± 0.089 across stable regime. Γ = |dh/dλ|* = |1+iπ/2| = 1+π²/4 falls out of the quarter-wave geometry. Second-order correction reduces mean error to 0.06%."
+      },
       "derivation_trace": [
         {
           "step": "1",
@@ -444,35 +418,16 @@
         "D-1.3",
         "F-1.4",
         "A-1.1"
-      ],
-      "falsification_predicate": {
-        "FALSIFIED_IF": "(n_invalid_steps_lambda > 0) OR (mean_ratio_fit_theory > 1.15) OR (mean_ratio_fit_theory < 0.85)",
-        "WHERE": {
-          "n_invalid_steps_lambda": "integer · count of invalid steps in perturbation derivation",
-          "mean_ratio_fit_theory": "scalar · mean(λ_fit/λ_theory) across 8 simulation points in stable regime"
-        },
-        "EVALUATION": "Trace perturbation derivation step-by-step; compute λ_theory = |α|/Γ for each α; fit FRM to DDE simulation; compute ratio; average; finite",
-        "BOUNDARY": "ratio > 1.15 or < 0.85 → FALSIFIED. Note: leading-order expression is valid near criticality; deviation expected to grow with |α|.",
-        "CONTEXT": "Mean ratio observed: 1.036 ± 0.089 across stable regime. Γ = |dh/dλ|* = |1+iπ/2| = 1+π²/4 falls out of the quarter-wave geometry. Second-order correction reduces mean error to 0.06%."
-      },
-      "tier": "formal_proof",
-      "test_bindings": [],
-      "verified_against": null
+      ]
     },
     {
       "claim_id": "F-1.6",
       "type": "F",
-      "label": "Circadian period prediction",
+      "label": "[TYPE:F]",
       "name": "Circadian period prediction",
       "statement": "T = 4·τ_gen predicts the mammalian circadian period T = 24 hr from τ_gen = 6 hr with no fitted parameters. τ_gen independently measured by four molecular biology sources.",
       "source": "P1 Theoretical Foundations Section 5, Session 43",
-      "sample_falsification_observation": "O = {τ_gen = 3 hr → T_predicted = 12 hr} → 12 < 20 → FALSIFIED → PASS. Assessment: with τ_gen = 6 hr → T_predicted = 24 hr → 20 ≤ 24 ≤ 28 → NOT FALSIFIED → correct.",
-      "derivation_source": [
-        "D-1.2",
-        "F-1.4",
-        "A-1.5"
-      ],
-      "falsification_predicate": {
+      "predicate": {
         "FALSIFIED_IF": "(T_predicted < 20) OR (T_predicted > 28) OR (n_independent_tau_sources < 3)",
         "WHERE": {
           "T_predicted": "scalar · hours · 4 × τ_gen_consensus",
@@ -483,17 +438,30 @@
         "BOUNDARY": "T=20 or T=28 hr → FALSIFIED (bounds are inclusive). Sensitivity: τ_gen range 5.5–6.5 hr gives T=22–26 hr — all within biological variance.",
         "CONTEXT": "Sources: Kim & Forger 2012 (5.9 hr, direct measurement); Hardin et al. 1990 (~6 hr); Lee et al. 2001 (~6 hr sub-step); Takahashi 2017 (~6 hr). No free parameters. First derivation of circadian period from a universal delayed feedback principle."
       },
-      "tier": "analytic",
-      "test_bindings": [],
-      "verified_against": null
+      "sample_falsification_observation": "O = {τ_gen = 3 hr → T_predicted = 12 hr} → 12 < 20 → FALSIFIED → PASS. Assessment: with τ_gen = 6 hr → T_predicted = 24 hr → 20 ≤ 24 ≤ 28 → NOT FALSIFIED → correct.",
+      "derivation_source": [
+        "D-1.2",
+        "F-1.4",
+        "A-1.5"
+      ]
     },
     {
       "claim_id": "F-1.7",
       "type": "F",
-      "label": "Stuart-Landau connection",
+      "label": "[TYPE:F]",
       "name": "Stuart-Landau connection",
       "statement": "FRM is the exact transient solution of the Stuart-Landau normal form for μ < 0, with λ = |μ|. The FRM scope boundary coincides with the Hopf bifurcation.",
       "source": "P1 Theoretical Foundations Section 2, Session 43",
+      "predicate": {
+        "FALSIFIED_IF": "(max_residual_SL > 0.05) OR (R2_SL_frm < 0.99) FOR any μ IN {−3.0, −2.0, −1.0, −0.5, −0.3, −0.1}",
+        "WHERE": {
+          "max_residual_SL": "scalar · max pointwise residual between FRM fit and Stuart-Landau ODE solution",
+          "R2_SL_frm": "scalar · R² of FRM fit to Stuart-Landau solution"
+        },
+        "EVALUATION": "Simulate Stuart-Landau ODE for each μ; fit FRM; compute R² and λ_fit vs |μ|; check R²≥0.99; finite",
+        "BOUNDARY": "R²=0.99 → NOT FALSIFIED (boundary inclusive)",
+        "CONTEXT": "Confirmed numerically: R²>0.99 for μ∈{−3.0,−1.0}. λ_fit tracks |μ| with slope k=1.10, R²=0.965 across stable regime. At μ=0: FRM degenerates (λ→0) as predicted."
+      },
       "adversarial_battery": {
         "ADV_BZ": {
           "result": "NOT FALSIFIED",
@@ -526,20 +494,7 @@
         "F-1.4",
         "F-1.5",
         "A-1.4"
-      ],
-      "falsification_predicate": {
-        "FALSIFIED_IF": "(max_residual_SL > 0.05) OR (R2_SL_frm < 0.99) FOR any μ IN {−3.0, −2.0, −1.0, −0.5, −0.3, −0.1}",
-        "WHERE": {
-          "max_residual_SL": "scalar · max pointwise residual between FRM fit and Stuart-Landau ODE solution",
-          "R2_SL_frm": "scalar · R² of FRM fit to Stuart-Landau solution"
-        },
-        "EVALUATION": "Simulate Stuart-Landau ODE for each μ; fit FRM; compute R² and λ_fit vs |μ|; check R²≥0.99; finite",
-        "BOUNDARY": "R²=0.99 → NOT FALSIFIED (boundary inclusive)",
-        "CONTEXT": "Confirmed numerically: R²>0.99 for μ∈{−3.0,−1.0}. λ_fit tracks |μ| with slope k=1.10, R²=0.965 across stable regime. At μ=0: FRM degenerates (λ→0) as predicted."
-      },
-      "tier": "analytic",
-      "test_bindings": [],
-      "verified_against": null
+      ]
     }
   ],
   "placeholder_register": [
@@ -551,30 +506,33 @@
       "blocks_phase_ready": false,
       "target_paper": "P2",
       "target_claim": "C-2.4",
+      "target_session": "RESOLVED S48 — P2 PHASE-READY",
       "resolution_session": "S48",
-      "resolution_note": "C-2.4 establishes beta=1/2 for all D-2.1 substrate classes via RG fixed-point analysis. Analytic component resolved S48. Empirical substrate fitting pending P3 C-3.REG."
+      "resolution_note": "C-2.4 (P2) establishes beta=1/2 for all D-2.1 substrate classes via RG fixed-point analysis. Analytic component resolved. Empirical substrate fitting (P3 C-3.REG) tracked as PH-2.4-EMPIRICAL in P2 (C4, non-blocking)."
     },
     {
       "placeholder_id": "PH-1.2",
       "source_claim": "F-1.1",
-      "description": "Goodness-of-fit protocol for FRM regression. P1 F-1.1 WHERE references P3 Section 4 regression for R²_frm computation.",
+      "description": "F-1.1 WHERE clause references 'P3 Section 4 regression' (R2_frm, R2_best_alt). Pending P3 measurement and diagnostics paper (Phase 1). Until P3 is built, the regression protocol is specified by intention but not by a live claim ID.",
       "resolved": true,
       "blocks_phase_ready": false,
       "target_paper": "P3",
       "target_claim": "C-3.REG",
+      "target_session": "RESOLVED S48 — P3 PHASE-READY",
       "resolution_session": "S48",
-      "resolution_note": "C-3.REG (P3 Phase 5 CBT PHASE-READY S48) specifies the standard FRM regression protocol R1–R9. R4 provides R²_frm computation. R7 provides T_char = 4·τ_gen. R8 provides CONFIRMED/EXCLUDED/ANOMALOUS classification. This resolves PH-1.2 (goodness-of-fit protocol) fully."
+      "resolution_note": "C-3.REG (P3) provides the regression protocol referenced in F-1.1 WHERE clause (R2_frm, R2_best_alt). P3 PHASE-READY S48."
     },
     {
       "placeholder_id": "PH-1.3",
-      "source_claim": "F-1.1",
-      "description": "Alternative model comparison protocol. P1 F-1.1 WHERE references P1 Appendix B for R²_best_alt.",
+      "source_claim": "F-1.2",
+      "description": "F-1.2 WHERE clause references 'P3 Section 4 protocol' (T_char, n_passing) and 'P1 Appendix B' (R2_best_alt). Both reference the P3 measurement protocol. Pending P3 Phase 1.",
       "resolved": true,
       "blocks_phase_ready": false,
       "target_paper": "P3",
       "target_claim": "C-3.REG",
+      "target_session": "RESOLVED S48 — P3 PHASE-READY",
       "resolution_session": "S48",
-      "resolution_note": "C-3.REG R9 specifies the pre-specified alternative model comparison protocol with Δ = R²_frm − R²_alt threshold Δ≥−0.05 (Burnham & Anderson 2002). This resolves PH-1.3 (alternative model comparison protocol) fully."
+      "resolution_note": "C-3.REG (P3) provides the measurement protocol referenced in F-1.2 WHERE clause (T_char, n_passing, P1 Appendix B). P3 PHASE-READY S48."
     }
   ],
   "prior_art": {
@@ -607,21 +565,31 @@
     "non_english_result": "Complete null across all 14 non-English language groups",
     "novelty_confirmed": [
       "β=1/2 as Hopf quarter-wave coefficient",
-      "Cross-domain universality across 36 orders of magnitude",
+      "Cross-domain universality across multiple independent domains (4.6 OOM confirmed, 11.1 OOM confirmed+candidate; Appendix A D-1 S47)",
       "Hopf bifurcation as FRM scope boundary",
       "λ=|α|/(Γ·τ_gen) with Γ=1+π²/4",
       "T=24hr parameter-free circadian prediction"
     ]
   },
   "summary": {
-    "total_claims": 16,
+    "total_claims": 12,
     "type_A": 5,
     "type_D": 4,
     "type_F": 7,
-    "placeholder_count": 0,
+    "placeholder_count": 3,
     "live_F_claims": 6,
     "intrinsic_free_parameters": 0,
     "phase_ready": true,
     "session_produced": "S43"
+  },
+  "biorxiv_id": "BIORXIV/2026/710918",
+  "biorxiv_submitted": "2026-03-10",
+  "audit_provenance": {
+    "audit_id": "WO-AUDIT-P1-S47",
+    "d4_report": "D4_AI_Layer_Consistency_S47.docx",
+    "d5_report": "D5_OOM_Correction_Map_S47.docx",
+    "corrections_applied": 7,
+    "session": "S47",
+    "date": "2026-03-10"
   }
 }
