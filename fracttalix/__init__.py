@@ -49,6 +49,7 @@ from fracttalix.steps import (
     # Frequency
     RPIStep,
     RRSStep,
+    SeasonalPreprocessStep,
     SeasonalStep,
     SequenceOrderingStep,
     SSIStep,
@@ -113,6 +114,8 @@ __all__ = [
     "RFIStep",
     "SSIStep",
     "PEStep",
+    # Pre-pipeline step (v12.3)
+    "SeasonalPreprocessStep",
     # Complexity steps (16-20)
     "EWSStep",
     "AQBStep",

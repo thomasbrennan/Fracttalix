@@ -163,7 +163,7 @@ Schema:             v3-S51
 - **Citation format**: [Fracttalix Paper N, AI-Layer, Claim ID]
 - **Session numbering**: S1–S55 (current)
 - **Build Table**: tracks all 23 corpus objects, milestones, dependencies (CorpusArch v10)
-- **Sentinel**: Python package (v12.1) — streaming anomaly detector implementing the three-channel model
+- **Sentinel**: Python package (v12.3) — streaming anomaly detector implementing the three-channel model
 - **Meta-Kaizen (MK)**: Parallel 6-paper verification and governance corpus
 
 ## Key files in repo

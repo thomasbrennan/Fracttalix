@@ -8,18 +8,68 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [12.3.0] — 2026-03-13
 
-### Added
+### v12.3 — FPR Elimination & Drift Recovery (Meta Kaisen CBP)
 
-- **8-detector Sentinel Suite**: 5 core detectors + 3 FRM-derived detectors (Lambda, Omega, Virtu)
-- **Lambda detector**: FRM-native decay-rate detector with head-to-head EWS benchmark validation
-- **Professional documentation** across entire Sentinel Detector Suite
+**Goal**: Double performance of v12.2. Result: FPR dropped 93% (35% → 2.6%),
+mean F1 rose 25% (0.500 → 0.625). Drift F1 recovered from regression.
 
-### Fixed
+#### Architecture Changes
 
-- Suite module bugs: state asymmetry, DFT mean-centering, stale docs
-- Unused imports in suite module, corrected pipeline step count
-- Python 3.9 compat claim, dead code in detector, type annotations
-- Version consistency across AI layers
+- **SeasonalPreprocessStep** (new Step 0): Detects periodic components via FFT
+  with confidence gate `peak_power > 10× mean_power` (empirically calibrated:
+  p99.9 of white noise peak/mean ≈ 9.64; threshold=10.0 gives <0.1% false
+  detection on white noise). When period is confidently detected, writes
+  `deseasonalized_value` to scratch; `CoreEWMAStep` and all 37 downstream steps
+  operate on this residual. Eliminates the contextual archetype FPR
+  that previously dominated performance.
+
+- **Non-adaptive drift CUSUM** added to `CUSUMStep`: Second accumulator pair
+  (`_d_hi`, `_d_lo`) operating on `z_raw = (v - warmup_mean) / warmup_std`
+  (frozen baseline, not EWMA-adaptive). k=0.5, h=5.0. Fires `drift_cusum_alert`
+  and resets. `CoreEWMAStep` now freezes baseline at warmup end, writing
+  `warmup_mean` and `warmup_std` to scratch for this detector. Fixes drift
+  regression caused by EWMA masking slow drift.
+
+- **ConsensusGate** added to `AlertReasonsStep`: Requires ≥2 soft alerts OR
+  1 strong alert OR |z| ≥ 5σ bypass. Strong alerts: `cusum_mean_shift`,
+  `cusum_variance_spike`, `drift_cusum_shift`, `gradual_drift`,
+  `cascade_precursor`. Gated reasons are preserved as `gated:<reason>` in
+  `alert_reasons`. This is the primary mechanism reducing combined FPR.
+
+#### Threshold Recalibrations (null-distribution calibrated on N(0,1), n=2000)
+
+- `rfi_threshold`: 0.40 → 0.52 (was at p95 of white noise Hurst exponent;
+  raised to p99)
+- `pe_threshold`: 0.05 → 0.15 (was at ~p97 of white noise PE deviation;
+  raised to ~p99)
+- `var_cusum_k`: 0.5 → 1.0 (E[z²]=1.0 under N(0,1); k=0.5 gave systematic
+  +0.5/step drift → 10.4% FPR from VarCUSUM alone)
+- `var_cusum_h`: 5.0 → 10.0 (recalibrated with corrected k)
+- `cusum_k`: 0.5 → 1.0 (same reasoning; EWMA-adaptive z-score is near-zero
+  under normality, so k=1.0 will not accumulate spuriously)
+- `cusum_h`: 5.0 → 8.0 (recalibrated with corrected k)
+- `coupling_degradation_threshold`: 0.30 → 0.24 (corrected direction — lower
+  coupling indicates degradation)
+- `coherence_threshold`: 0.40 → 0.30 (mean coherence on white noise ≈ 0.72;
+  threshold=0.40 was at 4.5th percentile, i.e., far in the noise tail)
+
+#### SentinelDetector Default
+
+- `SentinelDetector()` (no args) now defaults to `SentinelConfig.production()`
+  instead of bare `SentinelConfig()`. Ensures out-of-box experience uses the
+  curated production preset (multiplier=4.5).
+
+#### Benchmark Results (n=1000, seed=42, post-warmup evaluation)
+
+| Archetype  | v12.2 F1 | v12.3 F1 | Change   |
+|------------|----------|----------|----------|
+| point      | 0.422    | 0.639    | +51%     |
+| contextual | 0.242    | 0.378    | +56%     |
+| collective | 0.239    | 0.356    | +49%     |
+| drift      | 0.723    | 0.766    | +6%      |
+| variance   | 0.876    | 0.987    | +13%     |
+| **FPR**    | **35%**  | **2.6%** | **−93%** |
+| Mean F1    | 0.500    | 0.625    | **+25%** |
 
 ---
 

@@ -925,6 +925,9 @@ class AlertReasonsStep(DetectorStep):
             reasons.append("cusum_mean_shift")
         if s.get("var_cusum_alert"):
             reasons.append("cusum_variance_spike")
+        # v12.3: non-adaptive drift CUSUM (warmup-frozen baseline)
+        if s.get("drift_cusum_alert"):
+            reasons.append("drift_cusum_shift")
         if s.get("regime_change"):
             reasons.append("regime_change")
         if s.get("ph_alert"):
@@ -972,6 +975,34 @@ class AlertReasonsStep(DetectorStep):
             " | ".join(channel_parts) if channel_parts else "channels:initializing"
         )
         ctx.scratch["alert_reasons"] = reasons
+
+        # v12.3 — Consensus Gate
+        # Classify reasons into strong (fire alone) and soft (require consensus).
+        # Strong: statistically robust multi-step accumulators and extremes.
+        # Soft:   single-step scores with meaningful per-step FPR; require ≥2.
+        _STRONG = frozenset({
+            "cusum_mean_shift",
+            "cusum_variance_spike",
+            "drift_cusum_shift",   # v12.3: non-adaptive drift CUSUM
+            "gradual_drift",
+            "cascade_precursor",
+        })
+        strong_active = [r for r in reasons if r in _STRONG]
+        soft_active = [r for r in reasons if r not in _STRONG]
+
+        # Hard bypass: z-score > 5× multiplier is always a strong signal.
+        hard_z = abs(s.get("z_score", 0.0)) >= 5.0 * self.cfg.multiplier
+
+        gate_passes = hard_z or bool(strong_active) or len(soft_active) >= 2
+
+        if not gate_passes:
+            # Suppress alert: not enough evidence consensus.
+            ctx.scratch["alert"] = False
+            ctx.scratch["anomaly"] = False
+            # Retain reasons for diagnostics but mark as gated.
+            ctx.scratch["alert_reasons"] = [f"gated:{r}" for r in reasons]
+            return
+
         # Phase 4: start cooldown after any real alert
         if reasons and ctx.scratch.get("alert") and cooldown > 0:
             self._cooldown_remaining = cooldown

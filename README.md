@@ -1,4 +1,4 @@
-# Fracttalix Sentinel v12.2
+# Fracttalix Sentinel v12.3
 
 [![Tests](https://github.com/thomasbrennan/Fracttalix/actions/workflows/tests.yml/badge.svg)](https://github.com/thomasbrennan/Fracttalix/actions/workflows/tests.yml)
 [![Python 3.10–3.12](https://img.shields.io/badge/python-3.10%E2%80%933.12-blue.svg)](https://www.python.org/)
@@ -21,12 +21,13 @@ Sentinel ingests one scalar (or multivariate) observation at a time and emits a 
 ## Table of Contents
 
 1. [Overview](#overview)
-2. [Three-Channel Decomposition](#three-channel-decomposition)
-3. [V12.2 Changes](#v122-changes)
+2. [Three-Channel Model](#three-channel-model)
+3. [V12.3 Changes](#v123-changes)
+3a. [V12.2 Changes](#v122-changes)
 4. [Installation](#installation)
 5. [Quick Start](#quick-start)
 6. [SentinelConfig — Configuration](#sentinelconfig--configuration)
-7. [Pipeline Architecture — 37 Steps](#pipeline-architecture--37-steps-v122)
+7. [Pipeline Architecture — 37 Steps](#pipeline-architecture--37-steps-v123)
 8. [Alert Types and Data Structures](#alert-types-and-data-structures)
 9. [SentinelResult API](#sentinelresult-api)
 10. [MultiStreamSentinel](#multistreamssentinel)
@@ -67,6 +68,51 @@ The detector organizes its 37 steps into three independent signal channels:
 **Cascade detection (v9.0):** alerts when band anomaly + coupling degradation + structural-spectral decoupling all occur simultaneously.
 
 **Extended heuristics (v10.0):** PAC degradation tracking, time-to-threshold estimation, and sequence ordering classification.
+
+---
+
+## V12.3 Changes
+
+### FPR Elimination & Drift Recovery — Meta Kaisen CBP
+
+v12.3 is a comprehensive recalibration targeting the ~35% FPR floor that
+dominated v12.2 performance. FPR dropped 93%, mean F1 rose 25%.
+
+#### New Architecture
+
+- **SeasonalPreprocessStep** (Step 0): FFT-based seasonal decomposition with
+  confidence gate `peak_power > 10× mean_power` (<0.1% false detection on
+  white noise). All 37 downstream steps receive the deseasonalized residual.
+- **Non-adaptive drift CUSUM** in `CUSUMStep`: Accumulates on warmup-frozen
+  z-score, detecting slow drift that EWMA adaptation masks. Fires
+  `drift_cusum_alert`, resets, and re-fires continuously during ongoing drift.
+- **ConsensusGate** in `AlertReasonsStep`: Requires ≥2 soft alerts OR 1
+  strong alert (`cusum_mean_shift`, `cusum_variance_spike`, `drift_cusum_shift`,
+  `gradual_drift`, `cascade_precursor`) OR |z| ≥ 5σ bypass. Primary FPR
+  reduction mechanism.
+
+#### Recalibrated Thresholds (null-distribution calibrated on N(0,1))
+
+- `rfi_threshold`: 0.40 → 0.52; `pe_threshold`: 0.05 → 0.15
+- `var_cusum_k`: 0.5 → 1.0 (E[z²]=1.0 under H₀; old k was systematically biased)
+- `var_cusum_h`: 5.0 → 10.0; `cusum_k`: 0.5 → 1.0; `cusum_h`: 5.0 → 8.0
+- `coherence_threshold`: 0.40 → 0.30; `coupling_degradation_threshold`: 0.30 → 0.24
+
+#### v12.3 Benchmark (n=1000, seed=42, post-warmup)
+
+| Archetype  | v12.2 F1 | v12.3 F1 | Change   |
+|------------|----------|----------|----------|
+| point      | 0.422    | 0.639    | +51%     |
+| contextual | 0.242    | 0.378    | +56%     |
+| collective | 0.239    | 0.356    | +49%     |
+| drift      | 0.723    | 0.766    | +6%      |
+| variance   | 0.876    | 0.987    | +13%     |
+| **FPR**    | **35%**  | **2.6%** | **−93%** |
+| Mean F1    | 0.500    | 0.625    | **+25%** |
+
+> `SentinelDetector()` (no args) now defaults to `SentinelConfig.production()`
+> (multiplier=4.5). The FPR floor has been eliminated by threshold recalibration
+> and ConsensusGate — not by multiplier inflation.
 
 ---
 

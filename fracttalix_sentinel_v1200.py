@@ -1,7 +1,7 @@
 # fracttalix_sentinel_v1200.py
 # Fracttalix Sentinel v12.3 — Three-Channel Extension
 #
-# V12.2 extends the v8.0 detection architecture to implement the
+# V12.3 extends the v8.0 detection architecture to implement the
 # three-channel model of dissipative network information transmission
 # derived in the Meta-Kaizen Paper 6 theoretical framework.
 #

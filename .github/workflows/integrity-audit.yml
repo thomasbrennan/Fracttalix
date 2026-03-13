@@ -1,0 +1,119 @@
+name: Repository Integrity Audit
+
+# =============================================================================
+# Scheduled integrity check for the Fracttalix corpus.
+# Runs weekly and on-demand to verify that fundamental records have not been
+# tampered with outside of the normal PR review process.
+# =============================================================================
+
+on:
+  schedule:
+    - cron: "0 6 * * 1"  # Every Monday at 06:00 UTC
+  workflow_dispatch:       # Manual trigger for on-demand audits
+
+permissions:
+  contents: read
+
+jobs:
+  integrity-check:
+    name: Verify corpus integrity
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: pip install jsonschema
+
+      # --- Fundamental record existence checks ---
+      - name: Verify critical files exist
+        run: |
+          CRITICAL_FILES=(
+            "LICENSE"
+            "SECURITY.md"
+            "CODEOWNERS"
+            "CITATION.cff"
+            "REPRODUCIBILITY.md"
+            "pyproject.toml"
+            "CHANGELOG.md"
+            "paper/paper.md"
+            "paper/paper.bib"
+          )
+
+          MISSING=0
+          for f in "${CRITICAL_FILES[@]}"; do
+            if [ ! -f "$f" ]; then
+              echo "::error::MISSING critical file: $f"
+              MISSING=1
+            else
+              echo "OK: $f"
+            fi
+          done
+
+          if [ "$MISSING" -eq 1 ]; then
+            exit 1
+          fi
+
+      # --- AI layer schema validation ---
+      - name: Validate AI layers
+        run: python scripts/validate_ai_layers.py
+
+      # --- Corpus consistency ---
+      - name: Corpus status check
+        run: python scripts/corpus_status.py --check-only
+
+      - name: Cross-paper consistency
+        run: python scripts/cross_paper_checker.py --check-only
+
+      # --- CODEOWNERS syntax validation ---
+      - name: Validate CODEOWNERS syntax
+        run: |
+          echo "Checking CODEOWNERS syntax..."
+          while IFS= read -r line; do
+            # Skip comments and empty lines
+            [[ "$line" =~ ^[[:space:]]*# ]] && continue
+            [[ -z "${line// /}" ]] && continue
+
+            # Each non-comment line must have at least a pattern and an owner
+            PARTS=($line)
+            if [ "${#PARTS[@]}" -lt 2 ]; then
+              echo "::error::Invalid CODEOWNERS line (missing owner): $line"
+              exit 1
+            fi
+
+            # Owner must start with @
+            OWNER="${PARTS[1]}"
+            if [[ ! "$OWNER" =~ ^@ ]]; then
+              echo "::error::Invalid owner format (must start with @): $OWNER"
+              exit 1
+            fi
+          done < CODEOWNERS
+          echo "CODEOWNERS syntax OK"
+
+      # --- License integrity ---
+      - name: Verify LICENSE has not been emptied
+        run: |
+          LINES=$(wc -l < LICENSE)
+          if [ "$LINES" -lt 5 ]; then
+            echo "::error::LICENSE file appears truncated or emptied ($LINES lines)"
+            exit 1
+          fi
+          echo "LICENSE integrity OK ($LINES lines)"
+
+      - name: Generate audit summary
+        run: |
+          echo "### Repository Integrity Audit — $(date -u '+%Y-%m-%d %H:%M UTC')" >> "$GITHUB_STEP_SUMMARY"
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+          echo "| Check | Status |" >> "$GITHUB_STEP_SUMMARY"
+          echo "|-------|--------|" >> "$GITHUB_STEP_SUMMARY"
+          echo "| Critical files exist | Passed |" >> "$GITHUB_STEP_SUMMARY"
+          echo "| AI layer validation | Passed |" >> "$GITHUB_STEP_SUMMARY"
+          echo "| Corpus consistency | Passed |" >> "$GITHUB_STEP_SUMMARY"
+          echo "| CODEOWNERS syntax | Passed |" >> "$GITHUB_STEP_SUMMARY"
+          echo "| LICENSE integrity | Passed |" >> "$GITHUB_STEP_SUMMARY"
