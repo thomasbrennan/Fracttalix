@@ -37,12 +37,14 @@ Useless at
 
 import math
 import random
-from collections import deque
 from typing import Any, Dict, List, Tuple
 
 from fracttalix.suite.base import (
-    BaseDetector, ScopeStatus,
-    _mean, _variance, _std, _linear_trend,
+    BaseDetector,
+    _linear_trend,
+    _mean,
+    _std,
+    _variance,
 )
 
 

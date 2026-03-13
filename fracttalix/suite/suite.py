@@ -24,14 +24,14 @@ Neural / physiological
 """
 
 import dataclasses
-from typing import Any, Dict, Iterator, List, Optional, Tuple
+from typing import Any, Dict, Iterator, List, Optional
 
 from fracttalix.suite.base import DetectorResult, ScopeStatus
-from fracttalix.suite.hopf import HopfDetector
+from fracttalix.suite.coupling import CouplingDetector
 from fracttalix.suite.discord import DiscordDetector
 from fracttalix.suite.drift import DriftDetector
+from fracttalix.suite.hopf import HopfDetector
 from fracttalix.suite.variance import VarianceDetector
-from fracttalix.suite.coupling import CouplingDetector
 
 
 @dataclasses.dataclass(frozen=True)

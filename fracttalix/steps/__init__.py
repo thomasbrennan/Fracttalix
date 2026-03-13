@@ -59,7 +59,7 @@ from fracttalix.steps.temporal import (
 def _build_default_pipeline(config: SentinelConfig):
     """Return ordered list of DetectorStep instances for a SentinelDetector.
 
-    V11.0: 37 steps. Steps numbered 1-37 consecutively.
+    38 steps. Steps numbered 1-38 consecutively.
     Phase 1.3: CoreEWMAStep and RegimeStep share a RegimeBoostState object —
     no scratch-key side channel.
     Phase 0: @register_step / _STEP_REGISTRY removed; pipeline is explicit.

@@ -44,13 +44,14 @@ Useless at
     Point anomalies (resets the accumulator; DiscordDetector handles).
 """
 
-import math
-from collections import deque
 from typing import Any, Dict, List, Tuple
 
 from fracttalix.suite.base import (
-    BaseDetector, ScopeStatus,
-    _mean, _variance, _std, _ac1,
+    BaseDetector,
+    _ac1,
+    _mean,
+    _std,
+    _variance,
 )
 
 

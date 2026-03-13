@@ -43,8 +43,9 @@ from collections import deque
 from typing import Any, Dict, List, Optional, Tuple
 
 from fracttalix.suite.base import (
-    BaseDetector, ScopeStatus,
-    _mean, _variance, _std,
+    BaseDetector,
+    _mean,
+    _std,
 )
 
 
