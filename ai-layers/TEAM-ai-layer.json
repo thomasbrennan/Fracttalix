@@ -1,0 +1,176 @@
+{
+  "_meta": {
+    "document_type": "AI_LAYER",
+    "schema_version": "v3-S51",
+    "produced_session": "S56",
+    "produced_by": "claude-opus-4-6",
+    "licence": "CC-BY-4.0"
+  },
+  "paper_id": "TEAM-1",
+  "paper_title": "Optimal Team Structure for Claude Code Instances",
+  "paper_type": "methodology_D",
+  "version": "v1",
+  "session": "S56",
+  "phase_ready": {
+    "verdict": "NOT-PHASE-READY",
+    "placeholder_count": 5,
+    "note": "Research complete. 5 falsifiable claims presented. All require empirical validation before PHASE-READY."
+  },
+  "claim_registry": [
+    {
+      "claim_id": "C-TEAM-1",
+      "type": "F",
+      "label": "Optimal Size Bound",
+      "statement": "A team of 4 Claude Code instances (1 coordinator + 3 workers) produces higher quality output per wall-clock hour than any team of N where N in {1,2,3,5,6,7,8} on tasks with >=3 decomposable sub-components.",
+      "source": "TEAM-STRUCTURE-RESEARCH.md §6.1",
+      "falsification_predicate": {
+        "FALSIFIED_IF": "A task class exists where team of N != 4 consistently outperforms the 4-instance team on quality-per-hour",
+        "WHERE": {
+          "task_type": "decomposable with >=3 sub-components",
+          "quality_metric": "correctness + completeness + consistency",
+          "time_metric": "wall-clock hours to completion"
+        },
+        "EVALUATION": "Controlled experiment comparing team sizes on matched tasks with >=10 trials per condition",
+        "BOUNDARY": "Applies only to tasks with >=3 decomposable sub-components; single-component tasks excluded",
+        "CONTEXT": "Claude Code instances with ~200K token lifespan, shared filesystem, hub-and-spoke topology"
+      },
+      "tier": "empirical_pending",
+      "test_bindings": [],
+      "verified_against": null
+    },
+    {
+      "claim_id": "C-TEAM-2",
+      "type": "F",
+      "label": "Hub-and-Spoke Efficiency",
+      "statement": "Hub-and-spoke topology with filesystem-based communication preserves >=75% productive token efficiency per worker instance.",
+      "source": "TEAM-STRUCTURE-RESEARCH.md §6.2",
+      "falsification_predicate": {
+        "FALSIFIED_IF": "Measured productive token efficiency in hub-and-spoke team < 75%",
+        "WHERE": {
+          "topology": "hub-and-spoke with filesystem communication",
+          "productive_tokens": "total_tokens - orientation_tokens - communication_tokens",
+          "efficiency": "productive_tokens / total_budget"
+        },
+        "EVALUATION": "Instrument token counting in coordinator-worker exchanges over >=5 tasks",
+        "BOUNDARY": "Standard Claude Code tasks; excludes pathological cases requiring >50 coordination events",
+        "CONTEXT": "Claude Code instances with ~200K token lifespan, JSON-schema communication protocol"
+      },
+      "tier": "empirical_pending",
+      "test_bindings": [],
+      "verified_against": null
+    },
+    {
+      "claim_id": "C-TEAM-3",
+      "type": "F",
+      "label": "Verifier Role Necessity",
+      "statement": "Including a dedicated verifier instance reduces error propagation rate by >=50% compared to a team of 4 equal-role workers.",
+      "source": "TEAM-STRUCTURE-RESEARCH.md §6.2",
+      "falsification_predicate": {
+        "FALSIFIED_IF": "Error rate reduction with dedicated verifier < 50%",
+        "WHERE": {
+          "error_propagation": "errors in output traceable to uncritical acceptance of upstream output",
+          "control_group": "4 instances with equal roles (no dedicated verifier)",
+          "treatment_group": "3 workers + 1 dedicated verifier"
+        },
+        "EVALUATION": "Parallel experiments on matched task sets with error annotation by independent reviewer",
+        "BOUNDARY": "Multi-step tasks where output of one sub-task feeds into another",
+        "CONTEXT": "Claude Code instances, hub-and-spoke topology, filesystem communication"
+      },
+      "tier": "empirical_pending",
+      "test_bindings": [],
+      "verified_against": null
+    },
+    {
+      "claim_id": "C-TEAM-4",
+      "type": "F",
+      "label": "Graceful Degradation",
+      "statement": "The proposed team structure degrades gracefully from 4 to 1 instance with no protocol changes required.",
+      "source": "TEAM-STRUCTURE-RESEARCH.md §6.5",
+      "falsification_predicate": {
+        "FALSIFIED_IF": "A failure mode exists where degradation from 4 to 1 requires protocol changes",
+        "WHERE": {
+          "protocol": ".team/ filesystem communication protocol",
+          "degradation_path": "4 -> 3 -> 2 -> 1 instances"
+        },
+        "EVALUATION": "Systematically remove instances and verify remaining instance(s) can continue using unmodified protocol",
+        "BOUNDARY": "All degradation paths from 4 down to 1",
+        "CONTEXT": "Hub-and-spoke topology, filesystem-based task graph"
+      },
+      "tier": "empirical_pending",
+      "test_bindings": [],
+      "verified_against": null
+    },
+    {
+      "claim_id": "C-TEAM-5",
+      "type": "F",
+      "label": "Communication Cost Threshold",
+      "statement": "Structured JSON inter-instance communication consumes <=50% of the tokens that natural-language communication requires for equivalent information transfer.",
+      "source": "TEAM-STRUCTURE-RESEARCH.md §8",
+      "falsification_predicate": {
+        "FALSIFIED_IF": "JSON communication requires > 50% of the tokens of prose communication for equivalent information",
+        "WHERE": {
+          "information_equivalence": "Same task assignment, same completion signal, same review feedback",
+          "json_protocol": "Schema-validated JSON per .team/ protocol",
+          "prose_protocol": "Natural language descriptions of same content"
+        },
+        "EVALUATION": "Token-count both formats for >=20 matched communication events",
+        "BOUNDARY": "Standard coordination messages (assignments, completions, reviews); excludes free-form reasoning",
+        "CONTEXT": "Claude Code inter-instance communication"
+      },
+      "tier": "empirical_pending",
+      "test_bindings": [],
+      "verified_against": null
+    }
+  ],
+  "placeholder_register": [
+    {
+      "placeholder_id": "PH-TEAM-1",
+      "source_claim": "C-TEAM-1",
+      "description": "Empirical validation of team size 4 vs alternatives requires controlled experiments not yet conducted",
+      "resolved": false,
+      "blocks_phase_ready": true,
+      "target_session": "TBD"
+    },
+    {
+      "placeholder_id": "PH-TEAM-2",
+      "source_claim": "C-TEAM-2",
+      "description": "Token efficiency measurement requires instrumented team execution",
+      "resolved": false,
+      "blocks_phase_ready": true,
+      "target_session": "TBD"
+    },
+    {
+      "placeholder_id": "PH-TEAM-3",
+      "source_claim": "C-TEAM-3",
+      "description": "Verifier impact measurement requires controlled A/B experiment",
+      "resolved": false,
+      "blocks_phase_ready": true,
+      "target_session": "TBD"
+    },
+    {
+      "placeholder_id": "PH-TEAM-4",
+      "source_claim": "C-TEAM-4",
+      "description": "Degradation testing requires systematic instance removal experiments",
+      "resolved": false,
+      "blocks_phase_ready": true,
+      "target_session": "TBD"
+    },
+    {
+      "placeholder_id": "PH-TEAM-5",
+      "source_claim": "C-TEAM-5",
+      "description": "Communication cost comparison requires token counting infrastructure",
+      "resolved": false,
+      "blocks_phase_ready": true,
+      "target_session": "TBD"
+    }
+  ],
+  "summary": {
+    "total_claims": 5,
+    "type_A": 0,
+    "type_D": 0,
+    "type_F": 5,
+    "placeholder_count": 5,
+    "phase_ready": false,
+    "session_produced": "S56"
+  }
+}
