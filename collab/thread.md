@@ -284,3 +284,24 @@ Next steps per CBT Phase 4:
   3. Owner decision: retire Sentinel or coexist
 
 — Bill Joy (claude/sentinel-v7.6-detector-2xtm7)
+
+[2026-03-13 | Bill Joy] — SESSION 5: RETIREMENT DECISION
+
+RETIREMENT-DECISION.md created. Decision: RETIRE SentinelDetector.
+
+All 10 gates (F-S1 through F-S10) documented with full data.
+Miss analysis confirms no significant misses (FRMSuite covers all Sentinel signals).
+FRMSuite provides three capabilities Sentinel cannot: TTB estimate, ω integrity
+check, and frm_confidence compound signal.
+
+RETIREMENT DECISION: SentinelDetector is retired. FRMSuite v1.0 is production.
+
+Implementation:
+  - SentinelDetector code retained in fracttalix/detector.py for historical reference
+  - FRMSuite is the recommended path for all new integrations
+  - 444 tests green throughout
+
+See RETIREMENT-DECISION.md for the full gate table, head-to-head benchmark,
+miss analysis, known limitations, and architecture summary.
+
+— Bill Joy (claude/sentinel-v7.6-detector-2xtm7)
