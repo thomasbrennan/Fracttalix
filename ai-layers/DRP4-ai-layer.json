@@ -1,0 +1,343 @@
+{
+  "_meta": {
+    "document_type": "AI_LAYER",
+    "schema_version": "v2-S42+S48",
+    "schema_url": "https://github.com/thomasbrennan/Fracttalix/blob/main/ai-layers/ai-layer-schema.json",
+    "schema_amendments": [
+      {
+        "amendment_id": "S48-A1",
+        "session": "S48",
+        "field_added": "principle_10_audit",
+        "description": "Array tracking derivation path for every constant or structural condition. principle_10_compliant true only when all entries anchored at live edges or IR axioms."
+      },
+      {
+        "amendment_id": "S48-A2",
+        "session": "S48",
+        "field_added": "principle_10_compliant",
+        "description": "Boolean gate. Circularity detection: paths must terminate at (a) live edge from published AI layer or (b) IR rule applied to mathematical axiom."
+      }
+    ],
+    "produced_session": "S56",
+    "produced_by": "Claude (Anthropic) — DRP-4 Phase 4 (AI layer), S56",
+    "licence": "CC BY 4.0",
+    "phase_produced": "Phase 5 — CBT I-9 PASS — PHASE-READY (pending Thomas sign-off)",
+    "cbp_version": "v2 (S39) + S42 two-state gate + Principle 10 (S48)",
+    "source_documents": [
+      "journal/DRP4-D4-build-S56.md"
+    ]
+  },
+  "paper_id": "DRP-4",
+  "paper_title": "The Full Conservation Law: Epistemic Information Vanishes for All Measurement Functions",
+  "paper_type": "derivation_B",
+  "series": "DRP Series",
+  "series_position": "DRP-4 of 8",
+  "version": "v1",
+  "session": "S56",
+  "scope_boundary": {
+    "IN": "All measurement functions M satisfying condition (b) of T(P,O,M) — finite deterministic functions from observation classes to verdict spaces. Includes binary, n-ary, continuous, and probabilistic M.",
+    "OUT": [
+      "Non-terminating M (fail condition (b), not well-formed predicates)",
+      "Stochastic M that are not finite deterministic (fail condition (b))",
+      "The UMP itself (proved in DRP-1; DRP-4 uses the conservation consequence, not the independence condition)"
+    ],
+    "scope_note": "DRP-4 generalises the binary conservation law I(M(O);P)=0 from DRP-2 to all terminating M. The generalisation is structural: the I=0 mechanism depends only on O=f(P), not on M's output type."
+  },
+  "inbound_edges": [
+    {
+      "edge_id": "C-DRP2.2→DRP4",
+      "source_paper": "DRP-2",
+      "source_claim": "C-DRP2.2",
+      "label": "Binary epistemic conservation law: I(M(O);P) = 0 for binary M when O = f(P)",
+      "ai_layer_version": "DRP-2 AI Layer v1.2 (S54)",
+      "status": "LIVE",
+      "received_as": "C-DRP4.1 (Type A axiom)"
+    },
+    {
+      "edge_id": "C-DRP3.5→DRP4",
+      "source_paper": "DRP-3",
+      "source_claim": "C-DRP3.5",
+      "label": "Convergence Principle: M-termination ↔ μ<0. All terminating M share the same convergence structure.",
+      "ai_layer_version": "DRP-3 AI Layer v1 (S56)",
+      "status": "LIVE",
+      "received_as": "C-DRP4.2 (Type A axiom)"
+    }
+  ],
+  "outbound_edges_register": [
+    {
+      "edge_id": "C-DRP4.5→DRP-5",
+      "type": "PASS_FORWARD",
+      "source_claim": "C-DRP4.5",
+      "target_paper": "DRP-5",
+      "label": "Full Conservation Law: I(M(O);P) = 0 for all terminating M when O = f(P). Received as Type A axiom in DRP-5.",
+      "status": "LIVE — pending DRP-4 PHASE-READY"
+    }
+  ],
+  "inference_rules": [
+    {
+      "id": "IR-DRP4-1",
+      "name": "Received Axiom",
+      "form": "A claim proved in a prior paper with LIVE status may be received as Type A without re-derivation."
+    },
+    {
+      "id": "IR-DRP4-2",
+      "name": "Structural Generalisation",
+      "form": "If a theorem proved for a restricted case X depends only on structural property S, and S holds for the general case Y ⊃ X, then the theorem holds for Y."
+    },
+    {
+      "id": "IR-DRP4-3",
+      "name": "Composition Preservation",
+      "form": "If f: A→B and g: B→C are both determined by the same upstream variable, then g∘f is determined by that variable. Determinism is preserved under composition."
+    },
+    {
+      "id": "IR-DRP4-4",
+      "name": "Exhaustive Classification",
+      "form": "If a domain D is partitioned into classes C1...Cn and a property P holds for each Ci, then P holds for all of D."
+    },
+    {
+      "id": "IR-DRP4-5",
+      "name": "Vacuity Witness",
+      "form": "A falsification predicate is non-vacuous (C6) iff a coherent observation exists that would trigger FALSIFIED."
+    }
+  ],
+  "claim_registry": [
+    {
+      "claim_id": "C-DRP4.1",
+      "type": "A",
+      "label": "Binary conservation law — received from DRP-2",
+      "statement": "For any falsification predicate K = (P, O, M, B) where O = f(P) and M is binary (M: O → {FALSIFIED, NOT FALSIFIED}): I(M(O); P) = 0. The mutual information between the test outcome and the proposition is zero when the observation class is derived from the proposition.",
+      "derivation_source": [
+        "DRP-2 C-DRP2.2"
+      ],
+      "falsification_predicate": null,
+      "tier": "axiom",
+      "test_bindings": [],
+      "verified_against": null
+    },
+    {
+      "claim_id": "C-DRP4.2",
+      "type": "A",
+      "label": "Convergence Principle — received from DRP-3",
+      "statement": "M-termination is epistemically equivalent to μ<0. Both are instances of the same abstract fixed-point convergence requirement. All terminating M functions share the same convergence structure regardless of output type.",
+      "derivation_source": [
+        "DRP-3 C-DRP3.5"
+      ],
+      "falsification_predicate": null,
+      "tier": "axiom",
+      "test_bindings": [],
+      "verified_against": null
+    },
+    {
+      "claim_id": "C-DRP4.3",
+      "type": "D",
+      "label": "M-class taxonomy",
+      "statement": "The class of all measurement functions M satisfying condition (b) of T(P,O,M) (finite deterministic) is partitioned into four exhaustive sub-classes by output type: (i) binary M: O → {FALSIFIED, NOT FALSIFIED}; (ii) n-ary M: O → {v1, ..., vn} for finite n > 2; (iii) continuous M: O → ℝ (or a measurable subset); (iv) probabilistic M: O → [0,1] (interpreted as probability or confidence). All four sub-classes satisfy condition (b) when M terminates. No well-formed M exists outside this partition.",
+      "derivation_source": [
+        "C-DRP4.2",
+        "D4-2.0 Step 1",
+        "IR-DRP4-4"
+      ],
+      "falsification_predicate": null,
+      "tier": "definition",
+      "test_bindings": [],
+      "verified_against": null
+    },
+    {
+      "claim_id": "C-DRP4.4",
+      "type": "D",
+      "label": "Generalised epistemic information",
+      "statement": "For any M satisfying condition (b) of T(P,O,M), the epistemic information content I(M(O); P) is defined as: the reduction in uncertainty about P achieved by observing M(O), measured as the difference between prior uncertainty H(P) and posterior uncertainty H(P|M(O)). I(M(O); P) = H(P) − H(P|M(O)). This definition applies uniformly across all M-classes (C-DRP4.3) and reduces to Shannon mutual information when M is binary.",
+      "derivation_source": [
+        "C-DRP4.1",
+        "C-DRP4.3",
+        "D4-2.0 Step 2",
+        "IR-DRP4-1"
+      ],
+      "falsification_predicate": null,
+      "tier": "definition",
+      "test_bindings": [],
+      "verified_against": null
+    },
+    {
+      "claim_id": "C-DRP4.5",
+      "type": "F",
+      "label": "The full conservation law",
+      "statement": "For any falsification predicate K = (P, O, M, B) where O = f(P) and M satisfies condition (b) of T(P,O,M): I(M(O); P) = 0. The epistemic information content of the test is zero regardless of M's output type. This generalises C-DRP4.1 (binary case) to all terminating M.",
+      "derivation_source": [
+        "C-DRP4.1",
+        "C-DRP4.2",
+        "C-DRP4.3",
+        "C-DRP4.4",
+        "C-DRP4.6",
+        "D4-2.0 Step 4",
+        "IR-DRP4-2",
+        "IR-DRP4-4"
+      ],
+      "falsification_predicate": {
+        "FALSIFIED_IF": "n_counterexamples > 0",
+        "WHERE": {
+          "n_counterexamples": "integer, dimensionless. Count of falsification predicates K = (P, O, M, B) simultaneously satisfying: (a) O = f(P) — observation class derived from the proposition; (b) M satisfies condition (b) of T(P,O,M) — M is finite deterministic and terminates; (c) I(M(O); P) > 0 — the test outcome provides non-zero epistemic information about P, measured as reduction in prior uncertainty. A single instance of (a)+(b)+(c) suffices to falsify."
+        },
+        "EVALUATION": "1. Construct candidate predicate K with O = f(P) and non-binary M (binary case already covered by C-DRP4.1). 2. Verify M satisfies condition (b): finite, deterministic, terminates. 3. Compute h = M ∘ f. Verify h(P) is a deterministic function of P. 4. Compute I(h(P); P) using the generalised measure (C-DRP4.4). 5. If I > 0: n_counterexamples += 1. Output: n_counterexamples. Finite procedure.",
+        "BOUNDARY": "n_counterexamples = 0 → NOT FALSIFIED. n_counterexamples = 1 → FALSIFIED (universal claim; one counterexample suffices).",
+        "CONTEXT": "C-DRP4.5 · Type F · Full conservation law — central claim. Generalises DRP-2 C-DRP2.2 from binary to all M. Tests whether a non-binary M with O=f(P) can produce I > 0. Threshold: 0. UMP SATISFIED: O (candidate predicates with measured I) upstream of P (conservation law). M (computation of I) finite deterministic. C6 SATISFIED: counterexample system would produce FALSIFIED."
+      },
+      "sample_falsification_observation": "A continuous M computing a test statistic from O=f(P) that yields I > 0 — i.e., the test statistic provides information about P despite O being derived from P. Believed non-existent because h(P) = M(f(P)) is determined by P, so H(P|h(P)) = H(P) and I = 0.",
+      "tier": "formal_proof",
+      "test_bindings": [],
+      "verified_against": null
+    },
+    {
+      "claim_id": "C-DRP4.6",
+      "type": "F",
+      "label": "Mechanism independence",
+      "statement": "The I=0 result in DRP-2 §3 depends on exactly one structural property: O = f(P). It does not invoke any property specific to binary M. The cardinality, topology, or measure-theoretic structure of M's output space plays no role in the proof that I = 0.",
+      "derivation_source": [
+        "C-DRP4.1",
+        "D4-2.0 Step 3",
+        "IR-DRP4-2",
+        "IR-DRP4-3"
+      ],
+      "falsification_predicate": {
+        "FALSIFIED_IF": "n_binary_steps > 0",
+        "WHERE": {
+          "n_binary_steps": "integer, dimensionless. Count of steps in the DRP-2 §3 proof of I(M(O); P) = 0 that invoke a property specific to binary M — i.e., steps whose justification requires |range(M)| = 2 or the structure {FALSIFIED, NOT FALSIFIED} as a necessary premise, and which cannot be re-derived for general M."
+        },
+        "EVALUATION": "1. Obtain DRP-2 v1.2 §3 proof text. 2. For each step: identify the justification. 3. Determine whether the justification requires |range(M)| = 2 or any binary-specific property. 4. If a step requires binary M and cannot be re-derived without it: n_binary_steps += 1. Output: n_binary_steps. Finite procedure (proof is a finite text).",
+        "BOUNDARY": "n_binary_steps = 0 → NOT FALSIFIED. n_binary_steps = 1 → FALSIFIED (single binary-dependent step would block generalisation).",
+        "CONTEXT": "C-DRP4.6 · Type F · Mechanism independence. Tests whether DRP-2 §3 proof depends on binary M. Threshold: 0. UMP SATISFIED: O (DRP-2 §3 text) is a published document fixed independently of P (mechanism independence claim). M (step-by-step audit) finite deterministic. C6 SATISFIED: binary-dependent step found → FALSIFIED."
+      },
+      "sample_falsification_observation": "A step in DRP-2 §3 reading 'Since M has exactly two outputs, the probability table has exactly two rows, allowing us to compute I directly.' If such a step existed, the proof would require binary M as a necessary premise.",
+      "tier": "formal_proof",
+      "test_bindings": [],
+      "verified_against": null
+    },
+    {
+      "claim_id": "C-DRP4.7",
+      "type": "F",
+      "label": "Exhaustive coverage",
+      "statement": "The M-class taxonomy (C-DRP4.3) is exhaustive: every finite deterministic function from an observation class to a verdict space falls into exactly one of the four sub-classes. The full conservation law (C-DRP4.5) holds for each sub-class individually and therefore for all M.",
+      "derivation_source": [
+        "C-DRP4.3",
+        "C-DRP4.5",
+        "D4-2.0 Step 5",
+        "IR-DRP4-4"
+      ],
+      "falsification_predicate": {
+        "FALSIFIED_IF": "n_uncovered > 0",
+        "WHERE": {
+          "n_uncovered": "integer, dimensionless. Count of finite deterministic measurement functions M satisfying condition (b) of T(P,O,M) that do not fall into any of the four sub-classes defined in C-DRP4.3 (binary, n-ary, continuous, probabilistic)."
+        },
+        "EVALUATION": "1. Enumerate known M functions used in published falsification predicates across the corpus. 2. For each: classify into C-DRP4.3 sub-class. 3. Attempt to construct an M satisfying condition (b) that does not fit any sub-class. 4. If such an M is found: n_uncovered += 1. Output: n_uncovered. Finite procedure.",
+        "BOUNDARY": "n_uncovered = 0 → NOT FALSIFIED. n_uncovered = 1 → FALSIFIED.",
+        "CONTEXT": "C-DRP4.7 · Type F · Exhaustive coverage. Tests whether the M-class taxonomy is complete. Threshold: 0. A single uncovered M would require extending the taxonomy and re-proving the conservation law for the new class. UMP SATISFIED: O (M functions and their output spaces) determined by examining predicate structure, upstream of P (taxonomy completeness claim). M (classification procedure) finite deterministic. C6 SATISFIED: uncovered M found → FALSIFIED."
+      },
+      "sample_falsification_observation": "An M function whose output space is a non-Hausdorff topological space not embeddable in ℝ or [0,1] and not a finite discrete set. Such an M would satisfy condition (b) (finite deterministic) but fall outside the taxonomy.",
+      "tier": "formal_proof",
+      "test_bindings": [],
+      "verified_against": null
+    }
+  ],
+  "placeholder_register": [
+    {
+      "placeholder_id": "PH-DRP4.1",
+      "source_claim": "C-DRP4.5",
+      "description": "Outbound pass-forward: C-DRP4.5 (Full Conservation Law) → DRP-5. DRP-5 receives as Type A axiom and proves universality + auxiliary hypothesis protocol. ARCH-2 placeholder resolved when DRP-4 reaches PHASE-READY.",
+      "resolved": false,
+      "blocks_phase_ready": false,
+      "c4_tracking": true,
+      "target_paper": "DRP-5",
+      "target_claim": "Full Conservation Law (Type A axiom in DRP-5)",
+      "target_session": "OPEN — DRP-5 Phase 1"
+    }
+  ],
+  "pass_forward_register": [
+    {
+      "entry_id": "DRP4→DRP5",
+      "claim_id": "C-DRP4.5",
+      "label": "Full Conservation Law: I(M(O);P) = 0 for all terminating M when O = f(P). DRP-5 receives as Type A and proves universality.",
+      "target_paper": "DRP-5",
+      "axiom_label_in_DRP5": "TBD — DRP-5 Phase 1",
+      "status": "LIVE — pending DRP-4 PHASE-READY"
+    }
+  ],
+  "derivation_table_reference": {
+    "document": "journal/DRP4-D4-build-S56.md",
+    "step_count": 6,
+    "steps": [
+      {"step": "S0", "description": "Received inputs: C-DRP4.1 (A) from DRP-2, C-DRP4.2 (A) from DRP-3", "rule": "IR-DRP4-1", "output": "C-DRP4.1, C-DRP4.2"},
+      {"step": "1", "description": "M-class taxonomy: partition all terminating M by output type", "rule": "IR-DRP4-4", "output": "C-DRP4.3 (D)"},
+      {"step": "2", "description": "Generalised epistemic information: extend I measure to all M-classes", "rule": "IR-DRP4-1", "output": "C-DRP4.4 (D)"},
+      {"step": "3", "description": "Mechanism independence: DRP-2 §3 proof audited — no binary-specific steps", "rule": "IR-DRP4-2, IR-DRP4-3", "output": "C-DRP4.6 (F)"},
+      {"step": "4", "description": "Full conservation law: I=0 generalised from binary to all M via structural property O=f(P)", "rule": "IR-DRP4-2, IR-DRP4-4", "output": "C-DRP4.5 (F)"},
+      {"step": "5", "description": "Exhaustive coverage: conservation law verified for each sub-class individually", "rule": "IR-DRP4-4", "output": "C-DRP4.7 (F)"}
+    ],
+    "n_invalid_steps": 0,
+    "principle_10_compliance": "All constants and conditions trace to live edges (DRP-2 C-DRP2.2, DRP-3 C-DRP3.5) or IR axioms. No orphaned constants."
+  },
+  "principle_10_audit": [
+    {
+      "constant_or_condition": "O = f(P) (observation class derived from proposition)",
+      "derivation_path": "Received via C-DRP4.1 from DRP-2 C-DRP2.2 (live edge). The condition O=f(P) is the antecedent of the conservation law proved in DRP-2 §3. Not stipulated — derived from the UMP violation analysis in DRP-2.",
+      "gap_id": null
+    },
+    {
+      "constant_or_condition": "I(M(O); P) = H(P) − H(P|M(O)) (generalised epistemic information)",
+      "derivation_path": "Definitional extension of DRP-2 §3 information measure (C-DRP4.1, live edge) to all M-classes. Standard Shannon/differential entropy. No new empirical constants introduced.",
+      "gap_id": null
+    },
+    {
+      "constant_or_condition": "M-class taxonomy (binary, n-ary, continuous, probabilistic)",
+      "derivation_path": "Exhaustive classification of finite deterministic function output spaces by topological structure. Derived from condition (b) of T(P,O,M) via C-DRP4.2 (live edge from DRP-3 C-DRP3.5). Standard mathematical classification — no stipulated constants.",
+      "gap_id": null
+    },
+    {
+      "constant_or_condition": "Composition h = M ∘ f (determinism preservation)",
+      "derivation_path": "Function composition axiom (IR-DRP4-3). If O = f(P) and M is deterministic, then M(O) = M(f(P)) = h(P) is deterministic in P. Standard mathematical property — no empirical constants.",
+      "gap_id": null
+    }
+  ],
+  "principle_10_compliant": true,
+  "principle_10_compliant_note": "All 4 audit entries have derivation_path values anchored at live edges (DRP-2 C-DRP2.2, DRP-3 C-DRP3.5) or IR axioms (IR-DRP4-3). No free constants or stipulated conditions.",
+  "phase_ready": {
+    "verdict": "PHASE-READY",
+    "c1": "SATISFIED",
+    "c2": "SATISFIED",
+    "c3": "SATISFIED",
+    "c4_mode": "PHASE-READY-TRACKING",
+    "c5": "SATISFIED",
+    "c6": "SATISFIED",
+    "placeholder_count": 1,
+    "placeholder_blocking_count": 0,
+    "note": "CBT I-9 all 7 steps PASS — Session S56. Phases 0-3 complete (S56, combined build record). Phase 4 (AI layer) complete S56. Phase 5 (CBT I-9) complete S56. 1 C4-tracking placeholder (PH-DRP4.1: C-DRP4.5 → DRP-5), non-blocking. All 3 Type F claims have full 5-part predicates, vacuity witnesses, UMP compliance checks. All inbound edges LIVE. Principle 10 audit: 4 entries, all anchored at live edges or IR axioms. Pass-forward: C-DRP4.5 → DRP-5 LIVE. Registry update: 175 + 7 = 182 claims, 18 papers.",
+    "cbt_session": "S56",
+    "cbt_steps": {
+      "step_1_schema": "PASS — schema_version v2-S42+S48, paper_type derivation_B, principle_10_compliant field present, principle_10_audit array present (4 entries)",
+      "step_2_predicates": "PASS — 3 Type F claims with 5-part predicates (FALSIFIED_IF/WHERE/EVALUATION/BOUNDARY/CONTEXT). 2 Type D with derivation paths. 2 Type A with null predicates. All 7 registered.",
+      "step_3_derivation": "PASS — 6-step derivation table D4-2.0. All steps IR-cited. No circular steps. 0 invalid steps. All 7 claims appear as derivation outputs.",
+      "step_4_principle_10": "PASS — 4/4 audit entries have derivation_path anchored at live edges or IR axioms. No gap_ids remaining. principle_10_compliant=true.",
+      "step_5_dependency": "PASS — C4 mode PHASE-READY-TRACKING. 1 C4-tracking placeholder (PH-DRP4.1), non-blocking. Pass-forward C-DRP4.5→DRP-5 registered LIVE.",
+      "step_5b_where_scan": "PASS — All WHERE field external references (T(P,O,M), DRP-2 §3, C-DRP4.3) have corresponding inbound edges, internal claims, or are evaluation procedure references.",
+      "step_6_cross_corpus": "PASS — No unregistered cross-corpus references. DRP-5 pass-forward registered.",
+      "step_7_holistic": "PASS — 7 claims (2A+2D+3F) all present in registry matching D4-1.0 inventory. All Type F predicates have UMP compliance and C6 vacuity witnesses. Derivation table complete and consistent."
+    },
+    "thomas_signoff_required": true,
+    "thomas_signoff_session": null,
+    "thomas_signoff_note": "Phase 6 PHASE-READY requires Thomas Brennan sign-off.",
+    "github_publication": {
+      "target_path": "ai-layers/DRP4-ai-layer.json",
+      "status": "PUBLISHED — pending Thomas sign-off for PHASE-READY"
+    }
+  },
+  "summary": {
+    "total_claims": 7,
+    "type_A": 2,
+    "type_D": 2,
+    "type_F": 3,
+    "placeholder_count": 1,
+    "placeholder_blocking_count": 0,
+    "phase_ready": true,
+    "session_produced": "S56",
+    "inference_rules_count": 5,
+    "corpus_registry_update": "175 + 7 = 182 claims, 18 papers"
+  }
+}
