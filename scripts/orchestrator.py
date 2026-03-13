@@ -133,16 +133,47 @@ def save_orchestrator_state(state: dict) -> None:
 
 
 def launch_claude(prompt: str) -> subprocess.Popen:
-    """Launch a Claude Code instance with the given prompt."""
+    """Launch a Claude Code instance with the given prompt.
+
+    Authentication handling:
+    - Local installs: claude CLI uses ~/.claude credentials directly
+    - Remote/cloud: auth is via session-bound file descriptors that cannot
+      be inherited by child processes. In this case, set ANTHROPIC_API_KEY
+      in the environment, or run the orchestrator from a local terminal.
+    - API key auth: set ANTHROPIC_API_KEY env var before launching
+
+    Clears CLAUDECODE env var to allow launching from within an existing
+    Claude Code session (the orchestrator may be started from inside one).
+    """
     cmd = [
         "claude",
-        "--print",
+        "-p",
+        "--verbose",
         prompt
     ]
-    log(f"Launching: claude --print '<prompt>' (PID pending)")
+
+    # Build clean environment for child process
+    env = os.environ.copy()
+    # Remove nesting guard
+    env.pop("CLAUDECODE", None)
+
+    # Check if we have a usable auth mechanism
+    has_api_key = bool(env.get("ANTHROPIC_API_KEY"))
+    is_remote = env.get("CLAUDE_CODE_REMOTE") == "true"
+
+    if is_remote and not has_api_key:
+        log("WARNING: Running in remote/cloud environment without ANTHROPIC_API_KEY.")
+        log("Child Claude instances cannot inherit remote session auth.")
+        log("Set ANTHROPIC_API_KEY env var or run orchestrator from a local terminal.")
+
+    log(f"Launching claude -p (prompt length: {len(prompt)} chars, "
+        f"auth: {'api_key' if has_api_key else 'session'}, "
+        f"remote: {is_remote})")
+
     proc = subprocess.Popen(
         cmd,
         cwd=str(ROOT),
+        env=env,
         stdout=subprocess.PIPE,
         stderr=subprocess.STDOUT,
         text=True
@@ -156,6 +187,29 @@ def is_process_alive(proc: subprocess.Popen) -> bool:
 
 
 def cmd_start(args):
+    # Pre-flight check: verify claude CLI can authenticate
+    is_remote = os.environ.get("CLAUDE_CODE_REMOTE") == "true"
+    has_api_key = bool(os.environ.get("ANTHROPIC_API_KEY"))
+    if is_remote and not has_api_key:
+        log("=" * 60)
+        log("FATAL: Cannot launch child Claude instances in remote/cloud environment")
+        log("without ANTHROPIC_API_KEY. Remote session auth uses file descriptors")
+        log("that cannot be inherited by child processes.")
+        log("")
+        log("To fix, choose one of:")
+        log("  1. Set ANTHROPIC_API_KEY before launching:")
+        log("     export ANTHROPIC_API_KEY=sk-ant-...")
+        log("     python scripts/orchestrator.py start ...")
+        log("")
+        log("  2. Run the orchestrator from a LOCAL terminal (not remote):")
+        log("     ssh into the machine or run locally where 'claude' is installed")
+        log("")
+        log("  3. Use the orchestrator within the current Claude Code session")
+        log("     by using the Agent tool (subagents) instead of spawning")
+        log("     independent CLI instances.")
+        log("=" * 60)
+        sys.exit(1)
+
     log("=" * 60)
     log("Fracttalix Team Orchestrator starting")
     log(f"Session: {args.session}")
@@ -193,9 +247,25 @@ def cmd_start(args):
     signal.signal(signal.SIGINT, shutdown)
     signal.signal(signal.SIGTERM, shutdown)
 
+    # Initialize fresh checkpoint state for this session
+    # This clears any stale state from prior sessions
+    log("Initializing fresh checkpoint state...")
+    init_cmd = [
+        sys.executable, str(ROOT / "scripts" / "checkpoint.py"),
+        "init",
+        "--session", args.session,
+        "--role", "coordinator",
+        "--objective", args.objective,
+        "--team-size", str(args.team_size),
+        "--force"
+    ]
+    subprocess.run(init_cmd, cwd=str(ROOT), check=True)
+    log("Checkpoint initialized.")
+
     while generation < args.max_generations:
         generation += 1
         orch_state["current_generation"] = generation
+        orch_state["status"] = "running"
         save_orchestrator_state(orch_state)
 
         if generation == 1:
@@ -217,6 +287,7 @@ def cmd_start(args):
             log(f"Generation {generation}: Launching recovery coordinator")
 
         current_proc = launch_claude(prompt)
+        launch_time = time.time()
 
         # Monitor loop: watch for process death OR stale checkpoint
         while True:
@@ -225,18 +296,29 @@ def cmd_start(args):
             # Case 1: Process exited cleanly
             if not is_process_alive(current_proc):
                 exit_code = current_proc.returncode
+                # Capture output for logging
+                stdout_data = current_proc.stdout.read() if current_proc.stdout else ""
+                if stdout_data:
+                    # Log last 500 chars of output for debugging
+                    tail = stdout_data[-500:] if len(stdout_data) > 500 else stdout_data
+                    log(f"Claude output (tail): {tail}")
                 log(f"Claude instance exited (code: {exit_code})")
 
-                # Check if work is complete
+                # Check if work is complete — must be OUR session
                 if STATE_FILE.exists():
                     with open(STATE_FILE) as f:
                         state = json.load(f)
+                    state_session = state.get("_meta", {}).get("created_session", "")
                     tasks = state.get("task_graph", [])
-                    all_done = all(t["status"] == "completed" for t in tasks) if tasks else False
-                    has_handoff = "handoff" in state
+                    all_done = (
+                        tasks
+                        and all(t["status"] == "completed" for t in tasks)
+                        and state_session == args.session
+                    )
+                    has_handoff = "handoff" in state and state_session == args.session
 
                     if all_done or has_handoff:
-                        log("All tasks completed or handoff prepared. Orchestrator done.")
+                        log(f"All tasks completed for session {args.session}. Orchestrator done.")
                         orch_state["status"] = "completed"
                         save_orchestrator_state(orch_state)
                         return
@@ -246,18 +328,20 @@ def cmd_start(args):
 
             # Case 2: Process alive but checkpoint stale
             age = get_state_age()
-            if age > args.stale_seconds and generation > 0:
-                # Only kill on staleness if we actually have a state file
-                # (generation 1 might not have created it yet)
-                if STATE_FILE.exists() or age > args.stale_seconds * 3:
-                    log(f"Checkpoint stale ({age:.0f}s > {args.stale_seconds}s threshold)")
-                    log("Coordinator presumed unresponsive. Terminating...")
-                    current_proc.terminate()
-                    try:
-                        current_proc.wait(timeout=10)
-                    except subprocess.TimeoutExpired:
-                        current_proc.kill()
-                    break  # Launch next generation
+            elapsed = time.time() - launch_time
+            # Give Gen 1 extra time to initialize (600s grace period)
+            grace = 600 if generation == 1 else 0
+            effective_threshold = args.stale_seconds + grace
+
+            if elapsed > effective_threshold and age > effective_threshold:
+                log(f"Checkpoint stale ({age:.0f}s > {effective_threshold}s threshold)")
+                log("Coordinator presumed unresponsive. Terminating...")
+                current_proc.terminate()
+                try:
+                    current_proc.wait(timeout=10)
+                except subprocess.TimeoutExpired:
+                    current_proc.kill()
+                break  # Launch next generation
 
     log(f"Max generations ({args.max_generations}) reached. Manual intervention required.")
     orch_state["status"] = "exhausted"

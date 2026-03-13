@@ -71,6 +71,7 @@ start_team() {
     echo ""
 
     # Create tmux session in detached mode
+    # Note: orchestrator.py handles CLAUDECODE env var cleanup internally
     tmux new-session -d -s "$TMUX_SESSION" -c "$REPO_ROOT" \
         "python '$ORCHESTRATOR' start \
             --session '$SESSION' \
