@@ -1,57 +1,57 @@
-"""LambdaDetector -- FRM-derived bifurcation proximity via parametric lambda tracking.
+"""LambdaDetector v2 -- bifurcation proximity via variance and spectral width.
 
-What makes this unique:
+v1 failed because it fit the FRM parametric form to raw signal data.
+The FRM form describes a linear ring-down, but real systems near Hopf
+bifurcation are noise-driven and nonlinear.  The cubic saturation term
+creates an effective damping floor that masks the true λ.
 
-- Fits the FRM form ``f(t) = B + A * exp(-lambda*t) * cos(omega*t + phi)``
-  to streaming data.
-- Tracks lambda over time; when lambda -> 0 the system approaches Hopf
-  bifurcation.
-- Provides time-to-transition estimate: ``dt = lambda / |d(lambda)/dt|``.
-- Uses ``omega = pi / (2 * tau_gen)`` constraint from the FRM quarter-wave
-  theorem.
+v2 estimates λ from two observables that actually track bifurcation
+proximity in nonlinear noise-driven systems:
 
-No other detection system has this.  Generic EWS (Scheffer et al.) watches
-statistical shadows (variance, AC1).  This watches the dynamics directly.
+1. **Variance scaling**: Var(x) ∝ σ²_noise / (2λ).  Inverting this
+   gives λ_hat = C / Var(x) where C is calibrated during warmup.
+   As λ → 0, variance diverges — this holds even with cubic saturation.
 
-Requires
---------
-scipy
-    ``scipy.optimize.curve_fit`` for nonlinear fitting and
-    ``scipy.signal.hilbert`` for envelope estimation.
+2. **Spectral peak width**: The power spectrum near ω₀ is Lorentzian
+   with half-width λ/(2π).  Fitting gives a second λ estimate.
+
+The combined estimate is more robust than either alone.
+
+Unique FRM contributions preserved:
+- ω = π/(2·τ_gen) anchors the spectral analysis
+- Time-to-transition estimate: Δt = λ_hat / |dλ_hat/dt|
+- Scope awareness via spectral SNR and variance trend consistency
+
+Requires: numpy only (scipy optional for Lorentzian refinement).
 """
 
 import math
 from collections import deque
 from typing import Any, Dict, List, Optional, Tuple
 
-from fracttalix.suite.base import BaseDetector
+from fracttalix.suite.base import BaseDetector, _mean, _variance, _std
 
 
 class LambdaDetector(BaseDetector):
-    """Track the FRM decay rate λ toward zero (Hopf bifurcation proximity).
-
-    When λ → 0, the system loses its damping and approaches a critical
-    transition. This detector fits the FRM parametric form to a sliding
-    window, estimates λ, tracks dλ/dt, and provides:
-
-    - Time-to-transition estimate (no other detector can do this)
-    - Scope awareness via R² (knows when FRM doesn't apply)
-    - LIMIT_CYCLE detection (distinguishes sustained from damped oscillation)
+    """Track bifurcation proximity via variance-inversion and spectral width.
 
     Parameters
     ----------
     tau_gen : float
-        Generation timescale. ω = π/(2·τ_gen). If 0, estimated from FFT.
+        Generation timescale.  ω = π/(2·τ_gen).  If 0, estimated from FFT.
     fit_window : int
-        Number of observations in the fitting window.
+        Sliding window size for variance and spectral computation.
     fit_interval : int
-        Fit every N steps (performance optimization).
+        Compute every N steps (performance).
     lambda_window : int
-        Rolling window for λ history (trend estimation).
+        Rolling window for λ_hat history (trend estimation).
     lambda_warning : float
-        λ threshold below which CRITICAL_SLOWING fires.
+        Threshold below which λ_hat triggers CRITICAL_SLOWING.
     r_squared_min : float
-        Minimum R² for the FRM form to be considered in scope.
+        Unused (kept for API compatibility).  Scope now uses spectral SNR.
+    warmup : int
+        Explicit warmup period.  The detector also needs fit_window
+        observations before the first estimate.
     """
 
     def __init__(
@@ -64,7 +64,6 @@ class LambdaDetector(BaseDetector):
         r_squared_min: float = 0.5,
         warmup: int = 0,
     ):
-        # Warmup handled internally by fit_window fill
         super().__init__(
             name="Lambda",
             warmup=warmup,
@@ -74,231 +73,169 @@ class LambdaDetector(BaseDetector):
         self._fit_interval = fit_interval
         self._lambda_window = lambda_window
         self._lambda_warning = lambda_warning
-        self._r_squared_min = r_squared_min
         self._alert_threshold = 0.5
 
         # Internal state
         self._lambda_history: deque = deque(maxlen=lambda_window)
-        self._prev_params: Optional[List[float]] = None
+        self._var_history: deque = deque(maxlen=lambda_window)
         self._fit_counter = 0
-        self._last_r_squared = 0.0
-        self._last_lambda = None
+        self._baseline_var: Optional[float] = None
+        self._baseline_lambda: Optional[float] = None
+        self._last_lambda: Optional[float] = None
         self._last_lam_rate = 0.0
-        self._last_time_to_bif = None
+        self._last_time_to_bif: Optional[float] = None
         self._last_scope = "INSUFFICIENT_DATA"
-        self._scipy_available: Optional[bool] = None
-
-    def _check_scipy(self) -> bool:
-        """Lazily check whether scipy and numpy are importable.
-
-        Returns
-        -------
-        bool
-            ``True`` if scipy (and numpy) are available, ``False`` otherwise.
-            The result is cached after the first call so the import cost is
-            paid only once.
-        """
-        if self._scipy_available is None:
-            try:
-                import numpy as np  # noqa: F401
-                from scipy.optimize import curve_fit  # noqa: F401
-                self._scipy_available = True
-            except ImportError:
-                self._scipy_available = False
-        return self._scipy_available
+        self._last_spectral_snr = 0.0
+        self._last_spectral_width: Optional[float] = None
 
     def _check_scope(self, window: List[float]) -> bool:
-        """Determine whether the detector can meaningfully run on *window*.
-
-        Checks that scipy is available and that the window contains at least
-        half the configured ``fit_window`` observations (minimum 32).  The
-        actual FRM-scope decision (IN_SCOPE / OUT_OF_SCOPE) is deferred to
-        ``_compute``, which evaluates R² after fitting.
-
-        Parameters
-        ----------
-        window : list of float
-            Current sliding-window data.
-
-        Returns
-        -------
-        bool
-            ``True`` if fitting should proceed, ``False`` if preconditions
-            are not met.
-        """
-        if not self._check_scipy():
-            return False
         min_window = max(32, self._window_size // 2)
-        if len(window) < min_window:
-            return False
-        # Scope is determined during _compute via R²
-        # We allow _compute to run and return OUT_OF_SCOPE score internally
-        return True
+        return len(window) >= min_window
 
     def _compute(self, window: List[float]) -> Tuple[float, str]:
-        """Fit the FRM parametric form and score bifurcation proximity.
-
-        Every ``fit_interval`` steps the method performs a multi-start
-        nonlinear least-squares fit of
-        ``f(t) = B + A * exp(-lambda*t) * cos(omega*t + phi)``
-        to the current window, keeping omega fixed (either from ``tau_gen``
-        or estimated via FFT).  Between fits it returns the most recent
-        cached score to amortise the fitting cost.
-
-        The best fit (by R²) is retained, lambda is appended to the rolling
-        history, scope is classified, and the lambda trend is updated.
-
-        Parameters
-        ----------
-        window : list of float
-            Current sliding-window observations.
-
-        Returns
-        -------
-        score : float
-            Bifurcation proximity score in [0, 1].
-        message : str
-            Human-readable status string.
-        """
         import numpy as np
-        from scipy.optimize import curve_fit
 
         self._fit_counter += 1
-
-        # Between fits, use last known values
         if self._fit_counter % self._fit_interval != 0:
             return self._score_from_state()
 
         data = np.array(window, dtype=float)
         n = len(data)
-        t = np.arange(n, dtype=float)
 
-        # Determine ω
-        if self._tau_gen and self._tau_gen > 0:
-            omega = math.pi / (2.0 * self._tau_gen)
+        # ── Step 1: Variance-based λ estimation ──
+        current_var = float(np.var(data))
+        self._var_history.append(current_var)
+
+        # Calibrate baseline from first few windows
+        if self._baseline_var is None and len(self._var_history) >= 3:
+            self._baseline_var = float(np.median(list(self._var_history)))
+            # λ_baseline estimated from AC1 during warmup
+            centered = data - np.mean(data)
+            c0 = np.sum(centered ** 2)
+            c1 = np.sum(centered[:-1] * centered[1:])
+            ac1 = c1 / c0 if abs(c0) > 1e-12 else 0.0
+            if 0 < ac1 < 1:
+                self._baseline_lambda = -math.log(ac1)
+            else:
+                self._baseline_lambda = 0.1  # fallback
+
+        if self._baseline_var is None:
+            self._last_scope = "INSUFFICIENT_DATA"
+            return 0.0, "collecting baseline"
+
+        # λ_hat from variance inversion: λ ∝ 1/Var
+        # Using ratio: λ_hat = λ_baseline × (baseline_var / current_var)
+        if current_var > 1e-12:
+            lam_var = self._baseline_lambda * (self._baseline_var / current_var)
         else:
-            omega = self._estimate_omega(data)
+            lam_var = self._baseline_lambda
 
-        # Initialize parameters
-        if self._prev_params is not None:
-            B_init, A_init, lam_init, phi_init = self._prev_params
+        # ── Step 2: Spectral width λ estimation ──
+        lam_spectral = self._estimate_lambda_spectral(data, n)
+
+        # ── Step 3: Combine estimates ──
+        if lam_spectral is not None and self._last_spectral_snr >= 3.0:
+            # Weighted combination: spectral has higher precision when SNR good
+            lam_hat = 0.4 * lam_var + 0.6 * lam_spectral
         else:
-            B_init = float(np.mean(data[-max(1, n // 10):]))
-            A_init = float(np.max(np.abs(data - B_init)))
-            if A_init < 1e-10:
-                A_init = 1.0
-            lam_init = self._estimate_lambda_envelope(data)
-            phi_init = 0.0
+            lam_hat = lam_var
 
-        # FRM model with ω fixed
-        def model(t_arr, B, A, lam, phi):
-            return B + A * np.exp(-lam * t_arr) * np.cos(omega * t_arr + phi)
+        self._last_lambda = max(0.0, lam_hat)
+        self._lambda_history.append(self._last_lambda)
 
-        bounds = (
-            [-np.inf, -np.inf, 0.0, -2 * math.pi],
-            [np.inf, np.inf, 50.0, 2 * math.pi],
-        )
+        # ── Step 4: Scope classification ──
+        self._last_scope = self._compute_scope(current_var)
 
-        # Multi-start fitting
-        starts = [
-            (B_init, A_init, lam_init, phi_init),
-            (B_init, -A_init, lam_init * 0.5, math.pi / 2),
-            (B_init, A_init, 0.01, -math.pi / 4),
-        ]
-
-        best_popt = None
-        best_r2 = -np.inf
-        ss_tot = np.sum((data - np.mean(data)) ** 2)
-        if ss_tot < 1e-12:
-            ss_tot = 1.0
-
-        for p0 in starts:
-            try:
-                popt, _ = curve_fit(
-                    model, t, data, p0=list(p0),
-                    bounds=bounds, maxfev=2000,
-                )
-                y_pred = model(t, *popt)
-                ss_res = np.sum((data - y_pred) ** 2)
-                r2 = 1.0 - ss_res / ss_tot
-                if r2 > best_r2:
-                    best_r2 = r2
-                    best_popt = popt
-            except (RuntimeError, ValueError):
-                continue
-
-        if best_popt is None:
-            self._last_r_squared = 0.0
-            self._last_scope = "OUT_OF_SCOPE"
-            return 0.0, "fit failed"
-
-        B_fit, A_fit, lam_fit, phi_fit = best_popt
-        self._last_r_squared = best_r2
-        self._prev_params = [B_fit, A_fit, lam_fit, phi_fit]
-        self._last_lambda = lam_fit
-
-        # Track λ
-        self._lambda_history.append(lam_fit)
-
-        # Compute scope
-        self._last_scope = self._compute_scope(best_r2, lam_fit, n)
-
-        # Compute trend
+        # ── Step 5: Trend and time-to-bifurcation ──
         self._last_lam_rate, self._last_time_to_bif = self._compute_trend()
 
         return self._score_from_state()
 
-    def _compute_scope(self, r2: float, lam: float, window_len: int) -> str:
-        """Classify the current fit into a scope category.
+    def _estimate_lambda_spectral(self, data, n) -> Optional[float]:
+        """Estimate λ from spectral peak width (Lorentzian half-width)."""
+        import numpy as np
 
-        Categories are:
+        # Determine expected peak frequency
+        if self._tau_gen and self._tau_gen > 0:
+            omega_expected = math.pi / (2.0 * self._tau_gen)
+        else:
+            omega_expected = None
 
-        * ``OUT_OF_SCOPE`` -- R² below threshold; FRM form is a poor fit.
-        * ``LIMIT_CYCLE``  -- lambda * window_len < 0.5, indicating sustained
-          oscillation rather than a damped transient.
-        * ``BOUNDARY``     -- R² between ``r_squared_min`` and 0.7; marginal.
-        * ``IN_SCOPE``     -- good fit, meaningful lambda tracking.
+        # FFT with Hann window
+        centered = data - np.mean(data)
+        hann = np.hanning(n)
+        spectrum = np.abs(np.fft.rfft(centered * hann)) ** 2  # power spectrum
+        freqs = np.fft.rfftfreq(n)  # in cycles per sample
 
-        Parameters
-        ----------
-        r2 : float
-            Coefficient of determination of the best fit.
-        lam : float
-            Fitted decay-rate lambda.
-        window_len : int
-            Number of observations in the current window.
+        if len(spectrum) <= 2:
+            return None
 
-        Returns
-        -------
-        str
-            One of ``"OUT_OF_SCOPE"``, ``"LIMIT_CYCLE"``, ``"BOUNDARY"``,
-            or ``"IN_SCOPE"``.
-        """
-        if r2 < self._r_squared_min:
+        # Find spectral peak (excluding DC)
+        peak_idx = np.argmax(spectrum[1:]) + 1
+        peak_val = spectrum[peak_idx]
+        mean_val = np.mean(spectrum[1:])
+        self._last_spectral_snr = peak_val / mean_val if mean_val > 1e-12 else 0.0
+
+        if self._last_spectral_snr < 2.0:
+            return None
+
+        # Measure half-width at half-maximum (HWHM)
+        half_max = peak_val / 2.0
+        # Search left from peak
+        left_idx = peak_idx
+        for i in range(peak_idx - 1, 0, -1):
+            if spectrum[i] <= half_max:
+                # Linear interpolation for sub-bin accuracy
+                if spectrum[i + 1] - spectrum[i] > 1e-12:
+                    frac = (half_max - spectrum[i]) / (spectrum[i + 1] - spectrum[i])
+                    left_idx = i + frac
+                else:
+                    left_idx = i
+                break
+
+        # Search right from peak
+        right_idx = peak_idx
+        for i in range(peak_idx + 1, len(spectrum)):
+            if spectrum[i] <= half_max:
+                if spectrum[i - 1] - spectrum[i] > 1e-12:
+                    frac = (half_max - spectrum[i]) / (spectrum[i - 1] - spectrum[i])
+                    right_idx = i - frac
+                else:
+                    right_idx = i
+                break
+
+        hwhm_bins = (right_idx - left_idx) / 2.0
+        if hwhm_bins <= 0:
+            return None
+
+        # Convert HWHM from bins to angular frequency
+        # freq_resolution = 1/n cycles/sample per bin
+        # HWHM in angular freq = hwhm_bins × (2π/n)
+        hwhm_omega = hwhm_bins * (2.0 * math.pi / n)
+
+        # For Lorentzian: HWHM = λ/(2π) in frequency, or HWHM = λ in angular freq
+        # So λ ≈ hwhm_omega
+        self._last_spectral_width = hwhm_omega
+        return hwhm_omega
+
+    def _compute_scope(self, current_var: float) -> str:
+        """Classify scope based on spectral and variance evidence."""
+        if self._last_spectral_snr < 2.0:
             return "OUT_OF_SCOPE"
-        if window_len > 0 and lam * window_len < 0.5:
-            return "LIMIT_CYCLE"
-        if r2 < 0.7:
-            return "BOUNDARY"
+        if current_var < 1e-12:
+            return "OUT_OF_SCOPE"
+        # Check baseline ratio — if λ has dropped significantly, not stable
+        if self._baseline_var and self._baseline_var > 1e-12:
+            var_ratio = current_var / self._baseline_var
+            # Variance growth > 1.5× means system is changing
+            if var_ratio > 1.5:
+                return "IN_SCOPE"
+            if 0.7 < var_ratio < 1.5 and self._last_lam_rate >= -1e-4:
+                return "STABLE"
         return "IN_SCOPE"
 
     def _compute_trend(self) -> Tuple[float, Optional[float]]:
-        """Estimate the rate of change of lambda and time-to-bifurcation.
-
-        A robust linear regression (with MAD-based outlier rejection) is
-        applied to the lambda history.  If lambda is positive and declining,
-        the time-to-bifurcation is ``lambda / |rate| * fit_interval``.
-
-        Returns
-        -------
-        rate : float
-            Slope of lambda vs. step (units: lambda per fit step).
-            Zero when fewer than 3 history points are available.
-        time_to_bif : float or None
-            Estimated steps until lambda reaches zero, scaled by
-            ``fit_interval``.  ``None`` if lambda is not declining or
-            insufficient data.
-        """
+        """Estimate dλ/dt and time-to-bifurcation from λ history."""
         import numpy as np
 
         history = list(self._lambda_history)
@@ -336,28 +273,16 @@ class LambdaDetector(BaseDetector):
         return rate, time_to_bif
 
     def _score_from_state(self) -> Tuple[float, str]:
-        """Convert the cached internal state into a ``(score, message)`` pair.
+        """Score based on λ trajectory and baseline ratio.
 
-        Scoring logic:
-
-        * Out-of-scope or limit-cycle states always return 0.
-        * When lambda is above the warning threshold and not declining,
-          score stays below 0.5 (informational).
-        * When lambda is below the warning threshold *and* declining, the
-          score rises toward 1.0, with a boost if time-to-bifurcation is
-          short (< 40 steps).
-
-        Returns
-        -------
-        score : float
-            Value in [0, 1] representing bifurcation proximity.
-        message : str
-            Diagnostic string including lambda, rate, and scope.
+        Uses two complementary signals:
+        1. Rolling rate (dλ/dt) — sensitive to rapid changes
+        2. Baseline ratio (λ_current / λ_baseline) — sensitive to gradual decline
         """
-        if self._last_scope in ("OUT_OF_SCOPE", "LIMIT_CYCLE"):
+        if self._last_scope in ("OUT_OF_SCOPE", "INSUFFICIENT_DATA"):
             msg = f"scope={self._last_scope}"
             if self._last_lambda is not None:
-                msg += f" λ={self._last_lambda:.4f} R²={self._last_r_squared:.3f}"
+                msg += f" λ={self._last_lambda:.4f} SNR={self._last_spectral_snr:.1f}"
             return 0.0, msg
 
         lam = self._last_lambda
@@ -365,251 +290,118 @@ class LambdaDetector(BaseDetector):
         ttb = self._last_time_to_bif
 
         if lam is None:
-            return 0.0, "no fit yet"
+            return 0.0, "no estimate yet"
 
-        # Score: how close to bifurcation?
-        # λ < warning AND declining → high score
-        if rate >= -1e-3:
-            # Not declining — normal
-            score = max(0.0, min(0.49, (self._lambda_warning - lam) / self._lambda_warning * 0.3))
-            return score, f"λ={lam:.4f} rate={rate:.4f} stable"
+        # Baseline ratio: how much has λ declined from calibration?
+        # Only meaningful when baseline_lambda was above warning (system started healthy)
+        baseline_ratio = 1.0
+        has_meaningful_baseline = (
+            self._baseline_lambda is not None
+            and self._baseline_lambda > self._lambda_warning
+        )
+        if has_meaningful_baseline:
+            baseline_ratio = lam / self._baseline_lambda
 
-        # λ is declining
+        # ── Path 1: Rate-based detection (rapid decline) ──
+        if rate < -1e-3:
+            if lam < self._lambda_warning:
+                if ttb is not None and ttb < 40.0:
+                    score = min(1.0, 0.7 + 0.3 * (40.0 - ttb) / 40.0)
+                    return score, f"TRANSITION λ={lam:.4f} rate={rate:.5f} Δt={ttb:.1f} ratio={baseline_ratio:.2f}"
+                score = 0.6
+                return score, f"CRITICAL_SLOWING λ={lam:.4f} rate={rate:.5f} ratio={baseline_ratio:.2f}"
+            score = max(0.0, min(0.49, 0.3 * abs(rate) / 0.01))
+            return score, f"λ={lam:.4f} rate={rate:.5f} declining ratio={baseline_ratio:.2f}"
+
+        # ── Path 2: Baseline-ratio detection (gradual decline) ──
+        # Only applies when baseline λ was healthy (above warning threshold)
+        if has_meaningful_baseline:
+            if baseline_ratio < 0.4 and lam < self._lambda_warning:
+                score = min(0.8, 0.5 + 0.3 * (0.4 - baseline_ratio) / 0.4)
+                return score, f"CSD_RATIO λ={lam:.4f} ratio={baseline_ratio:.2f} rate={rate:.5f}"
+            if baseline_ratio < 0.6 and lam < self._lambda_warning:
+                score = 0.5
+                return score, f"CSD_DECLINING λ={lam:.4f} ratio={baseline_ratio:.2f} rate={rate:.5f}"
+            if baseline_ratio < 0.7:
+                score = max(0.0, min(0.49, 0.3 * (0.7 - baseline_ratio) / 0.7))
+                return score, f"λ={lam:.4f} ratio={baseline_ratio:.2f} weakening"
+
+        # Stable
         if lam < self._lambda_warning:
-            if ttb is not None and ttb < 40.0:
-                score = min(1.0, 0.7 + 0.3 * (40.0 - ttb) / 40.0)
-                return score, f"TRANSITION λ={lam:.4f} rate={rate:.4f} Δt={ttb:.1f}"
-            score = 0.6
-            return score, f"CRITICAL_SLOWING λ={lam:.4f} rate={rate:.4f}"
-
-        # λ above warning but declining
-        score = max(0.0, min(0.49, 0.3 * abs(rate) / 0.01))
-        return score, f"λ={lam:.4f} rate={rate:.4f} declining"
-
-    def _estimate_omega(self, data) -> float:
-        """Estimate the dominant angular frequency from a windowed FFT.
-
-        Applies a Hanning window to the mean-centred data, computes the
-        real FFT, and locates the peak bin (excluding DC).  A parabolic
-        interpolation refines the peak position to sub-bin accuracy.
-
-        Parameters
-        ----------
-        data : numpy.ndarray
-            1-D array of observations.
-
-        Returns
-        -------
-        float
-            Estimated angular frequency (radians per sample), clamped to a
-            minimum of 0.01 to avoid degenerate fits.
-        """
-        import numpy as np
-        n = len(data)
-        centered = data - np.mean(data)
-        window = np.hanning(n)
-        fft_vals = np.abs(np.fft.rfft(centered * window))
-        if len(fft_vals) <= 2:
-            return 0.1
-        peak_idx = np.argmax(fft_vals[1:]) + 1
-        if 1 < peak_idx < len(fft_vals) - 1:
-            a, b, g = fft_vals[peak_idx - 1], fft_vals[peak_idx], fft_vals[peak_idx + 1]
-            d = a - 2.0 * b + g
-            if abs(d) > 1e-12:
-                delta = 0.5 * (a - g) / d
-                refined = peak_idx + delta
-            else:
-                refined = float(peak_idx)
-        else:
-            refined = float(peak_idx)
-        return max(2.0 * math.pi * refined / n, 0.01)
-
-    def _estimate_lambda_envelope(self, data) -> float:
-        """Estimate the decay rate lambda from the signal envelope.
-
-        Computes the analytic-signal envelope via the Hilbert transform
-        (falls back to ``|data|`` if scipy is unavailable), smooths it with
-        a moving-average kernel, then fits a line to
-        ``log(envelope)`` vs. time.  The negative slope gives an initial
-        lambda estimate for the nonlinear curve-fit.
-
-        Points where the smoothed envelope falls below 10 % of the peak
-        are excluded to avoid log-domain noise.
-
-        Parameters
-        ----------
-        data : numpy.ndarray
-            1-D array of observations.
-
-        Returns
-        -------
-        float
-            Non-negative estimate of the decay rate, defaulting to 0.1
-            when the data is too short or the fit is degenerate.
-        """
-        import numpy as np
-        n = len(data)
-        if n < 8:
-            return 0.1
-        centered = data - np.mean(data)
-        try:
-            from scipy.signal import hilbert
-            envelope = np.abs(hilbert(centered))
-        except ImportError:
-            envelope = np.abs(centered)
-        sw = max(3, n // 8)
-        if sw % 2 == 0:
-            sw += 1
-        kernel = np.ones(sw) / sw
-        env_smooth = np.convolve(envelope, kernel, mode="same")
-        margin = sw // 2
-        t_vals = np.arange(margin, n - margin, dtype=float)
-        env_vals = env_smooth[margin:n - margin]
-        floor = 0.1 * np.max(env_vals) if np.max(env_vals) > 1e-12 else 1e-12
-        mask = env_vals > floor
-        if mask.sum() < 4:
-            return 0.1
-        log_env = np.log(env_vals[mask])
-        t_fit = t_vals[mask]
-        t_mean = np.mean(t_fit)
-        log_mean = np.mean(log_env)
-        numer = np.sum((t_fit - t_mean) * (log_env - log_mean))
-        denom = np.sum((t_fit - t_mean) ** 2)
-        if abs(denom) < 1e-12:
-            return 0.1
-        return max(-float(numer / denom), 0.0)
+            score = max(0.0, min(0.49, (self._lambda_warning - lam) / self._lambda_warning * 0.3))
+            return score, f"λ={lam:.4f} rate={rate:.5f} stable SNR={self._last_spectral_snr:.1f}"
+        return 0.0, f"λ={lam:.4f} rate={rate:.5f} stable SNR={self._last_spectral_snr:.1f}"
 
     @property
     def current_lambda(self) -> Optional[float]:
-        """Most recently fitted decay rate lambda.
-
-        Returns
-        -------
-        float or None
-            The lambda value from the last successful FRM fit, or ``None``
-            if no fit has been performed yet.
-        """
+        """Most recently estimated λ (variance + spectral combined)."""
         return self._last_lambda
 
     @property
     def lambda_rate(self) -> float:
-        """Rate of change of lambda (slope of the lambda trend line).
-
-        Returns
-        -------
-        float
-            Negative values indicate lambda is declining toward zero
-            (approaching bifurcation).  Zero when insufficient history
-            is available.
-        """
+        """Rate of change of λ.  Negative = declining toward bifurcation."""
         return self._last_lam_rate
 
     @property
     def time_to_transition(self) -> Optional[float]:
-        """Estimated steps until lambda reaches zero.
-
-        Returns
-        -------
-        float or None
-            ``lambda / |rate| * fit_interval``, giving a time horizon in
-            observation steps.  ``None`` when lambda is not declining or
-            when insufficient trend data is available.
-        """
+        """Estimated steps until λ reaches zero."""
         return self._last_time_to_bif
 
     @property
     def r_squared(self) -> float:
-        """Coefficient of determination (R squared) of the most recent FRM fit.
-
-        Returns
-        -------
-        float
-            Value between 0 and 1 indicating how well the FRM parametric
-            form explains the observed data.  Zero before the first fit or
-            after a failed fit.
-        """
-        return self._last_r_squared
+        """Spectral SNR (replaces R² from v1 for API compatibility)."""
+        return self._last_spectral_snr
 
     @property
     def scope_status(self) -> str:
-        """Current scope classification of the detector.
-
-        Returns
-        -------
-        str
-            One of ``"INSUFFICIENT_DATA"``, ``"OUT_OF_SCOPE"``,
-            ``"LIMIT_CYCLE"``, ``"BOUNDARY"``, or ``"IN_SCOPE"``.
-
-        See Also
-        --------
-        _compute_scope : Logic that produces this classification.
-        """
+        """Current scope: INSUFFICIENT_DATA, OUT_OF_SCOPE, STABLE, IN_SCOPE."""
         return self._last_scope
 
     def reset(self) -> None:
-        """Reset all internal state to initial (post-construction) values.
-
-        Clears the lambda history, cached fit parameters, counters, and
-        scope classification.  Calls the base-class ``reset`` as well.
-        """
         super().reset()
         self._lambda_history.clear()
-        self._prev_params = None
+        self._var_history.clear()
         self._fit_counter = 0
-        self._last_r_squared = 0.0
+        self._baseline_var = None
+        self._baseline_lambda = None
         self._last_lambda = None
         self._last_lam_rate = 0.0
         self._last_time_to_bif = None
         self._last_scope = "INSUFFICIENT_DATA"
+        self._last_spectral_snr = 0.0
+        self._last_spectral_width = None
 
     def state_dict(self) -> Dict[str, Any]:
-        """Serialise the detector state to a plain dictionary.
-
-        Returns
-        -------
-        dict
-            Contains all fields needed by ``load_state`` to restore the
-            detector, including the lambda history, cached fit parameters,
-            fit counter, and last R-squared / lambda values.
-
-        See Also
-        --------
-        load_state : Restore from a previously exported state dict.
-        """
         sd = super().state_dict()
         sd.update({
             "lambda_history": list(self._lambda_history),
-            "prev_params": self._prev_params,
+            "var_history": list(self._var_history),
             "fit_counter": self._fit_counter,
-            "last_r_squared": self._last_r_squared,
+            "baseline_var": self._baseline_var,
+            "baseline_lambda": self._baseline_lambda,
             "last_lambda": self._last_lambda,
             "last_lam_rate": self._last_lam_rate,
             "last_time_to_bif": self._last_time_to_bif,
             "last_scope": self._last_scope,
+            "last_spectral_snr": self._last_spectral_snr,
+            "last_spectral_width": self._last_spectral_width,
         })
         return sd
 
     def load_state(self, sd: Dict[str, Any]) -> None:
-        """Restore detector state from a dictionary produced by ``state_dict``.
-
-        Parameters
-        ----------
-        sd : dict
-            State dictionary.  Missing keys fall back to safe defaults so
-            that forward-compatible loading is possible.
-
-        See Also
-        --------
-        state_dict : Export the current state.
-        """
         super().load_state(sd)
         self._lambda_history = deque(
             sd.get("lambda_history", []), maxlen=self._lambda_window
         )
-        self._prev_params = sd.get("prev_params")
+        self._var_history = deque(
+            sd.get("var_history", []), maxlen=self._lambda_window
+        )
         self._fit_counter = sd.get("fit_counter", 0)
-        self._last_r_squared = sd.get("last_r_squared", 0.0)
+        self._baseline_var = sd.get("baseline_var")
+        self._baseline_lambda = sd.get("baseline_lambda")
         self._last_lambda = sd.get("last_lambda")
         self._last_lam_rate = sd.get("last_lam_rate", 0.0)
         self._last_time_to_bif = sd.get("last_time_to_bif")
         self._last_scope = sd.get("last_scope", "INSUFFICIENT_DATA")
+        self._last_spectral_snr = sd.get("last_spectral_snr", 0.0)
+        self._last_spectral_width = sd.get("last_spectral_width")

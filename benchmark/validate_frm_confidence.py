@@ -50,18 +50,22 @@ def generate_approaching_bifurcation(
     tau_gen=20.0,
     lam_start=0.15,
     lam_end=0.0,
-    noise_std=0.5,
+    noise_std=0.08,
     amplitude=3.0,
     baseline=10.0,
     seed=42,
 ):
     """Stochastic Hopf normal form approaching bifurcation.
 
+    Uses Euler-Maruyama with dt=0.1 sub-stepping for numerical stability.
+
     Returns (values, lam_true, transition_step) where transition_step
     is the first step where true λ < 0.05 (the Lambda warning threshold).
     """
     np.random.seed(seed)
     omega0 = math.pi / (2.0 * tau_gen)
+    dt = 0.1
+    sub_steps = 10
     x, y = 0.01, 0.01
     values = np.zeros(n_steps)
     lam_true = np.zeros(n_steps)
@@ -72,11 +76,12 @@ def generate_approaching_bifurcation(
         mu = -lam_t
         lam_true[t] = lam_t
 
-        r_sq = x * x + y * y
-        dx = (mu * x - omega0 * y - r_sq * x) + noise_std * np.random.normal()
-        dy = (omega0 * x + mu * y - r_sq * y) + noise_std * np.random.normal()
-        x = max(-10, min(10, x + dx))
-        y = max(-10, min(10, y + dy))
+        for _ in range(sub_steps):
+            r_sq = x * x + y * y
+            dx = (mu * x - omega0 * y - r_sq * x) * dt + noise_std * np.random.normal() * math.sqrt(dt)
+            dy = (omega0 * x + mu * y - r_sq * y) * dt + noise_std * np.random.normal() * math.sqrt(dt)
+            x += dx
+            y += dy
         values[t] = baseline + amplitude * x
 
     # Transition = first step where λ < warning threshold
@@ -381,8 +386,8 @@ def main():
 
     scenarios = [
         # (name, n_steps, tau_gen, lam_start, lam_end, noise_std, amplitude)
-        ("Stoch slow (τ=20, σ=0.3)", 600, 20.0, 0.15, 0.0, 0.3, 3.0),
-        ("Stoch fast (τ=10, σ=0.3)", 400, 10.0, 0.20, 0.0, 0.3, 3.0),
+        ("Stoch slow (τ=20, σ=0.08)", 800, 20.0, 0.15, 0.0, 0.08, 3.0),
+        ("Stoch fast (τ=10, σ=0.08)", 600, 10.0, 0.20, 0.0, 0.08, 3.0),
     ]
 
     print(f"\n{'─'*70}")
