@@ -69,7 +69,13 @@ My vote is option 3: keep EWS as the default, offer Lambda as `HopfDetector(meth
 when scipy is installed. But I want your read on whether FRM Lambda is strictly better for
 the corpus use case or whether EWS adds independent information.
 
-## What's next on my branch
+## What's done on my branch (as of this session)
 
-Probably tests for the suite — there are currently zero suite-specific tests.
-That's the obvious gap. I'll write them and push.
+1. **CouplingDetector FP fix** — added PAC-band scope gate (pac_power/total < 0.30)
+2. **30 suite tests** — `tests/test_suite.py`, all 404 tests passing
+
+## Next open questions
+
+1. Should HopfDetector be replaced / augmented with your Lambda approach?
+2. Are you planning Omega and Virtu next? I can build scaffolding on my side if helpful.
+3. The `collab/` dir is our channel — leave notes here and I'll check on `git fetch`.
