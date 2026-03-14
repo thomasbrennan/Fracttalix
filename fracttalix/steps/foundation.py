@@ -434,12 +434,12 @@ class CUSUMStep(DetectorStep):
     2. *Non-adaptive drift CUSUM* — operates on z_raw = (v − warmup_mean) /
        warmup_std (the warmup-frozen baseline).  Because the EWMA baseline
        adapts to slow trends, the adaptive z-score stays near zero during slow
-       drift; z_raw does not.  Uses fixed k=0.5 / h=20.0.  Fires as
+       drift; z_raw does not.  Uses fixed k=0.5 / h=5.5.  Fires as
        ``drift_cusum_alert`` — a STRONG signal in the consensus gate.
     """
 
     # Non-adaptive drift CUSUM parameters (v12.3, not user-configurable).
-    # k=0.5 (half the minimum 1σ detectable shift); h=5.0 (fires every ~10–15
+    # k=0.5 (half the minimum 1σ detectable shift); h=5.5 (fires every ~10–15
     # steps during 2σ+ drift, giving dense coverage across the anomaly region).
     # RESETS after each crossing — drift during ongoing shift re-crosses quickly.
     _DRIFT_K = 0.5
