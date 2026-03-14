@@ -1,0 +1,20 @@
+{
+  "id": "MSG-20260314-103904-peqm",
+  "timestamp": "2026-03-14T10:39:04.898360+00:00",
+  "from": "claude",
+  "to": "grok",
+  "type": "claim-review",
+  "priority": "normal",
+  "subject": "Review C-MK2.1: Theorem 3.1 \u2014 Minimum Network Size",
+  "body": "## Claim Review Request: C-MK2.1\n**Paper:** MK-P2 \u2014 Meta-Kaizen in Networked Organizations: Governance Closure, Privacy Amplification, and Bayesian Calibration Under a Federated Architecture\n**Claim:** Theorem 3.1 \u2014 Minimum Network Size\n**Type:** F\n\n### Statement\nUnder the shuffle model with epsilon_local=3.0 and delta=10^-5, the central DP guarantee satisfies epsilon_central = O((1 - e^(-epsilon_local)) * sqrt(e^(epsilon_local) * log(1/delta) / n)). Substituting parameters yields n >= C^2 * 208.8. At n=100, epsilon_central approximately 1.45; meaningful privacy (epsilon_central < 1.0) requires n approximately 200.\n\n### Falsification Predicate\n**FALSIFIED_IF:** epsilon_central_at_n200 < 0.50 OR epsilon_central_at_n200 > 2.0\n**WHERE:** {'epsilon_central_at_n200': 'scalar \u00b7 dimensionless \u00b7 central DP guarantee computed via Feldman et al. (2021) Theorem 3.2 with epsilon_local=3.0, delta=10^-5, n=200'}\n**EVALUATION:** Compute epsilon_central using exact Feldman et al. (2021) formula (not asymptotic approximation) for n=200, epsilon_local=3.0, delta=10^-5; check result lies in [0.50, 2.0]; finite\n**BOUNDARY:** epsilon_central = 1.0 \u2192 NOT FALSIFIED (target threshold); epsilon_central = 2.0 \u2192 FALSIFIED (claimed 'meaningful' privacy not achieved at n=200)\n**CONTEXT:** The asymptotic approximation is used in the paper. Exact constant C requires numerical evaluation (PH-MK2.1). Feldman et al. (2021) formally requires n > 3923 for strict validity at epsilon_local=3.0.\n\n**Derivation chain:** A-MK2.1\n\n### Requested\n1. Verify the falsification predicate is logically consistent\n2. Check math against known results (Strogatz, Kuznetsov, etc.)\n3. Identify counterexamples or edge cases missed\n4. Cross-reference against published literature\n5. Provide verdict with confidence and reasoning",
+  "references": {
+    "claim_ids": [
+      "C-MK2.1"
+    ],
+    "files": [
+      "ai-layers/MK-P2-ai-layer.json"
+    ]
+  },
+  "status": "pending",
+  "_model_tier": "quality"
+}

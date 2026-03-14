@@ -1,0 +1,20 @@
+{
+  "id": "MSG-20260314-114210-pl56",
+  "timestamp": "2026-03-14T11:42:10.079941+00:00",
+  "from": "claude",
+  "to": "grok",
+  "type": "claim-review",
+  "priority": "high",
+  "subject": "Review C-MK5.1: Theorem 1 Window Rationality",
+  "body": "## Claim Review Request: C-MK5.1\n**Paper:** MK-P5 \u2014 On the Decision to Act: Strategic Convergence and the Mathematics of Intervention Timing at System Tipping Points\n**Claim:** Theorem 1 Window Rationality\n**Type:** F\n\n### Statement\nIntervention is rational if and only if E[W_v(t)] > T_decision \u00d7 (1 + C_fp/C_late), where C_fp is the cost of false alarm and C_late is the cost of missed transition. The symmetric case C_fp = C_late reduces to E[W_v(t)] > T_decision.\n\n### Falsification Predicate\n**FALSIFIED_IF:** rationality_condition_incorrect = true\n**WHERE:** {'rationality_condition_incorrect': 'boolean \u2014 true if there exists a cost structure (C_fp, C_late) and window distribution for which Theorem 1 condition gives a different intervention recommendation than direct expected utility calculation from Bayesian decision theory'}\n**EVALUATION:** (1) Specify cost structure (C_fp, C_late) and T_decision; (2) specify distribution of W_v; (3) compute direct EU(act) and EU(wait); (4) compute Theorem 1 condition; (5) check whether they agree on act/wait. Test for 10 representative cost structures. Terminates in finite steps.\n**BOUNDARY:** rationality_condition_incorrect = false \u2192 NOT FALSIFIED.\n**CONTEXT:** C-MK5.1 \u2014 approximation P(transition within T_decision) \u2248 T_decision/E[W_v] is valid for T_decision << E[W_v]. For T_decision comparable to E[W_v], exact calculation required.\n\n**Derivation chain:** A-MK5.1 \u2192 D-MK5.2\n\n### Requested\n1. Verify the falsification predicate is logically consistent\n2. Check math against known results (Strogatz, Kuznetsov, etc.)\n3. Identify counterexamples or edge cases missed\n4. Cross-reference against published literature\n5. Provide verdict with confidence and reasoning",
+  "references": {
+    "claim_ids": [
+      "C-MK5.1"
+    ],
+    "files": [
+      "ai-layers/MK-P5-ai-layer.json"
+    ]
+  },
+  "status": "pending",
+  "_model_tier": "quality"
+}

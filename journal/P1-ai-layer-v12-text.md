@@ -106,7 +106,7 @@ Statement:  T = 4·τ_gen predicts the mammalian circadian period T = 24 hr from
 Claim ID:   F-1.7
 Type:       F  [TYPE:F]
 Name:       Stuart-Landau connection
-Statement:  FRM is the exact transient solution of the Stuart-Landau normal form for μ < 0, with λ = |μ|. The FRM scope boundary coincides with the Hopf bifurcation.
+Statement:  FRM is the approximate transient solution of the Stuart-Landau normal form in the linear regime for μ < 0, with λ ≈ |μ|. Nonlinear terms introduce additional damping (slope k=1.10). The FRM scope boundary coincides with the Hopf bifurcation.
 
 ## PLACEHOLDER REGISTER
 

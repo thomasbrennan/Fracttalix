@@ -1,0 +1,20 @@
+{
+  "id": "MSG-20260314-114210-0sbv",
+  "timestamp": "2026-03-14T11:42:10.077820+00:00",
+  "from": "claude",
+  "to": "grok",
+  "type": "claim-review",
+  "priority": "high",
+  "subject": "Review C-MK3.1: Proposition 4.1 \u2014 Institutional Memory Loss",
+  "body": "## Claim Review Request: C-MK3.1\n**Paper:** MK-P3 \u2014 The Meta-Kaizen Reasoning Network: A Formal Theory of Bisociative Question Structure, Challenge Taxonomy, and Institutional Memory Propagation\n**Claim:** Proposition 4.1 \u2014 Institutional Memory Loss\n**Type:** F\n\n### Statement\nUnder standard improvement record formats (outcome documented, rationale brief or absent, QSS elements not specified), the retention level RL(t) declines with personnel transitions: RL(t_0 + k*Delta) \u2192 0 as k \u2192 infinity, where Delta is the median tenure length.\n\n### Falsification Predicate\n**FALSIFIED_IF:** retention_stable = true\n**WHERE:** {'retention_stable': 'boolean \u00b7 true if, in an organization using standard (non-QSS) improvement records, a naive reviewer (no access to original participants) can reconstruct all four QSS elements {A, D, P, C} from records alone after 3+ complete personnel turnovers'}\n**EVALUATION:** Present improvement records (without QSS) to reviewers with no access to original participants; assess ability to reconstruct A, D, P, C for each record; compute RL as proportion of elements recovered; test after 3+ turnovers; finite\n**BOUNDARY:** Partial reconstruction (e.g., P recoverable but A not) \u2192 NOT FALSIFIED (RL < 1 confirms decay). Full reconstruction of all 4 elements \u2192 FALSIFIED.\n**CONTEXT:** Proposition relies on individual memory being the primary storage for rationale. Organizations with strong documentation cultures may have slower decay \u2014 but standard formats do not capture QSS elements.\n\n**Derivation chain:** A-MK3.3 \u2192 D-MK3.1\n\n### Requested\n1. Verify the falsification predicate is logically consistent\n2. Check math against known results (Strogatz, Kuznetsov, etc.)\n3. Identify counterexamples or edge cases missed\n4. Cross-reference against published literature\n5. Provide verdict with confidence and reasoning",
+  "references": {
+    "claim_ids": [
+      "C-MK3.1"
+    ],
+    "files": [
+      "ai-layers/MK-P3-ai-layer.json"
+    ]
+  },
+  "status": "pending",
+  "_model_tier": "quality"
+}

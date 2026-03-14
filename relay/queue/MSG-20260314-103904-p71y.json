@@ -1,0 +1,20 @@
+{
+  "id": "MSG-20260314-103904-p71y",
+  "timestamp": "2026-03-14T10:39:04.901901+00:00",
+  "from": "claude",
+  "to": "grok",
+  "type": "claim-review",
+  "priority": "normal",
+  "subject": "Review C-MK5.2: Theorem 2 Asymmetric Loss Threshold",
+  "body": "## Claim Review Request: C-MK5.2\n**Paper:** MK-P5 \u2014 On the Decision to Act: Strategic Convergence and the Mathematics of Intervention Timing at System Tipping Points\n**Claim:** Theorem 2 Asymmetric Loss Threshold\n**Type:** F\n\n### Statement\nThe optimal detection threshold under asymmetric loss is delta_c* = C_late/(C_late + C_fp). The symmetric case r = 1 gives delta_c*(sym) = 0.50, recovering MK-P1's kappa = 0.50. For r > 1 (C_late > C_fp), the optimal threshold is strictly below 0.50.\n\n### Falsification Predicate\n**FALSIFIED_IF:** abs(optimal_threshold - C_late/(C_late + C_fp)) > 0.001\n**WHERE:** {'optimal_threshold': 'scalar in [0,1] \u2014 the delta_c that minimizes E[Loss(delta_c)] = C_fp \u00d7 FP_rate(delta_c) + C_late \u00d7 FN_rate(delta_c), computed numerically for test case (C_fp=1.0, C_late=3.0)'}\n**EVALUATION:** (1) Specify C_fp=1.0, C_late=3.0; (2) define FP_rate and FN_rate as functions of delta_c; (3) compute E[Loss] over grid 0 to 1; (4) find minimizer; (5) compare to formula: 3.0/4.0 = 0.75; (6) check abs difference < 0.001. Terminates in finite steps.\n**BOUNDARY:** abs(optimal_threshold - C_late/(C_late + C_fp)) <= 0.001 \u2192 NOT FALSIFIED.\n**CONTEXT:** C-MK5.2 \u2014 intended extension of MK-P1 C-MK1.3, not a correction. The symmetric case is preserved. Organizations should assess actual C_fp/C_late ratio before using kappa = 0.50.\n\n**Derivation chain:** A-MK5.1 \u2192 MK-P1 AI-Layer C-MK1.3 \u2192 MK-P5 Section 4\n\n### Requested\n1. Verify the falsification predicate is logically consistent\n2. Check math against known results (Strogatz, Kuznetsov, etc.)\n3. Identify counterexamples or edge cases missed\n4. Cross-reference against published literature\n5. Provide verdict with confidence and reasoning",
+  "references": {
+    "claim_ids": [
+      "C-MK5.2"
+    ],
+    "files": [
+      "ai-layers/MK-P5-ai-layer.json"
+    ]
+  },
+  "status": "pending",
+  "_model_tier": "quality"
+}
