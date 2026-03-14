@@ -12,5 +12,10 @@
       "F-1.7"
     ]
   },
-  "status": "pending"
+  "status": "resolved",
+  "resolution": {
+    "session": "S57",
+    "action": "ACCEPTED. F-1.7 statement revised from 'exact' to 'approximate transient solution in the linear regime'. Nonlinear damping explanation (slope k=1.10) added to CONTEXT. Updated across P1-ai-layer.json, P4-ai-layer.json, grok-paste-block.md, and P1-ai-layer-v12-text.md.",
+    "resolved_by": "claude"
+  }
 }

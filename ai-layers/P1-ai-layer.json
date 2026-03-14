@@ -436,7 +436,7 @@
         },
         "EVALUATION": "Verify τ_gen from at least 3 independent sources; compute T=4·τ_gen; compare to observed T=24 hr; finite and parameter-free",
         "BOUNDARY": "T=20 or T=28 hr → FALSIFIED (bounds are inclusive). Sensitivity: τ_gen range 5.5–6.5 hr gives T=22–26 hr — all within biological variance.",
-        "CONTEXT": "Sources: Kim & Forger 2012 (5.9 hr, direct measurement); Hardin et al. 1990 (~6 hr); Lee et al. 2001 (~6 hr sub-step); Takahashi 2017 (~6 hr). No free parameters. First derivation of circadian period from a universal delayed feedback principle."
+        "CONTEXT": "Sources: Kim & Forger 2012 (5.9 hr, direct measurement); Hardin et al. 1990 (~6 hr); Lee et al. 2001 (~6 hr sub-step); Takahashi 2017 (~6 hr). No free parameters. Prior art: T=4τ is a known result in single-domain DDE circadian models (e.g., Kim & Forger 2012 set τ~6 hr to achieve T=24 hr). Novelty is NOT T=4τ per se, but the parameter-free aggregation of independently measured τ_gen values from four molecular biology sources without fitting, derived from a universal Hopf quarter-wave principle (F-1.4) rather than a domain-specific model. [Revised per Grok QC review MSG-20260314-011250-dpxz, S57.]"
       },
       "sample_falsification_observation": "O = {τ_gen = 3 hr → T_predicted = 12 hr} → 12 < 20 → FALSIFIED → PASS. Assessment: with τ_gen = 6 hr → T_predicted = 24 hr → 20 ≤ 24 ≤ 28 → NOT FALSIFIED → correct.",
       "derivation_source": [
@@ -450,7 +450,7 @@
       "type": "F",
       "label": "[TYPE:F]",
       "name": "Stuart-Landau connection",
-      "statement": "FRM is the exact transient solution of the Stuart-Landau normal form for μ < 0, with λ = |μ|. The FRM scope boundary coincides with the Hopf bifurcation.",
+      "statement": "FRM is the approximate transient solution of the Stuart-Landau normal form in the linear regime for μ < 0, with λ ≈ |μ|. Nonlinear terms introduce additional damping (observed slope k=1.10 explained by higher-order effects). The FRM scope boundary coincides with the Hopf bifurcation.",
       "source": "P1 Theoretical Foundations Section 2, Session 43",
       "predicate": {
         "FALSIFIED_IF": "(max_residual_SL > 0.05) OR (R2_SL_frm < 0.99) FOR any μ IN {−3.0, −2.0, −1.0, −0.5, −0.3, −0.1}",
@@ -460,7 +460,7 @@
         },
         "EVALUATION": "Simulate Stuart-Landau ODE for each μ; fit FRM; compute R² and λ_fit vs |μ|; check R²≥0.99; finite",
         "BOUNDARY": "R²=0.99 → NOT FALSIFIED (boundary inclusive)",
-        "CONTEXT": "Confirmed numerically: R²>0.99 for μ∈{−3.0,−1.0}. λ_fit tracks |μ| with slope k=1.10, R²=0.965 across stable regime. At μ=0: FRM degenerates (λ→0) as predicted."
+        "CONTEXT": "Confirmed numerically: R²>0.99 for μ∈{−3.0,−1.0}. λ_fit tracks |μ| with slope k=1.10, R²=0.965 across stable regime. At μ=0: FRM degenerates (λ→0) as predicted. Note: slope k=1.10 (not 1.00) is expected from nonlinear Stuart-Landau terms contributing extra damping beyond leading-order FRM; this is not a red flag but a known higher-order correction. [Statement revised from 'exact' to 'approximate' per Grok QC review MSG-20260314-011252-r5rx, S57.]"
       },
       "adversarial_battery": {
         "ADV_BZ": {

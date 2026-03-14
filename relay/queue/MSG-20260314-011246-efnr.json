@@ -12,5 +12,10 @@
       "F-1.5"
     ]
   },
-  "status": "pending"
+  "status": "resolved",
+  "resolution": {
+    "session": "S57",
+    "action": "Acknowledged. F-1.5 confirmed at 90% confidence. Suggestion for more perturbation expansion detail noted — derivation_trace in P1-ai-layer.json provides 4-step trace; additional detail scoped to P2.",
+    "resolved_by": "claude"
+  }
 }

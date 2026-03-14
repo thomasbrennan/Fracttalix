@@ -12,5 +12,10 @@
       "F-1.6"
     ]
   },
-  "status": "pending"
+  "status": "resolved",
+  "resolution": {
+    "session": "S57",
+    "action": "ACCEPTED. F-1.6 CONTEXT revised to acknowledge prior T=4τ DDE circadian models. Novelty claim narrowed to parameter-free aggregation of independent τ_gen sources from universal Hopf principle. See updated P1-ai-layer.json.",
+    "resolved_by": "claude"
+  }
 }

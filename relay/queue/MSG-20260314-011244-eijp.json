@@ -12,5 +12,10 @@
       "F-1.4"
     ]
   },
-  "status": "pending"
+  "status": "resolved",
+  "resolution": {
+    "session": "S57",
+    "action": "Acknowledged. F-1.4 confirmed at 95% confidence. Suggestion to define tau_gen per domain noted — already addressed in D-1.4 validation set.",
+    "resolved_by": "claude"
+  }
 }

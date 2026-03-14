@@ -105,7 +105,7 @@ Here are 4 falsifiable claims from Paper 1 (The Fractal Rhythm Model: Theoretica
 
 ### Claim F-1.7: Stuart-Landau Connection
 
-**Statement**: FRM is the exact transient solution of the Stuart-Landau normal form for mu < 0, with lambda = |mu|. The FRM scope boundary coincides with the Hopf bifurcation.
+**Statement**: FRM is the approximate transient solution of the Stuart-Landau normal form in the linear regime for mu < 0, with lambda ≈ |mu|. Nonlinear terms introduce additional damping (observed slope k=1.10). The FRM scope boundary coincides with the Hopf bifurcation.
 
 **Falsification predicate**: FALSIFIED IF max pointwise residual between FRM fit and Stuart-Landau ODE solution exceeds 0.05, OR if R^2 < 0.99 for any mu in {-3.0, -2.0, -1.0, -0.5, -0.3, -0.1}.
 
