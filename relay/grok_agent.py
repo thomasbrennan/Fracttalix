@@ -97,14 +97,32 @@ def call_xai_api(system_prompt: str, user_message: str, api_key: str) -> str:
         method="POST",
     )
 
-    try:
-        with urlopen(req, timeout=120) as resp:
-            data = json.loads(resp.read())
-            return data["choices"][0]["message"]["content"]
-    except HTTPError as e:
-        body = e.read().decode() if e.fp else ""
-        print(f"API error {e.code}: {body}", file=sys.stderr)
-        raise
+    import time
+    max_retries = 3
+    for attempt in range(max_retries + 1):
+        try:
+            with urlopen(req, timeout=120) as resp:
+                data = json.loads(resp.read())
+                return data["choices"][0]["message"]["content"]
+        except HTTPError as e:
+            body = e.read().decode() if e.fp else ""
+            print(f"API error {e.code}: {body}", file=sys.stderr)
+            if attempt < max_retries and e.code in (403, 429, 500, 502, 503):
+                wait = 2 ** (attempt + 1)
+                print(f"  Retrying in {wait}s (attempt {attempt + 1}/{max_retries})...")
+                time.sleep(wait)
+                # Rebuild request since urlopen consumes it
+                req = Request(
+                    XAI_API_URL,
+                    data=payload,
+                    headers={
+                        "Content-Type": "application/json",
+                        "Authorization": f"Bearer {api_key}",
+                    },
+                    method="POST",
+                )
+                continue
+            raise
 
 
 def build_system_prompt() -> str:
