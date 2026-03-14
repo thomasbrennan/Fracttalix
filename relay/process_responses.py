@@ -106,7 +106,7 @@ def process_responses() -> dict:
     tracker["summary"]["confirmed"] = verdicts.get("confirmed", 0)
     tracker["summary"]["disputed"] = verdicts.get("disputed", 0)
     tracker["summary"]["inconclusive"] = verdicts.get("inconclusive", 0)
-    tracker["summary"]["needs_revision"] = verdicts.get("needs-revision", 0)
+    tracker["summary"]["needs_revision"] = verdicts.get("needs-revision", 0) + verdicts.get("needs_revision", 0)
 
     save_tracker(tracker)
     return {"new_reviews": new_reviews, "total_reviewed": len(tracker["claims_reviewed"])}

@@ -10,6 +10,7 @@ Pricing (as of 2026-03):
 from __future__ import annotations
 
 import json
+import tempfile
 from pathlib import Path
 
 # Model configurations
@@ -87,6 +88,18 @@ def load_budget() -> dict:
     }
 
 
+def _atomic_write_json(path: Path, data: dict) -> None:
+    """Write JSON atomically via temp file + rename to prevent corruption."""
+    fd, tmp = tempfile.mkstemp(dir=path.parent, suffix=".tmp")
+    try:
+        with open(fd, "w") as f:
+            json.dump(data, f, indent=2)
+        Path(tmp).replace(path)
+    except BaseException:
+        Path(tmp).unlink(missing_ok=True)
+        raise
+
+
 def record_transaction(msg_id: str, model_id: str, input_tokens: int, output_tokens: int, cost_usd: float) -> dict:
     """Record a completed API transaction for budget tracking."""
     budget = load_budget()
@@ -98,8 +111,11 @@ def record_transaction(msg_id: str, model_id: str, input_tokens: int, output_tok
         "output_tokens": output_tokens,
         "cost_usd": round(cost_usd, 6),
     })
-    with open(BUDGET_FILE, "w") as f:
-        json.dump(budget, f, indent=2)
+    # Validate consistency: spent should equal sum of transactions
+    tx_total = round(sum(t["cost_usd"] for t in budget["transactions"]), 6)
+    if abs(budget["spent_usd"] - tx_total) > 0.001:
+        budget["spent_usd"] = tx_total  # self-heal from drift
+    _atomic_write_json(BUDGET_FILE, budget)
     return budget
 
 

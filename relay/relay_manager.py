@@ -79,6 +79,19 @@ def create_message(
     parent_message: str | None = None,
 ) -> dict:
     """Create a structured relay message."""
+    errs = []
+    if from_agent not in VALID_AGENTS - {"all"}:
+        errs.append(f"from_agent={from_agent!r} not in {sorted(VALID_AGENTS - {'all'})}")
+    if to_agent not in VALID_AGENTS:
+        errs.append(f"to_agent={to_agent!r} not in {sorted(VALID_AGENTS)}")
+    if msg_type not in VALID_TYPES:
+        errs.append(f"msg_type={msg_type!r} not in {sorted(VALID_TYPES)}")
+    if priority not in VALID_PRIORITIES:
+        errs.append(f"priority={priority!r} not in {sorted(VALID_PRIORITIES)}")
+    if not subject or len(subject) > 200:
+        errs.append(f"subject must be 1-200 chars (got {len(subject or '')})")
+    if errs:
+        raise ValueError("Invalid message:\n  " + "\n  ".join(errs))
     msg = {
         "id": generate_message_id(),
         "timestamp": datetime.now(timezone.utc).isoformat(),
@@ -159,6 +172,11 @@ def archive_resolved() -> list[str]:
             msg = json.load(f)
         if msg.get("status") in ("resolved", "expired"):
             dest = ARCHIVE_DIR / path.name
+            if dest.exists():
+                # Avoid collision: append timestamp suffix
+                stem = dest.stem
+                suffix = datetime.now(timezone.utc).strftime("%H%M%S")
+                dest = ARCHIVE_DIR / f"{stem}-{suffix}{dest.suffix}"
             path.rename(dest)
             archived.append(msg["id"])
     return archived

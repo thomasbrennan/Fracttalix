@@ -124,23 +124,35 @@ def call_xai_api(system_prompt: str, user_message: str, api_key: str, model: str
 
     max_retries = 3
     for attempt in range(max_retries + 1):
-        result = subprocess.run(
-            [
-                "curl", "-s", "-w", "\n%{http_code}",
-                XAI_API_URL,
-                "-H", "Content-Type: application/json",
-                "-H", f"Authorization: Bearer {api_key}",
-                "-d", payload,
-                "--max-time", "120",
-            ],
-            capture_output=True, text=True, timeout=130,
-        )
+        try:
+            result = subprocess.run(
+                [
+                    "curl", "-s", "-w", "\n%{http_code}",
+                    XAI_API_URL,
+                    "-H", "Content-Type: application/json",
+                    "-H", f"Authorization: Bearer {api_key}",
+                    "-d", payload,
+                    "--max-time", "120",
+                    "--connect-timeout", "30",
+                ],
+                capture_output=True, text=True, timeout=150,
+            )
+        except subprocess.TimeoutExpired:
+            print(f"API timeout (attempt {attempt + 1}/{max_retries + 1})", file=sys.stderr)
+            if attempt < max_retries:
+                wait = 2 ** (attempt + 1)
+                print(f"  Retrying in {wait}s...", file=sys.stderr)
+                time.sleep(wait)
+                continue
+            raise RuntimeError("xAI API timed out after all retries")
+
         output = result.stdout.strip()
         # Last line is the HTTP status code
         lines = output.rsplit("\n", 1)
         body = lines[0] if len(lines) > 1 else output
         http_code = int(lines[-1]) if len(lines) > 1 and lines[-1].isdigit() else 0
 
+        # curl connection failures produce http_code 0
         if http_code == 200:
             data = json.loads(body)
             usage = data.get("usage", {})
@@ -150,9 +162,9 @@ def call_xai_api(system_prompt: str, user_message: str, api_key: str, model: str
         print(f"  Model: {selected_model}", file=sys.stderr)
         print(f"  Key prefix: {api_key[:8]}...{api_key[-4:]}", file=sys.stderr)
 
-        if attempt < max_retries and http_code in (429, 500, 502, 503):
+        if attempt < max_retries and (http_code in (0, 429, 500, 502, 503)):
             wait = 2 ** (attempt + 1)
-            print(f"  Retrying in {wait}s (attempt {attempt + 1}/{max_retries})...")
+            print(f"  Retrying in {wait}s (attempt {attempt + 1}/{max_retries})...", file=sys.stderr)
             time.sleep(wait)
             continue
 
@@ -206,11 +218,15 @@ def parse_grok_response(raw: str, original_msg: dict) -> dict:
     # Try to extract JSON from the response
     text = raw.strip()
 
-    # Strip markdown fences if present
-    if text.startswith("```"):
+    # Strip markdown fences if present (match balanced opening/closing fences)
+    import re
+    fence_match = re.search(r"```(?:json)?\s*\n(.*?)```", text, re.DOTALL)
+    if fence_match:
+        text = fence_match.group(1).strip()
+    elif text.startswith("```"):
+        # Fallback: strip opening fence line and any trailing fence
         lines = text.split("\n")
-        # Remove first and last fence lines
-        lines = [l for l in lines if not l.strip().startswith("```")]
+        lines = [l for l in lines[1:] if not l.strip() == "```"]
         text = "\n".join(lines).strip()
 
     try:

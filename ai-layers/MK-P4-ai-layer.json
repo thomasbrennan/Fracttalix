@@ -182,7 +182,7 @@
       "type": "F",
       "label": "Extinguishing Recursion Convergence (delta_min)",
       "name": "Extinguishing Recursion Convergence (delta_min)",
-      "statement": "For target planning horizon H_plan and deactivation threshold epsilon, delta_min = 1 - (epsilon/r_0)^(1/H_plan). With H_plan = 8 quarters, epsilon = 0.10, r_0 = 1.0: delta_min = 1 - 0.10^(1/8) = 0.25. Any delta >= delta_min guarantees r_t < epsilon within H_plan cycles.",
+      "statement": "For target planning horizon H_plan and deactivation threshold epsilon, delta_min = 1 - (epsilon/r_0)^(1/H_plan). With H_plan = 8 quarters, epsilon = 0.10, r_0 = 1.0: delta_min = 1 - 0.10^(1/8) ≈ 0.2501. Any delta >= delta_min guarantees r_t <= epsilon within H_plan cycles. [Revised per Grok QC: exact value is ~0.25010579, not 0.25; guarantee changed to non-strict inequality (<=) since delta_min is defined as the boundary value where r_{H_plan} = epsilon exactly.]",
       "derivation_source": [
         "D-MK4.5"
       ],
@@ -209,19 +209,19 @@
             "Step 2"
           ],
           "operation": "IR-5: Algebraic manipulation — substitute H_plan=8, epsilon=0.10, r_0=1.0.",
-          "output": "delta_min = 1 - 0.10^(1/8) = 1 - 0.7499 = 0.25."
+          "output": "delta_min = 1 - 0.10^(1/8) = 1 - 0.74989... ≈ 0.2501."
         }
       ],
       "falsification_predicate": {
-        "FALSIFIED_IF": "abs(computed_delta_min - 0.25) > 0.01",
+        "FALSIFIED_IF": "abs(computed_delta_min - 0.2501) > 0.001",
         "WHERE": {
           "computed_delta_min": "scalar · 1 - (0.10/1.0)^(1/8) computed numerically"
         },
-        "EVALUATION": "Compute 0.10^(1/8) numerically; subtract from 1; compare to 0.25; also verify: simulate r_t = (1-0.25)^t for t=1..8 and check r_8 < 0.10; finite",
-        "BOUNDARY": "abs(computed_delta_min - 0.25) <= 0.01 → NOT FALSIFIED.",
-        "CONTEXT": "Pure algebraic claim. delta_min formula assumes a_t = 1 every cycle (continuous adoption) — best-case scenario. If adoption is intermittent, convergence takes longer."
+        "EVALUATION": "Compute 0.10^(1/8) numerically; subtract from 1; compare to 0.2501; also verify: simulate r_t = (1-0.2501)^t for t=1..8 and check r_8 <= 0.10; finite",
+        "BOUNDARY": "abs(computed_delta_min - 0.2501) <= 0.001 → NOT FALSIFIED. [Revised: tighter tolerance around precise value.]",
+        "CONTEXT": "Pure algebraic claim. delta_min formula assumes a_t = 1 every cycle (continuous adoption) — best-case scenario. If adoption is intermittent, convergence takes longer. [Revised per Grok QC: precision corrected from 0.25 to 0.2501; non-strict inequality for guarantee.]"
       },
-      "sample_falsification_observation": "O = {0.10^(1/8) = 0.7499; 1 - 0.7499 = 0.2501 ≈ 0.25} → NOT FALSIFIED."
+      "sample_falsification_observation": "O = {0.10^(1/8) = 0.74989...; 1 - 0.74989... = 0.25011 ≈ 0.2501; abs(0.25011 - 0.2501) = 0.00001 < 0.001} → NOT FALSIFIED."
     },
     {
       "claim_id": "C-MK4.3",

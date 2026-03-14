@@ -393,6 +393,15 @@ class SentinelDetector:
     # Dunder helpers
     # ------------------------------------------------------------------
 
+    def __enter__(self) -> "SentinelDetector":
+        return self
+
+    def __exit__(self, *exc) -> None:
+        self.close()
+
+    def __del__(self) -> None:
+        self.close()
+
     def __repr__(self) -> str:
         try:
             from fracttalix import __version__ as _ver
