@@ -29,6 +29,44 @@ from pathlib import Path
 from typing import Any, Dict, List, Optional
 
 # ---------------------------------------------------------------------------
+# Checkpoint integration
+# ---------------------------------------------------------------------------
+
+
+def _checkpoint_on_send(msg: Dict[str, Any]) -> None:
+    """Auto-checkpoint after every message send for mortality-aware persistence."""
+    try:
+        from checkpoint import load_state, save_state  # noqa: delayed import
+    except ImportError:
+        # Also try relative import from scripts/
+        try:
+            _scripts = Path(__file__).resolve().parent
+            if str(_scripts) not in sys.path:
+                sys.path.insert(0, str(_scripts))
+            from checkpoint import load_state, save_state
+        except ImportError:
+            return  # checkpoint module not available — skip silently
+
+    try:
+        state = load_state()
+    except SystemExit:
+        return  # no checkpoint state yet
+
+    # Append to a rolling log of recent messages (keep last 50)
+    log = state["session_state"].setdefault("message_log", [])
+    log.append({
+        "seq": msg["seq"],
+        "from": msg["from"],
+        "to": msg["to"],
+        "type": msg["type"],
+        "timestamp": msg["timestamp"],
+    })
+    if len(log) > 50:
+        state["session_state"]["message_log"] = log[-50:]
+    save_state(state)
+
+
+# ---------------------------------------------------------------------------
 # Constants
 # ---------------------------------------------------------------------------
 
@@ -126,6 +164,7 @@ def send_message(
     filename = f"{seq:06d}_{from_role}_{to_role}.json"
     filepath = MSG_DIR / filename
     filepath.write_text(json.dumps(msg, indent=2) + "\n")
+    _checkpoint_on_send(msg)
     return msg
 
 

@@ -23,6 +23,42 @@ from pathlib import Path
 
 TEAM_DIR = Path(__file__).resolve().parent.parent / ".checkpoint" / "team"
 
+
+# ---------------------------------------------------------------------------
+# Checkpoint integration
+# ---------------------------------------------------------------------------
+
+
+def _checkpoint_on_role_change(role_name: str, event: str) -> None:
+    """Auto-checkpoint after role register/deregister for mortality-aware persistence."""
+    try:
+        _scripts = Path(__file__).resolve().parent
+        if str(_scripts) not in sys.path:
+            sys.path.insert(0, str(_scripts))
+        from checkpoint import load_state, save_state
+    except ImportError:
+        return
+
+    try:
+        state = load_state()
+    except SystemExit:
+        return  # no checkpoint state yet
+
+    log = state["session_state"].setdefault("role_events", [])
+    log.append({
+        "role": role_name,
+        "event": event,
+        "timestamp": datetime.now(timezone.utc).isoformat(),
+    })
+    if len(log) > 30:
+        state["session_state"]["role_events"] = log[-30:]
+
+    # Update team_size from live registry
+    team = get_team()
+    state["_meta"]["team_size"] = len(team)
+    save_state(state)
+
+
 # Default capabilities per role kind
 ROLE_DEFAULTS = {
     "coordinator": ["plan", "assign", "checkpoint"],
@@ -80,6 +116,7 @@ def register_role(role_name: str, capabilities: list, pid: int = None) -> dict:
         "status": "active",
     }
     _write_json(_role_path(role_name), data)
+    _checkpoint_on_role_change(role_name, "registered")
     return data
 
 
@@ -125,6 +162,7 @@ def deregister(role_name: str) -> None:
     path = _role_path(role_name)
     if path.exists():
         path.unlink()
+        _checkpoint_on_role_change(role_name, "deregistered")
 
 
 # --------------- CLI ---------------

@@ -1,0 +1,11 @@
+{
+  "seq": 2,
+  "from": "coordinator",
+  "to": "executor-1",
+  "type": "task_assign",
+  "payload": {
+    "task_id": "T-003",
+    "desc": "integration test"
+  },
+  "timestamp": "2026-03-14T12:09:19.535822+00:00"
+}
