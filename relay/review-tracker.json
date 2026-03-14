@@ -488,15 +488,60 @@
       "confidence": 0.65,
       "model_used": "grok-4-latest",
       "reasoning_preview": "The falsification predicate is logically consistent in structure, defining clear conditions for Tier 1 (confirmed substrates) and Tier 2 (provisional candidates) based on log10 spans and a passing cou"
+    },
+    "F-1.6": {
+      "msg_id": "MSG-20260314-105129-2mmr",
+      "parent_msg_id": "MSG-20260314-103904-59um",
+      "timestamp": "2026-03-14T10:51:29.130064+00:00",
+      "verdict": "needs-revision",
+      "confidence": 0.75,
+      "model_used": "grok-4-latest",
+      "reasoning_preview": "The falsification predicate is logically consistent: it clearly defines falsification based on predicted T bounds and a minimum number of independent sources, with well-specified variables, evaluation"
+    },
+    "F-DRSARCH.1": {
+      "msg_id": "MSG-20260314-105034-aceg",
+      "parent_msg_id": "MSG-20260314-103904-4mcf",
+      "timestamp": "2026-03-14T10:50:34.352341+00:00",
+      "verdict": "inconclusive",
+      "confidence": 0.4,
+      "model_used": "grok-4-latest",
+      "reasoning_preview": "The falsification predicate is logically consistent: it defines a clear, testable condition based on independent implementations failing schema validation, with a threshold of zero failures to confirm"
+    },
+    "C-MK4.2": {
+      "msg_id": "MSG-20260314-105214-slsq",
+      "parent_msg_id": "MSG-20260314-103904-6bwu",
+      "timestamp": "2026-03-14T10:52:14.163478+00:00",
+      "verdict": "needs-revision",
+      "confidence": 0.95,
+      "model_used": "grok-4-latest",
+      "reasoning_preview": "The mathematical formula delta_min = 1 - (epsilon/r_0)^{1/H_plan} is correct for achieving r_H = epsilon exactly under the geometric decay r_t = (1 - delta)^t * r_0. However, the claim states delta_mi"
+    },
+    "F-SFW.6": {
+      "msg_id": "MSG-20260314-105100-6eva",
+      "parent_msg_id": "MSG-20260314-103904-4rn2",
+      "timestamp": "2026-03-14T10:51:00.892259+00:00",
+      "verdict": "needs-revision",
+      "confidence": 0.75,
+      "model_used": "grok-4-latest",
+      "reasoning_preview": "The falsification predicate is mostly logically consistent, defining clear conditions for falsification based on step counter equality and result key set matching. The evaluation procedure is determin"
+    },
+    "F-5.1": {
+      "msg_id": "MSG-20260314-105239-kwl8",
+      "parent_msg_id": "MSG-20260314-103904-6c7k",
+      "timestamp": "2026-03-14T10:52:39.945566+00:00",
+      "verdict": "inconclusive",
+      "confidence": 0.65,
+      "model_used": "grok-4-latest",
+      "reasoning_preview": "The falsification predicate is logically consistent: it clearly defines conditions for falsification based on R\u00b2 threshold and parameter signs, with well-specified variables, evaluation steps, boundar"
     }
   },
   "summary": {
     "total_falsifiable": 70,
     "sent_to_grok": 70,
-    "reviewed_by_grok": 15,
+    "reviewed_by_grok": 20,
     "confirmed": 2,
     "disputed": 5,
-    "inconclusive": 4,
-    "needs_revision": 4
+    "inconclusive": 6,
+    "needs_revision": 7
   }
 }

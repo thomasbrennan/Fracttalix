@@ -15,6 +15,6 @@
       "ai-layers/DRS-ARCH-ai-layer.json"
     ]
   },
-  "status": "pending",
+  "status": "resolved",
   "_model_tier": "quality"
 }
