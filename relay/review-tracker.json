@@ -533,15 +533,60 @@
       "confidence": 0.65,
       "model_used": "grok-4-latest",
       "reasoning_preview": "The falsification predicate is logically consistent: it clearly defines conditions for falsification based on R\u00b2 threshold and parameter signs, with well-specified variables, evaluation steps, boundar"
+    },
+    "C-2.4": {
+      "msg_id": "MSG-20260314-133455-s8ck",
+      "parent_msg_id": "MSG-20260314-103904-6ivf",
+      "timestamp": "2026-03-14T13:34:55.017729+00:00",
+      "verdict": "inconclusive",
+      "confidence": 0.7,
+      "model_used": "grok-4-latest",
+      "reasoning_preview": "The falsification predicate is logically consistent: it clearly defines conditions for falsification based on statistical bounds (2-sigma) and proper classification under D-2.1, avoiding false counter"
+    },
+    "C-MK3.4": {
+      "msg_id": "MSG-20260314-133617-4xta",
+      "parent_msg_id": "MSG-20260314-103904-7tux",
+      "timestamp": "2026-03-14T13:36:17.643736+00:00",
+      "verdict": "needs-revision",
+      "confidence": 0.75,
+      "model_used": "grok-4-latest",
+      "reasoning_preview": "The falsification predicate is mostly logically consistent, as it defines a clear simulation-based test under the specified conditions C1-C3, with well-defined variables and evaluation steps. However,"
+    },
+    "F-MK6.4": {
+      "msg_id": "MSG-20260314-133527-gxbt",
+      "parent_msg_id": "MSG-20260314-103904-6mm1",
+      "timestamp": "2026-03-14T13:35:27.536395+00:00",
+      "verdict": "inconclusive",
+      "confidence": 0.65,
+      "model_used": "grok-4-latest",
+      "reasoning_preview": "The falsification predicate is logically consistent: it clearly defines conditions for falsification based on gap counts in three categories, with well-specified WHERE, EVALUATION, BOUNDARY, and CONTE"
+    },
+    "F-1.5": {
+      "msg_id": "MSG-20260314-133650-lhn3",
+      "parent_msg_id": "MSG-20260314-103904-81ra",
+      "timestamp": "2026-03-14T13:36:50.024620+00:00",
+      "verdict": "disputed",
+      "confidence": 0.95,
+      "model_used": "grok-4-latest",
+      "reasoning_preview": "The falsification predicate is logically consistent in structure, defining clear metrics (n_invalid_steps_lambda and mean_ratio_fit_theory) with evaluation steps, boundaries, and context. However, the"
+    },
+    "F-SFW.1": {
+      "msg_id": "MSG-20260314-133550-fz0c",
+      "parent_msg_id": "MSG-20260314-103904-6z49",
+      "timestamp": "2026-03-14T13:35:50.334904+00:00",
+      "verdict": "needs-revision",
+      "confidence": 0.75,
+      "model_used": "grok-4-latest",
+      "reasoning_preview": "The falsification predicate is logically consistent in its structure, defining a clear existential condition for falsification based on detectability differences between single-channel and combined pi"
     }
   },
   "summary": {
     "total_falsifiable": 70,
     "sent_to_grok": 70,
-    "reviewed_by_grok": 20,
+    "reviewed_by_grok": 25,
     "confirmed": 2,
-    "disputed": 5,
-    "inconclusive": 6,
-    "needs_revision": 7
+    "disputed": 6,
+    "inconclusive": 8,
+    "needs_revision": 9
   }
 }
