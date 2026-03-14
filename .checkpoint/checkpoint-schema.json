@@ -1,0 +1,154 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://github.com/thomasbrennan/Fracttalix/blob/main/.checkpoint/checkpoint-schema.json",
+  "title": "Fracttalix Checkpoint Protocol Schema v1",
+  "description": "Schema for continuous checkpointing across Claude Code instance lifespans. Implements mortality-aware state persistence for single-instance and team operation. Session S56.",
+  "version": "v1-S56",
+  "definitions": {
+    "task_status": {
+      "type": "string",
+      "enum": ["pending", "assigned", "in_progress", "blocked", "completed", "failed", "abandoned"]
+    },
+    "instance_role": {
+      "type": "string",
+      "enum": ["coordinator", "executor", "verifier", "solo"]
+    },
+    "priority": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 5,
+      "description": "1 = critical, 5 = nice-to-have"
+    }
+  },
+  "type": "object",
+  "required": ["_meta", "session_state", "task_graph"],
+  "properties": {
+    "_meta": {
+      "type": "object",
+      "required": ["schema_version", "created_session", "last_updated", "instance_role"],
+      "properties": {
+        "schema_version": { "type": "string", "const": "v1-S56" },
+        "created_session": { "type": "string", "pattern": "^S[0-9]+$" },
+        "last_updated": { "type": "string", "format": "date-time" },
+        "last_updated_by": { "type": "string", "description": "Instance identifier (e.g., coordinator, worker-a)" },
+        "instance_role": { "$ref": "#/definitions/instance_role" },
+        "team_size": { "type": "integer", "minimum": 1, "maximum": 8 },
+        "checkpoint_sequence": { "type": "integer", "minimum": 0, "description": "Monotonically increasing counter; incremented on every checkpoint write" }
+      }
+    },
+    "session_state": {
+      "type": "object",
+      "required": ["objective", "context_loaded", "decisions"],
+      "properties": {
+        "objective": {
+          "type": "string",
+          "description": "What this session is trying to accomplish. Written once at start, never changed."
+        },
+        "context_loaded": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "List of files read during orientation. Allows successor to know what context was loaded."
+        },
+        "decisions": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["decision", "rationale", "timestamp"],
+            "properties": {
+              "decision": { "type": "string" },
+              "rationale": { "type": "string" },
+              "timestamp": { "type": "string", "format": "date-time" },
+              "reversible": { "type": "boolean", "default": true }
+            }
+          },
+          "description": "Key decisions made during this session. Written immediately when decided, not retrospectively."
+        },
+        "discoveries": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Important things learned during this session that a successor needs to know."
+        },
+        "blockers": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["description", "blocking_task"],
+            "properties": {
+              "description": { "type": "string" },
+              "blocking_task": { "type": "string", "description": "Task ID that is blocked" },
+              "resolution": { "type": "string" },
+              "resolved": { "type": "boolean", "default": false }
+            }
+          }
+        }
+      }
+    },
+    "task_graph": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["task_id", "description", "status", "priority"],
+        "properties": {
+          "task_id": { "type": "string", "pattern": "^T-[0-9]{3}$" },
+          "description": { "type": "string" },
+          "status": { "$ref": "#/definitions/task_status" },
+          "priority": { "$ref": "#/definitions/priority" },
+          "assigned_to": { "type": "string", "description": "Instance identifier or null if unassigned" },
+          "depends_on": {
+            "type": "array",
+            "items": { "type": "string" },
+            "description": "Task IDs that must complete before this task can start"
+          },
+          "files_in_scope": {
+            "type": "array",
+            "items": { "type": "string" },
+            "description": "Files this task will read or modify"
+          },
+          "acceptance_criteria": {
+            "type": "array",
+            "items": { "type": "string" }
+          },
+          "checkpoint": {
+            "type": "object",
+            "description": "Last known progress on this task",
+            "properties": {
+              "progress_summary": { "type": "string" },
+              "files_modified": { "type": "array", "items": { "type": "string" } },
+              "files_created": { "type": "array", "items": { "type": "string" } },
+              "last_commit": { "type": "string", "pattern": "^[0-9a-f]{7,40}$" },
+              "timestamp": { "type": "string", "format": "date-time" }
+            }
+          },
+          "completion": {
+            "type": "object",
+            "description": "Filled when task is completed",
+            "properties": {
+              "commit_sha": { "type": "string", "pattern": "^[0-9a-f]{7,40}$" },
+              "summary": { "type": "string" },
+              "timestamp": { "type": "string", "format": "date-time" }
+            }
+          }
+        }
+      }
+    },
+    "handoff": {
+      "type": "object",
+      "description": "Populated when instance is preparing to hand off (graceful) or by successor reading stale state (recovery)",
+      "properties": {
+        "type": { "type": "string", "enum": ["graceful", "recovery"] },
+        "from_session": { "type": "string" },
+        "to_session": { "type": "string" },
+        "incomplete_tasks": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Task IDs not yet completed"
+        },
+        "critical_context": {
+          "type": "string",
+          "description": "Anything the successor absolutely must know. Written in plain language."
+        },
+        "timestamp": { "type": "string", "format": "date-time" }
+      }
+    }
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "seq": 1,
+  "from": "coordinator",
+  "to": "executor-1",
+  "type": "task_assign",
+  "payload": {
+    "task_id": "T-001",
+    "desc": "test message"
+  },
+  "timestamp": "2026-03-14T12:07:59.023130+00:00"
+}

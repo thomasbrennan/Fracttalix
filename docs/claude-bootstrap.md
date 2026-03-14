@@ -1,7 +1,7 @@
 # Fracttalix Session Bootstrap
 
 > Paste this file into a new Claude.ai conversation to restore full project context.
-> Last updated: Session 55 (Archivist), 2026-03-12.
+> Last updated: Session 56, 2026-03-13.
 
 ---
 
@@ -161,7 +161,8 @@ Schema:             v3-S51
 ## Conventions
 
 - **Citation format**: [Fracttalix Paper N, AI-Layer, Claim ID]
-- **Session numbering**: S1–S55 (current)
+- **Session numbering**: S1–S56 (current)
+- **Checkpoint protocol**: `.checkpoint/PROTOCOL.md` — continuous state persistence for mortality-aware operation
 - **Build Table**: tracks all 23 corpus objects, milestones, dependencies (CorpusArch v10)
 - **Sentinel**: Python package (v12.1) — streaming anomaly detector implementing the three-channel model
 - **Meta-Kaizen (MK)**: Parallel 6-paper verification and governance corpus
@@ -195,7 +196,10 @@ Fracttalix/
 ├── fracttalix/                      ← Package (v12.1, 37-step pipeline)
 ├── tests/                           ← 405 tests
 ├── benchmark/                       ← Anomaly archetype benchmarks
-├── scripts/                         ← Validation, status, consistency scripts
+├── .checkpoint/                     ← Mortality-aware state persistence protocol
+│   ├── PROTOCOL.md                  ← Usage rules and team coordination
+│   └── checkpoint-schema.json       ← JSON schema for state.json
+├── scripts/                         ← Validation, status, consistency, checkpoint scripts
 ├── legacy/                          ← Archived monolith versions (v7.6–v11.0)
 ├── examples/                        ← Quickstart notebook + tutorials
 ├── README.md
