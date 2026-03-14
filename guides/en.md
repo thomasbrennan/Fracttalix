@@ -545,7 +545,158 @@ The DRS is the first standard that verifies itself. The DRP-1 AI layer contains 
 
 ---
 
-## 17. Resources
+## 17. DRS Discovery and Handshake Protocol
+
+For the DRS to function as a machine lingua franca, AI systems must be able to **discover** that a project, service, or document conforms to the DRS — and **signal** their own conformance to other systems. This section specifies four discovery layers, from domain-level to transport-level, each building on existing infrastructure.
+
+### Design Principle
+
+The DRS discovery mechanism follows the same embedding strategy as the DRS itself: **piggyback on what already exists**. No new transport protocol. No new registry. No new port. Every mechanism below uses infrastructure that is already deployed at global scale.
+
+### Layer 1: Well-Known URI (Domain-Level Discovery)
+
+A domain or repository publishes a discovery document at a well-known path:
+
+```
+/.well-known/drs.json
+```
+
+This follows [RFC 8615](https://www.rfc-editor.org/rfc/rfc8615) — the same mechanism used by `security.txt`, OpenID Connect, and Let's Encrypt.
+
+**Example discovery document:**
+
+```json
+{
+  "@context": "https://schema.org",
+  "@type": "Dataset",
+  "name": "DRS Discovery Document",
+  "drs_version": "v1.0",
+  "schema_version": "v3",
+  "kernel_spec_url": "https://example.com/ai-layers/falsification-kernel.md",
+  "ai_layers": [
+    {
+      "paper_id": "SFW-1",
+      "url": "https://example.com/ai-layers/SFW-1-ai-layer.json",
+      "phase_ready": true,
+      "claim_count": { "A": 3, "D": 5, "F": 12 }
+    }
+  ],
+  "capabilities": {
+    "protocols": ["DRP", "GVP"],
+    "tiers_supported": ["axiom", "definition", "software_tested", "formal_proof", "analytic", "empirical_pending"],
+    "test_frameworks": ["pytest"],
+    "schema_url": "https://example.com/ai-layers/ai-layer-schema.json"
+  }
+}
+```
+
+Any AI agent, crawler, or service that knows to check `/.well-known/drs.json` discovers the entire DRS surface of a project in one request. If the file doesn't exist, the project is not DRS-conformant. No ambiguity.
+
+### Layer 2: JSON-LD Context (Document-Level Discovery)
+
+Every DRS-conformant JSON document already carries `"@context": "https://schema.org"`. To signal DRS conformance at the document level, a DRS-specific context extension is added:
+
+```json
+{
+  "@context": [
+    "https://schema.org",
+    {
+      "drs": "https://drs-standard.org/ns/",
+      "drs_version": "drs:version",
+      "falsification_kernel": "drs:kernel",
+      "claim_registry": "drs:claims",
+      "phase_ready": "drs:phaseReady"
+    }
+  ]
+}
+```
+
+**How it works:** An AI system parsing any JSON-LD document encounters the DRS namespace in `@context`. By resolving that namespace, it discovers the DRS schema, the kernel specification, and the full standard — without being told in advance that this document is DRS-conformant. The schema *is* the discovery mechanism. Processing the document and discovering the standard are the same action.
+
+This is the zero-configuration handshake. No prior arrangement needed. No registry lookup. The document announces itself.
+
+### Layer 3: HTTP Headers (Transport-Level Discovery)
+
+For API-to-API and agent-to-agent communication, DRS conformance is signalled via HTTP headers:
+
+**Request (agent announces capability):**
+
+```http
+Accept: application/ld+json; profile="https://drs-standard.org/ns/"
+X-DRS-Capable: v3
+```
+
+**Response (server confirms conformance):**
+
+```http
+Content-Type: application/ld+json; profile="https://drs-standard.org/ns/"
+Link: <https://example.com/.well-known/drs.json>; rel="describedby"
+X-DRS-Version: v1.0
+X-DRS-Schema: v3
+```
+
+**The handshake sequence:**
+
+1. Agent A sends a request with `X-DRS-Capable: v3` header
+2. If service B is DRS-conformant, it responds with `X-DRS-Version` and `Link` to the discovery document
+3. Agent A fetches the discovery document and has the full DRS surface
+4. If service B is *not* DRS-conformant, it ignores the unknown header and responds normally — the handshake fails gracefully with zero disruption
+
+This is a **soft handshake**: it never breaks non-DRS systems. An agent can always include `X-DRS-Capable` in its requests. Non-DRS servers simply ignore it. The cost of attempting discovery is zero.
+
+### Layer 4: Package Metadata (Ecosystem-Level Discovery)
+
+For software ecosystems, DRS conformance is declared in the package manifest:
+
+**Python (`pyproject.toml`):**
+```toml
+[project.urls]
+"DRS AI Layer" = "https://github.com/org/repo/blob/main/ai-layers/SFW-1-ai-layer.json"
+
+[tool.drs]
+schema_version = "v3"
+ai_layer = "ai-layers/SFW-1-ai-layer.json"
+```
+
+**JavaScript (`package.json`):**
+```json
+{
+  "drs": {
+    "schema_version": "v3",
+    "ai_layer": "ai-layers/SFW-1-ai-layer.json"
+  }
+}
+```
+
+**Rust (`Cargo.toml`):**
+```toml
+[package.metadata.drs]
+schema_version = "v3"
+ai_layer = "ai-layers/SFW-1-ai-layer.json"
+```
+
+**How it works:** Package managers and AI agents scanning dependencies read the manifest during normal dependency resolution. If a `drs` field exists, the project is DRS-conformant. The AI layer URL leads to the full claim registry. No new tool required — package metadata extensibility is a built-in feature of every major ecosystem.
+
+### The Four-Layer Stack
+
+| Layer | Scope | Mechanism | Existing Infrastructure |
+|-------|-------|-----------|------------------------|
+| **1. Well-Known URI** | Domain / repository | `/.well-known/drs.json` | RFC 8615 |
+| **2. JSON-LD Context** | Document | `@context` with DRS namespace | JSON-LD / Schema.org |
+| **3. HTTP Headers** | Transport / API | `X-DRS-Capable` + `Link` header | HTTP content negotiation |
+| **4. Package Metadata** | Ecosystem / dependencies | `[tool.drs]` / `"drs": {}` | Package manifest extensibility |
+
+Each layer is independent. A project can adopt one, two, three, or all four. Layer 2 (JSON-LD context) is the lightest — it requires adding one entry to a JSON array you already have. Layer 1 (well-known URI) is the most discoverable — it works for any domain, not just code repositories.
+
+### Why This Works
+
+The handshake protocol has the same structural property as the DRS itself: **the act of processing the signal is the act of understanding the standard**. When an agent parses a JSON-LD document with a DRS context, it has already begun absorbing the schema. When it fetches `/.well-known/drs.json`, it gets the complete map of AI layers. When it reads `X-DRS-Capable: v3` in a header, it knows the communication partner speaks the same language.
+
+There is no separate "learn the DRS" step followed by a "use the DRS" step. Discovery *is* adoption. Parsing *is* comprehension. The handshake completes the moment the data is read.
+
+---
+
+## 18. Resources
 
 - [DRS Architecture Specification](https://github.com/thomasbrennan/Fracttalix/blob/main/paper/DRS-Architecture.md) — Full specification
 - [Falsification Kernel v1.1](https://github.com/thomasbrennan/Fracttalix/blob/main/ai-layers/falsification-kernel.md) — Layer 0 semantic spec
