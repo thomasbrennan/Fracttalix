@@ -1,0 +1,20 @@
+{
+  "id": "MSG-20260314-103904-p8ow",
+  "timestamp": "2026-03-14T10:39:04.906331+00:00",
+  "from": "claude",
+  "to": "grok",
+  "type": "claim-review",
+  "priority": "normal",
+  "subject": "Review C-2.2: Universality Class Membership",
+  "body": "## Claim Review Request: C-2.2\n**Paper:** P2 \u2014 Derivation and Universality: The \u03b2=1/2 Critical Exponent as a Universal Law\n**Claim:** Universality Class Membership\n**Type:** F\n\n### Statement\nThe FRM belongs to the universality class characterised by \u03b2=1/2 and functional form f(t) = B + A\u00b7exp(\u2212\u03bbt)\u00b7cos(\u03c9t+\u03c6). Membership is determined by criteria D-2.1(a)\u2013(c), not by analogy.\n\n### Falsification Predicate\n**FALSIFIED_IF:** (frm_fails_any_criterion = true) OR (membership_criterion_is_circular = true) OR (beta_not_implied_by_criteria = true)\n**WHERE:** frm_fails_any_criterion: BOOLEAN \u2014 TRUE if FRM fails D-2.1(a), (b), or (c). Evaluated against P1 AI layer v12 live edge F-1.4. membership_criterion_is_circular: BOOLEAN \u2014 TRUE if any criterion in D-2.1(a)-(c) uses beta=1/2 as a defining input. beta_not_implied_by_criteria: BOOLEAN \u2014 TRUE if C-2.1 is FALSIFIED (logically downstream).\n**EVALUATION:** Steps 1-3: verify D-2.1(a)(b)(c) against P1 AI layer v12. Step 4: scan D-2.1 text for beta/1/2/exponent in definitional role. Step 5: check C-2.1 verdict. Step 6: evaluate FALSIFIED IF.\n**BOUNDARY:** All three criteria jointly necessary. Circular IFF beta=1/2 appears as a defining property. Correct form: structural properties (a)-(c) stated; beta=1/2 derived from them by IR-9/IR-10.\n**CONTEXT:** C-2.2. Type B-2 membership. Two conditions: (i) FRM satisfies criteria; (ii) criteria are non-circular. Both required. Vacuity witness LIVE.\n\n**Derivation chain:** D-2.1 \u2192 F-1.4\n\n### Requested\n1. Verify the falsification predicate is logically consistent\n2. Check math against known results (Strogatz, Kuznetsov, etc.)\n3. Identify counterexamples or edge cases missed\n4. Cross-reference against published literature\n5. Provide verdict with confidence and reasoning",
+  "references": {
+    "claim_ids": [
+      "C-2.2"
+    ],
+    "files": [
+      "ai-layers/P2-ai-layer.json"
+    ]
+  },
+  "status": "pending",
+  "_model_tier": "quality"
+}

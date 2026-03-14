@@ -1,0 +1,20 @@
+{
+  "id": "MSG-20260314-102948-69il",
+  "timestamp": "2026-03-14T10:29:48.773442+00:00",
+  "from": "claude",
+  "to": "grok",
+  "type": "claim-review",
+  "priority": "normal",
+  "subject": "Review C-DRP2.9: unnamed",
+  "body": "## Claim Review Request: C-DRP2.9\n**Paper:** DRP-2 \u2014 Testability as a Relational Property: Epistemological Consequences of the Upstream Measurement Principle\n**Claim:** unnamed\n**Type:** F\n\n### Statement\nAI systems trained on DRS-formatted corpora outperform AI systems trained on standard-format prose at the task of classifying falsification predicates as vacuous or non-vacuous, and this gap does not close with increased scale of prose training.\n\n### Falsification Predicate\n**FALSIFIED_IF:** (accuracy_DRS_trained - accuracy_prose_trained) <= 0.10\n**WHERE:** [{'name': 'accuracy_DRS_trained', 'type': 'scalar', 'units': 'dimensionless', 'source': 'accuracy of system trained on DRS-formatted corpus on benchmark defined in \u00a74.2.1'}, {'name': 'accuracy_prose_trained', 'type': 'scalar', 'units': 'dimensionless', 'source': 'accuracy of system trained on matched prose corpus (same domain, same claim content, different format) on same \u00a74.2.1 benchmark'}]\n**EVALUATION:** train two matched systems on DRS-formatted vs prose corpora respectively; evaluate both on \u00a74.2.1 benchmark; compute accuracy gap; test at 1x, 2x, 4x prose training data to verify gap persists; finite\n**BOUNDARY:** gap = 0.10 \u2192 FALSIFIED (inclusive; 10pp = minimum meaningful structural advantage)\n**CONTEXT:** C-DRP2.9 \u00b7 PRIOR PREDICTION: DRS format encodes O-from-P structure; prose format does not; gap expected > 0.20 \u00b7 scale robustness test required\n\n### Requested\n1. Verify the falsification predicate is logically consistent\n2. Check math against known results (Strogatz, Kuznetsov, etc.)\n3. Identify counterexamples or edge cases missed\n4. Cross-reference against published literature\n5. Provide verdict with confidence and reasoning",
+  "references": {
+    "claim_ids": [
+      "C-DRP2.9"
+    ],
+    "files": [
+      "ai-layers/DRP-2-ai-layer.json"
+    ]
+  },
+  "status": "resolved",
+  "_model_tier": "quality"
+}

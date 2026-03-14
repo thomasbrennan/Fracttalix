@@ -236,7 +236,19 @@
       "CONTEXT": "Uniqueness is up to positive monotone transformation. The alpha=1 exponent choice is a separate modeling decision. A counterexample must violate none of A1–A6.",
       "vacuity_witness": "f = N+I'+C'+T satisfies A1–A4 but fails A5: f(0,0.9,0.9,0.9)=2.7>0. Therefore n=0 for additive form → NOT FALSIFIED → non-vacuous.",
       "placeholder": false,
-      "phase_ready_blocking": false
+      "phase_ready_blocking": false,
+      "type": "F",
+      "statement": "Multiplicative functional form — uniqueness",
+      "falsification_predicate": {
+        "FALSIFIED_IF": "n_valid_alternative_forms > 0",
+        "WHERE": {
+          "n_valid_alternative_forms": "integer · dimensionless · count of functional forms f:[0,1]^4→[0,1] satisfying all six axioms A1–A6 AND producing at least one output differing from N×I'×C'×T"
+        },
+        "EVALUATION": "For each axiom, state as formal constraint; check whether it admits non-multiplicative solutions. For A5, check whether any non-multiplicative f satisfies f(0,x2,x3,x4)=0 for all inputs. Finite.",
+        "BOUNDARY": "n_valid_alternative_forms = 0 → NOT FALSIFIED. Forms identical under positive monotone transformation are not counted as alternatives.",
+        "CONTEXT": "Uniqueness is up to positive monotone transformation. The alpha=1 exponent choice is a separate modeling decision. A counterexample must violate none of A1–A6.",
+        "vacuity_witness": "f = N+I'+C'+T satisfies A1–A4 but fails A5: f(0,0.9,0.9,0.9)=2.7>0. Therefore n=0 for additive form → NOT FALSIFIED → non-vacuous."
+      }
     },
     {
       "claim_id": "F-MK1.2",
@@ -253,7 +265,19 @@
       "CONTEXT": "Depends on A6 as stated in Section 3.2. Weakening A6 may change result.",
       "vacuity_witness": "(0.4,0.2,0.2,0.2) fails A6 (asymmetric marginals at symmetric point) — not a valid alternative → NOT FALSIFIED → confirms non-vacuity.",
       "placeholder": false,
-      "phase_ready_blocking": false
+      "phase_ready_blocking": false,
+      "type": "F",
+      "statement": "Equal weights derivation from Axiom A6 (Marginal Symmetry)",
+      "falsification_predicate": {
+        "FALSIFIED_IF": "n_asymmetric_weight_solutions > 0",
+        "WHERE": {
+          "n_asymmetric_weight_solutions": "integer · dimensionless · count of weight vectors (w_N,w_I,w_C,w_T) with at least two unequal components satisfying (i) Marginal Symmetry A6 at (0.5,0.5,0.5,0.5) AND (ii) sum(w_i)=1"
+        },
+        "EVALUATION": "(1) State A6 as formal constraint; (2) solve for (w_N,w_I,w_C,w_T) s.t. sum=1; (3) check for asymmetric solutions. Finite: four-variable linear system.",
+        "BOUNDARY": "n_asymmetric_weight_solutions = 0 → NOT FALSIFIED.",
+        "CONTEXT": "Depends on A6 as stated in Section 3.2. Weakening A6 may change result.",
+        "vacuity_witness": "(0.4,0.2,0.2,0.2) fails A6 (asymmetric marginals at symmetric point) — not a valid alternative → NOT FALSIFIED → confirms non-vacuity."
+      }
     },
     {
       "claim_id": "F-MK1.3",
@@ -270,7 +294,19 @@
       "CONTEXT": "Symmetric loss is an explicit simplification. The asymmetric extension κ* = C_late/(C_late+C_fp) is derived in MK-P5 Theorem 2.",
       "vacuity_witness": "Set C_fp=2.0, C_fn=1.0: optimal=0.333. abs(0.333-0.50)=0.167>0.001 → FALSIFIED under asymmetric loss. Confirms non-vacuity.",
       "placeholder": false,
-      "phase_ready_blocking": false
+      "phase_ready_blocking": false,
+      "type": "F",
+      "statement": "Adoption threshold κ=0.50 derivation under symmetric loss",
+      "falsification_predicate": {
+        "FALSIFIED_IF": "abs(optimal_threshold - 0.50) > 0.001",
+        "WHERE": {
+          "optimal_threshold": "scalar · dimensionless · value minimizing E[Loss(κ)] under symmetric loss C_fp=C_fn and uniform Beta(1,1) prior, as specified in Section 4.7"
+        },
+        "EVALUATION": "Define loss function with C_fp=C_fn=1.0 and Beta(1,1) prior. Compute posterior expected loss as function of κ. Find minimizer numerically or analytically. Compare to 0.50. Finite.",
+        "BOUNDARY": "abs(optimal_threshold - 0.50) ≤ 0.001 → NOT FALSIFIED.",
+        "CONTEXT": "Symmetric loss is an explicit simplification. The asymmetric extension κ* = C_late/(C_late+C_fp) is derived in MK-P5 Theorem 2.",
+        "vacuity_witness": "Set C_fp=2.0, C_fn=1.0: optimal=0.333. abs(0.333-0.50)=0.167>0.001 → FALSIFIED under asymmetric loss. Confirms non-vacuity."
+      }
     },
     {
       "claim_id": "F-MK1.4",
@@ -289,7 +325,19 @@
       "placeholder": true,
       "placeholder_id": "PH-MK1.2",
       "placeholder_description": "Full distributional parameters from Section 5 pending publication as standalone Channel 2 asset.",
-      "phase_ready_blocking": false
+      "phase_ready_blocking": false,
+      "type": "F",
+      "statement": "Simulation recall 73.8% [90% CI: 71.2, 76.2]",
+      "falsification_predicate": {
+        "FALSIFIED_IF": "recall_point_estimate < 71.2 OR recall_point_estimate > 76.2",
+        "WHERE": {
+          "recall_point_estimate": "scalar · dimensionless · proportion of top-k ground-truth candidates appearing in top-k KVS-ranked candidates, averaged over n_sim=10,000 runs with distributional parameters as stated in Section 5"
+        },
+        "EVALUATION": "Generate n_sim=10,000 candidate sets from specified Beta distributions. Rank by KVS and by noisy multiplicative ground truth. Compute recall at specified k. Compute mean and 90% CI. Check whether point estimate falls in [71.2, 76.2]. Finite.",
+        "BOUNDARY": "recall_point_estimate in [71.2, 76.2] → NOT FALSIFIED. CI bounds inclusive.",
+        "CONTEXT": "PLACEHOLDER PH-MK1.2: Full distributional parameters from Section 5 pending publication as standalone Channel 2 asset.",
+        "vacuity_witness": "Recall=55.0% is logically possible if distributional parameters place most top-k KVS candidates in low ground-truth categories → FALSIFIED → non-vacuous."
+      }
     },
     {
       "claim_id": "F-MK1.5",
@@ -306,7 +354,19 @@
       "CONTEXT": "Analytic property. Falsifiable only by mathematical counterexample with valid input giving output outside [0,1].",
       "vacuity_witness": "N=−0.1 gives KVS<0 → FALSIFIED, but violates N∈[0,1]. Domain constraint is load-bearing — confirms non-vacuity.",
       "placeholder": false,
-      "phase_ready_blocking": false
+      "phase_ready_blocking": false,
+      "type": "F",
+      "statement": "KVS boundedness — output in [0,1] for all valid inputs",
+      "falsification_predicate": {
+        "FALSIFIED_IF": "kvs_out_of_bounds = true",
+        "WHERE": {
+          "kvs_out_of_bounds": "boolean · dimensionless · true if any (N,I',C',T) in [0,1]^4 gives KVS = N×I'×C'×T outside [0,1]"
+        },
+        "EVALUATION": "Boundary check: KVS(0,0,0,0)=0; KVS(1,1,1,1)=1. Monotone product guarantees [0,1] for all intermediate inputs. Finite.",
+        "BOUNDARY": "kvs_out_of_bounds = false → NOT FALSIFIED.",
+        "CONTEXT": "Analytic property. Falsifiable only by mathematical counterexample with valid input giving output outside [0,1].",
+        "vacuity_witness": "N=−0.1 gives KVS<0 → FALSIFIED, but violates N∈[0,1]. Domain constraint is load-bearing — confirms non-vacuity."
+      }
     },
     {
       "claim_id": "F-MK1.6",
@@ -323,7 +383,19 @@
       "CONTEXT": "MK-P3 Appendix A demonstrates with KVS=0.413. Claim is about logical consistency, not independence of quality signal.",
       "vacuity_witness": "'KVS=1 iff KVS<0.5' creates self-referential contradiction → FALSIFIED. No legitimate modification has this form. Confirms non-vacuity.",
       "placeholder": false,
-      "phase_ready_blocking": false
+      "phase_ready_blocking": false,
+      "type": "F",
+      "statement": "Self-referential applicability — no logical contradiction (Theorem 4.2)",
+      "falsification_predicate": {
+        "FALSIFIED_IF": "self_application_contradiction = true",
+        "WHERE": {
+          "self_application_contradiction": "boolean · dimensionless · true if applying KVS to a modification of itself produces a logical contradiction or non-termination"
+        },
+        "EVALUATION": "(1) Specify modification M; (2) compute KVS(M) with current formula; (3) check termination and output in [0,1]; (4) check for contradiction. Finite.",
+        "BOUNDARY": "self_application_contradiction = false → NOT FALSIFIED.",
+        "CONTEXT": "MK-P3 Appendix A demonstrates with KVS=0.413. Claim is about logical consistency, not independence of quality signal.",
+        "vacuity_witness": "'KVS=1 iff KVS<0.5' creates self-referential contradiction → FALSIFIED. No legitimate modification has this form. Confirms non-vacuity."
+      }
     }
   ],
   "placeholder_register": [

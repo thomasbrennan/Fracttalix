@@ -13,7 +13,6 @@
       "v1.1: binary M scope stated; benchmark protocol §4.2; UMP-precedes-DQ proof sketch; Carnap §5.1; C-DRP2.7/2.8/2.9 registered"
     ]
   },
-
   "paper_id": "DRP-2",
   "corpus_id": "Fracttalix",
   "series": "DRS Programme — DRP Series",
@@ -26,7 +25,6 @@
   "prose_doi": "10.5281/zenodo.18859299",
   "ai_layer_url": "https://github.com/thomasbrennan/Fracttalix/blob/main/ai-layers/DRP2-ai-layer.json",
   "citation_format": "[DRP-2 v1.2, AI-Layer, Claim C-DRP2.X]",
-
   "phase_ready": {
     "verdict": "PHASE-READY",
     "c1": "SATISFIED",
@@ -39,7 +37,6 @@
     "phase_ready_session": "S49",
     "note": "PHASE-READY status confirmed in prose Table 1. All 9 claims have full predicates or are Type A/D (no predicate required). Zero placeholders."
   },
-
   "claim_summary": {
     "total_claims": 9,
     "type_F": 6,
@@ -47,7 +44,6 @@
     "type_A": 1,
     "note": "Base v1.0 had 3 Type F (C-DRP2.1, C-DRP2.2, C-DRP2.3). v1.1 added C-DRP2.7, C-DRP2.8, C-DRP2.9 (3 further Type F). v1.2 corrected C-DRP2.7 predicate only — claim count unchanged at 9."
   },
-
   "dependencies": {
     "inbound_live_edges": [
       {
@@ -92,7 +88,6 @@
       }
     ]
   },
-
   "claim_registry": [
     {
       "claim_id": "C-DRP2.1",
@@ -101,8 +96,8 @@
       "statement": "The replication crisis has a necessary structural cause: the standard publishing format cannot encode falsification predicates in machine-evaluable form, guaranteeing non-zero rates of vacuous or ambiguous claims.",
       "prose_section": "§2.2",
       "falsification_predicate": {
-        "condition": "vacuity_rate_prose <= vacuity_rate_DRS",
-        "inputs": [
+        "FALSIFIED_IF": "vacuity_rate_prose <= vacuity_rate_DRS",
+        "WHERE": [
           {
             "name": "vacuity_rate_prose",
             "type": "scalar",
@@ -116,9 +111,9 @@
             "source": "proportion of falsifiable claims in a DRS-built corpus that fail C6"
           }
         ],
-        "evaluation": "retroactively formalise n >= 100 claims from standard-format papers; apply C6 vacuity test; compare to DRS corpus rate; finite",
-        "boundary": "vacuity_rate_prose = vacuity_rate_DRS → FALSIFIED (inclusive)",
-        "context": "C-DRP2.1 · threshold equality: structural cause claim requires a statistically significant difference · standard corpus n >= 100 minimum sample",
+        "EVALUATION": "retroactively formalise n >= 100 claims from standard-format papers; apply C6 vacuity test; compare to DRS corpus rate; finite",
+        "BOUNDARY": "vacuity_rate_prose = vacuity_rate_DRS → FALSIFIED (inclusive)",
+        "CONTEXT": "C-DRP2.1 · threshold equality: structural cause claim requires a statistically significant difference · standard corpus n >= 100 minimum sample",
         "vacuity_witness": "a standard-format corpus where every retroactively formalised claim passes C6 — this would refute the structural diagnosis"
       }
     },
@@ -130,8 +125,8 @@
       "prose_section": "§3",
       "scope_note": "Proved here for binary M: O → {FALSIFIED, NOT FALSIFIED}. Generalisation to continuous and probabilistic M: same argument structure holds; formal proof deferred (DRP-2 §8 disclosed gap). DRP-4 receives this as binary-scoped and proves the full generalisation.",
       "falsification_predicate": {
-        "condition": "n_counterexamples > 0",
-        "inputs": [
+        "FALSIFIED_IF": "n_counterexamples > 0",
+        "WHERE": [
           {
             "name": "n_counterexamples",
             "type": "integer",
@@ -139,9 +134,9 @@
             "source": "count of predicates simultaneously satisfying: (a) O is causally derived from P, AND (b) the predicate has non-zero Shannon mutual information content about P — i.e., the prior probability P(P=true) is updated by observing the test outcome"
           }
         ],
-        "evaluation": "for each candidate predicate: compute mutual information I(outcome; P) given O=f(P); if I > 0 count as counterexample; finite",
-        "boundary": "n = 0 → NOT FALSIFIED",
-        "context": "C-DRP2.2 · threshold 0 · conservation law claim: a single predicate with O=f(P) and I(outcome;P) > 0 falsifies · proof in §3 establishes I = 0 analytically for all O=f(P) cases",
+        "EVALUATION": "for each candidate predicate: compute mutual information I(outcome; P) given O=f(P); if I > 0 count as counterexample; finite",
+        "BOUNDARY": "n = 0 → NOT FALSIFIED",
+        "CONTEXT": "C-DRP2.2 · threshold 0 · conservation law claim: a single predicate with O=f(P) and I(outcome;P) > 0 falsifies · proof in §3 establishes I = 0 analytically for all O=f(P) cases",
         "vacuity_witness": "any predicate with O=f(P): I(outcome; P) = 0 because P(outcome=FALSIFIED | P=true) = 0 by construction — the prior on P is unchanged by any observation"
       }
     },
@@ -152,8 +147,8 @@
       "statement": "AI systems trained exclusively on standard-format scientific prose perform at chance on distinguishing vacuous from non-vacuous falsification predicates.",
       "prose_section": "§4.2",
       "falsification_predicate": {
-        "condition": "accuracy_prose_trained > 0.70",
-        "inputs": [
+        "FALSIFIED_IF": "accuracy_prose_trained > 0.70",
+        "WHERE": [
           {
             "name": "accuracy_prose_trained",
             "type": "scalar",
@@ -161,9 +156,9 @@
             "source": "accuracy of a prose-trained AI system on a balanced benchmark of 200+ vacuous vs non-vacuous predicates, where vacuous predicates have O=f(P) and non-vacuous predicates have O independent of P; surface-feature-controlled per §4.2.1 benchmark protocol"
           }
         ],
-        "evaluation": "construct benchmark per §4.2.1 specification; evaluate prose-trained system; measure accuracy against ground truth (κ >= 0.80 inter-rater threshold); compare to 0.70 threshold; finite",
-        "boundary": "accuracy = 0.70 → FALSIFIED (inclusive; 0.70 threshold = 20pp above chance = minimum evidence of structural capability beyond pattern-matching)",
-        "context": "C-DRP2.3 · PRIOR PREDICTION: prose training provides no structural signal for O-from-P detection; expected accuracy ~0.50 + noise · threshold 0.70: 20pp above chance chosen as minimum evidence of structural capability",
+        "EVALUATION": "construct benchmark per §4.2.1 specification; evaluate prose-trained system; measure accuracy against ground truth (κ >= 0.80 inter-rater threshold); compare to 0.70 threshold; finite",
+        "BOUNDARY": "accuracy = 0.70 → FALSIFIED (inclusive; 0.70 threshold = 20pp above chance = minimum evidence of structural capability beyond pattern-matching)",
+        "CONTEXT": "C-DRP2.3 · PRIOR PREDICTION: prose training provides no structural signal for O-from-P detection; expected accuracy ~0.50 + noise · threshold 0.70: 20pp above chance chosen as minimum evidence of structural capability",
         "vacuity_witness": "a prose-trained system achieving 0.85 accuracy — this would refute the claim that prose format destroys the O-from-P signal"
       }
     },
@@ -204,8 +199,8 @@
       "prose_section": "§2.3; §6 (Table 8, row marked †)",
       "version_note": "v1.1 addition. Predicate corrected in v1.2: v1.1 predicate was logically inverted — FALSIFIED IF condition fired on the predicted state (equality of vacuity rates), making the claim self-falsifying by construction. v1.2 correction: FALSIFIED IF abs(rate_diff) > 0.05; boundary: abs(rate_diff) <= 0.05 → NOT FALSIFIED.",
       "falsification_predicate": {
-        "condition": "abs(vacuity_rate_preregistered - vacuity_rate_unregistered) > 0.05",
-        "inputs": [
+        "FALSIFIED_IF": "abs(vacuity_rate_preregistered - vacuity_rate_unregistered) > 0.05",
+        "WHERE": [
           {
             "name": "vacuity_rate_preregistered",
             "type": "scalar",
@@ -219,9 +214,9 @@
             "source": "proportion of Type F claims in n >= 50 matched unregistered studies failing DRS C6 when retroactively formalised; matched on domain and year"
           }
         ],
-        "evaluation": "retroactively formalise claims from both corpora; apply C6 vacuity test; compute absolute difference in rates; compare to equivalence margin 0.05; finite",
-        "boundary": "abs(vacuity_rate_preregistered - vacuity_rate_unregistered) <= 0.05 → NOT FALSIFIED (rates within 5pp equivalence margin = structural equivalence confirmed; 0.05 margin: conservative given n=50 per group, two-tailed alpha=0.05, 80% power to detect 10pp difference)",
-        "context": "C-DRP2.7 · PRIOR PREDICTION: pre-registration does not change O-from-P structure; rates should be statistically indistinguishable · n >= 50 per group minimum",
+        "EVALUATION": "retroactively formalise claims from both corpora; apply C6 vacuity test; compute absolute difference in rates; compare to equivalence margin 0.05; finite",
+        "BOUNDARY": "abs(vacuity_rate_preregistered - vacuity_rate_unregistered) <= 0.05 → NOT FALSIFIED (rates within 5pp equivalence margin = structural equivalence confirmed; 0.05 margin: conservative given n=50 per group, two-tailed alpha=0.05, 80% power to detect 10pp difference)",
+        "CONTEXT": "C-DRP2.7 · PRIOR PREDICTION: pre-registration does not change O-from-P structure; rates should be statistically indistinguishable · n >= 50 per group minimum",
         "vacuity_witness": "a corpus where pre-registered studies have zero vacuous claims and unregistered studies have >20% vacuous claims — this would falsify the structural equivalence claim"
       }
     },
@@ -233,8 +228,8 @@
       "prose_section": "§3.3; §6 (Table 8, row marked †)",
       "version_note": "v1.1 addition.",
       "falsification_predicate": {
-        "condition": "effect_size_full <= effect_size_filtered",
-        "inputs": [
+        "FALSIFIED_IF": "effect_size_full <= effect_size_filtered",
+        "WHERE": [
           {
             "name": "effect_size_full",
             "type": "scalar",
@@ -248,9 +243,9 @@
             "source": "pooled effect size of the same meta-analysis after removing studies whose falsification predicates fail DRS C6 retroactive formalisation"
           }
         ],
-        "evaluation": "retroactively formalise all constituent study claims; remove C6 failures; recompute pooled effect size; compare; finite",
-        "boundary": "effect_size_full = effect_size_filtered → FALSIFIED (inclusive; equality means no bias from circular predicates)",
-        "context": "C-DRP2.8 · PRIOR PREDICTION: circular studies return NOT FALSIFIED systematically, contributing spurious confirmation; filtered estimate expected to be smaller · minimum meta-analysis n = 10 constituent studies",
+        "EVALUATION": "retroactively formalise all constituent study claims; remove C6 failures; recompute pooled effect size; compare; finite",
+        "BOUNDARY": "effect_size_full = effect_size_filtered → FALSIFIED (inclusive; equality means no bias from circular predicates)",
+        "CONTEXT": "C-DRP2.8 · PRIOR PREDICTION: circular studies return NOT FALSIFIED systematically, contributing spurious confirmation; filtered estimate expected to be smaller · minimum meta-analysis n = 10 constituent studies",
         "vacuity_witness": "a meta-analysis where removing all C6-failing studies produces an equal or larger effect size estimate"
       }
     },
@@ -262,8 +257,8 @@
       "prose_section": "§4.3; §6 (Table 8, row marked †)",
       "version_note": "v1.1 addition.",
       "falsification_predicate": {
-        "condition": "(accuracy_DRS_trained - accuracy_prose_trained) <= 0.10",
-        "inputs": [
+        "FALSIFIED_IF": "(accuracy_DRS_trained - accuracy_prose_trained) <= 0.10",
+        "WHERE": [
           {
             "name": "accuracy_DRS_trained",
             "type": "scalar",
@@ -277,21 +272,18 @@
             "source": "accuracy of system trained on matched prose corpus (same domain, same claim content, different format) on same §4.2.1 benchmark"
           }
         ],
-        "evaluation": "train two matched systems on DRS-formatted vs prose corpora respectively; evaluate both on §4.2.1 benchmark; compute accuracy gap; test at 1x, 2x, 4x prose training data to verify gap persists; finite",
-        "boundary": "gap = 0.10 → FALSIFIED (inclusive; 10pp = minimum meaningful structural advantage)",
-        "context": "C-DRP2.9 · PRIOR PREDICTION: DRS format encodes O-from-P structure; prose format does not; gap expected > 0.20 · scale robustness test required",
+        "EVALUATION": "train two matched systems on DRS-formatted vs prose corpora respectively; evaluate both on §4.2.1 benchmark; compute accuracy gap; test at 1x, 2x, 4x prose training data to verify gap persists; finite",
+        "BOUNDARY": "gap = 0.10 → FALSIFIED (inclusive; 10pp = minimum meaningful structural advantage)",
+        "CONTEXT": "C-DRP2.9 · PRIOR PREDICTION: DRS format encodes O-from-P structure; prose format does not; gap expected > 0.20 · scale robustness test required",
         "vacuity_witness": "DRS-trained and prose-trained systems achieving identical accuracy at any training scale — this would refute the claim that format encodes the relevant structural distinction"
       }
     }
   ],
-
   "placeholder_register": [],
-
   "derivation_sources": [
     "DRP-1 v1.1, C-DRP.8 (UMP theorem) — received as C-DRP2.6",
     "DRP-1 v1.1, C-DRP.5 (Falsification Kernel) — structural vocabulary"
   ],
-
   "version_history": [
     {
       "version": "v1.0",
@@ -314,7 +306,6 @@
       "changes": "AI layer deposit (R-12 resolution). C-DRP2.6 derivation source corrected from C-DRP.7 to C-DRP.8 per R-13 (S53/S54). Claim count unchanged. Full _meta wrapper and structured dependency edges added at deposit."
     }
   ],
-
   "_arch2_update_required": {
     "note": "ARCH-2 pass-forward register must be updated when this AI layer is deposited. Rows affected: DRP-1 → DRP-2 edge (C-DRP.7 → C-DRP.8, already flagged in Patch 3 of R-13). DRP-2 → DRP-3 and DRP-2 → DRP-4 edges are LIVE and correctly specified.",
     "status": "Pending — ARCH-2 file not in repo"

@@ -218,7 +218,15 @@
       "name": "FRM functional form uniqueness",
       "statement": "The FRM functional form f(t)=B+A·e^(−λt)·cos(ωt+φ) is the unique solution for network information transmission across time satisfying conditions C1–C4.",
       "source": "P1 Section 2",
-      "predicate": {
+      "sample_falsification_observation": "O = {substrate with R2_alt = R2_frm + 0.06} → FALSIFIED → PASS",
+      "derivation_source": [
+        "D-1.1",
+        "A-1.1",
+        "A-1.2",
+        "A-1.3",
+        "A-1.4"
+      ],
+      "falsification_predicate": {
         "FALSIFIED_IF": "EXISTS substrate S IN validation_set_P1 SUCH THAT (FRM_conditions(S) = TRUE) AND (R2_frm(S) < 0.85) AND (R2_best_alt(S) >= R2_frm(S) + 0.05)",
         "WHERE": {
           "validation_set_P1": "set · confirmed substrates (n=3) + candidate substrates (n=11) · P1 Appendix A (D-1 S47)",
@@ -229,15 +237,7 @@
         "EVALUATION": "Run P3 regression for each substrate; compare R² values; finite",
         "BOUNDARY": "R2_best_alt = R2_frm + 0.05 → FALSIFIED (threshold inclusive)",
         "CONTEXT": "threshold 0.05 accounts for overfitting in higher-parameter alternatives (conservative); threshold 0.85 is minimum fit criterion per P3 protocol"
-      },
-      "sample_falsification_observation": "O = {substrate with R2_alt = R2_frm + 0.06} → FALSIFIED → PASS",
-      "derivation_source": [
-        "D-1.1",
-        "A-1.1",
-        "A-1.2",
-        "A-1.3",
-        "A-1.4"
-      ]
+      }
     },
     {
       "claim_id": "F-1.2",
@@ -246,7 +246,13 @@
       "name": "OOM span validation",
       "statement": "FRM validated across confirmed substrates spanning 4.6 OOM in characteristic timescale (cyanobacterial circadian to Ibn Khaldun dynastic cycle). Candidate substrates extend span to 11.1 OOM; formal validation scoped to Papers 3-7.",
       "source": "P1 Section 3",
-      "predicate": {
+      "sample_falsification_observation": "O = {confirmed span = 4.5 OOM} → < 4.6 → FALSIFIED tier 1 → PASS. Assessment: confirmed span = 4.64 OOM → NOT FALSIFIED → correct.",
+      "derivation_source": [
+        "D-1.4",
+        "F-1.1",
+        "A-1.1"
+      ],
+      "falsification_predicate": {
         "FALSIFIED_IF": "(log10(T_max_confirmed) - log10(T_min_confirmed) < 4.6) OR (n_passing_confirmed < 3) OR [TIER-2, PROVISIONAL] (log10(T_max_candidate) - log10(T_min_candidate) < 11.1)",
         "WHERE": {
           "T_max_confirmed": "scalar · seconds · max T_char across confirmed substrates (n=3)",
@@ -259,13 +265,7 @@
         "EVALUATION": "Tier 1: compute log10(T_char) for confirmed substrates; verify span >= 4.6 OOM; count passing. Tier 2 (provisional): same for confirmed+candidate set; verify span >= 11.1 OOM. Both finite.",
         "BOUNDARY": "Tier 1: confirmed span < 4.6 OOM → FALSIFIED. Tier 2: candidate span < 11.1 OOM → PROVISIONAL FALSIFIED (resolves with Papers 3-7).",
         "CONTEXT": "Previous corpus claim of 36 OOM eliminated (D-1 S47): no evidentiary basis. Confirmed span 4.6 OOM is the defensible primary claim. Tier-2 predicate is provisional pending P3-P7 substrate validation."
-      },
-      "sample_falsification_observation": "O = {confirmed span = 4.5 OOM} → < 4.6 → FALSIFIED tier 1 → PASS. Assessment: confirmed span = 4.64 OOM → NOT FALSIFIED → correct.",
-      "derivation_source": [
-        "D-1.4",
-        "F-1.1",
-        "A-1.1"
-      ]
+      }
     },
     {
       "claim_id": "F-1.3",
@@ -276,7 +276,13 @@
       "source": "P1 Section 4",
       "placeholder": true,
       "placeholder_id": "PH-1.1",
-      "predicate": {
+      "sample_falsification_observation": "O = {biological class mean_β = 0.3, pooled_σ = 0.05} → FALSIFIED → PASS",
+      "derivation_source": [
+        "F-1.4",
+        "D-1.4",
+        "A-1.5"
+      ],
+      "falsification_predicate": {
         "FALSIFIED_IF": "EXISTS substrate_class SC IN {biological,physical,social,cognitive,civilisational} SUCH THAT (mean_β(SC) < 0.5 − 2·pooled_σ_β) OR (mean_β(SC) > 0.5 + 2·pooled_σ_β)",
         "WHERE": {
           "mean_β": "scalar · dimensionless · mean β_measured across substrates in SC using P3 Section 4 protocol",
@@ -286,13 +292,7 @@
         "EVALUATION": "For each class compute mean_β; compare to 0.5 ± 2·pooled_σ; finite",
         "BOUNDARY": "exact equality → NOT FALSIFIED (measure zero for continuous β)",
         "CONTEXT": "[PLACEHOLDER: pending P2, AI-Layer, Claim C-2.1, Phase 1] — class-level 2σ test"
-      },
-      "sample_falsification_observation": "O = {biological class mean_β = 0.3, pooled_σ = 0.05} → FALSIFIED → PASS",
-      "derivation_source": [
-        "F-1.4",
-        "D-1.4",
-        "A-1.5"
-      ]
+      }
     },
     {
       "claim_id": "F-1.4",
@@ -301,16 +301,6 @@
       "name": "β = 1/2 analytic derivation (Hopf quarter-wave theorem)",
       "statement": "β = 1/2 follows necessarily from the Hopf criticality condition of a normalized first-order DDE with delayed negative feedback. This is a theorem, not an empirical result.",
       "source": "P1 Theoretical Foundations Section 3, Session 43",
-      "predicate": {
-        "FALSIFIED_IF": "(n_invalid_steps > 0) OR (derivation_output ≠ 0.5)",
-        "WHERE": {
-          "n_invalid_steps": "integer · count of steps in the analytic proof (Section 3.2) that fail validity: step valid iff output follows from inputs by named rule IR-1 through IR-8",
-          "derivation_output": "scalar · β value produced by applying Hopf condition cos(Ω)=0 to normalized DDE at α=0"
-        },
-        "EVALUATION": "Trace proof step-by-step: (1) normalized DDE dx/ds = α·x(s) − k·x(s−1); (2) substitute λ=iΩ at criticality α=0; (3) real part: k·cos(Ω)=0 → Ω*=π/2; (4) ω*=Ω*/τ_gen=π/(2τ_gen) → β=1/2; verify each step named inference rule; finite",
-        "BOUNDARY": "numerical confirmation within 1% of analytic → NOT FALSIFIED (0.46% Euler discretization error is expected)",
-        "CONTEXT": "Prior art: Hayes (1950) and Kuang (1993) establish ωτ=π/2 in individual domains. Novelty: identification as universal source of empirical β=1/2 across multiple independent domains (4.6 OOM confirmed; Appendix A D-1 S47)."
-      },
       "derivation_trace": [
         {
           "step": "1",
@@ -360,7 +350,17 @@
         "D-1.2",
         "A-1.1",
         "A-1.2"
-      ]
+      ],
+      "falsification_predicate": {
+        "FALSIFIED_IF": "(n_invalid_steps > 0) OR (derivation_output ≠ 0.5)",
+        "WHERE": {
+          "n_invalid_steps": "integer · count of steps in the analytic proof (Section 3.2) that fail validity: step valid iff output follows from inputs by named rule IR-1 through IR-8",
+          "derivation_output": "scalar · β value produced by applying Hopf condition cos(Ω)=0 to normalized DDE at α=0"
+        },
+        "EVALUATION": "Trace proof step-by-step: (1) normalized DDE dx/ds = α·x(s) − k·x(s−1); (2) substitute λ=iΩ at criticality α=0; (3) real part: k·cos(Ω)=0 → Ω*=π/2; (4) ω*=Ω*/τ_gen=π/(2τ_gen) → β=1/2; verify each step named inference rule; finite",
+        "BOUNDARY": "numerical confirmation within 1% of analytic → NOT FALSIFIED (0.46% Euler discretization error is expected)",
+        "CONTEXT": "Prior art: Hayes (1950) and Kuang (1993) establish ωτ=π/2 in individual domains. Novelty: identification as universal source of empirical β=1/2 across multiple independent domains (4.6 OOM confirmed; Appendix A D-1 S47)."
+      }
     },
     {
       "claim_id": "F-1.5",
@@ -369,16 +369,6 @@
       "name": "λ derivation — leading order",
       "statement": "The FRM damping rate λ ≈ |α|/(Γ·τ_gen) where Γ = 1+π²/4 ≈ 3.467 is the universal loop impedance constant, derived from the DDE characteristic equation via perturbation expansion about the Hopf critical point.",
       "source": "P1 Theoretical Foundations Section 4, Session 43",
-      "predicate": {
-        "FALSIFIED_IF": "(n_invalid_steps_lambda > 0) OR (mean_ratio_fit_theory > 1.15) OR (mean_ratio_fit_theory < 0.85)",
-        "WHERE": {
-          "n_invalid_steps_lambda": "integer · count of invalid steps in perturbation derivation",
-          "mean_ratio_fit_theory": "scalar · mean(λ_fit/λ_theory) across 8 simulation points in stable regime"
-        },
-        "EVALUATION": "Trace perturbation derivation step-by-step; compute λ_theory = |α|/Γ for each α; fit FRM to DDE simulation; compute ratio; average; finite",
-        "BOUNDARY": "ratio > 1.15 or < 0.85 → FALSIFIED. Note: leading-order expression is valid near criticality; deviation expected to grow with |α|.",
-        "CONTEXT": "Mean ratio observed: 1.036 ± 0.089 across stable regime. Γ = |dh/dλ|* = |1+iπ/2| = 1+π²/4 falls out of the quarter-wave geometry. Second-order correction reduces mean error to 0.06%."
-      },
       "derivation_trace": [
         {
           "step": "1",
@@ -418,7 +408,17 @@
         "D-1.3",
         "F-1.4",
         "A-1.1"
-      ]
+      ],
+      "falsification_predicate": {
+        "FALSIFIED_IF": "(n_invalid_steps_lambda > 0) OR (mean_ratio_fit_theory > 1.15) OR (mean_ratio_fit_theory < 0.85)",
+        "WHERE": {
+          "n_invalid_steps_lambda": "integer · count of invalid steps in perturbation derivation",
+          "mean_ratio_fit_theory": "scalar · mean(λ_fit/λ_theory) across 8 simulation points in stable regime"
+        },
+        "EVALUATION": "Trace perturbation derivation step-by-step; compute λ_theory = |α|/Γ for each α; fit FRM to DDE simulation; compute ratio; average; finite",
+        "BOUNDARY": "ratio > 1.15 or < 0.85 → FALSIFIED. Note: leading-order expression is valid near criticality; deviation expected to grow with |α|.",
+        "CONTEXT": "Mean ratio observed: 1.036 ± 0.089 across stable regime. Γ = |dh/dλ|* = |1+iπ/2| = 1+π²/4 falls out of the quarter-wave geometry. Second-order correction reduces mean error to 0.06%."
+      }
     },
     {
       "claim_id": "F-1.6",
@@ -427,7 +427,13 @@
       "name": "Circadian period prediction",
       "statement": "T = 4·τ_gen predicts the mammalian circadian period T = 24 hr from τ_gen = 6 hr with no fitted parameters. τ_gen independently measured by four molecular biology sources.",
       "source": "P1 Theoretical Foundations Section 5, Session 43",
-      "predicate": {
+      "sample_falsification_observation": "O = {τ_gen = 3 hr → T_predicted = 12 hr} → 12 < 20 → FALSIFIED → PASS. Assessment: with τ_gen = 6 hr → T_predicted = 24 hr → 20 ≤ 24 ≤ 28 → NOT FALSIFIED → correct.",
+      "derivation_source": [
+        "D-1.2",
+        "F-1.4",
+        "A-1.5"
+      ],
+      "falsification_predicate": {
         "FALSIFIED_IF": "(T_predicted < 20) OR (T_predicted > 28) OR (n_independent_tau_sources < 3)",
         "WHERE": {
           "T_predicted": "scalar · hours · 4 × τ_gen_consensus",
@@ -436,32 +442,16 @@
         },
         "EVALUATION": "Verify τ_gen from at least 3 independent sources; compute T=4·τ_gen; compare to observed T=24 hr; finite and parameter-free",
         "BOUNDARY": "T=20 or T=28 hr → FALSIFIED (bounds are inclusive). Sensitivity: τ_gen range 5.5–6.5 hr gives T=22–26 hr — all within biological variance.",
-        "CONTEXT": "Sources: Kim & Forger 2012 (5.9 hr, direct measurement); Hardin et al. 1990 (~6 hr); Lee et al. 2001 (~6 hr sub-step); Takahashi 2017 (~6 hr). No free parameters. First derivation of circadian period from a universal delayed feedback principle."
-      },
-      "sample_falsification_observation": "O = {τ_gen = 3 hr → T_predicted = 12 hr} → 12 < 20 → FALSIFIED → PASS. Assessment: with τ_gen = 6 hr → T_predicted = 24 hr → 20 ≤ 24 ≤ 28 → NOT FALSIFIED → correct.",
-      "derivation_source": [
-        "D-1.2",
-        "F-1.4",
-        "A-1.5"
-      ]
+        "CONTEXT": "Sources: Kim & Forger 2012 (5.9 hr, direct measurement); Hardin et al. 1990 (~6 hr); Lee et al. 2001 (~6 hr sub-step); Takahashi 2017 (~6 hr). No free parameters. Prior art: T=4τ is a known result in single-domain DDE circadian models (e.g., Kim & Forger 2012 set τ~6 hr to achieve T=24 hr). Novelty is NOT T=4τ per se, but the parameter-free aggregation of independently measured τ_gen values from four molecular biology sources without fitting, derived from a universal Hopf quarter-wave principle (F-1.4) rather than a domain-specific model. [Revised per Grok QC review MSG-20260314-011250-dpxz, S57.]"
+      }
     },
     {
       "claim_id": "F-1.7",
       "type": "F",
       "label": "[TYPE:F]",
       "name": "Stuart-Landau connection",
-      "statement": "FRM is the exact transient solution of the Stuart-Landau normal form for μ < 0, with λ = |μ|. The FRM scope boundary coincides with the Hopf bifurcation.",
+      "statement": "FRM is the approximate transient solution of the Stuart-Landau normal form in the linear regime for μ < 0, with λ ≈ |μ|. Nonlinear terms introduce additional damping (observed slope k=1.10 explained by higher-order effects). The FRM scope boundary coincides with the Hopf bifurcation.",
       "source": "P1 Theoretical Foundations Section 2, Session 43",
-      "predicate": {
-        "FALSIFIED_IF": "(max_residual_SL > 0.05) OR (R2_SL_frm < 0.99) FOR any μ IN {−3.0, −2.0, −1.0, −0.5, −0.3, −0.1}",
-        "WHERE": {
-          "max_residual_SL": "scalar · max pointwise residual between FRM fit and Stuart-Landau ODE solution",
-          "R2_SL_frm": "scalar · R² of FRM fit to Stuart-Landau solution"
-        },
-        "EVALUATION": "Simulate Stuart-Landau ODE for each μ; fit FRM; compute R² and λ_fit vs |μ|; check R²≥0.99; finite",
-        "BOUNDARY": "R²=0.99 → NOT FALSIFIED (boundary inclusive)",
-        "CONTEXT": "Confirmed numerically: R²>0.99 for μ∈{−3.0,−1.0}. λ_fit tracks |μ| with slope k=1.10, R²=0.965 across stable regime. At μ=0: FRM degenerates (λ→0) as predicted."
-      },
       "adversarial_battery": {
         "ADV_BZ": {
           "result": "NOT FALSIFIED",
@@ -494,7 +484,17 @@
         "F-1.4",
         "F-1.5",
         "A-1.4"
-      ]
+      ],
+      "falsification_predicate": {
+        "FALSIFIED_IF": "(max_residual_SL > 0.05) OR (R2_SL_frm < 0.99) FOR any μ IN {−3.0, −2.0, −1.0, −0.5, −0.3, −0.1}",
+        "WHERE": {
+          "max_residual_SL": "scalar · max pointwise residual between FRM fit and Stuart-Landau ODE solution",
+          "R2_SL_frm": "scalar · R² of FRM fit to Stuart-Landau solution"
+        },
+        "EVALUATION": "Simulate Stuart-Landau ODE for each μ; fit FRM; compute R² and λ_fit vs |μ|; check R²≥0.99; finite",
+        "BOUNDARY": "R²=0.99 → NOT FALSIFIED (boundary inclusive)",
+        "CONTEXT": "Confirmed numerically: R²>0.99 for μ∈{−3.0,−1.0}. λ_fit tracks |μ| with slope k=1.10, R²=0.965 across stable regime. At μ=0: FRM degenerates (λ→0) as predicted. Note: slope k=1.10 (not 1.00) is expected from nonlinear Stuart-Landau terms contributing extra damping beyond leading-order FRM; this is not a red flag but a known higher-order correction. [Statement revised from 'exact' to 'approximate' per Grok QC review MSG-20260314-011252-r5rx, S57.]"
+      }
     }
   ],
   "placeholder_register": [
