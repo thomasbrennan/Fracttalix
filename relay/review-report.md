@@ -1,6 +1,6 @@
 # Grok Review Report
 
-**Generated:** 2026-03-14T12:35:26Z
+**Generated:** 2026-03-14T12:55:56Z
 
 ## Summary
 
@@ -8,11 +8,11 @@
 |--------|-------|
 | Total falsifiable | 70 |
 | Sent to Grok | 70 |
-| Reviewed by Grok | 35 |
-| Confirmed | 5 |
+| Reviewed by Grok | 40 |
+| Confirmed | 7 |
 | Disputed | 8 |
-| Inconclusive | 13 |
-| Needs revision | 9 |
+| Inconclusive | 14 |
+| Needs revision | 11 |
 
 ## Disputed Claims (Action Required)
 
@@ -69,6 +69,8 @@
 - **C-2.5** (confidence: 0.65): The falsification predicate is mostly logically consistent, defining clear boolean conditions for falsification based on beta shift and eigenvalues. It aligns with standard RG stability criteria where
 - **C-DRP2.3** (confidence: 0.75): The falsification predicate is mostly logically consistent in structure: it defines a clear test (benchmark construction, evaluation, threshold comparison) that could in principle falsify the claim. T
 - **C-DRP2.7** (confidence: 0.65): The falsification predicate is logically consistent: it sets up a clear equivalence test comparing vacuity rates between pre-registered and unregistered studies, with a defined margin (0.05) and sampl
+- **C-DRP8.2** (confidence: 0.75): The falsification predicate is mostly logically consistent, defining a clear condition for disproval via existence of a non-vacuous K where O_out (observations slightly after the claimed boundary) can
+- **C-MK2.4** (confidence: 0.75): The falsification predicate has an internal inconsistency: The WHERE clause defines divergence as a failure of |kappa_{t+1} - kappa_t| to decrease monotonically after t > 20, which implies that any no
 - **C-MK4.2** (confidence: 0.95): The mathematical formula delta_min = 1 - (epsilon/r_0)^{1/H_plan} is correct for achieving r_H = epsilon exactly under the geometric decay r_t = (1 - delta)^t * r_0. However, the claim states delta_mi
 - **C-MK4.4** (confidence: 0.65): The falsification predicate is logically consistent in its definition, as it clearly specifies conditions for a 'broken' loop based on component connections, with well-defined variables and evaluation
 - **F-1.2** (confidence: 0.65): The falsification predicate is logically consistent in structure, defining clear conditions for Tier 1 (confirmed substrates) and Tier 2 (provisional candidates) based on log10 spans and a passing cou
@@ -84,4 +86,6 @@
 | C-3.DIAG | 0.92 | grok-4-latest |
 | C-MK4.3 | 0.95 | grok-4-latest |
 | C-MK5.4 | 0.85 | grok-4-latest |
+| F-1.4 | 0.95 | grok-4-latest |
+| F-1.7 | 0.92 | grok-4-latest |
 | F-SFW.4 | 0.95 | grok-4-latest |

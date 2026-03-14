@@ -743,15 +743,60 @@
       "confidence": 0.65,
       "model_used": "grok-4-latest",
       "reasoning_preview": "The falsification predicate is logically consistent: it defines a clear statistical test using mean \u03b2 per substrate class against a 2\u03c3 threshold around 0.5, with well-defined variables and evaluation "
+    },
+    "C-DRP8.3": {
+      "msg_id": "MSG-20260314-125527-4st7",
+      "parent_msg_id": "MSG-20260314-103904-gm96",
+      "timestamp": "2026-03-14T12:55:27.880016+00:00",
+      "verdict": "inconclusive",
+      "confidence": 0.65,
+      "model_used": "grok-4-latest",
+      "reasoning_preview": "The falsification predicate is logically consistent: it clearly defines a testable condition where the claim fails if \u03b2=1/2 holds but the measured causal boundary deviates systematically from \u03c4 by mor"
+    },
+    "F-1.7": {
+      "msg_id": "MSG-20260314-125502-tuch",
+      "parent_msg_id": "MSG-20260314-103904-figk",
+      "timestamp": "2026-03-14T12:55:02.462190+00:00",
+      "verdict": "confirmed",
+      "confidence": 0.92,
+      "model_used": "grok-4-latest",
+      "reasoning_preview": "The falsification predicate is logically consistent: it defines clear, testable conditions based on residuals and R\u00b2 metrics for specific \u03bc values in the stable regime (\u03bc < 0), with an inclusive bound"
+    },
+    "F-1.4": {
+      "msg_id": "MSG-20260314-125411-x5jo",
+      "parent_msg_id": "MSG-20260314-103904-dxuj",
+      "timestamp": "2026-03-14T12:54:11.996973+00:00",
+      "verdict": "confirmed",
+      "confidence": 0.95,
+      "model_used": "grok-4-latest",
+      "reasoning_preview": "The derivation starts with the normalized DDE: dx/ds = \u03b1\u00b7x(s) \u2212 k\u00b7x(s\u22121). At criticality (\u03b1=0), the characteristic equation becomes \u03bb = -k exp(-\u03bb), assuming normalized delay \u03c4=1. Substituting \u03bb=i\u03a9 yie"
+    },
+    "C-DRP8.2": {
+      "msg_id": "MSG-20260314-125441-ss0p",
+      "parent_msg_id": "MSG-20260314-103904-eb82",
+      "timestamp": "2026-03-14T12:54:41.659369+00:00",
+      "verdict": "needs-revision",
+      "confidence": 0.75,
+      "model_used": "grok-4-latest",
+      "reasoning_preview": "The falsification predicate is mostly logically consistent, defining a clear condition for disproval via existence of a non-vacuous K where O_out (observations slightly after the claimed boundary) can"
+    },
+    "C-MK2.4": {
+      "msg_id": "MSG-20260314-125556-ycrc",
+      "parent_msg_id": "MSG-20260314-103904-hwew",
+      "timestamp": "2026-03-14T12:55:56.349805+00:00",
+      "verdict": "needs-revision",
+      "confidence": 0.75,
+      "model_used": "grok-4-latest",
+      "reasoning_preview": "The falsification predicate has an internal inconsistency: The WHERE clause defines divergence as a failure of |kappa_{t+1} - kappa_t| to decrease monotonically after t > 20, which implies that any no"
     }
   },
   "summary": {
     "total_falsifiable": 70,
     "sent_to_grok": 70,
-    "reviewed_by_grok": 35,
-    "confirmed": 5,
+    "reviewed_by_grok": 40,
+    "confirmed": 7,
     "disputed": 8,
-    "inconclusive": 13,
-    "needs_revision": 9
+    "inconclusive": 14,
+    "needs_revision": 11
   }
 }
