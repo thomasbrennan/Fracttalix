@@ -2,9 +2,9 @@
   "@context": "https://schema.org",
   "@type": "TechArticle",
   "@id": "https://github.com/thomasbrennan/Fracttalix/blob/main/guides/ja.json",
-  "name": "Dual Reader Standard — 実装ガイド",
-  "headline": "機械検証可能な主張のためのDual Reader Standardの実装方法",
-  "description": "Dual Reader Standard（DRS）の完全な実装ガイド。DRSは、知識システムにおけるすべての主張を、JSONでエンコードされた決定論的反証述語を用いて、人間と機械の両方が読解可能にする検証アーキテクチャです。",
+  "name": "デュアルリーダー標準 — 完全ガイド",
+  "headline": "デュアルリーダー標準の全体像を一読で理解するためのガイド：アーキテクチャ、プロトコル、カーネル、レイヤー、互換性、共通言語、そして普及戦略",
+  "description": "デュアルリーダー標準（DRS）の包括的ガイド。DRSは、すべての主張が人間と機械の両方によって読み取り可能であることを要求する検証アーキテクチャです。両プロトコル（テキスト用のDRP、ソフトウェア用のGVP）、反証カーネル（レイヤー0）、AIレイヤー成果物、3つの主張タイプ、6つの検証ティア、8つの推論規則、6条件フェーズゲート、三軸互換性、機械の共通言語特性（埋め込みバイナリロジック）、および自己拡散的な普及ダイナミクスを網羅します。",
   "inLanguage": "ja",
   "author": {
     "@type": "Person",
@@ -21,14 +21,27 @@
   "keywords": [
     "dual reader standard",
     "デュアルリーダー標準",
+    "DRS",
     "machine-verifiable claims",
     "機械検証可能な主張",
     "falsification predicate",
     "反証述語",
+    "falsification kernel",
+    "反証カーネル",
     "AI layer",
     "AIレイヤー",
+    "dual reader protocol",
+    "デュアルリーダープロトコル",
+    "DRP",
     "grounded verification protocol",
-    "基盤検証プロトコル",
+    "根拠付き検証プロトコル",
+    "GVP",
+    "Layer 0",
+    "レイヤー0",
+    "embedded binary logic",
+    "埋め込みバイナリロジック",
+    "machine lingua franca",
+    "機械の共通言語",
     "JSON schema validation",
     "JSONスキーマ検証",
     "scientific verification",
@@ -37,8 +50,18 @@
     "ソフトウェア検証",
     "claim registry",
     "主張レジストリ",
-    "falsification kernel",
-    "反証カーネル",
+    "verification tiers",
+    "検証ティア",
+    "phase gate",
+    "フェーズゲート",
+    "inference rules",
+    "推論規則",
+    "three-axis compatibility",
+    "三軸互換性",
+    "substrate independence",
+    "基盤非依存性",
+    "serialisation independence",
+    "シリアライゼーション非依存性",
     "machine-readable research",
     "機械可読研究",
     "reproducible science",
@@ -46,12 +69,14 @@
     "open science",
     "オープンサイエンス",
     "verification architecture",
-    "検証アーキテクチャ"
+    "検証アーキテクチャ",
+    "Popperian epistemology",
+    "ポパー的認識論"
   ],
   "about": {
     "@type": "Thing",
-    "name": "Dual Reader Standard",
-    "description": "知識システムにおけるすべての主張が、人間と機械という二つの独立した読者クラスによって読解可能であることを要求する検証アーキテクチャ。",
+    "name": "デュアルリーダー標準",
+    "description": "知識システムにおけるすべての主張が、人間と機械という2つの独立したリーダークラスによって、それぞれ定義されたプロトコルを通じて読み取り可能であることを要求する検証アーキテクチャ。",
     "url": "https://github.com/thomasbrennan/Fracttalix/blob/main/paper/DRS-Architecture.md"
   },
   "citation": {
@@ -61,78 +86,117 @@
   },
   "isPartOf": {
     "@type": "CreativeWork",
-    "name": "Fracttalix — Dual Reader Standard 実装ガイド集",
+    "name": "Fracttalix — デュアルリーダー標準実装ガイド集",
     "url": "https://github.com/thomasbrennan/Fracttalix/tree/main/guides"
   },
   "content": {
-    "what_is_the_dual_reader_standard": {
-      "title": "Dual Reader Standardとは何か？",
-      "summary": "Dual Reader Standard（DRS）は、知識システムのための検証アーキテクチャです。すべての主張は——散文で書かれたものもコードで実装されたものも——人間と機械という二つの独立した読者クラスによって読解可能でなければなりません。",
+    "section_01_what_is_the_drs": {
+      "title": "デュアルリーダー標準とは",
+      "summary": "DRSは知識システムのための検証アーキテクチャです。散文で書かれた主張であれ、コードとして実装された主張であれ、すべての主張が人間と機械という2つの独立したリーダークラスによって読み取り可能であることを要求します。論文でもツールでもありません。2つのプロトコルを包含する標準規格です。",
       "protocols": {
         "DRP": {
-          "name": "Dual Reader Protocol",
-          "domain": "テキスト／論文",
-          "function": "5部構成の反証述語により、散文の主張を機械評価可能にする",
-          "readers": {
-            "reader_1": "人間 — 自然言語で論文を読む",
-            "reader_2": "AI — AIレイヤー（構造化されたJSON主張レジストリ）を読む"
-          }
+          "name": "デュアルリーダープロトコル",
+          "domain": "テキスト / 論文",
+          "function": "5部構成の反証述語により散文の主張を機械評価可能にする"
         },
         "GVP": {
-          "name": "Grounded Verification Protocol",
-          "domain": "ソフトウェア／コード",
-          "function": "テストバインディングとコミット固定のエビデンスにより、機械評価可能な主張を機械検証済みにする",
-          "readers": {
-            "reader_3a": "開発者 — tier、test_bindings、verified_againstフィールドを読む",
-            "reader_3b": "機械 — pytestを実行し、成功時にSHAを刻印する"
-          }
+          "name": "根拠付き検証プロトコル",
+          "domain": "ソフトウェア / コード",
+          "function": "テストバインディングとコミット固定のエビデンスにより機械評価可能な主張を機械検証済みにする"
         }
+      },
+      "relationship": "DRPは主張を機械評価可能にします。GVPは主張を機械検証済みにします。どちらも単独では完全ではありません。両方が合わさってDRSとなります。"
+    },
+    "section_02_two_protocols": {
+      "title": "2つのプロトコル",
+      "DRP": {
+        "name": "デュアルリーダープロトコル（テキスト）",
+        "description": "散文による主張がどのように機械評価可能になるかを規定します。",
+        "readers": {
+          "reader_1_human": "論文を自然言語で読みます。文脈、動機、物語を理解します。すべての主張を体系的に監査することはできません。",
+          "reader_2_ai": "AIレイヤーを読みます — すべての論文に付随する構造化JSONドキュメントです。完全な主張レジストリを含みます。散文を読まずにすべての主張を監査できます。"
+        },
+        "requirements": [
+          "主張の分類：すべての主張はA（公理）、D（定義）、またはF（反証可能）に分類",
+          "反証述語：すべてのタイプF主張は5部構成の決定論的述語を持つ",
+          "フェーズゲート：PHASE-READYステータスの前に6つの条件（c1〜c6）を満たす",
+          "プレースホルダー追跡：未解決の結果に依存する主張はプレースホルダーとして登録"
+        ],
+        "guarantee": "AIレイヤーにアクセスできるすべてのAIシステムは、散文を読まずに反証可能な主張を評価できます。自己充足性はフェーズゲート条件c5で強制されます。"
+      },
+      "GVP": {
+        "name": "根拠付き検証プロトコル（ソフトウェア）",
+        "description": "機械評価可能な主張がどのように機械検証済みになるかを規定します。",
+        "readers": {
+          "reader_3a_coder": "tierフィールドでエビデンスの種類を、test_bindingsでどのテストが主張を検証するかを、verified_againstでテストが最後にパスした時期を読みます。",
+          "reader_3b_machine": "test_bindings配列に対してテストランナーを実行します。合否を記録します。成功時にverified_againstのSHAをスタンプします。"
+        },
+        "required_fields_per_claim": {
+          "tier": "検証ティア（6つの値のうちの1つ）",
+          "test_bindings": "主張を検証する完全修飾テストノードIDの配列",
+          "verified_against": "それらのテストが最後にパスしたgitコミットSHA"
+        },
+        "guarantee": "すべての主張について：(a) どのエビデンスが根拠となるか、(b) どのテストが検証するか、(c) どのコミットでテストがパスしたか。tierがempirical_pendingならギャップは可視。verified_againstがnullならソフトウェアテストはカバーしていません。"
       }
     },
-    "falsification_kernel": {
-      "title": "反証カーネル K = (P, O, M, B)",
-      "description": "両プロトコルの共通基盤。すべてのType F（反証可能）の主張は、FALSIFIEDまたはNOT FALSIFIEDのいずれか一方の判定に正確に評価される決定論的述語を持つ。",
+    "section_03_falsification_kernel": {
+      "title": "共通基盤 — 反証カーネル（レイヤー0）",
+      "description": "両プロトコルは同じ基盤上で動作します。これはDRSのレイヤー0です — シリアライゼーション形式に依存せず反証述語が何を意味するかを定義します。AIレイヤーのsemantic_spec_urlフィールドはこの仕様を指します。",
+      "kernel_tuple": "K = (P, O, M, B)",
       "components": {
         "P": {
           "name": "述語",
           "json_field": "FALSIFIED_IF",
           "role": "TRUEの場合に主張を反証する論理文",
+          "grammar": [
+            "名前付き変数（WHEREで定義）",
+            "比較演算子：<, >, <=, >=, =, !=",
+            "論理接続子：AND, OR, NOT",
+            "量化子：EXISTS ... SUCH THAT, FOR ALL ... IN",
+            "算術：+, -, *, /, ^, log10(), exp(), abs(), max(), min()",
+            "集合演算子：IN, ∩, ∪, |...| （濃度）",
+            "関数適用：f(x)（fはWHEREで定義）"
+          ],
           "constraints": [
-            "任意の有効な変数割り当てに対して、正確にTRUEまたはFALSEに評価されなければならない",
-            "量化子は有限集合のみを対象とする",
-            "自己参照や循環依存は不可"
+            "決定性：正確にTRUEまたはFALSEに評価されなければならない",
+            "有限性：量化子は有限集合のみを範囲とする",
+            "自己参照なし：循環する述語依存関係は不可",
+            "完全性：FALSIFIED_IFのすべての変数がWHEREで定義され、逆も同様"
           ]
         },
         "O": {
           "name": "オペランド",
           "json_field": "WHERE",
           "role": "述語内のすべての変数の型付き定義",
-          "format": "型・単位・定義または出典",
+          "format": "型 · 単位 · 定義または出典",
+          "variable_types": ["scalar", "integer", "binary", "set", "string", "function"],
           "constraints": [
-            "Pのすべての自由変数がOに存在しなければならない",
-            "Oのすべての変数がPに存在しなければならない",
-            "各変数は引用データまたは導出から計算可能でなければならない"
+            "完全性：Pのすべての自由変数がOに現れなければならない",
+            "孤立なし：Oのすべての変数がPに現れなければならない",
+            "根拠付け可能：各変数はデータまたは導出から計算可能で、主観的判断ではない"
           ]
         },
         "M": {
           "name": "メカニズム",
           "json_field": "EVALUATION",
-          "role": "有限かつ決定論的な評価手続き",
+          "role": "有限で決定論的な評価手続き",
           "constraints": [
-            "有限ステップで終了しなければならない",
-            "同一の入力は同一の判定を生成する",
-            "第三者が再現可能であること"
+            "有限：有限ステップで終了（慣例として'finite'で終わることで確認）",
+            "決定論的：同じ入力は同じ判定を生成",
+            "再現可能：第三者が独立して実行可能"
           ]
         },
         "B": {
           "name": "境界",
           "json_fields": ["BOUNDARY", "CONTEXT"],
-          "role": "閾値の意味論と正当化",
-          "constraints": [
-            "BOUNDARYはすべての閾値について包含／排他を指定する",
-            "CONTEXTは述語内のすべての数値リテラルを正当化する"
-          ]
+          "role": "閾値セマンティクスと根拠",
+          "BOUNDARY": "すべての閾値について包含的／排他的を指定し、正確な等値での判定を定める",
+          "CONTEXT": "すべての数値閾値を根拠付ける：なぜこの値なのか、どのドメイン知識が根拠となるか、導出か慣例か"
         }
+      },
+      "verdict_mapping": {
+        "P_is_TRUE": "FALSIFIED",
+        "P_is_FALSE": "NOT FALSIFIED"
       },
       "example": {
         "claim": "sort()は要素を昇順で返す",
@@ -144,141 +208,157 @@
           "EVALUATION": "Run sort on test vectors; check adjacent pairs; finite",
           "BOUNDARY": "len(result) <= 1 → NOT FALSIFIED (vacuously sorted)",
           "CONTEXT": "Ascending order is the documented contract of sort()"
-        }
+        },
+        "note": "この述語はすべての言語のすべてのAIシステムに対して同じ意味を持ちます。翻訳は不要です。"
       }
     },
-    "three_claim_types": {
+    "section_04_three_claim_types": {
       "title": "3つの主張タイプ",
       "types": {
         "A": {
-          "name": "公理",
-          "description": "文献から受け入れた基礎的前提、または出発点として宣言された仮定。設計上、反証不可能。",
+          "name": "公理 / 仮定",
+          "in_papers": "文献から受け入れた前提",
+          "in_software": "プラットフォーム要件、依存関係の契約",
           "predicate_required": false,
-          "examples": ["熱力学的不可逆性", "プラットフォーム要件", "依存関係の契約"]
+          "predicate_value": "null"
         },
         "D": {
           "name": "定義",
-          "description": "用語、構造、手続きの規定的定義。真偽を問うものではなく、定義するもの。",
+          "in_papers": "規定的な用語と手続き",
+          "in_software": "型シグネチャ、データ構造、スキーマ",
           "predicate_required": false,
-          "examples": ["FRM関数形式", "型シグネチャ", "設定スキーマ"]
+          "predicate_value": "null"
         },
         "F": {
           "name": "反証可能",
-          "description": "決定論的述語を持つテスト可能な主張。科学およびソフトウェアの中核的主張。",
+          "in_papers": "定理、実証的予測、導出結果",
+          "in_software": "動作保証、正確性の不変条件、性能限界",
           "predicate_required": true,
-          "examples": ["β = 1/2 の解析的導出", "動作保証", "性能限界"]
+          "predicate_value": "完全な K = (P, O, M, B)"
         }
       }
     },
-    "six_verification_tiers": {
+    "section_05_six_verification_tiers": {
       "title": "6つの検証ティア",
-      "description": "すべての主張は、どのような種類のエビデンスが根拠となるかを宣言するtierフィールドを持つ。",
-      "tiers": {
-        "grounded_by_construction": [
-          {
-            "tier": "axiom",
-            "applies_to": "Type A",
-            "meaning": "基礎的、設計上反証不可能"
-          },
-          {
-            "tier": "definition",
-            "applies_to": "Type D",
-            "meaning": "定義的、述語不要"
-          }
-        ],
-        "grounded_now": [
-          {
-            "tier": "software_tested",
-            "applies_to": "Type F",
-            "meaning": "合格テストにより検証済み。test_bindingsが非空、verified_againstのSHAが非null。"
-          },
-          {
-            "tier": "formal_proof",
-            "applies_to": "Type F",
-            "meaning": "ステップインデックス付き導出表でn_invalid_steps = 0"
-          },
-          {
-            "tier": "analytic",
-            "applies_to": "Type F",
-            "meaning": "形式的導出トレースまたは解析的論証により検証済み"
-          }
-        ],
-        "explicitly_ungrounded": [
-          {
-            "tier": "empirical_pending",
-            "applies_to": "Type F",
-            "meaning": "アクティブなプレースホルダーまたは外部データ待ち。ギャップは設計上可視。"
-          }
-        ]
-      }
+      "description": "すべての主張はどのような種類のエビデンスが根拠となるかを宣言するtierフィールドを持ちます。",
+      "grounded_by_construction": [
+        {"tier": "axiom", "type": "A", "meaning": "基礎的前提。設計上反証不可能。", "test_bindings": "[]（空）", "verified_against": "null"},
+        {"tier": "definition", "type": "D", "meaning": "定義的。用語または構造を規定。真偽判定の対象外。", "test_bindings": "[]（空）", "verified_against": "null"}
+      ],
+      "grounded_now": [
+        {"tier": "software_tested", "type": "F", "meaning": "パスするテストにより検証済み。test_bindingsが非空、verified_againstが非null。", "test_bindings": "非空", "verified_against": "非null（7〜40桁の16進文字）"},
+        {"tier": "formal_proof", "type": "F", "meaning": "n_invalid_steps = 0のステップインデックス付き導出。証明はAIレイヤーに含まれる。", "test_bindings": "空可", "verified_against": "null可"},
+        {"tier": "analytic", "type": "F", "meaning": "形式的な導出トレースまたは分析的論証により検証済み。", "test_bindings": "空可", "verified_against": "null可"}
+      ],
+      "explicitly_ungrounded": [
+        {"tier": "empirical_pending", "type": "F", "meaning": "アクティブなプレースホルダーまたは保留中のデータ。設計上ギャップが可視。", "test_bindings": "空可", "verified_against": "null可"}
+      ]
     },
-    "ai_layer_structure": {
+    "section_06_vacuity_witness": {
+      "title": "空虚性の証人",
+      "description": "各タイプF主張にはsample_falsification_observationフィールドを含める必要があります：述語がTRUEに評価されるであろう具体的で仮説的な観察です。述語が自明に反証不可能ではないことを証明します。フェーズゲート条件c6により強制されます。"
+    },
+    "section_07_placeholder_predicates": {
+      "title": "プレースホルダー述語",
+      "description": "主張がまだPHASE-READYステータスにない論文の結果に依存している場合、述語にはプレースホルダー参照を含めることができます。",
+      "fields": {
+        "placeholder": "主張オブジェクトにtrueを設定",
+        "placeholder_id": "placeholder_registerにリンク",
+        "predicate_text": "[PLACEHOLDER: pending ...]を含む場合がある"
+      },
+      "behaviour": "プレースホルダー主張は有効ですが、依存関係が解決されるまで評価不可能です。blocks_phase_readyがtrueでない限り、PHASE-READYをブロックしません。"
+    },
+    "section_08_ai_layer": {
       "title": "AIレイヤー — 中心的成果物",
-      "description": "すべての論文またはソフトウェアシステムに付随するJSONドキュメント。述語、ティア、テストバインディングを含む完全な主張レジストリを格納する。",
+      "description": "すべての論文またはソフトウェアシステムに付随するJSONドキュメント。スキーマはai-layers/ai-layer-schema.jsonで定義されています。",
       "schema_url": "https://github.com/thomasbrennan/Fracttalix/blob/main/ai-layers/ai-layer-schema.json",
       "required_sections": {
         "_meta": "ドキュメントタイプ、スキーマバージョン、セッション、ライセンス",
-        "paper_id": "一意の論文／システム識別子",
-        "paper_title": "人間可読タイトル",
-        "paper_type": "分類：law_A、derivation_B、application_C、methodology_D",
-        "phase_ready": "フェーズゲート判定および条件ステータス（c1〜c6）",
-        "claim_registry": "すべての主張のタイプ、述語、ティア、バインディングを含む配列",
-        "placeholder_register": "未解決の依存関係の配列"
+        "paper_id_and_title": "識別情報",
+        "paper_type": "分類：law_A, derivation_B, application_C, methodology_D",
+        "phase_ready": "フェーズゲートの判定と条件ステータス（c1〜c6）",
+        "claim_registry": "タイプ、述語、ティア、バインディング、SHAを含むすべての主張の配列",
+        "placeholder_register": "未解決の依存関係の配列",
+        "summary": "主張の件数とステータス",
+        "semantic_spec_url": "反証カーネル（レイヤー0）を指す"
+      },
+      "role_in_protocols": {
+        "DRP": "AIレイヤーが存在し、述語を含み、フェーズゲートをパスすることを要求",
+        "GVP": "すべての主張にティア、test_bindings、verified_againstが含まれることを要求"
       }
     },
-    "phase_gate": {
-      "title": "6条件フェーズゲート",
-      "description": "論文またはソフトウェアリリースは、6つの条件がすべて満たされたときPHASE-READYとなる。",
+    "section_09_phase_gate": {
+      "title": "フェーズゲート",
+      "description": "論文またはソフトウェアリリースは6つの条件が満たされるとPHASE-READYとなります。",
       "conditions": {
         "c1": "AIレイヤーがスキーマ有効である",
         "c2": "すべての反証可能な主張が述語とともに登録されている",
         "c3": "すべての述語が機械評価可能である",
-        "c4": "相互参照が追跡されている（プレースホルダーレジスター）",
-        "c5": "検証が自己完結的である（AIレイヤー単独で、散文は不要）",
-        "c6": "すべての述語が非空虚である（反証観測サンプルが存在する）"
-      }
+        "c4": "クロスリファレンスが追跡されている（プレースホルダーレジスター）",
+        "c5": "検証が自己充足的である（AIレイヤー単独、散文不要）",
+        "c6": "すべての述語が非空虚的である（反証観察サンプルが存在）"
+      },
+      "corpus_complete": "すべての論文がPHASE-READYであり、すべてのオブジェクトにわたるすべてのプレースホルダーが解決された時に発動します。"
     },
-    "how_to_implement": {
-      "title": "Dual Reader Standardの実装方法",
-      "for_a_paper": {
-        "title": "論文の場合（DRP）",
-        "steps": [
-          "論文を執筆する（人間読者のための散文チャネル）",
-          "AIレイヤーJSONファイルを作成する（AI読者のための機械チャネル）",
-          "すべての主張をA（公理）、D（定義）、F（反証可能）に分類する",
-          "すべてのType F主張に対して5部構成の反証述語を記述する",
-          "各Type F主張にsample_falsification_observationを含める（空虚性の証人）",
-          "各主張に検証ティアを割り当てる",
-          "ai-layer-schema.jsonに対して検証する",
-          "フェーズゲートを実行する（c1〜c6）"
-        ]
-      },
-      "for_software": {
-        "title": "ソフトウェアの場合（GVP）",
-        "steps": [
-          "ソフトウェアが何を主張するかを列挙する",
-          "各主張をA（仮定）、D（定義）、F（動作的）に分類する",
-          "すべてのType F主張に対して反証述語を記述する",
-          "各主張を検証するテストを記述または特定する",
-          "完全修飾テストノードIDでtest_bindingsを設定する",
-          "テストを実行し、合格したコミットSHAをverified_againstに記録する",
-          "ティアを割り当てる：テストが存在すればsoftware_tested、まだなければempirical_pending",
-          "テストされていない主張をプレースホルダーとして登録する",
-          "ai-layer-schema.jsonに対して検証する"
-        ]
-      },
+    "section_10_inference_rules": {
+      "title": "推論規則",
+      "description": "formal_proofティア主張の導出トレースに使用される正規インベントリ。追加のみ：新しい規則は追加できますが、既存の規則は変更も削除もされません。",
+      "rules": [
+        {"id": "IR-1", "name": "モーダスポネンス", "description": "PかつP→QならばQ"},
+        {"id": "IR-2", "name": "全称例化", "description": "∀x P(x)ならば、任意の特定のaについてP(a)"},
+        {"id": "IR-3", "name": "等号の代入", "description": "a=bならば、aをbで置換"},
+        {"id": "IR-4", "name": "定義の展開", "description": "定義された用語をその定義で置換"},
+        {"id": "IR-5", "name": "代数的操作", "description": "等式を保持する有効な代数変換"},
+        {"id": "IR-6", "name": "論理的同値", "description": "論理的に同値な式で置換"},
+        {"id": "IR-7", "name": "統計的推論", "description": "名前付き統計的手続きをデータに適用"},
+        {"id": "IR-8", "name": "簡潔性 / モデリング原理の選択", "description": "公理整合的な族から標準値を選択"}
+      ],
+      "validation": "導出表の各ステップは1つの推論規則を引用し前提を列挙します。n_invalid_steps = 0のとき有効です。"
+    },
+    "section_11_architecture_stack": {
+      "title": "アーキテクチャスタック",
+      "description": "カーネルは共通基盤です。DRPは散文から述語を作成します。GVPは述語を実行可能なエビデンスに結合します。AIレイヤーは両方を運ぶ成果物です。",
+      "layers_top_to_bottom": [
+        "DRS（包括的標準）",
+        "DRP（テキストプロトコル）+ GVP（ソフトウェアプロトコル）",
+        "リーダー：人間、AI、開発者、機械",
+        "AIレイヤー（*-ai-layer.json）— 主張 + 述語 + ティア + バインディング + SHA",
+        "反証カーネル K = (P, O, M, B) — レイヤー0"
+      ]
+    },
+    "section_12_how_to_implement": {
+      "title": "実装方法",
+      "for_a_paper_DRP": [
+        "論文を書く（人間の読者のための散文チャネル）",
+        "AIレイヤーJSONファイルを作成する（AIの読者のための機械チャネル）",
+        "すべての主張をA（公理）、D（定義）、またはF（反証可能）に分類する",
+        "すべてのタイプF主張に5部構成の反証述語を書く",
+        "各タイプF主張にsample_falsification_observationを含める（空虚性の証人）",
+        "各主張に検証ティアを割り当てる",
+        "ai-layer-schema.jsonに対してバリデーションする",
+        "フェーズゲートを実行する（c1〜c6）"
+      ],
+      "for_software_GVP": [
+        "ソフトウェアが何を主張しているかを列挙する",
+        "各主張をA（仮定）、D（定義）、またはF（動作的）に分類する",
+        "すべてのタイプF主張に反証述語を書く",
+        "各主張を検証するテストを書くまたは特定する",
+        "test_bindingsに完全修飾テストノードIDを設定する",
+        "テストを実行し、パスしたコミットSHAをverified_againstに記録する",
+        "ティアを割り当てる：テストが存在すればsoftware_tested、まだであればempirical_pending",
+        "テストされていない主張をプレースホルダーとして登録する",
+        "ai-layer-schema.jsonに対してバリデーションする"
+      ],
+      "for_both": "AIレイヤーは同じ成果物です。スキーマは同じです。カーネルは同じです。唯一の違いは、どのプロトコルがコンテンツを作成し、どのプロトコルがそれを検証するかです。",
       "minimum_viable_adoption": {
-        "title": "最小限の導入",
-        "description": "最小限のDRS導入は、1つのType F主張と1つのテストバインディングです。",
+        "description": "最小限の有効なDRS導入は、1つのタイプF主張と1つのテストバインディングです。",
         "example": {
           "claim_id": "F-1",
           "type": "F",
           "statement": "sort() returns elements in ascending order",
           "falsification_predicate": {
             "FALSIFIED_IF": "EXISTS i IN range(len(result)-1) SUCH THAT result[i] > result[i+1]",
-            "WHERE": {
-              "result": "list · dimensionless · output of sort(input)"
-            },
+            "WHERE": {"result": "list · dimensionless · output of sort(input)"},
             "EVALUATION": "Run sort on test vectors; check adjacent pairs; finite",
             "BOUNDARY": "len(result) <= 1 → NOT FALSIFIED (vacuously sorted)",
             "CONTEXT": "Ascending order is the documented contract of sort()"
@@ -286,37 +366,130 @@
           "tier": "software_tested",
           "test_bindings": ["tests/test_sort.py::test_ascending_order"],
           "verified_against": "abc1234"
-        }
+        },
+        "note": "1つの主張。1つのテスト。1つのSHA。DRSは稼働中です。"
       }
     },
-    "design_principles": {
+    "section_13_design_principles": {
       "title": "設計原則",
       "principles": [
         {
           "name": "ポパー的認識論",
-          "description": "我々は反証できるが検証はできない。すべての反証の試みを生き延びた主張は証明されたのではなく、生き延びたのである。"
+          "description": "私たちは反証はできますが、証明はできません。すべての反証試行に耐えた主張は証明されたのではなく — 生き残ったのです。"
         },
         {
           "name": "誠実なギャップ",
-          "description": "プレースホルダーは最も重要な機能である。主張がempirical_pendingのとき、システムは「我々はこれを主張するが、まだ検証していない」と宣言する。これは、未検証の主張を隠すよりも厳密に情報量が多い。"
+          "description": "プレースホルダーは最も重要な機能です。主張がempirical_pendingの場合、システムは「これを主張しているが、まだ検証していない」と述べます。未検証の主張を隠すよりも厳密により多くの情報を提供します。"
         },
         {
-          "name": "基盤独立性",
-          "description": "カーネルK = (P, O, M, B)は、科学的定理を評価しているのかソフトウェアの保証を評価しているのかを知らない。将来のドメイン（法律、規制、政策）はカーネルを変更せずにプロトコルを追加できる。"
+          "name": "基盤非依存性",
+          "description": "カーネル K = (P, O, M, B) は、科学的定理を評価しているのかソフトウェアの保証を評価しているのかを知りません。将来のドメインはカーネルを変更せずに独自のプロトコルを追加できます。"
         },
         {
-          "name": "機械の共通言語",
-          "description": "カーネルは論理学と数学で書かれており、いかなる人間の言語でもない。北京でTRUEと評価される述語はボストンでもTRUEと評価される。JSONはトランスポート層であり、二値論理が基盤である。"
+          "name": "機械ファースト、人間が読める",
+          "description": "AIレイヤーが主要な成果物です。散文とソースコードは二次的チャネルです。AIレイヤーが検証され、監査され、バージョン管理される対象です。"
         }
       ]
     },
-    "three_axis_compatibility": {
+    "section_14_three_axis_compatibility": {
       "title": "三軸互換性",
-      "axes": {
-        "backwards": "既存のものは壊れない。スキーマバージョニング、追加のみの列挙型、恒久的カーネル。",
-        "lateral": "すべてのドメイン、言語、ツール、AIシステムで動作する。基盤独立カーネル。",
-        "forward": "再設計なしに新しいものを追加できる。プロトコル拡張性、ティア拡張性、追加的スキーマ進化。"
+      "invariant": "反証カーネル K = (P, O, M, B) は不動点です。ドメインも年も、シリアライゼーション形式も知りません。カーネルは永続的です。それ以外はすべて拡張可能です。",
+      "axis_1_backwards": {
+        "name": "過去への耐性（後方互換性）",
+        "mechanisms": [
+          "スキーマバージョニング：AIレイヤーはスキーマバージョンを記録し、v2レイヤーは永遠に有効、v3バリデーターはv2レイヤーを読める",
+          "述語の永続性：カーネル文法は永久に定義された数学的・論理的演算子のみを使用",
+          "推論規則の安定性：IR-1からIR-8は追加のみ、変更も削除もなし",
+          "ティアの安定性：6つのティアは追加のみ、削除も再定義もなし"
+        ],
+        "contract": "作成時に有効だったすべてのAIレイヤーは永遠に有効であり続けます。"
+      },
+      "axis_2_lateral": {
+        "name": "横断的耐性（クロスドメイン互換性）",
+        "mechanisms": {
+          "domain_independence": {
+            "description": "カーネルはあらゆる知識ドメインで機能します",
+            "domains": {
+              "science": {"A": "文献の前提", "D": "規定的用語", "F": "定理、予測"},
+              "software": {"A": "プラットフォーム要件", "D": "型シグネチャ、スキーマ", "F": "動作保証"},
+              "legal": {"A": "法的権限", "D": "定義された用語", "F": "法的結論"},
+              "regulatory": {"A": "フレームワークの仮定", "D": "標準定義", "F": "適合性の主張"},
+              "policy": {"A": "価値の前提", "D": "政策用語", "F": "影響予測"},
+              "education": {"A": "教育学的公理", "D": "学習目標", "F": "評価の主張"}
+            }
+          },
+          "language_independence": "test_bindingsは任意のフレームワークの任意の文字列を受け入れます：pytest、Jest、cargo test、go test、JUnit",
+          "ai_system_independence": "すべてのAIシステムがJSONとカーネル仕様を読めます。semantic_spec_urlはレイヤー0を指します。",
+          "serialisation_independence": "レイヤー0は散文で定義されており、JSON Schemaではありません。JSONは現在のトランスポートですが、カーネルのセマンティクスはエンコーディングに依存しません。将来：YAML、Protocol Buffers、CBOR、またはまだ発明されていない形式。",
+          "tool_independence": "既存のワークフローに埋め込まれます：git SHA、任意のテストランナー、任意のJSON Schemaバリデーター、任意のCIパイプライン。"
+        },
+        "contract": "1つのドメイン、言語、ツール、またはAIシステムでDRSを採用してもロックインされません。"
+      },
+      "axis_3_forward": {
+        "name": "未来への耐性（前方互換性）",
+        "mechanisms": [
+          "プロトコル拡張性：新しいドメインが新しいプロトコル（法的VP、規制VPなど）を追加し、カーネル、主張タイプ、AIレイヤースキーマを共有",
+          "ティア拡張性：将来のティア（regulatory_certified、peer_reviewed、formally_verified、field_tested、community_validated）がenumに追加、既存ティアは残る",
+          "推論規則拡張性：IR-9以降が必要に応じて追加、古い導出は安定したIDにより有効のまま",
+          "スキーマ拡張性：v1→v2→v3→v4+、各バージョンは追加、削除なし",
+          "未知の将来のリーダー：自律エージェント、クロスコーパスチェッカー、コンプライアンスエンジン、パッケージマネージャー統合"
+        ],
+        "contract": "あらゆる将来のイノベーションは、新しいプロトコル、ティア、推論規則、またはスキーマフィールドとして追加できます — 既存のものを変更することなく。"
+      },
+      "guarantee_table": {
+        "past": {"promise": "既に行われたことは何も壊れない", "mechanism": "スキーマバージョニング、追加のみのenum、永続的カーネル"},
+        "lateral": {"promise": "すべてのドメイン、言語、ツール、AIシステムで機能", "mechanism": "基盤非依存カーネル、文字列型バインディング、散文定義セマンティクス"},
+        "forward": {"promise": "再設計なしに何でも追加可能", "mechanism": "プロトコル拡張性、ティア拡張性、追加的スキーマ進化"}
       }
+    },
+    "section_15_machine_lingua_franca": {
+      "title": "機械の共通言語",
+      "description": "DRSの最も深い特性です。設計されたものではなく — 発見されたものです。",
+      "the_translation_problem": "科学的知識は人間の言語の背後にロックされています。翻訳は高価で、不完全で、遅い。知識は言語の境界に沿って断片化します。これは基盤の問題です：自然言語は本質的に相互運用不可能です。",
+      "the_kernel_dissolves_it": {
+        "description": "反証カーネルはいかなる人間の言語でも書かれていません。論理と数学で書かれています。",
+        "example": {
+          "FALSIFIED_IF": "R2_best_alt > R2_frm + 0.05",
+          "WHERE": {
+            "R2_best_alt": "scalar · dimensionless · best R² from competing models",
+            "R2_frm": "scalar · dimensionless · R² from FRM regression"
+          },
+          "EVALUATION": "Run regression for each model; compare R² values; finite",
+          "BOUNDARY": "R2_best_alt = R2_frm + 0.05 → FALSIFIED (threshold inclusive)",
+          "CONTEXT": "0.05 margin from standard model comparison practice"
+        },
+        "universality": "この述語は、英語のClaude、中国語のGPT、フランス語のGemini、そしてまだ構築されていないAIシステムに対して同じ意味を持ちます。"
+      },
+      "json_as_transport": "JSONはデファクトデータ交換フォーマットです — すべての言語、すべてのAIシステム、すべてのAPI。DRSはJSONの普遍性を継承します。任意の国のチームが数学的記法で述語を公開し、どこのチームでも翻訳なしで読めます。",
+      "qualification": "WHEREフィールドの定義には現在英語の散文が含まれています。実質的な内容（型、単位、演算子、閾値）は言語中立です。根拠のある値が与えられれば、任意のシステムが言語に関係なく述語を評価できます。",
+      "embedded_binary_logic": {
+        "description": "すべてのDRS述語は埋め込みバイナリロジックに帰着します。",
+        "evaluation_chain": "主張 → 述語 → 変数 + 演算子 → ブール値 → 1 or 0",
+        "explanation": "WHEREが変数を型付けします。FALSIFIED_IFがそれらを演算子と組み合わせます。EVALUATIONが入力を計算します。BOUNDARYがエッジケースを解決します。出力は常に1ビット：FALSIFIEDまたはNOT FALSIFIED。",
+        "consequence": "1や0を誤訳することはできません。>を誤解することはできません。意味は構造の中にあり、いかなる言語の中にもありません。北京でTRUEと評価される述語はボストン、サンパウロ、ラゴス、ロケール設定のないサーバーでもTRUEと評価されます。DRSは知識を言語間で翻訳するのではなく、論理そのものの基盤にエンコードします。"
+      }
+    },
+    "section_16_self_spreading_adoption": {
+      "title": "自己拡散的な普及",
+      "internal_incentive": "AIレイヤーを作成することで、何を主張しているかの列挙を強いられます。テスト済みだと思っていたが未テストの主張、文書化されていない境界条件、未登録の依存関係を発見します。ギャップは文書化するかどうかに関係なく存在します — DRSはそれらを可視にするだけです。",
+      "network_effect": {
+        "claim_aware_dependencies": "ライブラリAがAIレイヤーを公開しBがAに依存する場合、Bはどの主張がどの仮定に依存するかをプログラム的に判定できます。破壊的変更時にどの主張がリスクにさらされるか正確に把握できます。",
+        "cross_project_audit": "AIリーダーが複数のAIレイヤーを横断し、クロスリファレンスをチェックし、エコシステム全体の不整合を特定します。",
+        "auditable_trust": "信頼はソーシャルシグナル（スター、ダウンロード数）から構造的エビデンス（ティア、test_bindings、verified_against）に移行します。"
+      },
+      "ai_as_catalyst": {
+        "generate": "AIが主張を列挙し、分類し、述語を書き、テストバインディングを特定します。人間がレビューします。数時間から数分に短縮。",
+        "maintain": "コード変更時にAIが主張レジストリを更新し、バインディングを調整し、古くなったSHAをフラグします。人間が承認します。",
+        "audit": "AIが依存関係のAIレイヤーを読み、仮定の依存関係をマップし、リスクを自動的にフラグします。"
+      },
+      "embedding_strategy": {
+        "tests": "test_bindingsは既存のテストノードIDを参照。新しいフレームワーク不要。",
+        "schema": "標準JSON Schema。任意のバリデーター。",
+        "vcs": "verified_againstはgit SHA。新しいVCS不要。",
+        "ci": "スキーマバリデーションを既存パイプラインと並行してCIステップとして実行。",
+        "total_cost": "1つのファイル（*-ai-layer.json）。主張ごとに3つのフィールド（tier、test_bindings、verified_against）。"
+      },
+      "self_referential_property": "DRSは自身を検証する最初の標準です。DRP-1のAIレイヤーにはDRSについての反証述語付き主張が含まれ、評価され、verified_againstのSHAでスタンプされます。自分自身をコンパイルするコンパイラのように自己参照的です。"
     }
   },
   "resources": {
@@ -325,7 +498,6 @@
     "ai_layer_schema": "https://github.com/thomasbrennan/Fracttalix/blob/main/ai-layers/ai-layer-schema.json",
     "gvp_specification": "https://github.com/thomasbrennan/Fracttalix/blob/main/docs/GVP-spec.md",
     "example_ai_layer": "https://github.com/thomasbrennan/Fracttalix/blob/main/ai-layers/P1-ai-layer.json",
-    "claim_registry_index": "https://github.com/thomasbrennan/Fracttalix/blob/main/ai-layers/claim-registry-index.md",
     "repository": "https://github.com/thomasbrennan/Fracttalix",
     "doi": "https://doi.org/10.5281/zenodo.18859299"
   }
