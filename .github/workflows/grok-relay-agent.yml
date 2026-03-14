@@ -8,6 +8,7 @@ on:
       - 'relay/queue/MSG-*.json'
     branches:
       - main
+      - 'claude/**'
   schedule:
     # Check every 4 hours
     - cron: '0 */4 * * *'
@@ -26,6 +27,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
+          ref: ${{ github.ref }}
           token: ${{ secrets.GITHUB_TOKEN }}
 
       - uses: actions/setup-python@v5
@@ -65,5 +67,5 @@ jobs:
             echo "No new responses to commit."
           else
             git commit -m "relay(grok-agent): autonomous review cycle"
-            git push
+            git push origin HEAD
           fi
