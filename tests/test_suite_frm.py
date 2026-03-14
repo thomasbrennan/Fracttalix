@@ -192,6 +192,36 @@ class TestLambdaDetector:
         assert det.scope_status == "INSUFFICIENT_DATA"
         assert det.r_squared == 0.0
 
+    def test_monte_carlo_tpr_fpr(self):
+        """Monte Carlo: TPR and FPR converge to acceptable values at N=100.
+
+        Uses linearized OU oscillator (standard CSD model) where variance
+        scales as 1/λ.  Tests that the detector reliably separates forced
+        (λ declining) from null (λ constant) trajectories.
+
+        At N=100 per class, Wilson CI width is ~15%.  We use relaxed gates
+        (TPR > 80%, FPR < 35%) to account for CI width while still catching
+        catastrophic regressions.
+        """
+        from benchmark.monte_carlo_lambda import (
+            generate_forced_ensemble,
+            generate_null_ensemble,
+            run_lambda_detector,
+        )
+
+        n = 100
+        forced = generate_forced_ensemble(n, base_seed=2000)
+        null = generate_null_ensemble(n, base_seed=6000)
+
+        tp = sum(1 for t in forced if run_lambda_detector(t["values"])[0])
+        fp = sum(1 for t in null if run_lambda_detector(t["values"])[0])
+
+        tpr = tp / n
+        fpr = fp / n
+
+        assert tpr > 0.80, f"TPR={tpr:.1%} too low (need >80%)"
+        assert fpr < 0.35, f"FPR={fpr:.1%} too high (need <35%)"
+
 
 # ══════════════════════════════════════════════════════
 #  OMEGA DETECTOR TESTS

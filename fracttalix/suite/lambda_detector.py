@@ -90,6 +90,11 @@ class LambdaDetector(BaseDetector):
         self._last_spectral_width: Optional[float] = None
         self._last_var_ratio = 1.0
         self._last_var_trend = 0.5
+        # Confirmation counter: require alert conditions to persist across
+        # multiple fit intervals before firing.  Transient dips in estimated
+        # lambda (from noisy variance) will not persist; genuine CSD will.
+        self._confirm_count = 0
+        self._confirm_required = 5  # consecutive fit intervals
 
     def _check_scope(self, window: List[float]) -> bool:
         min_window = max(32, self._window_size // 2)
@@ -308,11 +313,18 @@ class LambdaDetector(BaseDetector):
         Uses two complementary signals:
         1. Rolling rate (dλ/dt) — sensitive to rapid changes
         2. Baseline ratio (λ_current / λ_baseline) — sensitive to gradual decline
+
+        Confirmation window: alert-level conditions must persist for
+        ``_confirm_required`` consecutive fit intervals before the score
+        exceeds the alert threshold.  This filters transient dips in the
+        noisy λ estimate (which recover quickly on stable systems) while
+        passing genuine sustained decline (which does not recover).
         """
         if self._last_scope in ("OUT_OF_SCOPE", "INSUFFICIENT_DATA"):
             msg = f"scope={self._last_scope}"
             if self._last_lambda is not None:
                 msg += f" λ={self._last_lambda:.4f} SNR={self._last_spectral_snr:.1f}"
+            self._confirm_count = 0
             return 0.0, msg
 
         lam = self._last_lambda
@@ -338,36 +350,58 @@ class LambdaDetector(BaseDetector):
             smoothed_lam = sorted_hist[mid]
             baseline_ratio = smoothed_lam / self._baseline_lambda
 
+        var_trend = self._last_var_trend
+
+        # ── Check if alert-level conditions are met (pre-confirmation) ──
+        alert_candidate = False
+        candidate_score = 0.0
+        candidate_msg = ""
+
         # ── Path 1: Rate-based detection (rapid decline) ──
         # Requires corroborating variance trend (> 0.6 = consistently rising)
-        # to distinguish CSD from noisy rate fluctuations on stable systems
-        var_trend = self._last_var_trend
-        var_ratio = self._last_var_ratio
         if rate < -1e-3 and lam < self._lambda_warning and var_trend > 0.6:
+            alert_candidate = True
             if ttb is not None and ttb < 40.0:
-                score = min(1.0, 0.7 + 0.3 * (40.0 - ttb) / 40.0)
-                return score, f"TRANSITION λ={lam:.4f} rate={rate:.5f} Δt={ttb:.1f} vt={var_trend:.2f}"
-            score = 0.6
-            return score, f"CRITICAL_SLOWING λ={lam:.4f} rate={rate:.5f} vt={var_trend:.2f}"
+                candidate_score = min(1.0, 0.7 + 0.3 * (40.0 - ttb) / 40.0)
+                candidate_msg = f"TRANSITION λ={lam:.4f} rate={rate:.5f} Δt={ttb:.1f} vt={var_trend:.2f}"
+            else:
+                candidate_score = 0.6
+                candidate_msg = f"CRITICAL_SLOWING λ={lam:.4f} rate={rate:.5f} vt={var_trend:.2f}"
 
         # ── Path 2: Baseline-ratio detection (gradual decline) ──
-        # Only applies when baseline λ was genuinely estimated
-        # Requires variance growth corroboration to avoid noise-driven false positives
-        var_ratio = self._last_var_ratio
-        if has_meaningful_baseline and baseline_ratio < 1.0:
-            # Extreme ratio drop (< 0.30) with rising variance trend AND λ concerning
+        if not alert_candidate and has_meaningful_baseline and baseline_ratio < 1.0:
             lam_ceiling = 10.0 * self._lambda_warning
             if baseline_ratio < 0.30 and var_trend > 0.55 and lam < lam_ceiling:
-                score = min(0.8, 0.5 + 0.3 * (0.25 - baseline_ratio) / 0.25)
-                return score, f"CSD_RATIO λ={lam:.4f} ratio={baseline_ratio:.2f} vt={var_trend:.2f}"
-            # Moderate drop (< 0.45) with λ below warning and rising variance
-            if baseline_ratio < 0.45 and lam < self._lambda_warning and var_trend > 0.55:
-                score = min(0.7, 0.5 + 0.2 * (0.45 - baseline_ratio) / 0.45)
-                return score, f"CSD_DECLINING λ={lam:.4f} ratio={baseline_ratio:.2f} vt={var_trend:.2f}"
-            # Mild decline — sub-alert scoring
-            if baseline_ratio < 0.5 and var_trend > 0.55:
-                score = max(0.0, min(0.49, 0.3 * (0.5 - baseline_ratio) / 0.5))
-                return score, f"λ={lam:.4f} ratio={baseline_ratio:.2f} weakening vt={var_trend:.2f}"
+                alert_candidate = True
+                candidate_score = min(0.8, 0.5 + 0.3 * (0.25 - baseline_ratio) / 0.25)
+                candidate_msg = f"CSD_RATIO λ={lam:.4f} ratio={baseline_ratio:.2f} vt={var_trend:.2f}"
+            elif baseline_ratio < 0.45 and lam < self._lambda_warning and var_trend > 0.55:
+                alert_candidate = True
+                candidate_score = min(0.7, 0.5 + 0.2 * (0.45 - baseline_ratio) / 0.45)
+                candidate_msg = f"CSD_DECLINING λ={lam:.4f} ratio={baseline_ratio:.2f} vt={var_trend:.2f}"
+
+        # ── Confirmation gate ──
+        # Only count at fit intervals (when _compute actually ran)
+        is_fit_step = (self._fit_counter % self._fit_interval == 0)
+        if alert_candidate and is_fit_step:
+            self._confirm_count += 1
+        elif not alert_candidate and is_fit_step:
+            # Decay rather than reset: allows brief interruptions in noisy signals
+            self._confirm_count = max(0, self._confirm_count - 1)
+
+        if alert_candidate:
+            if self._confirm_count >= self._confirm_required:
+                # Confirmed: genuine sustained decline
+                return candidate_score, candidate_msg
+            else:
+                # Not yet confirmed: report sub-alert score showing buildup
+                pending_score = min(0.49, candidate_score * self._confirm_count / self._confirm_required)
+                return pending_score, f"confirming ({self._confirm_count}/{self._confirm_required}) {candidate_msg}"
+
+        # ── Sub-alert: mild decline ──
+        if has_meaningful_baseline and baseline_ratio < 0.5 and var_trend > 0.55:
+            score = max(0.0, min(0.49, 0.3 * (0.5 - baseline_ratio) / 0.5))
+            return score, f"λ={lam:.4f} ratio={baseline_ratio:.2f} weakening vt={var_trend:.2f}"
 
         # Stable
         if lam < self._lambda_warning:
@@ -416,6 +450,7 @@ class LambdaDetector(BaseDetector):
         self._last_spectral_width = None
         self._last_var_ratio = 1.0
         self._last_var_trend = 0.5
+        self._confirm_count = 0
 
     def state_dict(self) -> Dict[str, Any]:
         sd = super().state_dict()
