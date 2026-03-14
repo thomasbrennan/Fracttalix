@@ -1,0 +1,332 @@
+{
+  "@context": "https://schema.org",
+  "@type": "TechArticle",
+  "@id": "https://github.com/thomasbrennan/Fracttalix/blob/main/guides/hi.json",
+  "name": "द्वैध पाठक मानक — कार्यान्वयन मार्गदर्शिका",
+  "headline": "मशीन-सत्यापनीय दावों के लिए द्वैध पाठक मानक का कार्यान्वयन कैसे करें",
+  "description": "द्वैध पाठक मानक (DRS) के लिए संपूर्ण कार्यान्वयन मार्गदर्शिका — एक सत्यापन संरचना जो JSON में संकेतित नियतात्मक मिथ्याकरण विधेय (falsification predicates) का उपयोग करके ज्ञान प्रणाली के प्रत्येक दावे को मानव और मशीन दोनों द्वारा पठनीय बनाती है।",
+  "inLanguage": "hi",
+  "author": {
+    "@type": "Person",
+    "name": "Thomas Brennan",
+    "identifier": "https://orcid.org/0009-0002-6353-7115"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "Fracttalix",
+    "url": "https://github.com/thomasbrennan/Fracttalix"
+  },
+  "datePublished": "2026-03-14",
+  "license": "https://creativecommons.org/licenses/by/4.0/",
+  "keywords": [
+    "dual reader standard",
+    "द्वैध पाठक मानक",
+    "machine-verifiable claims",
+    "मशीन-सत्यापनीय दावे",
+    "falsification predicate",
+    "मिथ्याकरण विधेय",
+    "AI layer",
+    "एआई परत",
+    "grounded verification protocol",
+    "आधारित सत्यापन प्रोटोकॉल",
+    "JSON schema validation",
+    "JSON स्कीमा सत्यापन",
+    "scientific verification",
+    "वैज्ञानिक सत्यापन",
+    "software verification",
+    "सॉफ़्टवेयर सत्यापन",
+    "claim registry",
+    "दावा पंजी",
+    "falsification kernel",
+    "मिथ्याकरण कर्नेल",
+    "machine-readable research",
+    "मशीन-पठनीय अनुसंधान",
+    "reproducible science",
+    "पुनरुत्पादनीय विज्ञान",
+    "open science",
+    "मुक्त विज्ञान",
+    "verification architecture",
+    "सत्यापन संरचना"
+  ],
+  "about": {
+    "@type": "Thing",
+    "name": "Dual Reader Standard",
+    "description": "ज्ञान प्रणालियों के लिए एक सत्यापन संरचना जिसमें प्रत्येक दावे को दो स्वतंत्र पाठक वर्गों — मानव और मशीन — द्वारा पठनीय होना आवश्यक है।",
+    "url": "https://github.com/thomasbrennan/Fracttalix/blob/main/paper/DRS-Architecture.md"
+  },
+  "citation": {
+    "@type": "CreativeWork",
+    "name": "Fracttalix Corpus",
+    "identifier": "https://doi.org/10.5281/zenodo.18859299"
+  },
+  "isPartOf": {
+    "@type": "CreativeWork",
+    "name": "Fracttalix — द्वैध पाठक मानक कार्यान्वयन मार्गदर्शिकाएँ",
+    "url": "https://github.com/thomasbrennan/Fracttalix/tree/main/guides"
+  },
+  "content": {
+    "what_is_the_dual_reader_standard": {
+      "title": "द्वैध पाठक मानक क्या है?",
+      "summary": "द्वैध पाठक मानक (DRS) ज्ञान प्रणालियों के लिए एक सत्यापन संरचना है। प्रत्येक दावा — चाहे गद्य में लिखा गया हो या कोड में कार्यान्वित — दो स्वतंत्र पाठक वर्गों द्वारा पठनीय होना चाहिए: मानव और मशीन।",
+      "protocols": {
+        "DRP": {
+          "name": "द्वैध पाठक प्रोटोकॉल (Dual Reader Protocol)",
+          "domain": "पाठ / शोधपत्र",
+          "function": "गद्य दावों को 5-भाग मिथ्याकरण विधेय के माध्यम से मशीन-मूल्यांकनीय बनाता है",
+          "readers": {
+            "reader_1": "मानव — शोधपत्र को प्राकृतिक भाषा में पढ़ता है",
+            "reader_2": "एआई — एआई परत (संरचित JSON दावा पंजी) पढ़ता है"
+          }
+        },
+        "GVP": {
+          "name": "आधारित सत्यापन प्रोटोकॉल (Grounded Verification Protocol)",
+          "domain": "सॉफ़्टवेयर / कोड",
+          "function": "मशीन-मूल्यांकनीय दावों को परीक्षण बाइंडिंग और कमिट-पिन किए गए प्रमाण के माध्यम से मशीन-सत्यापित बनाता है",
+          "readers": {
+            "reader_3a": "कोडर — tier, test_bindings, verified_against फ़ील्ड पढ़ता है",
+            "reader_3b": "मशीन — pytest चलाती है, सफलता पर SHA अंकित करती है"
+          }
+        }
+      }
+    },
+    "falsification_kernel": {
+      "title": "मिथ्याकरण कर्नेल K = (P, O, M, B)",
+      "description": "दोनों प्रोटोकॉल का साझा आधार। प्रत्येक प्रकार F (मिथ्याकरणीय) दावा एक नियतात्मक विधेय रखता है जो ठीक दो निर्णयों में से एक का मूल्यांकन करता है: FALSIFIED (मिथ्याकृत) या NOT FALSIFIED (मिथ्याकृत नहीं)।",
+      "components": {
+        "P": {
+          "name": "विधेय (Predicate)",
+          "json_field": "FALSIFIED_IF",
+          "role": "तार्किक वाक्य जो, यदि TRUE है, तो दावे को मिथ्याकृत करता है",
+          "constraints": [
+            "किसी भी वैध चर-निर्धारण के लिए ठीक TRUE या FALSE का मूल्यांकन होना चाहिए",
+            "परिमाणक केवल परिमित समुच्चयों पर लागू होते हैं",
+            "कोई आत्म-संदर्भ या चक्रीय निर्भरता नहीं"
+          ]
+        },
+        "O": {
+          "name": "संकार्य (Operands)",
+          "json_field": "WHERE",
+          "role": "विधेय में प्रत्येक चर की प्रकार-सहित परिभाषा",
+          "format": "प्रकार · इकाइयाँ · परिभाषा या स्रोत",
+          "constraints": [
+            "P में प्रत्येक मुक्त चर O में प्रकट होना चाहिए",
+            "O में प्रत्येक चर P में प्रकट होना चाहिए",
+            "प्रत्येक चर उद्धृत डेटा या व्युत्पत्ति से गणनीय होना चाहिए"
+          ]
+        },
+        "M": {
+          "name": "तंत्र (Mechanism)",
+          "json_field": "EVALUATION",
+          "role": "परिमित, नियतात्मक मूल्यांकन प्रक्रिया",
+          "constraints": [
+            "परिमित चरणों में समाप्त होना चाहिए",
+            "समान इनपुट से समान निर्णय",
+            "तृतीय पक्ष द्वारा पुनरुत्पादनीय"
+          ]
+        },
+        "B": {
+          "name": "सीमाएँ (Bounds)",
+          "json_fields": ["BOUNDARY", "CONTEXT"],
+          "role": "सीमा-मान शब्दार्थ और औचित्य",
+          "constraints": [
+            "BOUNDARY प्रत्येक सीमा-मान के लिए समावेशी/अपवर्जी निर्दिष्ट करता है",
+            "CONTEXT विधेय में प्रत्येक संख्यात्मक अक्षर का औचित्य देता है"
+          ]
+        }
+      },
+      "example": {
+        "claim": "sort() तत्वों को आरोही क्रम में लौटाता है",
+        "predicate": {
+          "FALSIFIED_IF": "EXISTS i IN range(len(result)-1) SUCH THAT result[i] > result[i+1]",
+          "WHERE": {
+            "result": "list · dimensionless · output of sort(input)"
+          },
+          "EVALUATION": "Run sort on test vectors; check adjacent pairs; finite",
+          "BOUNDARY": "len(result) <= 1 → NOT FALSIFIED (vacuously sorted)",
+          "CONTEXT": "Ascending order is the documented contract of sort()"
+        }
+      }
+    },
+    "three_claim_types": {
+      "title": "तीन दावा प्रकार",
+      "types": {
+        "A": {
+          "name": "स्वयंसिद्ध (Axiom)",
+          "description": "साहित्य से स्वीकृत या प्रारंभिक पूर्वधारणाओं के रूप में कथित मूलभूत आधार-वाक्य। डिज़ाइन से अमिथ्याकरणीय।",
+          "predicate_required": false,
+          "examples": ["ऊष्मागतिकीय अनुत्क्रमणीयता", "प्लेटफ़ॉर्म आवश्यकताएँ", "निर्भरता अनुबंध"]
+        },
+        "D": {
+          "name": "परिभाषा (Definition)",
+          "description": "पदों, संरचनाओं या प्रक्रियाओं की निर्धारणात्मक परिभाषाएँ। सत्य-योग्य नहीं — ये परिभाषित करती हैं, दावा नहीं करतीं।",
+          "predicate_required": false,
+          "examples": ["FRM कार्यात्मक रूप", "प्रकार हस्ताक्षर", "विन्यास स्कीमा"]
+        },
+        "F": {
+          "name": "मिथ्याकरणीय (Falsifiable)",
+          "description": "नियतात्मक विधेय वाले परीक्षणीय दावे। मुख्य वैज्ञानिक और सॉफ़्टवेयर दावे।",
+          "predicate_required": true,
+          "examples": ["β = 1/2 विश्लेषणात्मक रूप से व्युत्पन्न", "व्यवहारगत गारंटी", "प्रदर्शन सीमाएँ"]
+        }
+      }
+    },
+    "six_verification_tiers": {
+      "title": "छह सत्यापन स्तर",
+      "description": "प्रत्येक दावा एक tier फ़ील्ड रखता है जो घोषित करता है कि उसे किस प्रकार का प्रमाण आधारित करता है।",
+      "tiers": {
+        "grounded_by_construction": [
+          {
+            "tier": "axiom",
+            "applies_to": "प्रकार A",
+            "meaning": "मूलभूत, डिज़ाइन से अमिथ्याकरणीय"
+          },
+          {
+            "tier": "definition",
+            "applies_to": "प्रकार D",
+            "meaning": "परिभाषात्मक, विधेय की आवश्यकता नहीं"
+          }
+        ],
+        "grounded_now": [
+          {
+            "tier": "software_tested",
+            "applies_to": "प्रकार F",
+            "meaning": "उत्तीर्ण परीक्षणों द्वारा अभ्यासित। test_bindings अरिक्त, verified_against SHA अशून्य।"
+          },
+          {
+            "tier": "formal_proof",
+            "applies_to": "प्रकार F",
+            "meaning": "चरण-अनुक्रमित व्युत्पत्ति तालिका जिसमें n_invalid_steps = 0"
+          },
+          {
+            "tier": "analytic",
+            "applies_to": "प्रकार F",
+            "meaning": "औपचारिक व्युत्पत्ति ट्रेस या विश्लेषणात्मक तर्क द्वारा सत्यापित"
+          }
+        ],
+        "explicitly_ungrounded": [
+          {
+            "tier": "empirical_pending",
+            "applies_to": "प्रकार F",
+            "meaning": "सक्रिय प्लेसहोल्डर या लंबित बाह्य डेटा। अंतराल डिज़ाइन से दृश्यमान है।"
+          }
+        ]
+      }
+    },
+    "ai_layer_structure": {
+      "title": "एआई परत — केंद्रीय कलाकृति",
+      "description": "एक JSON दस्तावेज़ जो प्रत्येक शोधपत्र या सॉफ़्टवेयर प्रणाली के साथ होता है। इसमें विधेय, स्तर और परीक्षण बाइंडिंग सहित संपूर्ण दावा पंजी होती है।",
+      "schema_url": "https://github.com/thomasbrennan/Fracttalix/blob/main/ai-layers/ai-layer-schema.json",
+      "required_sections": {
+        "_meta": "दस्तावेज़ प्रकार, स्कीमा संस्करण, सत्र, लाइसेंस",
+        "paper_id": "अद्वितीय शोधपत्र/प्रणाली पहचानकर्ता",
+        "paper_title": "मानव-पठनीय शीर्षक",
+        "paper_type": "वर्गीकरण: law_A, derivation_B, application_C, methodology_D",
+        "phase_ready": "चरण द्वार निर्णय और शर्त स्थिति (c1–c6)",
+        "claim_registry": "प्रकार, विधेय, स्तर, बाइंडिंग सहित सभी दावों की सरणी",
+        "placeholder_register": "अनसुलझी निर्भरताओं की सरणी"
+      }
+    },
+    "phase_gate": {
+      "title": "छह-शर्त चरण द्वार",
+      "description": "एक शोधपत्र या सॉफ़्टवेयर रिलीज़ PHASE-READY तब होती है जब सभी छह शर्तें पूरी होती हैं।",
+      "conditions": {
+        "c1": "एआई परत स्कीमा-वैध है",
+        "c2": "सभी मिथ्याकरणीय दावे विधेय सहित पंजीकृत हैं",
+        "c3": "सभी विधेय मशीन-मूल्यांकनीय हैं",
+        "c4": "परस्पर-संदर्भ ट्रैक किए गए हैं (प्लेसहोल्डर पंजी)",
+        "c5": "सत्यापन आत्मनिर्भर है (केवल एआई परत, गद्य की आवश्यकता नहीं)",
+        "c6": "सभी विधेय अरिक्त हैं (नमूना मिथ्याकरण प्रेक्षण विद्यमान है)"
+      }
+    },
+    "how_to_implement": {
+      "title": "द्वैध पाठक मानक का कार्यान्वयन कैसे करें",
+      "for_a_paper": {
+        "title": "शोधपत्र के लिए (DRP)",
+        "steps": [
+          "शोधपत्र लिखें (मानव पाठकों के लिए गद्य चैनल)",
+          "एआई परत JSON फ़ाइल बनाएँ (एआई पाठकों के लिए मशीन चैनल)",
+          "प्रत्येक दावे को A (स्वयंसिद्ध), D (परिभाषा), या F (मिथ्याकरणीय) के रूप में वर्गीकृत करें",
+          "प्रत्येक प्रकार F दावे के लिए 5-भाग मिथ्याकरण विधेय लिखें",
+          "प्रत्येक प्रकार F दावे के लिए sample_falsification_observation शामिल करें (रिक्तता साक्षी)",
+          "प्रत्येक दावे को सत्यापन स्तर निर्धारित करें",
+          "ai-layer-schema.json के विरुद्ध मान्य करें",
+          "चरण द्वार चलाएँ (c1–c6)"
+        ]
+      },
+      "for_software": {
+        "title": "सॉफ़्टवेयर के लिए (GVP)",
+        "steps": [
+          "सॉफ़्टवेयर क्या करने का दावा करता है, उसकी सूची बनाएँ",
+          "प्रत्येक दावे को A (पूर्वधारणा), D (परिभाषा), या F (व्यवहारगत) के रूप में वर्गीकृत करें",
+          "प्रत्येक प्रकार F दावे के लिए मिथ्याकरण विधेय लिखें",
+          "प्रत्येक दावे को अभ्यासित करने वाले परीक्षण लिखें या पहचानें",
+          "test_bindings में पूर्ण-योग्य परीक्षण नोड ID भरें",
+          "परीक्षण चलाएँ और उत्तीर्ण कमिट SHA को verified_against में दर्ज करें",
+          "स्तर निर्धारित करें: software_tested यदि परीक्षण मौजूद हैं, empirical_pending यदि अभी नहीं",
+          "किसी भी अपरीक्षित दावे को प्लेसहोल्डर के रूप में पंजीकृत करें",
+          "ai-layer-schema.json के विरुद्ध मान्य करें"
+        ]
+      },
+      "minimum_viable_adoption": {
+        "title": "न्यूनतम व्यवहार्य अंगीकरण",
+        "description": "सबसे छोटा उपयोगी DRS अंगीकरण एक एकल प्रकार F दावा है जिसमें एक एकल परीक्षण बाइंडिंग हो।",
+        "example": {
+          "claim_id": "F-1",
+          "type": "F",
+          "statement": "sort() returns elements in ascending order",
+          "falsification_predicate": {
+            "FALSIFIED_IF": "EXISTS i IN range(len(result)-1) SUCH THAT result[i] > result[i+1]",
+            "WHERE": {
+              "result": "list · dimensionless · output of sort(input)"
+            },
+            "EVALUATION": "Run sort on test vectors; check adjacent pairs; finite",
+            "BOUNDARY": "len(result) <= 1 → NOT FALSIFIED (vacuously sorted)",
+            "CONTEXT": "Ascending order is the documented contract of sort()"
+          },
+          "tier": "software_tested",
+          "test_bindings": ["tests/test_sort.py::test_ascending_order"],
+          "verified_against": "abc1234"
+        }
+      }
+    },
+    "design_principles": {
+      "title": "डिज़ाइन सिद्धांत",
+      "principles": [
+        {
+          "name": "पॉपरीय ज्ञानमीमांसा (Popperian epistemology)",
+          "description": "हम मिथ्याकृत कर सकते हैं लेकिन सत्यापित नहीं। जो दावा सभी मिथ्याकरण प्रयासों से बचा रहता है वह सिद्ध नहीं है — वह टिका रहा है।"
+        },
+        {
+          "name": "ईमानदार अंतराल (Honest gaps)",
+          "description": "प्लेसहोल्डर सबसे महत्वपूर्ण विशेषता है। जब कोई दावा empirical_pending है, तो प्रणाली कहती है: हम यह दावा करते हैं लेकिन अभी तक इसे सत्यापित नहीं किया है। यह असत्यापित दावों को छुपाने की तुलना में सख्ती से अधिक सूचनाप्रद है।"
+        },
+        {
+          "name": "अधःस्तर स्वतंत्रता (Substrate independence)",
+          "description": "कर्नेल K = (P, O, M, B) नहीं जानता कि वह किसी वैज्ञानिक प्रमेय का मूल्यांकन कर रहा है या किसी सॉफ़्टवेयर गारंटी का। भविष्य के क्षेत्र (कानूनी, नियामक, नीतिगत) कर्नेल को संशोधित किए बिना अपने प्रोटोकॉल जोड़ सकते हैं।"
+        },
+        {
+          "name": "मशीन सामान्य भाषा (Machine lingua franca)",
+          "description": "कर्नेल तर्कशास्त्र और गणित में लिखा गया है, किसी मानव भाषा में नहीं। जो विधेय बीजिंग में TRUE का मूल्यांकन करता है वह बोस्टन में भी TRUE का मूल्यांकन करता है। JSON परिवहन परत है। द्विआधारी तर्क अधःस्तर है।"
+        }
+      ]
+    },
+    "three_axis_compatibility": {
+      "title": "त्रि-अक्ष संगतता",
+      "axes": {
+        "backwards": "पहले से किया गया कुछ भी नहीं टूटता। स्कीमा संस्करणन, केवल-परिवर्धन गणनाएँ, स्थायी कर्नेल।",
+        "lateral": "सभी क्षेत्रों, भाषाओं, उपकरणों और एआई प्रणालियों में कार्य करता है। अधःस्तर-स्वतंत्र कर्नेल।",
+        "forward": "कोई भी नई चीज़ पुनर्डिज़ाइन के बिना जोड़ी जा सकती है। प्रोटोकॉल विस्तारशीलता, स्तर विस्तारशीलता, योगात्मक स्कीमा विकास।"
+      }
+    }
+  },
+  "resources": {
+    "architecture_specification": "https://github.com/thomasbrennan/Fracttalix/blob/main/paper/DRS-Architecture.md",
+    "falsification_kernel": "https://github.com/thomasbrennan/Fracttalix/blob/main/ai-layers/falsification-kernel.md",
+    "ai_layer_schema": "https://github.com/thomasbrennan/Fracttalix/blob/main/ai-layers/ai-layer-schema.json",
+    "gvp_specification": "https://github.com/thomasbrennan/Fracttalix/blob/main/docs/GVP-spec.md",
+    "example_ai_layer": "https://github.com/thomasbrennan/Fracttalix/blob/main/ai-layers/P1-ai-layer.json",
+    "claim_registry_index": "https://github.com/thomasbrennan/Fracttalix/blob/main/ai-layers/claim-registry-index.md",
+    "repository": "https://github.com/thomasbrennan/Fracttalix",
+    "doi": "https://doi.org/10.5281/zenodo.18859299"
+  }
+}
