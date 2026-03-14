@@ -443,15 +443,60 @@
       "confidence": 0.75,
       "model_used": "grok-4-latest",
       "reasoning_preview": "The falsification predicate is not logically consistent with the stated claim. The claim asserts that an observation class O (from the past) 'cannot be a logical function of x(t+\u03c4)' (future state), wh"
+    },
+    "F-SFW.4": {
+      "msg_id": "MSG-20260314-104819-0lh2",
+      "parent_msg_id": "MSG-20260314-103904-475y",
+      "timestamp": "2026-03-14T10:48:19.045450+00:00",
+      "verdict": "confirmed",
+      "confidence": 0.95,
+      "model_used": "grok-4-latest",
+      "reasoning_preview": "The falsification predicate is logically consistent, as it precisely defines falsification for both false positives (alert fires when not all conditions are met) and false negatives (alert fails to fi"
+    },
+    "F-4.2": {
+      "msg_id": "MSG-20260314-104637-68vl",
+      "parent_msg_id": "MSG-20260314-103904-0e9n",
+      "timestamp": "2026-03-14T10:46:37.415696+00:00",
+      "verdict": "needs-revision",
+      "confidence": 0.65,
+      "model_used": "grok-4-latest",
+      "reasoning_preview": "The falsification predicate is mostly logically consistent, as it defines a clear inequality based on self-similarity indices, with \u03b5 providing a tolerance for noise. However, the predicate is incompl"
+    },
+    "F-DRSARCH.3": {
+      "msg_id": "MSG-20260314-104757-4ldj",
+      "parent_msg_id": "MSG-20260314-103904-32kw",
+      "timestamp": "2026-03-14T10:47:57.728981+00:00",
+      "verdict": "inconclusive",
+      "confidence": 0.65,
+      "model_used": "grok-4-latest",
+      "reasoning_preview": "The falsification predicate for F-DRSARCH.3 is logically consistent: it defines a clear condition for falsification based on the existence of any Type F claim where a valid assignment leads to an UNDE"
+    },
+    "C-3.DIAG": {
+      "msg_id": "MSG-20260314-104728-upof",
+      "parent_msg_id": "MSG-20260314-103904-2ppl",
+      "timestamp": "2026-03-14T10:47:28.914939+00:00",
+      "verdict": "confirmed",
+      "confidence": 0.92,
+      "model_used": "grok-4-latest",
+      "reasoning_preview": "The falsification predicate is logically consistent: it defines clear boolean conditions for falsification via an OR operator, with no internal contradictions. The evaluation procedure is straightforw"
+    },
+    "F-1.2": {
+      "msg_id": "MSG-20260314-104705-lxhq",
+      "parent_msg_id": "MSG-20260314-103904-1bgt",
+      "timestamp": "2026-03-14T10:47:05.676260+00:00",
+      "verdict": "needs-revision",
+      "confidence": 0.65,
+      "model_used": "grok-4-latest",
+      "reasoning_preview": "The falsification predicate is logically consistent in structure, defining clear conditions for Tier 1 (confirmed substrates) and Tier 2 (provisional candidates) based on log10 spans and a passing cou"
     }
   },
   "summary": {
     "total_falsifiable": 70,
     "sent_to_grok": 70,
-    "reviewed_by_grok": 10,
-    "confirmed": 0,
+    "reviewed_by_grok": 15,
+    "confirmed": 2,
     "disputed": 5,
-    "inconclusive": 3,
-    "needs_revision": 2
+    "inconclusive": 4,
+    "needs_revision": 4
   }
 }

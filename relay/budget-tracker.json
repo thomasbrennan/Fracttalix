@@ -1,6 +1,6 @@
 {
   "total_budget_usd": 25.0,
-  "spent_usd": 0.143238,
+  "spent_usd": 0.210363,
   "transactions": [
     {
       "msg_id": "MSG-20260314-102948-3i8h",
@@ -71,6 +71,41 @@
       "input_tokens": 2103,
       "output_tokens": 531,
       "cost_usd": 0.014274
+    },
+    {
+      "msg_id": "MSG-20260314-103904-0e9n",
+      "model": "grok-4-latest",
+      "input_tokens": 2046,
+      "output_tokens": 451,
+      "cost_usd": 0.012903
+    },
+    {
+      "msg_id": "MSG-20260314-103904-1bgt",
+      "model": "grok-4-latest",
+      "input_tokens": 2309,
+      "output_tokens": 541,
+      "cost_usd": 0.015042
+    },
+    {
+      "msg_id": "MSG-20260314-103904-2ppl",
+      "model": "grok-4-latest",
+      "input_tokens": 2139,
+      "output_tokens": 378,
+      "cost_usd": 0.012087
+    },
+    {
+      "msg_id": "MSG-20260314-103904-32kw",
+      "model": "grok-4-latest",
+      "input_tokens": 2164,
+      "output_tokens": 500,
+      "cost_usd": 0.013992
+    },
+    {
+      "msg_id": "MSG-20260314-103904-475y",
+      "model": "grok-4-latest",
+      "input_tokens": 2332,
+      "output_tokens": 407,
+      "cost_usd": 0.013101
     }
   ]
 }

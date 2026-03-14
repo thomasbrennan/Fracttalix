@@ -1,6 +1,6 @@
 # Grok Review Report
 
-**Generated:** 2026-03-14T10:42:00Z
+**Generated:** 2026-03-14T10:48:19Z
 
 ## Summary
 
@@ -8,11 +8,11 @@
 |--------|-------|
 | Total falsifiable | 70 |
 | Sent to Grok | 70 |
-| Reviewed by Grok | 10 |
-| Confirmed | 0 |
+| Reviewed by Grok | 15 |
+| Confirmed | 2 |
 | Disputed | 5 |
-| Inconclusive | 3 |
-| Needs revision | 2 |
+| Inconclusive | 4 |
+| Needs revision | 4 |
 
 ## Disputed Claims (Action Required)
 
@@ -50,3 +50,12 @@
 
 - **C-DRP2.3** (confidence: 0.75): The falsification predicate is mostly logically consistent in structure: it defines a clear test (benchmark construction, evaluation, threshold comparison) that could in principle falsify the claim. T
 - **C-DRP2.7** (confidence: 0.65): The falsification predicate is logically consistent: it sets up a clear equivalence test comparing vacuity rates between pre-registered and unregistered studies, with a defined margin (0.05) and sampl
+- **F-1.2** (confidence: 0.65): The falsification predicate is logically consistent in structure, defining clear conditions for Tier 1 (confirmed substrates) and Tier 2 (provisional candidates) based on log10 spans and a passing cou
+- **F-4.2** (confidence: 0.65): The falsification predicate is mostly logically consistent, as it defines a clear inequality based on self-similarity indices, with ε providing a tolerance for noise. However, the predicate is incompl
+
+## Confirmed Claims
+
+| Claim | Confidence | Model |
+|-------|-----------|-------|
+| C-3.DIAG | 0.92 | grok-4-latest |
+| F-SFW.4 | 0.95 | grok-4-latest |
