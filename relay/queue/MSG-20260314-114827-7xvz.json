@@ -24,7 +24,7 @@
     ],
     "suggestions": "Clarify the exact intermediate rounding steps in the paper to explain the reported 0.072 vs. the precise 0.074, as this could confuse readers. Consider adding more context on how these coefficients (e.g., 0.67, 0.60) derive from the core FRM theory to strengthen ties to analytical foundations. Empirical validation (as noted in CONTEXT) should be prioritized for related claims like PH-MK4.1."
   },
-  "status": "pending",
+  "status": "resolved",
   "_model_used": "grok-4-latest",
   "_usage": {
     "prompt_tokens": 2181,

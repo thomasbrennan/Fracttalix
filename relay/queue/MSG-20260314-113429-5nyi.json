@@ -26,7 +26,7 @@
     ],
     "suggestions": "Explicitly define D-2.1(a)-(c) in the claim for clarity, as the review assumes they ensure supercritical Hopf and mean-field conditions. Consider tightening the 2-sigma bound or justifying it further if empirical deviations are expected (e.g., due to noise). Add discussion of potential deviations in finite systems or with strong coupling, even if excluded by D-2.1. Since empirical validation is pending, mark the claim as provisionally confirmed and prioritize P3 C-3.REG."
   },
-  "status": "pending",
+  "status": "resolved",
   "_model_used": "grok-4-latest",
   "_usage": {
     "prompt_tokens": 2220,

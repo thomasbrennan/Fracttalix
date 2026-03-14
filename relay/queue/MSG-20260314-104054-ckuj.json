@@ -25,7 +25,7 @@
     ],
     "suggestions": "Clarify the claim wording\u2014possibly invert to 'x(t+\u03c4) cannot be a logical function of O' if that's the intent. Define C1-C4 explicitly. Revise falsification to use directed information or conditional entropy (e.g., H(O | x(t+\u03c4)) == 0) to properly test if past is determined by future. Specify scope (e.g., deterministic vs. stochastic DDEs). Test with simple linear DDE examples to check predicate behavior."
   },
-  "status": "pending",
+  "status": "resolved",
   "_model_used": "grok-4-latest",
   "_usage": {
     "prompt_tokens": 2199,

@@ -25,7 +25,7 @@
     ],
     "suggestions": "Consider expanding tests to include variations in cascade_ews_threshold (e.g., 1 or 3) to ensure configurability doesn't introduce bugs; also, document if floating-point precision affects ews_score comparisons (e.g., if 0.59999 < 0.6 but should be tolerant)."
   },
-  "status": "pending",
+  "status": "resolved",
   "_model_used": "grok-4-latest",
   "_usage": {
     "prompt_tokens": 2332,
