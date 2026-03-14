@@ -2,9 +2,9 @@
   "@context": "https://schema.org",
   "@type": "TechArticle",
   "@id": "https://github.com/thomasbrennan/Fracttalix/blob/main/guides/id.json",
-  "name": "Dual Reader Standard — Panduan Implementasi",
-  "headline": "Cara Mengimplementasikan Dual Reader Standard untuk Klaim yang Dapat Diverifikasi Mesin",
-  "description": "Panduan implementasi lengkap untuk Dual Reader Standard (DRS), arsitektur verifikasi yang menjadikan setiap klaim dalam sistem pengetahuan dapat dibaca oleh manusia dan mesin menggunakan predikat falsifikasi deterministik yang dikodekan dalam JSON.",
+  "name": "Dual Reader Standard — Panduan Lengkap",
+  "headline": "Panduan Satu Kali Baca untuk Seluruh Dual Reader Standard: Arsitektur, Protokol, Kernel, Lapisan, Kompatibilitas, Lingua Franca, dan Adopsi",
+  "description": "Panduan lengkap untuk Dual Reader Standard (DRS), arsitektur verifikasi yang mengharuskan setiap klaim dapat dibaca oleh manusia dan mesin. Mencakup kedua protokol (DRP untuk teks, GVP untuk perangkat lunak), Kernel Falsifikasi (Lapisan 0), artefak lapisan AI, tiga tipe klaim, enam tingkat verifikasi, delapan aturan inferensi, gerbang fase enam kondisi, kompatibilitas tiga sumbu, sifat lingua franca mesin (logika biner tertanam), dan dinamika adopsi yang menyebar sendiri.",
   "inLanguage": "id",
   "author": {
     "@type": "Person",
@@ -21,14 +21,27 @@
   "keywords": [
     "dual reader standard",
     "standar pembaca ganda",
+    "DRS",
     "machine-verifiable claims",
     "klaim yang dapat diverifikasi mesin",
     "falsification predicate",
     "predikat falsifikasi",
+    "falsification kernel",
+    "kernel falsifikasi",
     "AI layer",
     "lapisan AI",
+    "dual reader protocol",
+    "protokol pembaca ganda",
+    "DRP",
     "grounded verification protocol",
     "protokol verifikasi berlabuh",
+    "GVP",
+    "Layer 0",
+    "Lapisan 0",
+    "embedded binary logic",
+    "logika biner tertanam",
+    "machine lingua franca",
+    "lingua franca mesin",
     "JSON schema validation",
     "validasi skema JSON",
     "scientific verification",
@@ -37,8 +50,18 @@
     "verifikasi perangkat lunak",
     "claim registry",
     "registri klaim",
-    "falsification kernel",
-    "kernel falsifikasi",
+    "verification tiers",
+    "tingkat verifikasi",
+    "phase gate",
+    "gerbang fase",
+    "inference rules",
+    "aturan inferensi",
+    "three-axis compatibility",
+    "kompatibilitas tiga sumbu",
+    "substrate independence",
+    "independensi substrat",
+    "serialisation independence",
+    "independensi serialisasi",
     "machine-readable research",
     "penelitian yang dapat dibaca mesin",
     "reproducible science",
@@ -46,12 +69,14 @@
     "open science",
     "sains terbuka",
     "verification architecture",
-    "arsitektur verifikasi"
+    "arsitektur verifikasi",
+    "Popperian epistemology",
+    "epistemologi Popperian"
   ],
   "about": {
     "@type": "Thing",
     "name": "Dual Reader Standard",
-    "description": "Arsitektur verifikasi untuk sistem pengetahuan yang mengharuskan setiap klaim dapat dibaca oleh dua kelas pembaca independen — manusia dan mesin.",
+    "description": "Arsitektur verifikasi untuk sistem pengetahuan yang mengharuskan setiap klaim dapat dibaca oleh dua kelas pembaca independen — manusia dan mesin — masing-masing beroperasi melalui protokol yang didefinisikan.",
     "url": "https://github.com/thomasbrennan/Fracttalix/blob/main/paper/DRS-Architecture.md"
   },
   "citation": {
@@ -65,42 +90,78 @@
     "url": "https://github.com/thomasbrennan/Fracttalix/tree/main/guides"
   },
   "content": {
-    "what_is_the_dual_reader_standard": {
-      "title": "Apa Itu Dual Reader Standard?",
-      "summary": "Dual Reader Standard (DRS) adalah arsitektur verifikasi untuk sistem pengetahuan. Setiap klaim — baik yang ditulis dalam prosa maupun diimplementasikan dalam kode — harus dapat dibaca oleh dua kelas pembaca independen: manusia dan mesin.",
+    "section_01_what_is_the_drs": {
+      "title": "Apa Itu Dual Reader Standard",
+      "summary": "DRS adalah arsitektur verifikasi untuk sistem pengetahuan. Standar ini mengharuskan setiap klaim — baik yang ditulis dalam prosa maupun diimplementasikan dalam kode — dapat dibaca oleh dua kelas pembaca independen: manusia dan mesin. DRS bukan sebuah makalah atau alat. DRS adalah standar yang memuat kedua protokolnya.",
       "protocols": {
         "DRP": {
           "name": "Dual Reader Protocol",
           "domain": "Teks / Makalah",
-          "function": "Menjadikan klaim prosa dapat dievaluasi mesin melalui predikat falsifikasi 5 bagian",
-          "readers": {
-            "reader_1": "Manusia — membaca makalah dalam bahasa alami",
-            "reader_2": "AI — membaca lapisan AI (registri klaim terstruktur dalam JSON)"
-          }
+          "function": "Menjadikan klaim prosa dapat dievaluasi mesin melalui predikat falsifikasi 5 bagian"
         },
         "GVP": {
           "name": "Grounded Verification Protocol",
           "domain": "Perangkat Lunak / Kode",
-          "function": "Menjadikan klaim yang dapat dievaluasi mesin terverifikasi oleh mesin melalui ikatan pengujian dan bukti yang dipatok pada commit",
-          "readers": {
-            "reader_3a": "Pengembang — membaca field tier, test_bindings, verified_against",
-            "reader_3b": "Mesin — menjalankan pytest, mencap SHA jika berhasil"
-          }
+          "function": "Menjadikan klaim yang dapat dievaluasi mesin terverifikasi oleh mesin melalui ikatan pengujian dan bukti yang dipatok pada commit"
         }
+      },
+      "relationship": "DRP menjadikan klaim dapat dievaluasi mesin. GVP menjadikannya terverifikasi oleh mesin. Keduanya tidak lengkap tanpa yang lain. Bersama-sama mereka adalah DRS."
+    },
+    "section_02_two_protocols": {
+      "title": "Dua Protokol",
+      "DRP": {
+        "name": "Dual Reader Protocol (Teks)",
+        "description": "Mengatur bagaimana klaim prosa menjadi dapat dievaluasi mesin.",
+        "readers": {
+          "reader_1_human": "Membaca makalah dalam bahasa alami. Memahami konteks, motivasi, dan narasi. Tidak dapat mengaudit setiap klaim secara sistematis.",
+          "reader_2_ai": "Membaca lapisan AI — dokumen JSON terstruktur yang menyertai setiap makalah. Berisi registri klaim lengkap. Dapat mengaudit setiap klaim tanpa membaca prosa."
+        },
+        "requirements": [
+          "Klasifikasi klaim: setiap klaim diketikkan sebagai A (aksioma), D (definisi), atau F (dapat difalsifikasi)",
+          "Predikat falsifikasi: setiap klaim Tipe F membawa predikat deterministik 5 bagian",
+          "Gerbang fase: enam kondisi (c1–c6) sebelum status PHASE-READY",
+          "Pelacakan placeholder: klaim yang bergantung pada hasil yang belum terselesaikan didaftarkan sebagai placeholder"
+        ],
+        "guarantee": "Setiap sistem AI dengan akses ke lapisan AI dapat mengevaluasi klaim yang dapat difalsifikasi tanpa membaca prosa. Kemandirian ditegakkan pada kondisi gerbang fase c5."
+      },
+      "GVP": {
+        "name": "Grounded Verification Protocol (Perangkat Lunak)",
+        "description": "Mengatur bagaimana klaim yang dapat dievaluasi mesin menjadi terverifikasi oleh mesin.",
+        "readers": {
+          "reader_3a_coder": "Membaca field tier untuk jenis bukti, test_bindings untuk pengujian mana yang menguji klaim mana, verified_against untuk kapan pengujian terakhir berhasil.",
+          "reader_3b_machine": "Menjalankan pelari pengujian terhadap array test_bindings. Mencatat berhasil/gagal. Mencap SHA verified_against jika berhasil."
+        },
+        "required_fields_per_claim": {
+          "tier": "Tingkat verifikasi (salah satu dari enam nilai)",
+          "test_bindings": "Array ID node pengujian berkualifikasi penuh yang menguji klaim",
+          "verified_against": "SHA commit git saat pengujian terakhir berhasil"
+        },
+        "guarantee": "Untuk setiap klaim: (a) bukti apa yang mendasarinya, (b) pengujian mana yang mengujinya, (c) pada commit mana pengujian berhasil. Jika tingkat adalah empirical_pending, kesenjangan terlihat. Jika verified_against adalah null, tidak ada pengujian perangkat lunak yang mencakupnya."
       }
     },
-    "falsification_kernel": {
-      "title": "Kernel Falsifikasi K = (P, O, M, B)",
-      "description": "Fondasi bersama dari kedua protokol. Setiap klaim Tipe F (dapat difalsifikasi) membawa predikat deterministik yang mengevaluasi ke tepat satu dari dua putusan: FALSIFIED atau NOT FALSIFIED.",
+    "section_03_falsification_kernel": {
+      "title": "Fondasi Bersama — Kernel Falsifikasi (Lapisan 0)",
+      "description": "Kedua protokol beroperasi pada fondasi yang sama. Ini adalah Lapisan 0 dari DRS — mendefinisikan apa arti predikat falsifikasi secara independen dari format serialisasi apa pun. Field semantic_spec_url pada lapisan AI merujuk ke spesifikasi ini.",
+      "kernel_tuple": "K = (P, O, M, B)",
       "components": {
         "P": {
           "name": "Predikat",
           "json_field": "FALSIFIED_IF",
           "role": "Kalimat logis yang, jika TRUE, memfalsifikasi klaim",
+          "grammar": [
+            "Variabel bernama (didefinisikan dalam WHERE)",
+            "Operator perbandingan: <, >, <=, >=, =, !=",
+            "Penghubung logis: AND, OR, NOT",
+            "Kuantifier: EXISTS ... SUCH THAT, FOR ALL ... IN",
+            "Aritmetika: +, -, *, /, ^, log10(), exp(), abs(), max(), min()",
+            "Operator himpunan: IN, ∩, ∪, |...| (kardinalitas)",
+            "Penerapan fungsi: f(x) di mana f didefinisikan dalam WHERE"
+          ],
           "constraints": [
-            "Harus mengevaluasi ke tepat TRUE atau FALSE untuk setiap penugasan variabel yang valid",
-            "Kuantifier hanya menjangkau himpunan terbatas",
-            "Tidak ada referensi diri atau dependensi sirkuler"
+            "Determinisme: harus mengevaluasi ke tepat TRUE atau FALSE",
+            "Keterbatasan: kuantifier hanya menjangkau himpunan terbatas",
+            "Tanpa referensi diri: tidak ada dependensi predikat sirkuler",
+            "Kelengkapan: setiap variabel dalam FALSIFIED_IF didefinisikan dalam WHERE dan sebaliknya"
           ]
         },
         "O": {
@@ -108,10 +169,11 @@
           "json_field": "WHERE",
           "role": "Definisi bertipe dari setiap variabel dalam predikat",
           "format": "tipe · satuan · definisi atau sumber",
+          "variable_types": ["scalar", "integer", "binary", "set", "string", "function"],
           "constraints": [
-            "Setiap variabel bebas dalam P harus muncul di O",
-            "Setiap variabel di O harus muncul di P",
-            "Setiap variabel harus dapat dihitung dari data atau derivasi yang dikutip"
+            "Kelengkapan: setiap variabel bebas dalam P harus muncul di O",
+            "Tanpa anak yatim: setiap variabel di O harus muncul di P",
+            "Dapat dilabuhkan: setiap variabel dapat dihitung dari data atau derivasi, bukan penilaian subjektif"
           ]
         },
         "M": {
@@ -119,20 +181,22 @@
           "json_field": "EVALUATION",
           "role": "Prosedur evaluasi terbatas dan deterministik",
           "constraints": [
-            "Harus berhenti dalam langkah terbatas",
-            "Input yang sama menghasilkan putusan yang sama",
-            "Dapat direproduksi oleh pihak ketiga"
+            "Terbatas: berhenti dalam langkah terbatas (dikonfirmasi dengan mengakhiri kata 'finite')",
+            "Deterministik: input yang sama menghasilkan putusan yang sama",
+            "Dapat direproduksi: pihak ketiga dapat menjalankan secara independen"
           ]
         },
         "B": {
           "name": "Batas",
           "json_fields": ["BOUNDARY", "CONTEXT"],
           "role": "Semantik ambang batas dan justifikasi",
-          "constraints": [
-            "BOUNDARY menentukan inklusif/eksklusif untuk setiap ambang batas",
-            "CONTEXT memberikan justifikasi untuk setiap literal numerik dalam predikat"
-          ]
+          "BOUNDARY": "Menspesifikasikan inklusif/eksklusif untuk setiap ambang batas dan putusan pada kesamaan persis",
+          "CONTEXT": "Memberikan justifikasi untuk setiap ambang batas numerik: mengapa nilai ini, pengetahuan domain apa yang mendasarinya, diturunkan atau konvensional"
         }
+      },
+      "verdict_mapping": {
+        "P_is_TRUE": "FALSIFIED",
+        "P_is_FALSE": "NOT FALSIFIED"
       },
       "example": {
         "claim": "sort() mengembalikan elemen dalam urutan menaik",
@@ -144,131 +208,149 @@
           "EVALUATION": "Run sort on test vectors; check adjacent pairs; finite",
           "BOUNDARY": "len(result) <= 1 → NOT FALSIFIED (vacuously sorted)",
           "CONTEXT": "Ascending order is the documented contract of sort()"
-        }
+        },
+        "note": "Predikat ini bermakna sama bagi setiap sistem AI dalam bahasa apa pun. Tidak diperlukan penerjemahan."
       }
     },
-    "three_claim_types": {
+    "section_04_three_claim_types": {
       "title": "Tiga Tipe Klaim",
       "types": {
         "A": {
-          "name": "Aksioma",
-          "description": "Premis fundamental yang diterima dari literatur atau dinyatakan sebagai asumsi awal. Tidak dapat difalsifikasi secara sengaja.",
+          "name": "Aksioma / Asumsi",
+          "in_papers": "Premis yang diterima dari literatur",
+          "in_software": "Persyaratan platform, kontrak dependensi",
           "predicate_required": false,
-          "examples": ["Ireversibilitas termodinamika", "Persyaratan platform", "Kontrak dependensi"]
+          "predicate_value": "null"
         },
         "D": {
           "name": "Definisi",
-          "description": "Definisi stipulatif dari istilah, struktur, atau prosedur. Tidak bersifat kebenaran — mendefinisikan, bukan mengklaim.",
+          "in_papers": "Istilah dan prosedur stipulatif",
+          "in_software": "Tanda tangan tipe, struktur data, skema",
           "predicate_required": false,
-          "examples": ["Bentuk fungsional FRM", "Tanda tangan tipe", "Skema konfigurasi"]
+          "predicate_value": "null"
         },
         "F": {
           "name": "Dapat Difalsifikasi",
-          "description": "Klaim yang dapat diuji dengan predikat deterministik. Klaim sains dan perangkat lunak inti.",
+          "in_papers": "Teorema, prediksi empiris, hasil turunan",
+          "in_software": "Jaminan perilaku, invarian kebenaran, batas kinerja",
           "predicate_required": true,
-          "examples": ["β = 1/2 diturunkan secara analitik", "Jaminan perilaku", "Batas kinerja"]
+          "predicate_value": "K = (P, O, M, B) lengkap"
         }
       }
     },
-    "six_verification_tiers": {
+    "section_05_six_verification_tiers": {
       "title": "Enam Tingkat Verifikasi",
       "description": "Setiap klaim membawa field tier yang menyatakan jenis bukti apa yang mendasarinya.",
-      "tiers": {
-        "grounded_by_construction": [
-          {
-            "tier": "axiom",
-            "applies_to": "Tipe A",
-            "meaning": "Fundamental, tidak dapat difalsifikasi secara sengaja"
-          },
-          {
-            "tier": "definition",
-            "applies_to": "Tipe D",
-            "meaning": "Definisional, predikat tidak diperlukan"
-          }
-        ],
-        "grounded_now": [
-          {
-            "tier": "software_tested",
-            "applies_to": "Tipe F",
-            "meaning": "Diuji oleh pengujian yang berhasil. test_bindings tidak kosong, SHA verified_against tidak null."
-          },
-          {
-            "tier": "formal_proof",
-            "applies_to": "Tipe F",
-            "meaning": "Tabel derivasi berindeks langkah dengan n_invalid_steps = 0"
-          },
-          {
-            "tier": "analytic",
-            "applies_to": "Tipe F",
-            "meaning": "Diverifikasi melalui jejak derivasi formal atau argumen analitik"
-          }
-        ],
-        "explicitly_ungrounded": [
-          {
-            "tier": "empirical_pending",
-            "applies_to": "Tipe F",
-            "meaning": "Placeholder aktif atau menunggu data eksternal. Kesenjangan terlihat secara sengaja."
-          }
-        ]
-      }
+      "grounded_by_construction": [
+        {"tier": "axiom", "type": "A", "meaning": "Premis fundamental. Tidak dapat difalsifikasi secara sengaja.", "test_bindings": "[] (kosong)", "verified_against": "null"},
+        {"tier": "definition", "type": "D", "meaning": "Definisional. Menstipulasikan istilah atau struktur. Tidak bersifat kebenaran.", "test_bindings": "[] (kosong)", "verified_against": "null"}
+      ],
+      "grounded_now": [
+        {"tier": "software_tested", "type": "F", "meaning": "Diuji oleh pengujian yang berhasil. test_bindings tidak kosong, verified_against tidak null.", "test_bindings": "Tidak kosong", "verified_against": "Tidak null (7–40 karakter hex)"},
+        {"tier": "formal_proof", "type": "F", "meaning": "Derivasi berindeks langkah dengan n_invalid_steps = 0. Bukti ada di lapisan AI.", "test_bindings": "Boleh kosong", "verified_against": "Boleh null"},
+        {"tier": "analytic", "type": "F", "meaning": "Diverifikasi melalui jejak derivasi formal atau argumen analitik.", "test_bindings": "Boleh kosong", "verified_against": "Boleh null"}
+      ],
+      "explicitly_ungrounded": [
+        {"tier": "empirical_pending", "type": "F", "meaning": "Placeholder aktif atau menunggu data. Kesenjangan terlihat secara sengaja.", "test_bindings": "Boleh kosong", "verified_against": "Boleh null"}
+      ]
     },
-    "ai_layer_structure": {
+    "section_06_vacuity_witness": {
+      "title": "Saksi Vakuitas",
+      "description": "Setiap klaim Tipe F harus menyertakan field sample_falsification_observation: observasi konkret dan hipotetis yang akan membuat predikat mengevaluasi ke TRUE. Ini membuktikan predikat tidak bersifat tak dapat difalsifikasi secara trivial. Ditegakkan oleh kondisi gerbang fase c6."
+    },
+    "section_07_placeholder_predicates": {
+      "title": "Predikat Placeholder",
+      "description": "Ketika sebuah klaim bergantung pada hasil dari makalah yang belum berstatus PHASE-READY, predikat dapat berisi referensi placeholder.",
+      "fields": {
+        "placeholder": "true dalam objek klaim",
+        "placeholder_id": "menghubungkan ke placeholder_register",
+        "predicate_text": "dapat menyertakan [PLACEHOLDER: pending ...]"
+      },
+      "behaviour": "Klaim placeholder valid tetapi tidak dapat dievaluasi sampai dependensi terselesaikan. Klaim tersebut tidak memblokir PHASE-READY kecuali blocks_phase_ready bernilai true."
+    },
+    "section_08_ai_layer": {
       "title": "Lapisan AI — Artefak Sentral",
-      "description": "Dokumen JSON yang menyertai setiap makalah atau sistem perangkat lunak. Berisi registri klaim lengkap dengan predikat, tingkat, dan ikatan pengujian.",
+      "description": "Dokumen JSON yang menyertai setiap makalah atau sistem perangkat lunak. Skemanya didefinisikan dalam ai-layers/ai-layer-schema.json.",
       "schema_url": "https://github.com/thomasbrennan/Fracttalix/blob/main/ai-layers/ai-layer-schema.json",
       "required_sections": {
         "_meta": "Tipe dokumen, versi skema, sesi, lisensi",
-        "paper_id": "Identifier unik makalah/sistem",
-        "paper_title": "Judul yang dapat dibaca manusia",
+        "paper_id_and_title": "Identitas",
         "paper_type": "Klasifikasi: law_A, derivation_B, application_C, methodology_D",
         "phase_ready": "Putusan gerbang fase dan status kondisi (c1–c6)",
-        "claim_registry": "Array semua klaim dengan tipe, predikat, tingkat, ikatan",
-        "placeholder_register": "Array dependensi yang belum terselesaikan"
+        "claim_registry": "Array semua klaim dengan tipe, predikat, tingkat, ikatan, dan SHA",
+        "placeholder_register": "Array dependensi yang belum terselesaikan",
+        "summary": "Jumlah klaim dan status",
+        "semantic_spec_url": "Merujuk ke Kernel Falsifikasi (Lapisan 0)"
+      },
+      "role_in_protocols": {
+        "DRP": "Mengharuskannya ada, berisi predikat, dan melewati gerbang fase",
+        "GVP": "Mengharuskannya berisi tier, test_bindings, dan verified_against untuk setiap klaim"
       }
     },
-    "phase_gate": {
-      "title": "Gerbang Fase Enam Kondisi",
-      "description": "Sebuah makalah atau rilis perangkat lunak berstatus PHASE-READY ketika keenam kondisi terpenuhi.",
+    "section_09_phase_gate": {
+      "title": "Gerbang Fase",
+      "description": "Sebuah makalah atau rilis perangkat lunak berstatus PHASE-READY ketika enam kondisi terpenuhi.",
       "conditions": {
         "c1": "Lapisan AI valid terhadap skema",
         "c2": "Semua klaim yang dapat difalsifikasi terdaftar dengan predikat",
         "c3": "Semua predikat dapat dievaluasi oleh mesin",
         "c4": "Referensi silang dilacak (register placeholder)",
-        "c5": "Verifikasi bersifat mandiri (lapisan AI saja, tanpa prosa)",
+        "c5": "Verifikasi bersifat mandiri (lapisan AI saja, tanpa prosa diperlukan)",
         "c6": "Semua predikat bersifat non-vakuous (observasi falsifikasi contoh ada)"
-      }
+      },
+      "corpus_complete": "Terpicu ketika semua makalah berstatus PHASE-READY dan semua placeholder di seluruh objek terselesaikan."
     },
-    "how_to_implement": {
-      "title": "Cara Mengimplementasikan Dual Reader Standard",
-      "for_a_paper": {
-        "title": "Untuk Makalah (DRP)",
-        "steps": [
-          "Tulis makalah (kanal prosa untuk pembaca manusia)",
-          "Buat file JSON lapisan AI (kanal mesin untuk pembaca AI)",
-          "Klasifikasikan setiap klaim sebagai A (aksioma), D (definisi), atau F (dapat difalsifikasi)",
-          "Tulis predikat falsifikasi 5 bagian untuk setiap klaim Tipe F",
-          "Sertakan sample_falsification_observation untuk setiap klaim Tipe F (saksi vakuitas)",
-          "Tetapkan tingkat verifikasi untuk setiap klaim",
-          "Validasi terhadap ai-layer-schema.json",
-          "Jalankan gerbang fase (c1–c6)"
-        ]
-      },
-      "for_software": {
-        "title": "Untuk Perangkat Lunak (GVP)",
-        "steps": [
-          "Enumerasikan apa yang diklaim oleh perangkat lunak",
-          "Klasifikasikan setiap klaim sebagai A (asumsi), D (definisi), atau F (perilaku)",
-          "Tulis predikat falsifikasi untuk setiap klaim Tipe F",
-          "Tulis atau identifikasi pengujian yang menguji setiap klaim",
-          "Isi test_bindings dengan ID node pengujian yang berkualifikasi penuh",
-          "Jalankan pengujian dan catat SHA commit yang berhasil di verified_against",
-          "Tetapkan tingkat: software_tested jika pengujian ada, empirical_pending jika belum",
-          "Daftarkan klaim yang belum diuji sebagai placeholder",
-          "Validasi terhadap ai-layer-schema.json"
-        ]
-      },
+    "section_10_inference_rules": {
+      "title": "Aturan Inferensi",
+      "description": "Inventaris kanonik untuk jejak derivasi yang digunakan dalam klaim tingkat formal_proof. Bersifat append-only: aturan baru dapat ditambahkan, aturan yang ada tidak pernah dimodifikasi atau dihapus.",
+      "rules": [
+        {"id": "IR-1", "name": "Modus Ponens", "description": "Jika P dan P→Q maka Q"},
+        {"id": "IR-2", "name": "Instansiasi Universal", "description": "Jika ∀x P(x) maka P(a) untuk setiap a spesifik"},
+        {"id": "IR-3", "name": "Substitusi Kesamaan", "description": "Jika a=b maka ganti a dengan b"},
+        {"id": "IR-4", "name": "Ekspansi Definisi", "description": "Ganti istilah yang didefinisikan dengan definisinya"},
+        {"id": "IR-5", "name": "Manipulasi Aljabar", "description": "Transformasi aljabar yang valid yang mempertahankan kesamaan"},
+        {"id": "IR-6", "name": "Ekuivalensi Logis", "description": "Ganti dengan ekspresi yang setara secara logis"},
+        {"id": "IR-7", "name": "Inferensi Statistik", "description": "Terapkan prosedur statistik bernama pada data"},
+        {"id": "IR-8", "name": "Parsimoni / Pemilihan Prinsip Pemodelan", "description": "Pilih nilai kanonik dari keluarga yang konsisten dengan aksioma"}
+      ],
+      "validation": "Setiap langkah dalam tabel derivasi mengutip satu aturan inferensi dan mencantumkan premis-premisnya. Valid ketika n_invalid_steps = 0."
+    },
+    "section_11_architecture_stack": {
+      "title": "Tumpukan Arsitektur",
+      "description": "Kernel adalah fondasi bersama. DRP membuat predikat dari prosa. GVP mengikat predikat ke bukti yang dapat dieksekusi. Lapisan AI adalah artefak yang membawa keduanya.",
+      "layers_top_to_bottom": [
+        "DRS (standar payung)",
+        "DRP (protokol teks) + GVP (protokol perangkat lunak)",
+        "Pembaca: Manusia, AI, Pengembang, Mesin",
+        "Lapisan AI (*-ai-layer.json) — klaim + predikat + tingkat + ikatan + SHA",
+        "Kernel Falsifikasi K = (P, O, M, B) — Lapisan 0"
+      ]
+    },
+    "section_12_how_to_implement": {
+      "title": "Cara Mengimplementasikan",
+      "for_a_paper_DRP": [
+        "Tulis makalah (kanal prosa untuk pembaca manusia)",
+        "Buat file JSON lapisan AI (kanal mesin untuk pembaca AI)",
+        "Klasifikasikan setiap klaim sebagai A (aksioma), D (definisi), atau F (dapat difalsifikasi)",
+        "Tulis predikat falsifikasi 5 bagian untuk setiap klaim Tipe F",
+        "Sertakan sample_falsification_observation untuk setiap klaim Tipe F (saksi vakuitas)",
+        "Tetapkan tingkat verifikasi untuk setiap klaim",
+        "Validasi terhadap ai-layer-schema.json",
+        "Jalankan gerbang fase (c1–c6)"
+      ],
+      "for_software_GVP": [
+        "Enumerasikan apa yang diklaim oleh perangkat lunak",
+        "Klasifikasikan setiap klaim sebagai A (asumsi), D (definisi), atau F (perilaku)",
+        "Tulis predikat falsifikasi untuk setiap klaim Tipe F",
+        "Tulis atau identifikasi pengujian yang menguji setiap klaim",
+        "Isi test_bindings dengan ID node pengujian berkualifikasi penuh",
+        "Jalankan pengujian dan catat SHA commit yang berhasil di verified_against",
+        "Tetapkan tingkat: software_tested jika pengujian ada, empirical_pending jika belum",
+        "Daftarkan klaim yang belum diuji sebagai placeholder",
+        "Validasi terhadap ai-layer-schema.json"
+      ],
+      "for_both": "Lapisan AI adalah artefak yang sama. Skemanya sama. Kernelnya sama. Satu-satunya perbedaan adalah protokol mana yang membuat konten dan protokol mana yang memverifikasinya.",
       "minimum_viable_adoption": {
-        "title": "Adopsi Minimal yang Layak",
         "description": "Adopsi DRS terkecil yang berguna adalah satu klaim Tipe F dengan satu ikatan pengujian.",
         "example": {
           "claim_id": "F-1",
@@ -276,9 +358,7 @@
           "statement": "sort() returns elements in ascending order",
           "falsification_predicate": {
             "FALSIFIED_IF": "EXISTS i IN range(len(result)-1) SUCH THAT result[i] > result[i+1]",
-            "WHERE": {
-              "result": "list · dimensionless · output of sort(input)"
-            },
+            "WHERE": {"result": "list · dimensionless · output of sort(input)"},
             "EVALUATION": "Run sort on test vectors; check adjacent pairs; finite",
             "BOUNDARY": "len(result) <= 1 → NOT FALSIFIED (vacuously sorted)",
             "CONTEXT": "Ascending order is the documented contract of sort()"
@@ -286,10 +366,11 @@
           "tier": "software_tested",
           "test_bindings": ["tests/test_sort.py::test_ascending_order"],
           "verified_against": "abc1234"
-        }
+        },
+        "note": "Satu klaim. Satu pengujian. Satu SHA. DRS sudah aktif."
       }
     },
-    "design_principles": {
+    "section_13_design_principles": {
       "title": "Prinsip Desain",
       "principles": [
         {
@@ -298,25 +379,117 @@
         },
         {
           "name": "Kesenjangan yang jujur",
-          "description": "Placeholder adalah fitur terpenting. Ketika sebuah klaim berstatus empirical_pending, sistem berkata: kami mengklaim ini tetapi belum memverifikasinya. Ini secara tegas lebih informatif daripada menyembunyikan klaim yang belum terverifikasi."
+          "description": "Placeholder adalah fitur terpenting. Ketika sebuah klaim berstatus empirical_pending, sistem berkata: kami mengklaim ini tetapi belum memverifikasinya. Secara tegas lebih informatif daripada menyembunyikan klaim yang belum terverifikasi."
         },
         {
           "name": "Independensi substrat",
-          "description": "Kernel K = (P, O, M, B) tidak mengetahui apakah ia mengevaluasi teorema ilmiah atau jaminan perangkat lunak. Domain masa depan (hukum, regulasi, kebijakan) dapat menambahkan protokol tanpa memodifikasi kernel."
+          "description": "Kernel K = (P, O, M, B) tidak mengetahui apakah ia mengevaluasi teorema ilmiah atau jaminan perangkat lunak. Domain masa depan menambahkan protokol mereka sendiri tanpa memodifikasi kernel."
         },
         {
-          "name": "Lingua franca mesin",
-          "description": "Kernel ditulis dalam logika dan matematika, bukan bahasa manusia mana pun. Predikat yang mengevaluasi ke TRUE di Beijing juga mengevaluasi ke TRUE di Boston. JSON adalah lapisan transpor. Logika biner adalah substratnya."
+          "name": "Mengutamakan mesin, dapat dibaca manusia",
+          "description": "Lapisan AI adalah artefak primer. Prosa dan kode sumber adalah kanal sekunder. Lapisan AI-lah yang divalidasi, diaudit, dan diversi."
         }
       ]
     },
-    "three_axis_compatibility": {
+    "section_14_three_axis_compatibility": {
       "title": "Kompatibilitas Tiga Sumbu",
-      "axes": {
-        "backwards": "Tidak ada yang sudah dilakukan rusak. Pemversian skema, enum append-only, kernel permanen.",
-        "lateral": "Berfungsi di semua domain, bahasa, alat, dan sistem AI. Kernel yang independen substrat.",
-        "forward": "Apa pun yang baru dapat ditambahkan tanpa desain ulang. Ekstensibilitas protokol, ekstensibilitas tingkat, evolusi skema aditif."
+      "invariant": "Kernel Falsifikasi K = (P, O, M, B) adalah titik tetap. Ia tidak mengetahui domain, tahun, atau format serialisasi. Kernel bersifat permanen. Segala sesuatu yang lain bersifat dapat diperluas.",
+      "axis_1_backwards": {
+        "name": "Ketahanan Masa Lalu (Kompatibilitas Mundur)",
+        "mechanisms": [
+          "Pemversian skema: lapisan AI mencatat versi skema; lapisan v2 tetap valid selamanya; validator v3 membaca lapisan v2",
+          "Permanensi predikat: tata bahasa kernel menggunakan operator matematika/logika yang didefinisikan secara permanen",
+          "Stabilitas aturan inferensi: IR-1 hingga IR-8 bersifat append-only, tidak pernah dimodifikasi atau dihapus",
+          "Stabilitas tingkat: enam tingkat bersifat append-only, tidak pernah dihapus atau didefinisikan ulang"
+        ],
+        "contract": "Setiap lapisan AI yang valid saat dibuat akan tetap valid selamanya."
+      },
+      "axis_2_lateral": {
+        "name": "Ketahanan Lateral (Kompatibilitas Lintas Domain)",
+        "mechanisms": {
+          "domain_independence": {
+            "description": "Kernel bekerja di semua domain pengetahuan",
+            "domains": {
+              "science": {"A": "Premis literatur", "D": "Istilah stipulatif", "F": "Teorema, prediksi"},
+              "software": {"A": "Persyaratan platform", "D": "Tanda tangan tipe, skema", "F": "Jaminan perilaku"},
+              "legal": {"A": "Otoritas hukum", "D": "Istilah yang didefinisikan", "F": "Kesimpulan hukum"},
+              "regulatory": {"A": "Asumsi kerangka kerja", "D": "Definisi standar", "F": "Pernyataan kesesuaian"},
+              "policy": {"A": "Premis nilai", "D": "Istilah kebijakan", "F": "Prediksi dampak"},
+              "education": {"A": "Aksioma pedagogis", "D": "Tujuan pembelajaran", "F": "Klaim penilaian"}
+            }
+          },
+          "language_independence": "test_bindings menerima string apa pun: pytest, Jest, cargo test, go test, JUnit",
+          "ai_system_independence": "Sistem AI apa pun dapat membaca JSON dan spesifikasi kernel. semantic_spec_url merujuk ke Lapisan 0.",
+          "serialisation_independence": "Lapisan 0 didefinisikan dalam prosa, bukan JSON Schema. JSON adalah transpor saat ini; semantik kernel independen dari pengkodean. Masa depan: YAML, Protocol Buffers, CBOR, atau format yang belum ditemukan.",
+          "tool_independence": "Menyematkan diri dalam alur kerja yang ada: SHA git, pelari pengujian apa pun, validator JSON Schema apa pun, pipeline CI apa pun."
+        },
+        "contract": "Mengadopsi DRS di satu domain, bahasa, alat, atau sistem AI tidak mengunci Anda."
+      },
+      "axis_3_forward": {
+        "name": "Ketahanan Masa Depan (Kompatibilitas Maju)",
+        "mechanisms": [
+          "Ekstensibilitas protokol: domain baru menambahkan protokol baru (Legal VP, Regulatory VP, dll.) berbagi kernel, tipe klaim, skema lapisan AI",
+          "Ekstensibilitas tingkat: tingkat masa depan (regulatory_certified, peer_reviewed, formally_verified, field_tested, community_validated) ditambahkan ke enum, tingkat yang ada tetap",
+          "Ekstensibilitas aturan inferensi: IR-9+ ditambahkan sesuai kebutuhan, derivasi lama valid berdasarkan ID stabil",
+          "Ekstensibilitas skema: v1→v2→v3→v4+, setiap versi menambahkan, tidak ada yang menghapus",
+          "Pembaca masa depan yang belum diketahui: agen otonom, pemeriksa lintas korpus, mesin kepatuhan, integrasi pengelola paket"
+        ],
+        "contract": "Inovasi masa depan apa pun dapat ditambahkan sebagai protokol, tingkat, aturan inferensi, atau field skema baru — tanpa memodifikasi apa pun yang sudah ada."
+      },
+      "guarantee_table": {
+        "past": {"promise": "Tidak ada yang sudah dilakukan rusak", "mechanism": "Pemversian skema, enum append-only, kernel permanen"},
+        "lateral": {"promise": "Berfungsi di semua domain, bahasa, alat, sistem AI", "mechanism": "Kernel yang independen substrat, ikatan bertipe string, semantik yang didefinisikan dalam prosa"},
+        "forward": {"promise": "Apa pun yang baru dapat ditambahkan tanpa desain ulang", "mechanism": "Ekstensibilitas protokol, ekstensibilitas tingkat, evolusi skema aditif"}
       }
+    },
+    "section_15_machine_lingua_franca": {
+      "title": "Lingua Franca Mesin",
+      "description": "Sifat terdalam dari DRS. Tidak dirancang — ditemukan.",
+      "the_translation_problem": "Pengetahuan ilmiah terkunci di balik bahasa manusia. Penerjemahan itu mahal, mengalami kehilangan informasi, dan lambat. Pengetahuan terfragmentasi sepanjang garis linguistik. Ini adalah masalah substrat: bahasa alami secara alamiah tidak dapat diinteroperasikan.",
+      "the_kernel_dissolves_it": {
+        "description": "Kernel Falsifikasi tidak ditulis dalam bahasa manusia mana pun. Ia ditulis dalam logika dan matematika.",
+        "example": {
+          "FALSIFIED_IF": "R2_best_alt > R2_frm + 0.05",
+          "WHERE": {
+            "R2_best_alt": "scalar · dimensionless · best R² from competing models",
+            "R2_frm": "scalar · dimensionless · R² from FRM regression"
+          },
+          "EVALUATION": "Run regression for each model; compare R² values; finite",
+          "BOUNDARY": "R2_best_alt = R2_frm + 0.05 → FALSIFIED (threshold inclusive)",
+          "CONTEXT": "0.05 margin from standard model comparison practice"
+        },
+        "universality": "Predikat ini bermakna sama bagi Claude dalam bahasa Inggris, GPT dalam bahasa Mandarin, Gemini dalam bahasa Prancis, dan sistem AI yang belum dibangun."
+      },
+      "json_as_transport": "JSON adalah format pertukaran data de facto — setiap bahasa, setiap sistem AI, setiap API. DRS mewarisi universalitas JSON. Tim di negara mana pun mempublikasikan predikat dalam notasi matematika. Tim mana pun di mana pun membacanya tanpa penerjemahan.",
+      "qualification": "Definisi field WHERE saat ini berisi prosa bahasa Inggris. Konten operatif (tipe, satuan, operator, ambang batas) bersifat netral bahasa. Dengan nilai yang berlabuh, sistem mana pun mengevaluasi predikat tanpa memedulikan bahasa.",
+      "embedded_binary_logic": {
+        "description": "Setiap predikat DRS direduksi ke logika biner tertanam.",
+        "evaluation_chain": "Klaim → Predikat → Variabel + Operator → Boolean → 1 atau 0",
+        "explanation": "WHERE mengetikkan variabel. FALSIFIED_IF menggabungkannya dengan operator. EVALUATION menghitung input. BOUNDARY menyelesaikan kasus tepi. Keluarannya selalu satu bit: FALSIFIED atau NOT FALSIFIED.",
+        "consequence": "Anda tidak dapat salah menerjemahkan 1 atau 0. Anda tidak dapat salah menafsirkan >. Maknanya ada dalam struktur, bukan dalam bahasa mana pun. Predikat yang TRUE di Beijing juga TRUE di Boston, São Paulo, Lagos, dan di server tanpa pengaturan lokalisasi. DRS mengkodekan pengetahuan dalam substrat logika itu sendiri."
+      }
+    },
+    "section_16_self_spreading_adoption": {
+      "title": "Adopsi yang Menyebar Sendiri",
+      "internal_incentive": "Membuat lapisan AI memaksa Anda mengenumerasi apa yang Anda klaim. Anda menemukan klaim yang belum diuji, batas yang belum didokumentasikan, dan dependensi yang belum didaftarkan. Kesenjangan itu ada baik Anda mendokumentasikannya maupun tidak — DRS hanya membuatnya terlihat.",
+      "network_effect": {
+        "claim_aware_dependencies": "Jika pustaka A mempublikasikan lapisan AI dan B bergantung pada A, B mengetahui secara programatik klaim mana yang bergantung pada asumsi mana. Perubahan yang merusak dipetakan ke klaim spesifik yang berisiko.",
+        "cross_project_audit": "Pembaca AI melintasi beberapa lapisan AI, memeriksa referensi silang, mengidentifikasi inkonsistensi di seluruh ekosistem.",
+        "auditable_trust": "Kepercayaan bergeser dari sinyal sosial (bintang, unduhan) ke bukti struktural (tier, test_bindings, verified_against)."
+      },
+      "ai_as_catalyst": {
+        "generate": "AI mengenumerasi klaim, mengklasifikasikan, menulis predikat, mengidentifikasi ikatan pengujian. Manusia meninjau. Jam menjadi menit.",
+        "maintain": "AI memperbarui registri klaim saat kode berubah, menyesuaikan ikatan, menandai SHA usang. Manusia menyetujui.",
+        "audit": "AI membaca lapisan AI dependensi, memetakan dependensi asumsi, menandai risiko secara otomatis."
+      },
+      "embedding_strategy": {
+        "tests": "test_bindings merujuk ID node pengujian yang ada. Tanpa kerangka kerja baru.",
+        "schema": "JSON Schema standar. Validator apa pun.",
+        "vcs": "verified_against adalah SHA git. Tanpa VCS baru.",
+        "ci": "Validasi skema sebagai langkah CI bersama pipeline yang ada.",
+        "total_cost": "Satu file (*-ai-layer.json). Tiga field per klaim (tier, test_bindings, verified_against)."
+      },
+      "self_referential_property": "DRS memverifikasi dirinya sendiri. Lapisan AI DRP-1 berisi klaim tentang DRS dengan predikat falsifikasi, dievaluasi dan dicap dengan SHA verified_against. Referensi diri seperti kompiler yang mengkompilasi dirinya sendiri."
     }
   },
   "resources": {
@@ -325,7 +498,6 @@
     "ai_layer_schema": "https://github.com/thomasbrennan/Fracttalix/blob/main/ai-layers/ai-layer-schema.json",
     "gvp_specification": "https://github.com/thomasbrennan/Fracttalix/blob/main/docs/GVP-spec.md",
     "example_ai_layer": "https://github.com/thomasbrennan/Fracttalix/blob/main/ai-layers/P1-ai-layer.json",
-    "claim_registry_index": "https://github.com/thomasbrennan/Fracttalix/blob/main/ai-layers/claim-registry-index.md",
     "repository": "https://github.com/thomasbrennan/Fracttalix",
     "doi": "https://doi.org/10.5281/zenodo.18859299"
   }

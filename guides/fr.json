@@ -2,9 +2,9 @@
   "@context": "https://schema.org",
   "@type": "TechArticle",
   "@id": "https://github.com/thomasbrennan/Fracttalix/blob/main/guides/fr.json",
-  "name": "Dual Reader Standard — Guide d'implémentation",
-  "headline": "Comment implémenter le Dual Reader Standard pour des assertions vérifiables par machine",
-  "description": "Guide complet d'implémentation du Dual Reader Standard (DRS), une architecture de vérification qui rend chaque assertion d'un système de connaissances lisible à la fois par l'humain et par la machine, grâce à des prédicats de falsification déterministes encodés en JSON.",
+  "name": "Le Dual Reader Standard — Guide complet",
+  "headline": "Guide en une lecture du Dual Reader Standard dans son intégralité : architecture, protocoles, noyau, couches, compatibilité, lingua franca et adoption",
+  "description": "Guide complet du Dual Reader Standard (DRS), une architecture de vérification exigeant que chaque affirmation soit lisible à la fois par l'humain et par la machine. Couvre les deux protocoles (DRP pour le texte, GVP pour le logiciel), le Noyau de falsification (Couche 0), l'artefact couche IA, les trois types d'affirmations, les six niveaux de vérification, les huit règles d'inférence, la porte de phase à six conditions, la compatibilité sur trois axes, la propriété de lingua franca des machines (logique binaire embarquée) et la dynamique d'adoption auto-propagée.",
   "inLanguage": "fr",
   "author": {
     "@type": "Person",
@@ -20,15 +20,28 @@
   "license": "https://creativecommons.org/licenses/by/4.0/",
   "keywords": [
     "dual reader standard",
-    "norme de double lecture",
+    "standard de double lecture",
+    "DRS",
     "machine-verifiable claims",
-    "assertions vérifiables par machine",
+    "affirmations vérifiables par machine",
     "falsification predicate",
     "prédicat de falsification",
+    "falsification kernel",
+    "noyau de falsification",
     "AI layer",
     "couche IA",
+    "dual reader protocol",
+    "protocole de double lecture",
+    "DRP",
     "grounded verification protocol",
-    "protocole de vérification ancré",
+    "protocole de vérification fondée",
+    "GVP",
+    "Layer 0",
+    "Couche 0",
+    "embedded binary logic",
+    "logique binaire embarquée",
+    "machine lingua franca",
+    "lingua franca des machines",
     "JSON schema validation",
     "validation de schéma JSON",
     "scientific verification",
@@ -36,9 +49,19 @@
     "software verification",
     "vérification logicielle",
     "claim registry",
-    "registre d'assertions",
-    "falsification kernel",
-    "noyau de falsification",
+    "registre des affirmations",
+    "verification tiers",
+    "niveaux de vérification",
+    "phase gate",
+    "porte de phase",
+    "inference rules",
+    "règles d'inférence",
+    "three-axis compatibility",
+    "compatibilité sur trois axes",
+    "substrate independence",
+    "indépendance du substrat",
+    "serialisation independence",
+    "indépendance de la sérialisation",
     "machine-readable research",
     "recherche lisible par machine",
     "reproducible science",
@@ -46,17 +69,19 @@
     "open science",
     "science ouverte",
     "verification architecture",
-    "architecture de vérification"
+    "architecture de vérification",
+    "Popperian epistemology",
+    "épistémologie poppérienne"
   ],
   "about": {
     "@type": "Thing",
     "name": "Dual Reader Standard",
-    "description": "Une architecture de vérification pour les systèmes de connaissances exigeant que chaque assertion soit lisible par deux classes de lecteurs indépendantes — humain et machine.",
+    "description": "Une architecture de vérification pour les systèmes de connaissances exigeant que chaque affirmation soit lisible par deux classes de lecteurs indépendantes — humain et machine — chacune opérant par un protocole défini.",
     "url": "https://github.com/thomasbrennan/Fracttalix/blob/main/paper/DRS-Architecture.md"
   },
   "citation": {
     "@type": "CreativeWork",
-    "name": "Corpus Fracttalix",
+    "name": "Fracttalix Corpus",
     "identifier": "https://doi.org/10.5281/zenodo.18859299"
   },
   "isPartOf": {
@@ -65,53 +90,90 @@
     "url": "https://github.com/thomasbrennan/Fracttalix/tree/main/guides"
   },
   "content": {
-    "what_is_the_dual_reader_standard": {
-      "title": "Qu'est-ce que le Dual Reader Standard ?",
-      "summary": "Le Dual Reader Standard (DRS) est une architecture de vérification pour les systèmes de connaissances. Chaque assertion — qu'elle soit rédigée en prose ou implémentée en code — doit être lisible par deux classes de lecteurs indépendantes : humain et machine.",
+    "section_01_what_is_the_drs": {
+      "title": "Ce qu'est le Dual Reader Standard",
+      "summary": "Le DRS est une architecture de vérification pour les systèmes de connaissances. Il exige que chaque affirmation — qu'elle soit rédigée en prose ou implémentée en code — soit lisible par deux classes de lecteurs indépendantes : humain et machine. Ce n'est pas un article ni un outil. C'est le standard qui contient ses deux protocoles.",
       "protocols": {
         "DRP": {
           "name": "Dual Reader Protocol",
           "domain": "Texte / Articles",
-          "function": "Rend les assertions en prose évaluables par machine via des prédicats de falsification en 5 parties",
-          "readers": {
-            "reader_1": "Humain — lit l'article en langage naturel",
-            "reader_2": "IA — lit la couche IA (registre d'assertions structuré en JSON)"
-          }
+          "function": "Rend les affirmations en prose évaluables par la machine via des prédicats de falsification en 5 parties"
         },
         "GVP": {
           "name": "Grounded Verification Protocol",
           "domain": "Logiciel / Code",
-          "function": "Rend les assertions évaluables par machine vérifiées par machine via des liaisons de tests et des preuves ancrées sur des commits",
-          "readers": {
-            "reader_3a": "Développeur — lit les champs tier, test_bindings, verified_against",
-            "reader_3b": "Machine — exécute pytest, appose le SHA en cas de succès"
-          }
+          "function": "Rend les affirmations évaluables par la machine vérifiées par la machine via des liaisons de test et des preuves ancrées sur un commit"
         }
+      },
+      "relationship": "Le DRP rend les affirmations évaluables par la machine. Le GVP les rend vérifiées par la machine. Aucun des deux n'est complet sans l'autre. Ensemble, ils constituent le DRS."
+    },
+    "section_02_two_protocols": {
+      "title": "Les deux protocoles",
+      "DRP": {
+        "name": "Dual Reader Protocol (Texte)",
+        "description": "Régit la manière dont les affirmations en prose deviennent évaluables par la machine.",
+        "readers": {
+          "reader_1_human": "Lit l'article en langage naturel. Comprend le contexte, la motivation et le récit. Ne peut pas auditer systématiquement chaque affirmation.",
+          "reader_2_ai": "Lit la couche IA — un document JSON structuré qui accompagne chaque article. Contient le registre complet des affirmations. Peut auditer chaque affirmation sans lire la prose."
+        },
+        "requirements": [
+          "Classification des affirmations : chaque affirmation typée comme A (axiome), D (définition) ou F (falsifiable)",
+          "Prédicats de falsification : chaque affirmation de type F porte un prédicat déterministe en 5 parties",
+          "Portes de phase : six conditions (c1–c6) avant le statut PHASE-READY",
+          "Suivi des espaces réservés : les affirmations dépendant de résultats non résolus sont enregistrées comme espaces réservés"
+        ],
+        "guarantee": "Tout système d'IA ayant accès à la couche IA peut évaluer toute affirmation falsifiable sans lire la prose. L'autosuffisance est appliquée à la condition c5 de la porte de phase."
+      },
+      "GVP": {
+        "name": "Grounded Verification Protocol (Logiciel)",
+        "description": "Régit la manière dont les affirmations évaluables par la machine deviennent vérifiées par la machine.",
+        "readers": {
+          "reader_3a_coder": "Lit le champ tier pour le type de preuve, test_bindings pour quels tests exercent les affirmations, verified_against pour quand les tests ont réussi pour la dernière fois.",
+          "reader_3b_machine": "Exécute le lanceur de tests sur le tableau test_bindings. Enregistre la réussite/l'échec. Appose le SHA verified_against en cas de succès."
+        },
+        "required_fields_per_claim": {
+          "tier": "Le niveau de vérification (une des six valeurs)",
+          "test_bindings": "Tableau d'identifiants de nœuds de test pleinement qualifiés qui exercent l'affirmation",
+          "verified_against": "SHA du commit git auquel ces tests ont réussi pour la dernière fois"
+        },
+        "guarantee": "Pour toute affirmation : (a) quel type de preuve la fonde, (b) quels tests l'exercent, (c) à quel commit ces tests ont réussi. Si le niveau est empirical_pending, la lacune est visible. Si verified_against est null, aucun test logiciel ne la couvre."
       }
     },
-    "falsification_kernel": {
-      "title": "Le noyau de falsification K = (P, O, M, B)",
-      "description": "Le fondement commun des deux protocoles. Chaque assertion de type F (falsifiable) porte un prédicat déterministe qui s'évalue à exactement l'un de deux verdicts : FALSIFIÉ ou NON FALSIFIÉ.",
+    "section_03_falsification_kernel": {
+      "title": "La fondation partagée — Noyau de falsification (Couche 0)",
+      "description": "Les deux protocoles opèrent sur la même fondation. C'est la Couche 0 du DRS — elle définit ce qu'un prédicat de falsification signifie indépendamment de tout format de sérialisation. Le champ semantic_spec_url d'une couche IA pointe vers cette spécification.",
+      "kernel_tuple": "K = (P, O, M, B)",
       "components": {
         "P": {
           "name": "Prédicat",
           "json_field": "FALSIFIED_IF",
-          "role": "Énoncé logique qui, s'il est VRAI, falsifie l'assertion",
+          "role": "Phrase logique qui, si VRAIE, falsifie l'affirmation",
+          "grammar": [
+            "Variables nommées (définies dans WHERE)",
+            "Opérateurs de comparaison : <, >, <=, >=, =, !=",
+            "Connecteurs logiques : AND, OR, NOT",
+            "Quantificateurs : EXISTS ... SUCH THAT, FOR ALL ... IN",
+            "Arithmétique : +, -, *, /, ^, log10(), exp(), abs(), max(), min()",
+            "Opérateurs d'ensembles : IN, ∩, ∪, |...| (cardinalité)",
+            "Application de fonctions : f(x) où f est définie dans WHERE"
+          ],
           "constraints": [
-            "Doit s'évaluer à exactement VRAI ou FAUX pour toute affectation valide de variables",
-            "Les quantificateurs portent uniquement sur des ensembles finis",
-            "Pas d'autoréférence ni de dépendance circulaire"
+            "Déterminisme : doit s'évaluer à exactement TRUE ou FALSE",
+            "Finitude : les quantificateurs portent sur des ensembles finis uniquement",
+            "Pas d'autoréférence : pas de dépendances circulaires de prédicats",
+            "Complétude : chaque variable dans FALSIFIED_IF définie dans WHERE et vice versa"
           ]
         },
         "O": {
           "name": "Opérandes",
           "json_field": "WHERE",
-          "role": "Définitions typées de chaque variable du prédicat",
+          "role": "Définitions typées de chaque variable dans le prédicat",
           "format": "type · unités · définition ou source",
+          "variable_types": ["scalar", "integer", "binary", "set", "string", "function"],
           "constraints": [
-            "Chaque variable libre dans P doit apparaître dans O",
-            "Chaque variable dans O doit apparaître dans P",
-            "Chaque variable doit être calculable à partir de données citées ou de dérivations"
+            "Complétude : chaque variable libre dans P doit apparaître dans O",
+            "Pas d'orphelins : chaque variable dans O doit apparaître dans P",
+            "Fondable : chaque variable calculable à partir de données ou de dérivations, pas de jugement subjectif"
           ]
         },
         "M": {
@@ -119,23 +181,25 @@
           "json_field": "EVALUATION",
           "role": "Procédure d'évaluation finie et déterministe",
           "constraints": [
-            "Doit se terminer en un nombre fini d'étapes",
-            "Les mêmes entrées produisent le même verdict",
-            "Reproductible par un tiers"
+            "Fini : se termine en un nombre fini d'étapes (confirmé en terminant par 'finite')",
+            "Déterministe : les mêmes entrées produisent le même verdict",
+            "Reproductible : un tiers peut exécuter indépendamment"
           ]
         },
         "B": {
           "name": "Bornes",
           "json_fields": ["BOUNDARY", "CONTEXT"],
           "role": "Sémantique des seuils et justification",
-          "constraints": [
-            "BOUNDARY spécifie inclusif/exclusif pour chaque seuil",
-            "CONTEXT justifie chaque littéral numérique dans le prédicat"
-          ]
+          "BOUNDARY": "Spécifie inclusif/exclusif pour chaque seuil et le verdict en cas d'égalité exacte",
+          "CONTEXT": "Justifie chaque seuil numérique : pourquoi cette valeur, quelle connaissance du domaine la fonde, dérivée ou conventionnelle"
         }
       },
+      "verdict_mapping": {
+        "P_is_TRUE": "FALSIFIED",
+        "P_is_FALSE": "NOT FALSIFIED"
+      },
       "example": {
-        "claim": "sort() renvoie les éléments en ordre croissant",
+        "claim": "sort() retourne les éléments en ordre croissant",
         "predicate": {
           "FALSIFIED_IF": "EXISTS i IN range(len(result)-1) SUCH THAT result[i] > result[i+1]",
           "WHERE": {
@@ -144,141 +208,157 @@
           "EVALUATION": "Run sort on test vectors; check adjacent pairs; finite",
           "BOUNDARY": "len(result) <= 1 → NOT FALSIFIED (vacuously sorted)",
           "CONTEXT": "Ascending order is the documented contract of sort()"
-        }
+        },
+        "note": "Ce prédicat signifie la même chose pour tout système d'IA dans toute langue. Aucune traduction nécessaire."
       }
     },
-    "three_claim_types": {
-      "title": "Les trois types d'assertions",
+    "section_04_three_claim_types": {
+      "title": "Les trois types d'affirmations",
       "types": {
         "A": {
-          "name": "Axiome",
-          "description": "Prémisses fondamentales acceptées de la littérature ou posées comme hypothèses de départ. Non falsifiables par conception.",
+          "name": "Axiome / Hypothèse",
+          "in_papers": "Prémisses acceptées de la littérature",
+          "in_software": "Exigences de plateforme, contrats de dépendances",
           "predicate_required": false,
-          "examples": ["Irréversibilité thermodynamique", "Exigences de plateforme", "Contrats de dépendances"]
+          "predicate_value": "null"
         },
         "D": {
           "name": "Définition",
-          "description": "Définitions stipulatives de termes, structures ou procédures. Non susceptibles de vérité — elles définissent, elles n'affirment pas.",
+          "in_papers": "Termes et procédures stipulatifs",
+          "in_software": "Signatures de types, structures de données, schémas",
           "predicate_required": false,
-          "examples": ["Forme fonctionnelle FRM", "Signatures de types", "Schémas de configuration"]
+          "predicate_value": "null"
         },
         "F": {
           "name": "Falsifiable",
-          "description": "Assertions testables avec des prédicats déterministes. Les assertions scientifiques et logicielles fondamentales.",
+          "in_papers": "Théorèmes, prédictions empiriques, résultats dérivés",
+          "in_software": "Garanties comportementales, invariants de correction, bornes de performance",
           "predicate_required": true,
-          "examples": ["β = 1/2 dérivé analytiquement", "Garanties comportementales", "Bornes de performance"]
+          "predicate_value": "K = (P, O, M, B) complet"
         }
       }
     },
-    "six_verification_tiers": {
+    "section_05_six_verification_tiers": {
       "title": "Les six niveaux de vérification",
-      "description": "Chaque assertion porte un champ tier déclarant quel type de preuve la fonde.",
-      "tiers": {
-        "grounded_by_construction": [
-          {
-            "tier": "axiom",
-            "applies_to": "Type A",
-            "meaning": "Fondamental, non falsifiable par conception"
-          },
-          {
-            "tier": "definition",
-            "applies_to": "Type D",
-            "meaning": "Définitionnel, aucun prédicat requis"
-          }
-        ],
-        "grounded_now": [
-          {
-            "tier": "software_tested",
-            "applies_to": "Type F",
-            "meaning": "Exercé par des tests passants. test_bindings non vide, verified_against SHA non nul."
-          },
-          {
-            "tier": "formal_proof",
-            "applies_to": "Type F",
-            "meaning": "Table de dérivation indexée par étapes avec n_invalid_steps = 0"
-          },
-          {
-            "tier": "analytic",
-            "applies_to": "Type F",
-            "meaning": "Vérifié par trace de dérivation formelle ou argument analytique"
-          }
-        ],
-        "explicitly_ungrounded": [
-          {
-            "tier": "empirical_pending",
-            "applies_to": "Type F",
-            "meaning": "Espace réservé actif ou données externes en attente. La lacune est visible par conception."
-          }
-        ]
-      }
+      "description": "Chaque affirmation porte un champ tier déclarant quel type de preuve la fonde.",
+      "grounded_by_construction": [
+        {"tier": "axiom", "type": "A", "meaning": "Prémisse fondamentale. Non falsifiable par conception.", "test_bindings": "[] (vide)", "verified_against": "null"},
+        {"tier": "definition", "type": "D", "meaning": "Définitionnel. Stipule un terme ou une structure. Non susceptible de vérité.", "test_bindings": "[] (vide)", "verified_against": "null"}
+      ],
+      "grounded_now": [
+        {"tier": "software_tested", "type": "F", "meaning": "Exercé par des tests réussis. test_bindings non vide, verified_against non nul.", "test_bindings": "Non vide", "verified_against": "Non nul (7–40 caractères hex)"},
+        {"tier": "formal_proof", "type": "F", "meaning": "Dérivation indexée par étapes avec n_invalid_steps = 0. La preuve est dans la couche IA.", "test_bindings": "Peut être vide", "verified_against": "Peut être nul"},
+        {"tier": "analytic", "type": "F", "meaning": "Vérifié par trace de dérivation formelle ou argument analytique.", "test_bindings": "Peut être vide", "verified_against": "Peut être nul"}
+      ],
+      "explicitly_ungrounded": [
+        {"tier": "empirical_pending", "type": "F", "meaning": "Espace réservé actif ou données en attente. La lacune est visible par conception.", "test_bindings": "Peut être vide", "verified_against": "Peut être nul"}
+      ]
     },
-    "ai_layer_structure": {
+    "section_06_vacuity_witness": {
+      "title": "Le témoin de vacuité",
+      "description": "Chaque affirmation de type F doit inclure un champ sample_falsification_observation : une observation concrète et hypothétique qui ferait évaluer le prédicat à TRUE. Cela prouve que le prédicat n'est pas trivialement infalsifiable. Imposé par la condition c6 de la porte de phase."
+    },
+    "section_07_placeholder_predicates": {
+      "title": "Prédicats d'espace réservé",
+      "description": "Lorsqu'une affirmation dépend de résultats d'un article n'ayant pas encore atteint le statut PHASE-READY, le prédicat peut contenir des références d'espace réservé.",
+      "fields": {
+        "placeholder": "true dans l'objet de l'affirmation",
+        "placeholder_id": "lié au placeholder_register",
+        "predicate_text": "peut inclure [PLACEHOLDER: pending ...]"
+      },
+      "behaviour": "Les affirmations d'espace réservé sont valides mais non évaluables jusqu'à ce que la dépendance soit résolue. Elles ne bloquent pas PHASE-READY sauf si blocks_phase_ready est true."
+    },
+    "section_08_ai_layer": {
       "title": "La couche IA — L'artefact central",
-      "description": "Un document JSON qui accompagne chaque article ou système logiciel. Contient le registre complet des assertions avec prédicats, niveaux et liaisons de tests.",
+      "description": "Un document JSON qui accompagne chaque article ou système logiciel. Le schéma est défini dans ai-layers/ai-layer-schema.json.",
       "schema_url": "https://github.com/thomasbrennan/Fracttalix/blob/main/ai-layers/ai-layer-schema.json",
       "required_sections": {
         "_meta": "Type de document, version du schéma, session, licence",
-        "paper_id": "Identifiant unique de l'article ou du système",
-        "paper_title": "Titre lisible par l'humain",
+        "paper_id_and_title": "Identité",
         "paper_type": "Classification : law_A, derivation_B, application_C, methodology_D",
-        "phase_ready": "Verdict de la porte de phase et état des conditions (c1–c6)",
-        "claim_registry": "Tableau de toutes les assertions avec types, prédicats, niveaux, liaisons",
-        "placeholder_register": "Tableau des dépendances non résolues"
+        "phase_ready": "Verdict de la porte de phase et statut des conditions (c1–c6)",
+        "claim_registry": "Tableau de toutes les affirmations avec types, prédicats, niveaux, liaisons et SHA",
+        "placeholder_register": "Tableau des dépendances non résolues",
+        "summary": "Comptages et statut des affirmations",
+        "semantic_spec_url": "Pointe vers le Noyau de falsification (Couche 0)"
+      },
+      "role_in_protocols": {
+        "DRP": "Exige qu'elle existe, contienne des prédicats et passe la porte de phase",
+        "GVP": "Exige qu'elle contienne tier, test_bindings et verified_against pour chaque affirmation"
       }
     },
-    "phase_gate": {
-      "title": "La porte de phase à six conditions",
-      "description": "Un article ou une version logicielle est PHASE-READY lorsque les six conditions sont satisfaites.",
+    "section_09_phase_gate": {
+      "title": "La porte de phase",
+      "description": "Un article ou une version logicielle est PHASE-READY lorsque six conditions sont satisfaites.",
       "conditions": {
         "c1": "La couche IA est conforme au schéma",
-        "c2": "Toutes les assertions falsifiables sont enregistrées avec des prédicats",
-        "c3": "Tous les prédicats sont évaluables par machine",
+        "c2": "Toutes les affirmations falsifiables enregistrées avec des prédicats",
+        "c3": "Tous les prédicats sont évaluables par la machine",
         "c4": "Les références croisées sont suivies (registre des espaces réservés)",
-        "c5": "La vérification est autosuffisante (la couche IA seule, sans prose)",
-        "c6": "Tous les prédicats sont non vacueux (une observation de falsification d'exemple existe)"
-      }
+        "c5": "La vérification est autosuffisante (couche IA seule, sans prose nécessaire)",
+        "c6": "Tous les prédicats sont non vacuistes (observation d'exemple de falsification existante)"
+      },
+      "corpus_complete": "Se déclenche lorsque tous les articles sont PHASE-READY et que tous les espaces réservés de tous les objets sont résolus."
     },
-    "how_to_implement": {
-      "title": "Comment implémenter le Dual Reader Standard",
-      "for_a_paper": {
-        "title": "Pour un article (DRP)",
-        "steps": [
-          "Rédiger l'article (canal en prose pour les lecteurs humains)",
-          "Créer le fichier JSON de la couche IA (canal machine pour les lecteurs IA)",
-          "Classer chaque assertion comme A (axiome), D (définition) ou F (falsifiable)",
-          "Rédiger le prédicat de falsification en 5 parties pour chaque assertion de type F",
-          "Inclure une sample_falsification_observation pour chaque assertion de type F (témoin de vacuité)",
-          "Attribuer le niveau de vérification à chaque assertion",
-          "Valider contre ai-layer-schema.json",
-          "Exécuter la porte de phase (c1–c6)"
-        ]
-      },
-      "for_software": {
-        "title": "Pour un logiciel (GVP)",
-        "steps": [
-          "Énumérer ce que le logiciel prétend faire",
-          "Classer chaque assertion comme A (hypothèse), D (définition) ou F (comportementale)",
-          "Rédiger le prédicat de falsification pour chaque assertion de type F",
-          "Rédiger ou identifier les tests qui exercent chaque assertion",
-          "Remplir test_bindings avec les identifiants de nœuds de test pleinement qualifiés",
-          "Exécuter les tests et enregistrer le SHA du commit passant dans verified_against",
-          "Attribuer le niveau : software_tested si les tests existent, empirical_pending sinon",
-          "Enregistrer toute assertion non testée comme espace réservé",
-          "Valider contre ai-layer-schema.json"
-        ]
-      },
+    "section_10_inference_rules": {
+      "title": "Les règles d'inférence",
+      "description": "Inventaire canonique pour les traces de dérivation utilisées dans les affirmations de niveau formal_proof. En ajout seul : de nouvelles règles peuvent être ajoutées, les existantes ne sont jamais modifiées ni supprimées.",
+      "rules": [
+        {"id": "IR-1", "name": "Modus Ponens", "description": "Si P et P→Q alors Q"},
+        {"id": "IR-2", "name": "Instanciation universelle", "description": "Si ∀x P(x) alors P(a) pour tout a spécifique"},
+        {"id": "IR-3", "name": "Substitution d'égaux", "description": "Si a=b alors remplacer a par b"},
+        {"id": "IR-4", "name": "Expansion de définition", "description": "Remplacer un terme défini par sa définition"},
+        {"id": "IR-5", "name": "Manipulation algébrique", "description": "Transformation algébrique valide préservant l'égalité"},
+        {"id": "IR-6", "name": "Équivalence logique", "description": "Remplacer par une expression logiquement équivalente"},
+        {"id": "IR-7", "name": "Inférence statistique", "description": "Appliquer une procédure statistique nommée aux données"},
+        {"id": "IR-8", "name": "Parcimonie / Sélection de principe de modélisation", "description": "Sélectionner une valeur canonique dans une famille cohérente avec les axiomes"}
+      ],
+      "validation": "Chaque étape d'une table de dérivation cite une règle d'inférence et liste ses prémisses. Valide lorsque n_invalid_steps = 0."
+    },
+    "section_11_architecture_stack": {
+      "title": "Pile architecturale",
+      "description": "Le noyau est la fondation partagée. Le DRP crée des prédicats à partir de la prose. Le GVP lie les prédicats à des preuves exécutables. La couche IA est l'artefact qui porte les deux.",
+      "layers_top_to_bottom": [
+        "DRS (standard englobant)",
+        "DRP (protocole texte) + GVP (protocole logiciel)",
+        "Lecteurs : Humain, IA, Développeur, Machine",
+        "Couche IA (*-ai-layer.json) — affirmations + prédicats + niveaux + liaisons + SHA",
+        "Noyau de falsification K = (P, O, M, B) — Couche 0"
+      ]
+    },
+    "section_12_how_to_implement": {
+      "title": "Comment implémenter",
+      "for_a_paper_DRP": [
+        "Rédiger l'article (canal en prose pour les lecteurs humains)",
+        "Créer le fichier JSON de la couche IA (canal machine pour les lecteurs IA)",
+        "Classifier chaque affirmation comme A (axiome), D (définition) ou F (falsifiable)",
+        "Écrire le prédicat de falsification en 5 parties pour chaque affirmation de type F",
+        "Inclure une sample_falsification_observation pour chaque affirmation de type F (témoin de vacuité)",
+        "Assigner le niveau de vérification à chaque affirmation",
+        "Valider contre ai-layer-schema.json",
+        "Exécuter la porte de phase (c1–c6)"
+      ],
+      "for_software_GVP": [
+        "Énumérer ce que le logiciel prétend faire",
+        "Classifier chaque affirmation comme A (hypothèse), D (définition) ou F (comportementale)",
+        "Écrire le prédicat de falsification pour chaque affirmation de type F",
+        "Écrire ou identifier les tests qui exercent chaque affirmation",
+        "Remplir test_bindings avec les identifiants de nœuds de test pleinement qualifiés",
+        "Exécuter les tests et enregistrer le SHA du commit réussi dans verified_against",
+        "Assigner le niveau : software_tested si des tests existent, empirical_pending sinon",
+        "Enregistrer toute affirmation non testée comme espace réservé",
+        "Valider contre ai-layer-schema.json"
+      ],
+      "for_both": "La couche IA est le même artefact. Le schéma est le même. Le noyau est le même. La seule différence est quel protocole crée le contenu et quel protocole le vérifie.",
       "minimum_viable_adoption": {
-        "title": "Adoption minimale viable",
-        "description": "La plus petite adoption utile du DRS est une seule assertion de type F avec une seule liaison de test.",
+        "description": "La plus petite adoption utile du DRS est une affirmation de type F avec une liaison de test.",
         "example": {
           "claim_id": "F-1",
           "type": "F",
-          "statement": "sort() renvoie les éléments en ordre croissant",
+          "statement": "sort() retourne les éléments en ordre croissant",
           "falsification_predicate": {
             "FALSIFIED_IF": "EXISTS i IN range(len(result)-1) SUCH THAT result[i] > result[i+1]",
-            "WHERE": {
-              "result": "list · dimensionless · output of sort(input)"
-            },
+            "WHERE": {"result": "list · dimensionless · output of sort(input)"},
             "EVALUATION": "Run sort on test vectors; check adjacent pairs; finite",
             "BOUNDARY": "len(result) <= 1 → NOT FALSIFIED (vacuously sorted)",
             "CONTEXT": "Ascending order is the documented contract of sort()"
@@ -286,37 +366,130 @@
           "tier": "software_tested",
           "test_bindings": ["tests/test_sort.py::test_ascending_order"],
           "verified_against": "abc1234"
-        }
+        },
+        "note": "Une affirmation. Un test. Un SHA. Le DRS est opérationnel."
       }
     },
-    "design_principles": {
+    "section_13_design_principles": {
       "title": "Principes de conception",
       "principles": [
         {
           "name": "Épistémologie poppérienne",
-          "description": "On peut falsifier mais non vérifier. Une assertion qui survit à toutes les tentatives de falsification n'est pas prouvée — elle a survécu."
+          "description": "Nous pouvons falsifier mais pas vérifier. Une affirmation qui survit à toutes les tentatives de falsification n'est pas prouvée — elle a survécu."
         },
         {
           "name": "Lacunes honnêtes",
-          "description": "L'espace réservé est la fonctionnalité la plus importante. Quand une assertion est empirical_pending, le système déclare : nous affirmons ceci mais ne l'avons pas encore vérifié. C'est strictement plus informatif que de masquer les assertions non vérifiées."
+          "description": "L'espace réservé est la fonctionnalité la plus importante. Lorsqu'une affirmation est empirical_pending, le système dit : nous affirmons ceci mais ne l'avons pas encore vérifié. Strictement plus informatif que de masquer les affirmations non vérifiées."
         },
         {
           "name": "Indépendance du substrat",
-          "description": "Le noyau K = (P, O, M, B) ignore s'il évalue un théorème scientifique ou une garantie logicielle. Les domaines futurs (juridique, réglementaire, politique) peuvent ajouter des protocoles sans modifier le noyau."
+          "description": "Le noyau K = (P, O, M, B) ne sait pas s'il évalue un théorème scientifique ou une garantie logicielle. Les domaines futurs ajoutent leurs propres protocoles sans modifier le noyau."
         },
         {
-          "name": "Lingua franca machinique",
-          "description": "Le noyau est écrit en logique et en mathématiques, non dans une langue humaine. Un prédicat qui s'évalue à VRAI à Pékin s'évalue à VRAI à Paris. JSON est la couche de transport. La logique binaire est le substrat."
+          "name": "Machine d'abord, lisible par l'humain",
+          "description": "La couche IA est l'artefact principal. La prose et le code source sont des canaux secondaires. La couche IA est ce qui est validé, audité et versionné."
         }
       ]
     },
-    "three_axis_compatibility": {
+    "section_14_three_axis_compatibility": {
       "title": "Compatibilité sur trois axes",
-      "axes": {
-        "backwards": "Rien de ce qui existe déjà ne casse. Versionnement du schéma, énumérations en ajout seul, noyau permanent.",
-        "lateral": "Fonctionne à travers tous les domaines, langages, outils et systèmes d'IA. Noyau indépendant du substrat.",
-        "forward": "Tout élément nouveau peut être ajouté sans refonte. Extensibilité des protocoles, extensibilité des niveaux, évolution additive du schéma."
+      "invariant": "Le Noyau de falsification K = (P, O, M, B) est le point fixe. Il ne connaît ni le domaine, ni l'année, ni le format de sérialisation. Le noyau est permanent. Tout le reste est extensible.",
+      "axis_1_backwards": {
+        "name": "Résistance au passé (Rétrocompatibilité)",
+        "mechanisms": [
+          "Versionnage du schéma : les couches IA enregistrent la version du schéma ; les couches v2 restent valides pour toujours ; les validateurs v3 lisent les couches v2",
+          "Permanence des prédicats : la grammaire du noyau utilise des opérateurs mathématiques/logiques définis de manière permanente",
+          "Stabilité des règles d'inférence : IR-1 à IR-8 en ajout seul, jamais modifiées ni supprimées",
+          "Stabilité des niveaux : six niveaux en ajout seul, jamais supprimés ni redéfinis"
+        ],
+        "contract": "Toute couche IA qui était valide au moment de sa création restera valide pour toujours."
+      },
+      "axis_2_lateral": {
+        "name": "Résistance latérale (Compatibilité inter-domaines)",
+        "mechanisms": {
+          "domain_independence": {
+            "description": "Le noyau fonctionne dans tous les domaines de connaissances",
+            "domains": {
+              "science": {"A": "Prémisses de la littérature", "D": "Termes stipulatifs", "F": "Théorèmes, prédictions"},
+              "software": {"A": "Exigences de plateforme", "D": "Signatures de types, schémas", "F": "Garanties comportementales"},
+              "legal": {"A": "Autorité statutaire", "D": "Termes définis", "F": "Conclusions juridiques"},
+              "regulatory": {"A": "Hypothèses du cadre", "D": "Définitions standards", "F": "Assertions de conformité"},
+              "policy": {"A": "Prémisses de valeur", "D": "Termes de politique", "F": "Prédictions d'impact"},
+              "education": {"A": "Axiomes pédagogiques", "D": "Objectifs d'apprentissage", "F": "Affirmations d'évaluation"}
+            }
+          },
+          "language_independence": "test_bindings accepte toute chaîne : pytest, Jest, cargo test, go test, JUnit",
+          "ai_system_independence": "Tout système d'IA peut lire le JSON et la spécification du noyau. semantic_spec_url pointe vers la Couche 0.",
+          "serialisation_independence": "La Couche 0 est définie en prose, pas en JSON Schema. JSON est le transport actuel ; la sémantique du noyau est indépendante de l'encodage. Futur : YAML, Protocol Buffers, CBOR ou formats pas encore inventés.",
+          "tool_independence": "S'intègre dans les flux de travail existants : SHA git, tout lanceur de tests, tout validateur JSON Schema, tout pipeline CI."
+        },
+        "contract": "Adopter le DRS dans un domaine, une langue, un outil ou un système d'IA ne vous enferme pas."
+      },
+      "axis_3_forward": {
+        "name": "Résistance au futur (Compatibilité ascendante)",
+        "mechanisms": [
+          "Extensibilité des protocoles : les nouveaux domaines ajoutent de nouveaux protocoles (PV juridique, PV réglementaire, etc.) partageant le noyau, les types d'affirmations et le schéma de la couche IA",
+          "Extensibilité des niveaux : niveaux futurs (regulatory_certified, peer_reviewed, formally_verified, field_tested, community_validated) ajoutés à l'enum, les niveaux existants demeurent",
+          "Extensibilité des règles d'inférence : IR-9+ ajoutées selon les besoins, les anciennes dérivations valides par identifiant stable",
+          "Extensibilité du schéma : v1→v2→v3→v4+, chaque version ajoute, aucune ne supprime",
+          "Lecteurs futurs inconnus : agents autonomes, vérificateurs inter-corpus, moteurs de conformité, intégrations de gestionnaires de paquets"
+        ],
+        "contract": "Toute innovation future peut être ajoutée comme nouveau protocole, niveau, règle d'inférence ou champ de schéma — sans modifier quoi que ce soit de déjà existant."
+      },
+      "guarantee_table": {
+        "past": {"promise": "Rien de ce qui a déjà été fait ne casse", "mechanism": "Versionnage du schéma, enums en ajout seul, noyau permanent"},
+        "lateral": {"promise": "Fonctionne dans tous les domaines, langues, outils, systèmes d'IA", "mechanism": "Noyau indépendant du substrat, liaisons typées chaîne, sémantique définie en prose"},
+        "forward": {"promise": "Tout ce qui est nouveau peut être ajouté sans reconception", "mechanism": "Extensibilité des protocoles, extensibilité des niveaux, évolution additive du schéma"}
       }
+    },
+    "section_15_machine_lingua_franca": {
+      "title": "La lingua franca des machines",
+      "description": "La propriété la plus profonde du DRS. Non conçue — découverte.",
+      "the_translation_problem": "Les connaissances scientifiques sont enfermées derrière les langues humaines. La traduction est coûteuse, avec perte d'information, et lente. Les connaissances se fragmentent le long de frontières linguistiques. C'est un problème de substrat : le langage naturel est non interopérable par nature.",
+      "the_kernel_dissolves_it": {
+        "description": "Le Noyau de falsification n'est écrit dans aucune langue humaine. Il est écrit en logique et en mathématiques.",
+        "example": {
+          "FALSIFIED_IF": "R2_best_alt > R2_frm + 0.05",
+          "WHERE": {
+            "R2_best_alt": "scalar · dimensionless · best R² from competing models",
+            "R2_frm": "scalar · dimensionless · R² from FRM regression"
+          },
+          "EVALUATION": "Run regression for each model; compare R² values; finite",
+          "BOUNDARY": "R2_best_alt = R2_frm + 0.05 → FALSIFIED (threshold inclusive)",
+          "CONTEXT": "0.05 margin from standard model comparison practice"
+        },
+        "universality": "Ce prédicat signifie la même chose pour Claude en anglais, GPT en mandarin, Gemini en français, et des systèmes d'IA pas encore construits."
+      },
+      "json_as_transport": "JSON est le format d'échange de facto — tous les langages, tous les systèmes d'IA, toutes les API. Le DRS hérite de l'universalité de JSON. Une équipe dans n'importe quel pays publie des prédicats en notation mathématique. Toute équipe partout les lit sans traduction.",
+      "qualification": "Les définitions du champ WHERE contiennent actuellement de la prose anglaise. Le contenu opératif (types, unités, opérateurs, seuils) est neutre linguistiquement. Étant donné des valeurs fondées, tout système évalue le prédicat indépendamment de la langue.",
+      "embedded_binary_logic": {
+        "description": "Chaque prédicat DRS se réduit à une logique binaire embarquée.",
+        "evaluation_chain": "Affirmation → Prédicat → Variables + Opérateurs → Booléen → 1 ou 0",
+        "explanation": "WHERE type les variables. FALSIFIED_IF les combine avec des opérateurs. EVALUATION calcule les entrées. BOUNDARY résout les cas limites. La sortie est toujours un seul bit : FALSIFIED ou NOT FALSIFIED.",
+        "consequence": "On ne peut pas mal traduire 1 ou 0. On ne peut pas mal interpréter >. La signification est dans la structure, pas dans une langue. Un prédicat TRUE à Pékin est TRUE à Boston, São Paulo, Lagos, et sur un serveur sans locale. Le DRS encode les connaissances dans le substrat de la logique elle-même."
+      }
+    },
+    "section_16_self_spreading_adoption": {
+      "title": "Adoption auto-propagée",
+      "internal_incentive": "Créer une couche IA vous oblige à énumérer ce que vous affirmez. Vous découvrez des affirmations non testées, des limites non documentées et des dépendances non enregistrées. Les lacunes existent que vous les documentiez ou non — le DRS les rend visibles.",
+      "network_effect": {
+        "claim_aware_dependencies": "Si la bibliothèque A publie une couche IA et que B dépend de A, B sait par programme quelles affirmations dépendent de quelles hypothèses. Les changements incompatibles correspondent à des affirmations spécifiques en danger.",
+        "cross_project_audit": "Les lecteurs IA traversent plusieurs couches IA, vérifient les références croisées, identifient les incohérences dans les écosystèmes.",
+        "auditable_trust": "La confiance passe des signaux sociaux (étoiles, téléchargements) à la preuve structurelle (tier, test_bindings, verified_against)."
+      },
+      "ai_as_catalyst": {
+        "generate": "L'IA énumère les affirmations, les classifie, écrit les prédicats, identifie les liaisons de test. L'humain révise. D'heures à minutes.",
+        "maintain": "L'IA met à jour le registre des affirmations lors des changements de code, ajuste les liaisons, signale les SHA obsolètes. L'humain approuve.",
+        "audit": "L'IA lit les couches IA des dépendances, cartographie les dépendances d'hypothèses, signale automatiquement les risques."
+      },
+      "embedding_strategy": {
+        "tests": "test_bindings référence les identifiants de nœuds de test existants. Aucun nouveau framework.",
+        "schema": "JSON Schema standard. N'importe quel validateur.",
+        "vcs": "verified_against est un SHA git. Aucun nouveau VCS.",
+        "ci": "Validation du schéma comme étape CI aux côtés des pipelines existants.",
+        "total_cost": "Un fichier (*-ai-layer.json). Trois champs par affirmation (tier, test_bindings, verified_against)."
+      },
+      "self_referential_property": "Le DRS se vérifie lui-même. La couche IA DRP-1 contient des affirmations sur le DRS avec des prédicats de falsification, évalués et estampillés par le SHA verified_against. Autoréférentiel comme un compilateur qui se compile lui-même."
     }
   },
   "resources": {
@@ -325,7 +498,6 @@
     "ai_layer_schema": "https://github.com/thomasbrennan/Fracttalix/blob/main/ai-layers/ai-layer-schema.json",
     "gvp_specification": "https://github.com/thomasbrennan/Fracttalix/blob/main/docs/GVP-spec.md",
     "example_ai_layer": "https://github.com/thomasbrennan/Fracttalix/blob/main/ai-layers/P1-ai-layer.json",
-    "claim_registry_index": "https://github.com/thomasbrennan/Fracttalix/blob/main/ai-layers/claim-registry-index.md",
     "repository": "https://github.com/thomasbrennan/Fracttalix",
     "doi": "https://doi.org/10.5281/zenodo.18859299"
   }
