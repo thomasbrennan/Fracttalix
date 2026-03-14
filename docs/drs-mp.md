@@ -183,6 +183,7 @@ Scan to access any entry point directly:
 | ![Repository](qr-fracttalix.png) | **Repository** — github.com/thomasbrennan/Fracttalix |
 | ![Protocol](qr-drs-mp-protocol.png) | **Protocol Schema** — relay/protocol-v2.json |
 | ![Paper](qr-mkp8-paper.png) | **MK-P8 Paper** — DRS for Inter-AI Communication |
+| ![GVP](qr-gvp-spec.png) | **GVP Spec** — Grounded Verification Protocol for software |
 | ![DOI](qr-zenodo-doi.png) | **Zenodo DOI** — 10.5281/zenodo.18859299 |
 | ![PyPI](qr-drs-mp-pypi.png) | **pip install drs-mp** |
 

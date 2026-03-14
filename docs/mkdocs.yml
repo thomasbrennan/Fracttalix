@@ -12,8 +12,10 @@ theme:
     - search.highlight
 nav:
   - Home: index.md
-  - DRS-MP Protocol: drs-mp.md
-  - Canonical Build Plan: CBP-practical-guide.md
+  - DRS Protocols:
+    - DRS-MP (Inter-AI Messaging): drs-mp.md
+    - GVP (Software Verification): GVP-spec.md
+    - Canonical Build Plan: CBP-practical-guide.md
   - Getting Started: getting_started.md
   - API Reference:
     - SentinelDetector: api/detector.md

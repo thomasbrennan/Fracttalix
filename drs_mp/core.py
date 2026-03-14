@@ -69,15 +69,24 @@ class FalsificationPredicate:
 # --- Claim ---
 
 CLAIM_TYPES = {"A", "D", "F"}
+VERIFICATION_TIERS = {
+    "axiom", "definition", "software_tested", "analytic",
+    "empirical_pending", "formal_proof",
+}
 
 @dataclass
 class Claim:
-    """A typed scientific claim with optional falsification predicate.
+    """A typed scientific claim with optional falsification predicate and GVP fields.
 
     Types:
         A — Axiom/assumption (no predicate required)
         D — Definition (no predicate required)
         F — Falsifiable (predicate REQUIRED — all 5 parts)
+
+    GVP (Grounded Verification Protocol) fields for software claims:
+        tier — verification tier (axiom, definition, software_tested, analytic, empirical_pending, formal_proof)
+        test_bindings — list of fully qualified pytest node IDs that verify this claim
+        verified_against — git commit SHA at which test_bindings last passed
     """
     claim_id: str
     type: str  # "A", "D", or "F"
@@ -86,6 +95,10 @@ class Claim:
     source_paper: str = ""
     source_section: str = ""
     falsification_predicate: FalsificationPredicate | None = None
+    # GVP fields
+    tier: str = ""  # verification tier
+    test_bindings: list[str] = field(default_factory=list)
+    verified_against: str = ""  # git commit SHA
 
     @classmethod
     def falsifiable(
@@ -138,6 +151,14 @@ class Claim:
                     f"Claim {self.claim_id}: {e}"
                     for e in self.falsification_predicate.validate()
                 )
+        # GVP validation
+        if self.tier and self.tier not in VERIFICATION_TIERS:
+            errors.append(f"Claim {self.claim_id}: invalid GVP tier '{self.tier}'")
+        if self.tier == "software_tested":
+            if not self.test_bindings:
+                errors.append(f"Claim {self.claim_id}: tier 'software_tested' requires non-empty test_bindings")
+            if not self.verified_against:
+                errors.append(f"Claim {self.claim_id}: tier 'software_tested' requires verified_against SHA")
         return errors
 
     def to_dict(self) -> dict:
@@ -150,6 +171,12 @@ class Claim:
             d["source_section"] = self.source_section
         if self.falsification_predicate:
             d["falsification_predicate"] = self.falsification_predicate.to_dict()
+        if self.tier:
+            d["tier"] = self.tier
+        if self.test_bindings:
+            d["test_bindings"] = self.test_bindings
+        if self.verified_against:
+            d["verified_against"] = self.verified_against
         return d
 
     @classmethod
@@ -165,6 +192,9 @@ class Claim:
             source_paper=d.get("source_paper", ""),
             source_section=d.get("source_section", ""),
             falsification_predicate=fp,
+            tier=d.get("tier", ""),
+            test_bindings=d.get("test_bindings", []),
+            verified_against=d.get("verified_against", ""),
         )
 
 
@@ -291,6 +321,24 @@ PROTOCOL_SPEC = {
         "D": "Definition — no falsification predicate required",
         "F": "Falsifiable — MUST have a 5-part falsification predicate (FALSIFIED_IF, WHERE, EVALUATION, BOUNDARY, CONTEXT)",
     },
+    "grounded_verification_protocol": {
+        "what": "The GVP (Grounded Verification Protocol) extends claims to software. Every software claim can carry a verification tier, test bindings (pytest node IDs), and a verified_against commit SHA.",
+        "tiers": {
+            "axiom": "Foundational assumption — not testable, must be stated explicitly",
+            "definition": "Definitional claim — true by construction",
+            "software_tested": "Verified by automated tests — requires test_bindings and verified_against SHA",
+            "analytic": "Proved analytically (mathematical proof)",
+            "empirical_pending": "Awaiting empirical validation",
+            "formal_proof": "Formally proved (machine-checked or rigorous proof sketch)",
+        },
+        "fields": {
+            "tier": "Verification tier from the list above",
+            "test_bindings": "List of fully qualified pytest node IDs (e.g., 'tests/test_detector.py::TestScoreBounded::test_score_range')",
+            "verified_against": "Git commit SHA at which test_bindings last passed (e.g., '95f59d8')",
+        },
+        "spec": "https://github.com/thomasbrennan/Fracttalix/blob/main/docs/GVP-spec.md",
+        "paper": "MK-P6: The Dual Reader Standard for Software",
+    },
     "verdict_values": ["confirmed", "disputed", "inconclusive", "needs-revision"],
     "objection_types": [
         "logical-gap", "counterexample", "unstated-assumption", "vacuity",
@@ -305,16 +353,28 @@ PROTOCOL_SPEC = {
         "third_party_executable": "Can a third party execute the EVALUATION procedure? (pass|fail|uncertain)",
     },
     "origin": {
-        "framework": "Dual Reader Standard (DRS)",
-        "paper": "MK-P8: The Dual Reader Standard for Inter-AI Communication",
+        "framework": "Dual Reader Standard (DRS) — three protocols",
+        "protocols": {
+            "DRP": "Dual Reader Protocol — for papers and text (every paper has a human-readable version and a machine-readable AI layer)",
+            "GVP": "Grounded Verification Protocol — for software (claims carry test bindings and verified-against SHAs)",
+            "DRS-MP": "DRS Message Protocol — for inter-AI communication (this protocol — structured claims, objections, verdicts)",
+        },
+        "papers": {
+            "DRS-Architecture": "https://github.com/thomasbrennan/Fracttalix/blob/main/paper/DRS-Architecture.md",
+            "MK-P6-GVP": "https://github.com/thomasbrennan/Fracttalix/blob/main/paper/meta-kaizen/MK-P6-DualReaderStandardForSoftware.md",
+            "MK-P7-CBP": "https://github.com/thomasbrennan/Fracttalix/blob/main/paper/meta-kaizen/MK-P7-CanonicalBuildPlan.md",
+            "MK-P8-DRS-MP": "https://github.com/thomasbrennan/Fracttalix/blob/main/paper/meta-kaizen/MK-P8-DRSForInterAICommunication.md",
+        },
         "repository": "https://github.com/thomasbrennan/Fracttalix",
         "schema": "https://github.com/thomasbrennan/Fracttalix/blob/main/relay/protocol-v2.json",
+        "gvp_spec": "https://github.com/thomasbrennan/Fracttalix/blob/main/docs/GVP-spec.md",
         "license": "CC0-1.0 (public domain)",
         "author": "Thomas Brennan, with AI collaborators Claude (Anthropic) and Grok (xAI)",
     },
     "qr_codes": {
         "repository": "https://github.com/thomasbrennan/Fracttalix — scan QR at docs/qr-fracttalix.png",
         "protocol_schema": "https://github.com/thomasbrennan/Fracttalix/blob/main/relay/protocol-v2.json — scan QR at docs/qr-drs-mp-protocol.png",
+        "gvp_spec": "https://github.com/thomasbrennan/Fracttalix/blob/main/docs/GVP-spec.md — scan QR at docs/qr-gvp-spec.png",
         "paper": "https://github.com/thomasbrennan/Fracttalix/blob/main/paper/meta-kaizen/MK-P8-DRSForInterAICommunication.md — scan QR at docs/qr-mkp8-paper.png",
         "doi": "https://doi.org/10.5281/zenodo.18859299 — scan QR at docs/qr-zenodo-doi.png",
         "pip_package": "https://pypi.org/project/drs-mp/ — scan QR at docs/qr-drs-mp-pypi.png",
