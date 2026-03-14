@@ -1,0 +1,329 @@
+{
+  "@context": "https://schema.org",
+  "@type": "TechArticle",
+  "@id": "https://github.com/thomasbrennan/Fracttalix/blob/main/guides/pt.json",
+  "name": "Dual Reader Standard — Guia de Implementação",
+  "headline": "Como Implementar o Dual Reader Standard para Afirmações Verificáveis por Máquina",
+  "description": "Guia completo de implementação do Dual Reader Standard (DRS), uma arquitetura de verificação que torna cada afirmação em um sistema de conhecimento legível tanto por humanos quanto por máquinas, utilizando predicados de falsificação determinísticos codificados em JSON.",
+  "inLanguage": "pt",
+  "author": {
+    "@type": "Person",
+    "name": "Thomas Brennan",
+    "identifier": "https://orcid.org/0009-0002-6353-7115"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "Fracttalix",
+    "url": "https://github.com/thomasbrennan/Fracttalix"
+  },
+  "datePublished": "2026-03-14",
+  "license": "https://creativecommons.org/licenses/by/4.0/",
+  "keywords": [
+    "dual reader standard",
+    "machine-verifiable claims",
+    "falsification predicate",
+    "AI layer",
+    "grounded verification protocol",
+    "JSON schema validation",
+    "scientific verification",
+    "software verification",
+    "claim registry",
+    "falsification kernel",
+    "machine-readable research",
+    "reproducible science",
+    "open science",
+    "verification architecture",
+    "afirmações verificáveis por máquina",
+    "predicado de falsificação",
+    "camada de IA",
+    "verificação científica",
+    "verificação de software",
+    "registro de afirmações",
+    "núcleo de falsificação",
+    "pesquisa legível por máquina",
+    "ciência reprodutível",
+    "ciência aberta",
+    "arquitetura de verificação"
+  ],
+  "about": {
+    "@type": "Thing",
+    "name": "Dual Reader Standard",
+    "description": "Uma arquitetura de verificação para sistemas de conhecimento que exige que toda afirmação seja legível por duas classes independentes de leitores — humano e máquina.",
+    "url": "https://github.com/thomasbrennan/Fracttalix/blob/main/paper/DRS-Architecture.md"
+  },
+  "citation": {
+    "@type": "CreativeWork",
+    "name": "Fracttalix Corpus",
+    "identifier": "https://doi.org/10.5281/zenodo.18859299"
+  },
+  "isPartOf": {
+    "@type": "CreativeWork",
+    "name": "Fracttalix — Guias de Implementação do Dual Reader Standard",
+    "url": "https://github.com/thomasbrennan/Fracttalix/tree/main/guides"
+  },
+  "content": {
+    "what_is_the_dual_reader_standard": {
+      "title": "O Que É o Dual Reader Standard?",
+      "summary": "O Dual Reader Standard (DRS) é uma arquitetura de verificação para sistemas de conhecimento. Toda afirmação — seja escrita em prosa ou implementada em código — deve ser legível por duas classes independentes de leitores: humano e máquina.",
+      "protocols": {
+        "DRP": {
+          "name": "Dual Reader Protocol",
+          "domain": "Texto / Artigos",
+          "function": "Torna afirmações em prosa avaliáveis por máquina por meio de predicados de falsificação de 5 partes",
+          "readers": {
+            "reader_1": "Humano — lê o artigo em linguagem natural",
+            "reader_2": "IA — lê a camada de IA (registro estruturado de afirmações em JSON)"
+          }
+        },
+        "GVP": {
+          "name": "Grounded Verification Protocol",
+          "domain": "Software / Código",
+          "function": "Torna afirmações avaliáveis por máquina em afirmações verificadas por máquina, por meio de vinculações de teste e evidências fixadas em commits",
+          "readers": {
+            "reader_3a": "Desenvolvedor — lê os campos tier, test_bindings, verified_against",
+            "reader_3b": "Máquina — executa pytest, registra SHA em caso de sucesso"
+          }
+        }
+      }
+    },
+    "falsification_kernel": {
+      "title": "O Núcleo de Falsificação K = (P, O, M, B)",
+      "description": "A base compartilhada de ambos os protocolos. Toda afirmação do Tipo F (falsificável) carrega um predicado determinístico que resulta em exatamente um de dois vereditos: FALSIFIED ou NOT FALSIFIED.",
+      "components": {
+        "P": {
+          "name": "Predicado",
+          "json_field": "FALSIFIED_IF",
+          "role": "Sentença lógica que, se VERDADEIRA, falsifica a afirmação",
+          "constraints": [
+            "Deve resultar em exatamente VERDADEIRO ou FALSO para qualquer atribuição válida de variáveis",
+            "Quantificadores variam apenas sobre conjuntos finitos",
+            "Sem autorreferência ou dependência circular"
+          ]
+        },
+        "O": {
+          "name": "Operandos",
+          "json_field": "WHERE",
+          "role": "Definições tipadas de cada variável no predicado",
+          "format": "tipo · unidades · definição ou fonte",
+          "constraints": [
+            "Toda variável livre em P deve aparecer em O",
+            "Toda variável em O deve aparecer em P",
+            "Cada variável deve ser computável a partir de dados citados ou derivações"
+          ]
+        },
+        "M": {
+          "name": "Mecanismo",
+          "json_field": "EVALUATION",
+          "role": "Procedimento de avaliação finito e determinístico",
+          "constraints": [
+            "Deve terminar em um número finito de passos",
+            "As mesmas entradas produzem o mesmo veredito",
+            "Reproduzível por terceiros"
+          ]
+        },
+        "B": {
+          "name": "Limites",
+          "json_fields": ["BOUNDARY", "CONTEXT"],
+          "role": "Semântica de limiares e justificativa",
+          "constraints": [
+            "BOUNDARY especifica inclusivo/exclusivo para cada limiar",
+            "CONTEXT justifica cada literal numérico no predicado"
+          ]
+        }
+      },
+      "example": {
+        "claim": "sort() retorna elementos em ordem crescente",
+        "predicate": {
+          "FALSIFIED_IF": "EXISTS i IN range(len(result)-1) SUCH THAT result[i] > result[i+1]",
+          "WHERE": {
+            "result": "list · dimensionless · output of sort(input)"
+          },
+          "EVALUATION": "Run sort on test vectors; check adjacent pairs; finite",
+          "BOUNDARY": "len(result) <= 1 → NOT FALSIFIED (vacuously sorted)",
+          "CONTEXT": "Ascending order is the documented contract of sort()"
+        }
+      }
+    },
+    "three_claim_types": {
+      "title": "Os Três Tipos de Afirmação",
+      "types": {
+        "A": {
+          "name": "Axioma",
+          "description": "Premissas fundamentais aceitas da literatura ou declaradas como pressupostos iniciais. Infalsificáveis por design.",
+          "predicate_required": false,
+          "examples": ["Irreversibilidade termodinâmica", "Requisitos de plataforma", "Contratos de dependência"]
+        },
+        "D": {
+          "name": "Definição",
+          "description": "Definições estipulativas de termos, estruturas ou procedimentos. Não possuem valor de verdade — definem, não afirmam.",
+          "predicate_required": false,
+          "examples": ["Forma funcional FRM", "Assinaturas de tipo", "Esquemas de configuração"]
+        },
+        "F": {
+          "name": "Falsificável",
+          "description": "Afirmações testáveis com predicados determinísticos. As afirmações centrais de ciência e software.",
+          "predicate_required": true,
+          "examples": ["β = 1/2 derivado analiticamente", "Garantias comportamentais", "Limites de desempenho"]
+        }
+      }
+    },
+    "six_verification_tiers": {
+      "title": "Os Seis Níveis de Verificação",
+      "description": "Toda afirmação carrega um campo tier que declara qual tipo de evidência a sustenta.",
+      "tiers": {
+        "grounded_by_construction": [
+          {
+            "tier": "axiom",
+            "applies_to": "Tipo A",
+            "meaning": "Fundamental, infalsificável por design"
+          },
+          {
+            "tier": "definition",
+            "applies_to": "Tipo D",
+            "meaning": "Definicional, sem necessidade de predicado"
+          }
+        ],
+        "grounded_now": [
+          {
+            "tier": "software_tested",
+            "applies_to": "Tipo F",
+            "meaning": "Exercitado por testes aprovados. test_bindings não vazio, verified_against SHA não nulo."
+          },
+          {
+            "tier": "formal_proof",
+            "applies_to": "Tipo F",
+            "meaning": "Tabela de derivação indexada por passos com n_invalid_steps = 0"
+          },
+          {
+            "tier": "analytic",
+            "applies_to": "Tipo F",
+            "meaning": "Verificado por rastreamento de derivação formal ou argumento analítico"
+          }
+        ],
+        "explicitly_ungrounded": [
+          {
+            "tier": "empirical_pending",
+            "applies_to": "Tipo F",
+            "meaning": "Placeholder ativo ou dados externos pendentes. A lacuna é visível por design."
+          }
+        ]
+      }
+    },
+    "ai_layer_structure": {
+      "title": "A Camada de IA — O Artefato Central",
+      "description": "Um documento JSON que acompanha cada artigo ou sistema de software. Contém o registro completo de afirmações com predicados, níveis e vinculações de teste.",
+      "schema_url": "https://github.com/thomasbrennan/Fracttalix/blob/main/ai-layers/ai-layer-schema.json",
+      "required_sections": {
+        "_meta": "Tipo de documento, versão do esquema, sessão, licença",
+        "paper_id": "Identificador único do artigo/sistema",
+        "paper_title": "Título legível por humanos",
+        "paper_type": "Classificação: law_A, derivation_B, application_C, methodology_D",
+        "phase_ready": "Veredito do phase gate e status das condições (c1–c6)",
+        "claim_registry": "Array de todas as afirmações com tipos, predicados, níveis, vinculações",
+        "placeholder_register": "Array de dependências não resolvidas"
+      }
+    },
+    "phase_gate": {
+      "title": "O Phase Gate de Seis Condições",
+      "description": "Um artigo ou release de software é PHASE-READY quando todas as seis condições são satisfeitas.",
+      "conditions": {
+        "c1": "A camada de IA é válida conforme o esquema",
+        "c2": "Todas as afirmações falsificáveis registradas com predicados",
+        "c3": "Todos os predicados são avaliáveis por máquina",
+        "c4": "Referências cruzadas rastreadas (registro de placeholders)",
+        "c5": "A verificação é autossuficiente (apenas a camada de IA, sem necessidade de prosa)",
+        "c6": "Todos os predicados são não vacuosos (existe observação de falsificação de exemplo)"
+      }
+    },
+    "how_to_implement": {
+      "title": "Como Implementar o Dual Reader Standard",
+      "for_a_paper": {
+        "title": "Para um Artigo (DRP)",
+        "steps": [
+          "Escreva o artigo (canal em prosa para leitores humanos)",
+          "Crie o arquivo JSON da camada de IA (canal de máquina para leitores de IA)",
+          "Classifique cada afirmação como A (axioma), D (definição) ou F (falsificável)",
+          "Escreva o predicado de falsificação de 5 partes para cada afirmação do Tipo F",
+          "Inclua uma sample_falsification_observation para cada afirmação do Tipo F (testemunha de vacuidade)",
+          "Atribua o nível de verificação a cada afirmação",
+          "Valide contra ai-layer-schema.json",
+          "Execute o phase gate (c1–c6)"
+        ]
+      },
+      "for_software": {
+        "title": "Para Software (GVP)",
+        "steps": [
+          "Enumere o que o software afirma fazer",
+          "Classifique cada afirmação como A (pressuposto), D (definição) ou F (comportamental)",
+          "Escreva o predicado de falsificação para cada afirmação do Tipo F",
+          "Escreva ou identifique os testes que exercitam cada afirmação",
+          "Preencha test_bindings com IDs de nó de teste totalmente qualificados",
+          "Execute os testes e registre o SHA do commit aprovado em verified_against",
+          "Atribua o nível: software_tested se os testes existem, empirical_pending se ainda não",
+          "Registre quaisquer afirmações não testadas como placeholders",
+          "Valide contra ai-layer-schema.json"
+        ]
+      },
+      "minimum_viable_adoption": {
+        "title": "Adoção Mínima Viável",
+        "description": "A menor adoção útil do DRS é uma única afirmação do Tipo F com uma única vinculação de teste.",
+        "example": {
+          "claim_id": "F-1",
+          "type": "F",
+          "statement": "sort() retorna elementos em ordem crescente",
+          "falsification_predicate": {
+            "FALSIFIED_IF": "EXISTS i IN range(len(result)-1) SUCH THAT result[i] > result[i+1]",
+            "WHERE": {
+              "result": "list · dimensionless · output of sort(input)"
+            },
+            "EVALUATION": "Run sort on test vectors; check adjacent pairs; finite",
+            "BOUNDARY": "len(result) <= 1 → NOT FALSIFIED (vacuously sorted)",
+            "CONTEXT": "Ascending order is the documented contract of sort()"
+          },
+          "tier": "software_tested",
+          "test_bindings": ["tests/test_sort.py::test_ascending_order"],
+          "verified_against": "abc1234"
+        }
+      }
+    },
+    "design_principles": {
+      "title": "Princípios de Design",
+      "principles": [
+        {
+          "name": "Epistemologia popperiana",
+          "description": "Podemos falsificar, mas não verificar. Uma afirmação que sobrevive a todas as tentativas de falsificação não está provada — ela sobreviveu."
+        },
+        {
+          "name": "Lacunas honestas",
+          "description": "O placeholder é a funcionalidade mais importante. Quando uma afirmação é empirical_pending, o sistema diz: afirmamos isto, mas ainda não verificamos. Isso é estritamente mais informativo do que esconder afirmações não verificadas."
+        },
+        {
+          "name": "Independência de substrato",
+          "description": "O núcleo K = (P, O, M, B) não sabe se está avaliando um teorema científico ou uma garantia de software. Domínios futuros (jurídico, regulatório, políticas públicas) podem adicionar protocolos sem modificar o núcleo."
+        },
+        {
+          "name": "Lingua franca de máquina",
+          "description": "O núcleo é escrito em lógica e matemática, não em nenhuma língua humana. Um predicado que resulta em TRUE em Pequim resulta em TRUE em Boston. JSON é a camada de transporte. Lógica binária é o substrato."
+        }
+      ]
+    },
+    "three_axis_compatibility": {
+      "title": "Compatibilidade em Três Eixos",
+      "axes": {
+        "backwards": "Nada do que já foi feito quebra. Versionamento de esquema, enums somente com adição, núcleo permanente.",
+        "lateral": "Funciona em todos os domínios, idiomas, ferramentas e sistemas de IA. Núcleo independente de substrato.",
+        "forward": "Qualquer coisa nova pode ser adicionada sem redesenho. Extensibilidade de protocolo, extensibilidade de nível, evolução aditiva de esquema."
+      }
+    }
+  },
+  "resources": {
+    "architecture_specification": "https://github.com/thomasbrennan/Fracttalix/blob/main/paper/DRS-Architecture.md",
+    "falsification_kernel": "https://github.com/thomasbrennan/Fracttalix/blob/main/ai-layers/falsification-kernel.md",
+    "ai_layer_schema": "https://github.com/thomasbrennan/Fracttalix/blob/main/ai-layers/ai-layer-schema.json",
+    "gvp_specification": "https://github.com/thomasbrennan/Fracttalix/blob/main/docs/GVP-spec.md",
+    "example_ai_layer": "https://github.com/thomasbrennan/Fracttalix/blob/main/ai-layers/P1-ai-layer.json",
+    "claim_registry_index": "https://github.com/thomasbrennan/Fracttalix/blob/main/ai-layers/claim-registry-index.md",
+    "repository": "https://github.com/thomasbrennan/Fracttalix",
+    "doi": "https://doi.org/10.5281/zenodo.18859299"
+  }
+}

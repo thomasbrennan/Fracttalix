@@ -1,0 +1,332 @@
+{
+  "@context": "https://schema.org",
+  "@type": "TechArticle",
+  "@id": "https://github.com/thomasbrennan/Fracttalix/blob/main/guides/zh.json",
+  "name": "双重读者标准 — 实施指南",
+  "headline": "如何实施双重读者标准以构建机器可验证的声明",
+  "description": "双重读者标准（DRS）的完整实施指南。DRS 是一种验证架构，通过编码为 JSON 的确定性证伪谓词，使知识系统中的每一个声明都能被人类和机器两个独立的读者类别所读取。",
+  "inLanguage": "zh",
+  "author": {
+    "@type": "Person",
+    "name": "Thomas Brennan",
+    "identifier": "https://orcid.org/0009-0002-6353-7115"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "Fracttalix",
+    "url": "https://github.com/thomasbrennan/Fracttalix"
+  },
+  "datePublished": "2026-03-14",
+  "license": "https://creativecommons.org/licenses/by/4.0/",
+  "keywords": [
+    "dual reader standard",
+    "双重读者标准",
+    "machine-verifiable claims",
+    "机器可验证声明",
+    "falsification predicate",
+    "证伪谓词",
+    "AI layer",
+    "AI 层",
+    "grounded verification protocol",
+    "锚定验证协议",
+    "JSON schema validation",
+    "JSON 模式验证",
+    "scientific verification",
+    "科学验证",
+    "software verification",
+    "软件验证",
+    "claim registry",
+    "声明注册表",
+    "falsification kernel",
+    "证伪内核",
+    "machine-readable research",
+    "机器可读研究",
+    "reproducible science",
+    "可重复科学",
+    "open science",
+    "开放科学",
+    "verification architecture",
+    "验证架构"
+  ],
+  "about": {
+    "@type": "Thing",
+    "name": "双重读者标准",
+    "description": "一种用于知识系统的验证架构，要求每一个声明都能被两个独立的读者类别——人类和机器——所读取。",
+    "url": "https://github.com/thomasbrennan/Fracttalix/blob/main/paper/DRS-Architecture.md"
+  },
+  "citation": {
+    "@type": "CreativeWork",
+    "name": "Fracttalix 语料库",
+    "identifier": "https://doi.org/10.5281/zenodo.18859299"
+  },
+  "isPartOf": {
+    "@type": "CreativeWork",
+    "name": "Fracttalix — 双重读者标准实施指南",
+    "url": "https://github.com/thomasbrennan/Fracttalix/tree/main/guides"
+  },
+  "content": {
+    "what_is_the_dual_reader_standard": {
+      "title": "什么是双重读者标准？",
+      "summary": "双重读者标准（DRS）是一种用于知识系统的验证架构。每一个声明——无论是以散文形式书写还是以代码形式实现——都必须能被两个独立的读者类别所读取：人类和机器。",
+      "protocols": {
+        "DRP": {
+          "name": "双重读者协议",
+          "domain": "文本 / 论文",
+          "function": "通过五部分证伪谓词使散文形式的声明可被机器评估",
+          "readers": {
+            "reader_1": "人类 — 以自然语言阅读论文",
+            "reader_2": "AI — 读取 AI 层（结构化 JSON 声明注册表）"
+          }
+        },
+        "GVP": {
+          "name": "锚定验证协议",
+          "domain": "软件 / 代码",
+          "function": "通过测试绑定和提交锚定的证据，使机器可评估的声明实现机器验证",
+          "readers": {
+            "reader_3a": "开发者 — 读取 tier、test_bindings、verified_against 字段",
+            "reader_3b": "机器 — 运行 pytest，成功后盖上 SHA 戳"
+          }
+        }
+      }
+    },
+    "falsification_kernel": {
+      "title": "证伪内核 K = (P, O, M, B)",
+      "description": "两个协议的共同基础。每一个 F 类（可证伪）声明都携带一个确定性谓词，该谓词的求值结果恰好为两个判定之一：已证伪（FALSIFIED）或未证伪（NOT FALSIFIED）。",
+      "components": {
+        "P": {
+          "name": "谓词",
+          "json_field": "FALSIFIED_IF",
+          "role": "如果为 TRUE 则证伪该声明的逻辑语句",
+          "constraints": [
+            "对于任何有效的变量赋值，必须恰好求值为 TRUE 或 FALSE",
+            "量词仅遍历有限集合",
+            "不允许自引用或循环依赖"
+          ]
+        },
+        "O": {
+          "name": "操作数",
+          "json_field": "WHERE",
+          "role": "谓词中每个变量的类型化定义",
+          "format": "类型 · 单位 · 定义或来源",
+          "constraints": [
+            "P 中的每个自由变量必须在 O 中出现",
+            "O 中的每个变量必须在 P 中出现",
+            "每个变量必须可从引用数据或推导中计算得出"
+          ]
+        },
+        "M": {
+          "name": "机制",
+          "json_field": "EVALUATION",
+          "role": "有限的、确定性的求值过程",
+          "constraints": [
+            "必须在有限步骤内终止",
+            "相同输入产生相同判定",
+            "第三方可重现"
+          ]
+        },
+        "B": {
+          "name": "边界",
+          "json_fields": ["BOUNDARY", "CONTEXT"],
+          "role": "阈值语义和依据说明",
+          "constraints": [
+            "BOUNDARY 为每个阈值指定包含/排除",
+            "CONTEXT 为谓词中的每个数值常量提供依据"
+          ]
+        }
+      },
+      "example": {
+        "claim": "sort() 返回升序排列的元素",
+        "predicate": {
+          "FALSIFIED_IF": "EXISTS i IN range(len(result)-1) SUCH THAT result[i] > result[i+1]",
+          "WHERE": {
+            "result": "list · dimensionless · output of sort(input)"
+          },
+          "EVALUATION": "Run sort on test vectors; check adjacent pairs; finite",
+          "BOUNDARY": "len(result) <= 1 → NOT FALSIFIED (vacuously sorted)",
+          "CONTEXT": "Ascending order is the documented contract of sort()"
+        }
+      }
+    },
+    "three_claim_types": {
+      "title": "三种声明类型",
+      "types": {
+        "A": {
+          "name": "公理",
+          "description": "取自文献或作为起始假设的基础性前提。设计上不可证伪。",
+          "predicate_required": false,
+          "examples": ["热力学不可逆性", "平台需求", "依赖契约"]
+        },
+        "D": {
+          "name": "定义",
+          "description": "术语、结构或过程的约定性定义。不具有真值性——它们是定义而非声明。",
+          "predicate_required": false,
+          "examples": ["FRM 函数形式", "类型签名", "配置模式"]
+        },
+        "F": {
+          "name": "可证伪",
+          "description": "带有确定性谓词的可测试声明。核心科学声明和软件声明。",
+          "predicate_required": true,
+          "examples": ["β = 1/2 解析推导", "行为保证", "性能边界"]
+        }
+      }
+    },
+    "six_verification_tiers": {
+      "title": "六个验证层级",
+      "description": "每个声明都携带一个 tier 字段，声明其所依据的证据类型。",
+      "tiers": {
+        "grounded_by_construction": [
+          {
+            "tier": "axiom",
+            "applies_to": "A 类",
+            "meaning": "基础性的，设计上不可证伪"
+          },
+          {
+            "tier": "definition",
+            "applies_to": "D 类",
+            "meaning": "定义性的，无需谓词"
+          }
+        ],
+        "grounded_now": [
+          {
+            "tier": "software_tested",
+            "applies_to": "F 类",
+            "meaning": "通过测试验证。test_bindings 非空，verified_against SHA 非空。"
+          },
+          {
+            "tier": "formal_proof",
+            "applies_to": "F 类",
+            "meaning": "步骤索引的推导表，n_invalid_steps = 0"
+          },
+          {
+            "tier": "analytic",
+            "applies_to": "F 类",
+            "meaning": "通过形式推导轨迹或解析论证验证"
+          }
+        ],
+        "explicitly_ungrounded": [
+          {
+            "tier": "empirical_pending",
+            "applies_to": "F 类",
+            "meaning": "活跃的占位符或等待外部数据。缺口是设计上可见的。"
+          }
+        ]
+      }
+    },
+    "ai_layer_structure": {
+      "title": "AI 层 — 核心工件",
+      "description": "一个伴随每篇论文或软件系统的 JSON 文档。包含完整的声明注册表，含谓词、层级和测试绑定。",
+      "schema_url": "https://github.com/thomasbrennan/Fracttalix/blob/main/ai-layers/ai-layer-schema.json",
+      "required_sections": {
+        "_meta": "文档类型、模式版本、会话、许可证",
+        "paper_id": "唯一的论文/系统标识符",
+        "paper_title": "人类可读的标题",
+        "paper_type": "分类：law_A、derivation_B、application_C、methodology_D",
+        "phase_ready": "阶段门判定及条件状态（c1–c6）",
+        "claim_registry": "所有声明的数组，包含类型、谓词、层级、绑定",
+        "placeholder_register": "未解决依赖的数组"
+      }
+    },
+    "phase_gate": {
+      "title": "六条件阶段门",
+      "description": "当全部六个条件都满足时，论文或软件发布即为阶段就绪（PHASE-READY）。",
+      "conditions": {
+        "c1": "AI 层通过模式验证",
+        "c2": "所有可证伪声明均已注册并附带谓词",
+        "c3": "所有谓词均可被机器评估",
+        "c4": "交叉引用已追踪（占位符注册表）",
+        "c5": "验证自给自足（仅需 AI 层，无需散文文本）",
+        "c6": "所有谓词均非空泛（存在样本证伪观测值）"
+      }
+    },
+    "how_to_implement": {
+      "title": "如何实施双重读者标准",
+      "for_a_paper": {
+        "title": "用于论文（DRP）",
+        "steps": [
+          "撰写论文（面向人类读者的散文通道）",
+          "创建 AI 层 JSON 文件（面向 AI 读者的机器通道）",
+          "将每个声明分类为 A（公理）、D（定义）或 F（可证伪）",
+          "为每个 F 类声明编写五部分证伪谓词",
+          "为每个 F 类声明包含 sample_falsification_observation（空泛性见证）",
+          "为每个声明指定验证层级",
+          "对照 ai-layer-schema.json 进行验证",
+          "运行阶段门检查（c1–c6）"
+        ]
+      },
+      "for_software": {
+        "title": "用于软件（GVP）",
+        "steps": [
+          "列举软件声明要做的事情",
+          "将每个声明分类为 A（假设）、D（定义）或 F（行为性）",
+          "为每个 F 类声明编写证伪谓词",
+          "编写或确定验证每个声明的测试",
+          "在 test_bindings 中填入完全限定的测试节点 ID",
+          "运行测试并将通过的提交 SHA 记录到 verified_against 中",
+          "指定层级：如果测试存在则为 software_tested，否则为 empirical_pending",
+          "将所有未测试的声明注册为占位符",
+          "对照 ai-layer-schema.json 进行验证"
+        ]
+      },
+      "minimum_viable_adoption": {
+        "title": "最小可行采纳",
+        "description": "最小有用的 DRS 采纳方式是一个 F 类声明加一个测试绑定。",
+        "example": {
+          "claim_id": "F-1",
+          "type": "F",
+          "statement": "sort() 返回升序排列的元素",
+          "falsification_predicate": {
+            "FALSIFIED_IF": "EXISTS i IN range(len(result)-1) SUCH THAT result[i] > result[i+1]",
+            "WHERE": {
+              "result": "list · dimensionless · output of sort(input)"
+            },
+            "EVALUATION": "Run sort on test vectors; check adjacent pairs; finite",
+            "BOUNDARY": "len(result) <= 1 → NOT FALSIFIED (vacuously sorted)",
+            "CONTEXT": "Ascending order is the documented contract of sort()"
+          },
+          "tier": "software_tested",
+          "test_bindings": ["tests/test_sort.py::test_ascending_order"],
+          "verified_against": "abc1234"
+        }
+      }
+    },
+    "design_principles": {
+      "title": "设计原则",
+      "principles": [
+        {
+          "name": "波普尔认识论",
+          "description": "我们能证伪但不能证实。一个经受住所有证伪尝试的声明并非被证明了——它只是幸存了下来。"
+        },
+        {
+          "name": "诚实的缺口",
+          "description": "占位符是最重要的特性。当一个声明处于 empirical_pending 状态时，系统在说：我们声称了这一点，但尚未验证。这比隐藏未经验证的声明提供了严格更多的信息。"
+        },
+        {
+          "name": "基底无关性",
+          "description": "内核 K = (P, O, M, B) 不知道它评估的是一个科学定理还是一个软件保证。未来的领域（法律、监管、政策）可以添加自己的协议而无需修改内核。"
+        },
+        {
+          "name": "机器通用语",
+          "description": "内核以逻辑和数学写成，而非任何人类语言。一个在北京求值为 TRUE 的谓词在波士顿同样求值为 TRUE。JSON 是传输层。二进制逻辑是基底。"
+        }
+      ]
+    },
+    "three_axis_compatibility": {
+      "title": "三轴兼容性",
+      "axes": {
+        "backwards": "已有的一切不会被破坏。模式版本控制、仅追加枚举、永久内核。",
+        "lateral": "适用于所有领域、语言、工具和 AI 系统。基底无关的内核。",
+        "forward": "任何新内容都可以在不重新设计的情况下添加。协议可扩展性、层级可扩展性、增量式模式演进。"
+      }
+    }
+  },
+  "resources": {
+    "architecture_specification": "https://github.com/thomasbrennan/Fracttalix/blob/main/paper/DRS-Architecture.md",
+    "falsification_kernel": "https://github.com/thomasbrennan/Fracttalix/blob/main/ai-layers/falsification-kernel.md",
+    "ai_layer_schema": "https://github.com/thomasbrennan/Fracttalix/blob/main/ai-layers/ai-layer-schema.json",
+    "gvp_specification": "https://github.com/thomasbrennan/Fracttalix/blob/main/docs/GVP-spec.md",
+    "example_ai_layer": "https://github.com/thomasbrennan/Fracttalix/blob/main/ai-layers/P1-ai-layer.json",
+    "claim_registry_index": "https://github.com/thomasbrennan/Fracttalix/blob/main/ai-layers/claim-registry-index.md",
+    "repository": "https://github.com/thomasbrennan/Fracttalix",
+    "doi": "https://doi.org/10.5281/zenodo.18859299"
+  }
+}
