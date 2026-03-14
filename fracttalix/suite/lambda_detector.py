@@ -63,6 +63,7 @@ class LambdaDetector(BaseDetector):
         lambda_warning: float = 0.05,
         r_squared_min: float = 0.5,
         warmup: int = 0,
+        confirm_required: int = 5,
     ):
         super().__init__(
             name="Lambda",
@@ -94,7 +95,7 @@ class LambdaDetector(BaseDetector):
         # multiple fit intervals before firing.  Transient dips in estimated
         # lambda (from noisy variance) will not persist; genuine CSD will.
         self._confirm_count = 0
-        self._confirm_required = 5  # consecutive fit intervals
+        self._confirm_required = confirm_required
 
     def _check_scope(self, window: List[float]) -> bool:
         min_window = max(32, self._window_size // 2)
@@ -242,7 +243,16 @@ class LambdaDetector(BaseDetector):
         return hwhm_omega
 
     def _compute_scope(self, current_var: float) -> str:
-        """Classify scope based on spectral and variance evidence."""
+        """Classify scope based on spectral and variance evidence.
+
+        Scope states:
+        - OUT_OF_SCOPE: no spectral peak, data doesn't fit model
+        - NEAR_BOUNDARY: baseline λ < 2× lambda_warning — detector is
+          in scope but FPR is elevated (~50-70% in Monte Carlo).
+          Operators should expect more false alarms in this regime.
+        - IN_SCOPE: data fits model, λ may be declining
+        - STABLE: data fits model, no decline detected
+        """
         if self._last_spectral_snr < 2.0:
             return "OUT_OF_SCOPE"
         if current_var < 1e-12:
@@ -252,8 +262,16 @@ class LambdaDetector(BaseDetector):
             var_ratio = current_var / self._baseline_var
             # Variance growth > 1.5× means system is changing
             if var_ratio > 1.5:
+                if (self._baseline_lambda is not None
+                        and self._baseline_is_estimated
+                        and self._baseline_lambda < 2 * self._lambda_warning):
+                    return "NEAR_BOUNDARY"
                 return "IN_SCOPE"
             if 0.7 < var_ratio < 1.5 and self._last_lam_rate >= -1e-4:
+                if (self._baseline_lambda is not None
+                        and self._baseline_is_estimated
+                        and self._baseline_lambda < 2 * self._lambda_warning):
+                    return "NEAR_BOUNDARY"
                 return "STABLE"
         return "IN_SCOPE"
 
@@ -326,6 +344,9 @@ class LambdaDetector(BaseDetector):
                 msg += f" λ={self._last_lambda:.4f} SNR={self._last_spectral_snr:.1f}"
             self._confirm_count = 0
             return 0.0, msg
+
+        # NEAR_BOUNDARY: in scope but FPR elevated — proceed with detection
+        # but include boundary warning in messages
 
         lam = self._last_lambda
         rate = self._last_lam_rate

@@ -175,7 +175,7 @@ class TestLambdaDetector:
 
     def test_scope_states_valid(self):
         """Scope should be one of the v2 states."""
-        valid_scopes = {"INSUFFICIENT_DATA", "OUT_OF_SCOPE", "STABLE", "IN_SCOPE"}
+        valid_scopes = {"INSUFFICIENT_DATA", "OUT_OF_SCOPE", "STABLE", "IN_SCOPE", "NEAR_BOUNDARY"}
         det = LambdaDetector(tau_gen=20.0, fit_window=128)
         assert det.scope_status in valid_scopes
         for val in _sustained_oscillation(300, tau_gen=20.0):
