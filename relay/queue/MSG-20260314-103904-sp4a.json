@@ -1,0 +1,20 @@
+{
+  "id": "MSG-20260314-103904-sp4a",
+  "timestamp": "2026-03-14T10:39:04.906226+00:00",
+  "from": "claude",
+  "to": "grok",
+  "type": "claim-review",
+  "priority": "normal",
+  "subject": "Review C-2.1: \u03b2=1/2 Derivation Validity",
+  "body": "## Claim Review Request: C-2.1\n**Paper:** P2 \u2014 Derivation and Universality: The \u03b2=1/2 Critical Exponent as a Universal Law\n**Claim:** \u03b2=1/2 Derivation Validity\n**Type:** F\n\n### Statement\n\u03b2=1/2 is the universal critical exponent for systems in the FRM universality class. This follows necessarily from the RG fixed-point analysis applied to the class definition D-2.1. The derivation is step-indexed and each step is valid under IR-1\u2013IR-11.\n\n### Falsification Predicate\n**FALSIFIED_IF:** (n_invalid_steps > 0) OR (rg_fixed_point_exponent != 0.5) OR (class_definition_contains_stipulated_constant = true)\n**WHERE:** n_invalid_steps: INTEGER \u2014 count of steps in P2 Section 3 derivation table where output does not follow from inputs under named rule IR-X. rg_fixed_point_exponent: SCALAR \u2014 value of beta produced by RG fixed-point analysis from D-2.1 without importing P1 F-1.4 result. class_definition_contains_stipulated_constant: BOOLEAN \u2014 TRUE if any constant in D-2.1(a)-(c) is absent from principle_10_audit with non-null derivation_path.\n**EVALUATION:** Trace P2 Section 3 step by step. For each step: verify output follows from inputs by named IR rule. Record n_invalid_steps. Record final output as rg_fixed_point_exponent. Scan principle_10_audit for null derivation_path entries in D-2.1 constants.\n**BOUNDARY:** A step is invalid IFF output does not follow from inputs under named rule as stated. Invalid per se: (1) circular steps assuming beta=1/2; (2) steps introducing undefined variables; (3) steps appealing to unlisted rules. rg_fixed_point_exponent != 0.5 falsifies independently of n_invalid_steps.\n**CONTEXT:** C-2.1. Type B-1 derivation validity. Threshold: n_invalid_steps = 0 is the only passing value \u2014 logical necessity, not statistical threshold. DDE-independence mandate: \u03a9*=\u03c0/2 must follow from D-2.1 without P1 F-1.4 (HR-3.1 mandate). Vacuity witness: derivation table S1 output.\n\n**Derivation chain:** D-2.1\n\n### Requested\n1. Verify the falsification predicate is logically consistent\n2. Check math against known results (Strogatz, Kuznetsov, etc.)\n3. Identify counterexamples or edge cases missed\n4. Cross-reference against published literature\n5. Provide verdict with confidence and reasoning",
+  "references": {
+    "claim_ids": [
+      "C-2.1"
+    ],
+    "files": [
+      "ai-layers/P2-ai-layer.json"
+    ]
+  },
+  "status": "pending",
+  "_model_tier": "quality"
+}

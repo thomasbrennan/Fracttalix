@@ -1,0 +1,153 @@
+{
+  "_meta": {
+    "document_type": "AI_LAYER",
+    "schema_version": "v3-S49",
+    "schema_url": "github.com/thomasbrennan/Fracttalix/ai-layers/ai-layer-schema.json",
+    "produced_session": "S56",
+    "produced_by": "Instance 1 (Claude, Anthropic) — CBP Step 1+2",
+    "licence": "CC BY 4.0",
+    "semantic_spec_url": "github.com/thomasbrennan/Fracttalix/ai-layers/falsification-kernel.md"
+  },
+  "paper_id": "MK-P8",
+  "corpus_id": "Meta-Kaizen",
+  "series": "Meta-Kaizen Series",
+  "series_position": "Paper 8 of 8",
+  "paper_title": "The Dual Reader Standard for Inter-AI Communication: Epistemologically Grounded Messaging in Multi-Agent Systems",
+  "paper_type": "methodology_D",
+  "version": "v1.0",
+  "ai_layer_version": "v1.0",
+  "prose_doi": "pending",
+  "ai_layer_url": "github.com/thomasbrennan/Fracttalix/ai-layers/MK-P8-ai-layer.json",
+  "citation_format": "[MK Paper 8, AI-Layer, Claim X-MK8.Y]",
+  "phase_ready": {
+    "verdict": "DRAFT",
+    "c1": "SATISFIED",
+    "c2": "SATISFIED",
+    "c3": "SATISFIED",
+    "c4_mode": "PHASE-READY-TRACKING",
+    "c5": "SATISFIED",
+    "c6": "SATISFIED",
+    "placeholder_count": 1,
+    "note": "Draft under CBP. One placeholder: PH-MK8.1 (protocol v2 operational data pending)."
+  },
+  "dependencies": [
+    {
+      "paper_id": "MK-P1",
+      "claims_received": ["A-MK1.1", "A-MK1.5"],
+      "role": "KVS axioms for scoring objections in DRS-MP"
+    },
+    {
+      "paper_id": "MK-P6",
+      "claims_received": [],
+      "role": "DRS for software — prior extension of DRS beyond papers"
+    },
+    {
+      "paper_id": "MK-P7",
+      "claims_received": ["D-MK7.1", "F-MK7.1"],
+      "role": "CBP definition and monotonic quality theorem"
+    }
+  ],
+  "claim_registry": [
+    {
+      "claim_id": "A-MK8.1",
+      "type": "A",
+      "label": "JSON Parsing Determinism",
+      "statement": "JSON parsing is deterministic by specification (RFC 8259). Two conforming parsers produce identical structured output from identical input.",
+      "falsification_predicate": null,
+      "note": "Type A: standard specification property."
+    },
+    {
+      "claim_id": "A-MK8.2",
+      "type": "A",
+      "label": "Layer 1-3 Coverage",
+      "statement": "Existing inter-AI protocols (A2A, MCP, ACP, ANP, AGP) address transport, discovery, and task management but not epistemological content verification.",
+      "falsification_predicate": null,
+      "note": "Type A: empirical survey finding as of March 2026."
+    },
+    {
+      "claim_id": "D-MK8.1",
+      "type": "D",
+      "label": "DRS Message Protocol",
+      "statement": "DRS-MP is a dual-channel messaging format: Channel 1 (prose body for humans) + Channel 2 (structured claims/objections/verdicts for machines). Channel 2 is authoritative for machine processing.",
+      "falsification_predicate": null
+    },
+    {
+      "claim_id": "D-MK8.2",
+      "type": "D",
+      "label": "Epistemological Content",
+      "statement": "The subset of message content bearing on truth, falsifiability, or evidential status of claims. Includes claim types, predicates, verdicts, objection classifications, dispositions.",
+      "falsification_predicate": null
+    },
+    {
+      "claim_id": "D-MK8.3",
+      "type": "D",
+      "label": "Parsing Determinism Definition",
+      "statement": "A message format is parsing-deterministic if epistemological content is extractable by a finite-state machine (JSON parser) without natural language interpretation.",
+      "falsification_predicate": null
+    },
+    {
+      "claim_id": "D-MK8.4",
+      "type": "D",
+      "label": "Review Completeness",
+      "statement": "A review response is complete if for every claim_id in the request's claims array, there exists exactly one verdict_object in the response with matching claim_id and non-null verdict.",
+      "falsification_predicate": null
+    },
+    {
+      "claim_id": "D-MK8.5",
+      "type": "D",
+      "label": "Transport Independence",
+      "statement": "DRS-MP specifies content format, not delivery mechanism. Compatible with A2A, MCP, ACP, ANP, HTTP, git relay, or any JSON-capable transport.",
+      "falsification_predicate": null
+    },
+    {
+      "claim_id": "F-MK8.1",
+      "type": "F",
+      "label": "Parsing Determinism",
+      "statement": "DRS-MP messages can be processed without natural language interpretation. Two independent parser implementations produce identical extracted epistemological content.",
+      "falsification_predicate": {
+        "FALSIFIED_IF": "Two independent JSON parser implementations, given the same valid DRS-MP message, extract different epistemological content.",
+        "WHERE": "Independent implementations by different developers. Valid DRS-MP message conforming to protocol-v2.json schema. Different content means any divergence in claim_id, type, verdict, objection_type, severity, or predicate fields.",
+        "EVALUATION": "Implement two parsers independently. Feed ≥ 50 valid messages. Compare field by field.",
+        "BOUNDARY": "Zero divergences. Determinism is binary.",
+        "CONTEXT": "Structural property of JSON (RFC 8259). The claim is that DRS-MP's epistemological content is fully captured in typed fields."
+      },
+      "vacuity_witness": "A DRS-MP message with a malformed JSON string that two parsers handle differently (one recovers, one rejects). This would produce different extracted content, falsifying the claim for non-conforming inputs."
+    },
+    {
+      "claim_id": "F-MK8.2",
+      "type": "F",
+      "label": "Review Completeness Verification",
+      "statement": "DRS-MP enables automated verification that every claim in a review request received a structured verdict, with zero misclassifications.",
+      "falsification_predicate": {
+        "FALSIFIED_IF": "The automated verifier misclassifies a response as complete when it is missing a verdict, or as incomplete when all verdicts are present.",
+        "WHERE": "Verifier implements D-MK8.4. Request contains ≥ 3 claims. Response conforms to schema.",
+        "EVALUATION": "Generate ≥ 20 request-response pairs (10 complete, 10 incomplete). Run verifier. Compare to ground truth.",
+        "BOUNDARY": "Zero misclassifications.",
+        "CONTEXT": "Under prose-only messaging, completeness requires NLP. DRS-MP reduces it to set membership on claim_ids."
+      },
+      "vacuity_witness": "A response containing verdicts for claims A, B but not C (where request contained A, B, C). Verifier should classify as incomplete. If it classifies as complete, the claim is falsified."
+    },
+    {
+      "claim_id": "F-MK8.3",
+      "type": "F",
+      "label": "Information Loss Prevention",
+      "statement": "DRS-MP preserves all epistemologically relevant content across communication round-trips with zero field loss.",
+      "falsification_predicate": {
+        "FALSIFIED_IF": "A round-trip (create → transmit → receive → extract) loses any epistemological field present in the original message.",
+        "WHERE": "Information loss means a field present in sent message is absent or semantically different in received message. String equality for enums/identifiers, structural equality for objects.",
+        "EVALUATION": "Create ≥ 30 messages spanning all types. Transmit through relay. Compare field by field.",
+        "BOUNDARY": "Zero field losses across all 30 messages.",
+        "CONTEXT": "Under prose-only messaging, information routinely lost: severity omitted, types conflated, thresholds paraphrased."
+      },
+      "vacuity_witness": "A message where the relay pipeline truncates the body field at a character limit, removing a falsification_predicate's CONTEXT field. The structured content is lost, falsifying the claim."
+    }
+  ],
+  "placeholders": [
+    {
+      "placeholder_id": "PH-MK8.1",
+      "description": "Protocol v2 operational data — relay pipeline upgraded but insufficient runtime data for statistical validation of F-MK8.1 through F-MK8.3.",
+      "blocking": false,
+      "target_session": "S57+"
+    }
+  ]
+}

@@ -1,0 +1,43 @@
+name: Update Repository Metadata
+
+# Sets GitHub topics and description for SEO discoverability.
+# Runs once on push to main, then only on manual trigger.
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/repo-metadata.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  update-metadata:
+    name: Set repository topics and description
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Update repository description and topics
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          # Update description
+          gh repo edit ${{ github.repository }} \
+            --description "Unified scientific corpus: Fractal Rhythm Model, Meta-Kaizen (8 papers), Dual Reader Standard, DRS-MP — first inter-AI protocol with epistemologically typed claims. 175+ machine-verifiable claims. Multi-AI hostile review. CC0." \
+            2>/dev/null || echo "Description update requires admin token — skipping"
+
+          # Add topics (these work with default GITHUB_TOKEN on public repos)
+          topics=(
+            anomaly-detection streaming time-series fractal-rhythm-model
+            dual-reader-standard inter-ai-communication multi-agent-systems
+            machine-verifiable-claims falsification ai-peer-review
+            drs-message-protocol canonical-build-plan meta-kaizen
+            epistemology ai-governance agent-communication hostile-review
+            python public-domain
+          )
+          for topic in "${topics[@]}"; do
+            gh repo edit ${{ github.repository }} --add-topic "$topic" 2>/dev/null || true
+          done
+          echo "Topics updated."

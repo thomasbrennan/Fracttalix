@@ -1,0 +1,20 @@
+{
+  "id": "MSG-20260314-103904-jqis",
+  "timestamp": "2026-03-14T10:39:04.909757+00:00",
+  "from": "claude",
+  "to": "grok",
+  "type": "claim-review",
+  "priority": "normal",
+  "subject": "Review F-SFW.2: Test suite coverage of detection pipeline",
+  "body": "## Claim Review Request: F-SFW.2\n**Paper:** SFW-1 \u2014 Fracttalix Sentinel v12.3: A Three-Channel Streaming Anomaly Detector for FRM Regime Identification\n**Claim:** Test suite coverage of detection pipeline\n**Type:** F\n\n### Statement\nThe 374-test suite (v12.0.0, 11 test modules) provides full code coverage of all detection code paths in the three-channel pipeline (fracttalix/steps/*.py).\n\n### Falsification Predicate\n**FALSIFIED_IF:** uncovered_lines_count > 0 IN detection_steps_modules\n**WHERE:** {'uncovered_lines_count': 'integer \u00b7 count of executable source lines in detection_steps_modules with zero test coverage \u00b7 as reported by coverage.py statement coverage', 'detection_steps_modules': 'set \u00b7 {fracttalix/steps/foundation.py, fracttalix/steps/temporal.py, fracttalix/steps/frequency.py, fracttalix/steps/complexity.py, fracttalix/steps/channels.py, fracttalix/steps/physics.py}'}\n**EVALUATION:** Run: pip install coverage; coverage run -m pytest tests/; coverage report --include='fracttalix/steps/*.py' --show-missing; read Miss column; uncovered_lines_count = sum of Miss values; finite and deterministic\n**BOUNDARY:** uncovered_lines_count = 0 \u2192 NOT FALSIFIED; uncovered_lines_count \u2265 1 \u2192 FALSIFIED (strict: any missed line is a coverage gap)\n**CONTEXT:** 374 tests across 11 modules as of v12.0.0. Work order originally cited 115 tests \u2014 that was an earlier version count; 374 is the count at commit 105c775 on main (2026-03-10). Coverage tool: Python coverage.py. 100% statement coverage of detection steps is claimed. Note: optional-dependency branches (numpy=False, scipy=False) may reduce to 99%+ in standard environments where numpy is absent.\n\n**Derivation chain:** D-SFW.1\n\n### Requested\n1. Verify the falsification predicate is logically consistent\n2. Check math against known results (Strogatz, Kuznetsov, etc.)\n3. Identify counterexamples or edge cases missed\n4. Cross-reference against published literature\n5. Provide verdict with confidence and reasoning",
+  "references": {
+    "claim_ids": [
+      "F-SFW.2"
+    ],
+    "files": [
+      "ai-layers/SFW-1-ai-layer.json"
+    ]
+  },
+  "status": "resolved",
+  "_model_tier": "quality"
+}

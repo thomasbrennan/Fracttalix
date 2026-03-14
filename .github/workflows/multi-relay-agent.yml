@@ -1,0 +1,145 @@
+name: Multi-AI Relay Agent
+
+# Triggers when new messages appear in the relay queue,
+# or on schedule to process all providers.
+on:
+  push:
+    paths:
+      - 'relay/queue/MSG-*.json'
+    branches:
+      - main
+      - 'claude/**'
+  schedule:
+    # Check every 6 hours
+    - cron: '0 */6 * * *'
+  workflow_dispatch:
+    inputs:
+      provider:
+        description: 'Which provider to run (or "all")'
+        required: false
+        default: 'all'
+        type: choice
+        options:
+          - all
+          - gemini
+          - chatgpt
+          - mistral
+          - deepseek
+          - qwen
+          - yi
+          - ernie
+          - llama
+
+permissions:
+  contents: write
+
+jobs:
+  detect-pending:
+    name: Detect pending messages per provider
+    runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.detect.outputs.matrix }}
+      has_pending: ${{ steps.detect.outputs.has_pending }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.ref }}
+
+      - name: Detect providers with pending messages
+        id: detect
+        run: |
+          providers='["gemini","chatgpt","mistral","deepseek","qwen","yi","ernie","llama"]'
+          requested="${{ github.event.inputs.provider || 'all' }}"
+
+          pending_providers=$(python3 -c "
+          import json, glob, sys
+
+          all_providers = json.loads('$providers')
+          requested = '$requested'
+          if requested != 'all':
+              all_providers = [requested] if requested in all_providers else []
+
+          active = []
+          for provider in all_providers:
+              for f in glob.glob('relay/queue/MSG-*.json'):
+                  try:
+                      m = json.load(open(f))
+                      if m.get('to') in (provider, 'all') and m.get('status') == 'pending':
+                          active.append(provider)
+                          break
+                  except:
+                      pass
+
+          result = {'include': [{'provider': p} for p in active]}
+          print(json.dumps(result))
+          ")
+
+          echo "matrix=$pending_providers" >> $GITHUB_OUTPUT
+          if echo "$pending_providers" | python3 -c "import json,sys; d=json.load(sys.stdin); sys.exit(0 if d['include'] else 1)"; then
+            echo "has_pending=true" >> $GITHUB_OUTPUT
+          else
+            echo "has_pending=false" >> $GITHUB_OUTPUT
+          fi
+          echo "Pending providers: $pending_providers"
+
+  process:
+    name: "Process: ${{ matrix.provider }}"
+    needs: detect-pending
+    if: needs.detect-pending.outputs.has_pending == 'true'
+    runs-on: ubuntu-latest
+    strategy:
+      matrix: ${{ fromJson(needs.detect-pending.outputs.matrix) }}
+      fail-fast: false
+      max-parallel: 3
+    env:
+      GOOGLE_AI_API_KEY: ${{ secrets.GOOGLE_AI_API_KEY }}
+      OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+      MISTRAL_API_KEY: ${{ secrets.MISTRAL_API_KEY }}
+      DEEPSEEK_API_KEY: ${{ secrets.DEEPSEEK_API_KEY }}
+      DASHSCOPE_API_KEY: ${{ secrets.DASHSCOPE_API_KEY }}
+      YI_API_KEY: ${{ secrets.YI_API_KEY }}
+      BAIDU_API_KEY: ${{ secrets.BAIDU_API_KEY }}
+      TOGETHER_API_KEY: ${{ secrets.TOGETHER_API_KEY }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.ref }}
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Run ${{ matrix.provider }} relay agent
+        run: |
+          cd $GITHUB_WORKSPACE
+          python -m relay.multi_relay_agent \
+            --provider ${{ matrix.provider }} \
+            --no-push \
+            --batch-size 5
+
+      - name: Process responses
+        run: |
+          cd $GITHUB_WORKSPACE
+          python -m relay.process_responses --report || true
+
+      - name: Commit and push responses
+        run: |
+          cd $GITHUB_WORKSPACE
+          git config user.name "${{ matrix.provider }}-relay-agent"
+          git config user.email "relay@fracttalix.dev"
+          git add relay/queue/MSG-*.json
+          git add relay/review-tracker.json || true
+          git add relay/review-report.md || true
+          git add relay/budget-tracker.json || true
+          if git diff --cached --quiet; then
+            echo "No new responses to commit."
+          else
+            git commit -m "relay(${{ matrix.provider }}-agent): autonomous review cycle"
+            # Retry push with rebase in case of concurrent pushes from matrix jobs
+            for attempt in 1 2 3 4; do
+              git pull --rebase origin HEAD && git push origin HEAD && break
+              echo "Push attempt $attempt failed, retrying in $((attempt * 2))s..."
+              sleep $((attempt * 2))
+            done
+          fi

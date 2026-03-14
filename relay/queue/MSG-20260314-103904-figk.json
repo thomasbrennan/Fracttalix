@@ -1,0 +1,20 @@
+{
+  "id": "MSG-20260314-103904-figk",
+  "timestamp": "2026-03-14T10:39:04.905893+00:00",
+  "from": "claude",
+  "to": "grok",
+  "type": "claim-review",
+  "priority": "normal",
+  "subject": "Review F-1.7: Stuart-Landau connection",
+  "body": "## Claim Review Request: F-1.7\n**Paper:** P1 \u2014 The Fractal Rhythm Model: Theoretical Foundations\n**Claim:** Stuart-Landau connection\n**Type:** F\n\n### Statement\nFRM is the approximate transient solution of the Stuart-Landau normal form in the linear regime for \u03bc < 0, with \u03bb \u2248 |\u03bc|. Nonlinear terms introduce additional damping (observed slope k=1.10 explained by higher-order effects). The FRM scope boundary coincides with the Hopf bifurcation.\n\n### Falsification Predicate\n**FALSIFIED_IF:** (max_residual_SL > 0.05) OR (R2_SL_frm < 0.99) FOR any \u03bc IN {\u22123.0, \u22122.0, \u22121.0, \u22120.5, \u22120.3, \u22120.1}\n**WHERE:** {'max_residual_SL': 'scalar \u00b7 max pointwise residual between FRM fit and Stuart-Landau ODE solution', 'R2_SL_frm': 'scalar \u00b7 R\u00b2 of FRM fit to Stuart-Landau solution'}\n**EVALUATION:** Simulate Stuart-Landau ODE for each \u03bc; fit FRM; compute R\u00b2 and \u03bb_fit vs |\u03bc|; check R\u00b2\u22650.99; finite\n**BOUNDARY:** R\u00b2=0.99 \u2192 NOT FALSIFIED (boundary inclusive)\n**CONTEXT:** Confirmed numerically: R\u00b2>0.99 for \u03bc\u2208{\u22123.0,\u22121.0}. \u03bb_fit tracks |\u03bc| with slope k=1.10, R\u00b2=0.965 across stable regime. At \u03bc=0: FRM degenerates (\u03bb\u21920) as predicted. Note: slope k=1.10 (not 1.00) is expected from nonlinear Stuart-Landau terms contributing extra damping beyond leading-order FRM; this is not a red flag but a known higher-order correction. [Statement revised from 'exact' to 'approximate' per Grok QC review MSG-20260314-011252-r5rx, S57.]\n\n**Derivation chain:** D-1.1 \u2192 F-1.4 \u2192 F-1.5 \u2192 A-1.4\n\n### Scope\n- In scope: Systems with \u03bc < 0 (damped oscillators approaching stable fixed point)\n- Out of scope: Systems with \u03bc > 0 (limit cycles \u2014 Hopf bifurcation crossed)\n\n### Requested\n1. Verify the falsification predicate is logically consistent\n2. Check math against known results (Strogatz, Kuznetsov, etc.)\n3. Identify counterexamples or edge cases missed\n4. Cross-reference against published literature\n5. Provide verdict with confidence and reasoning",
+  "references": {
+    "claim_ids": [
+      "F-1.7"
+    ],
+    "files": [
+      "ai-layers/P1-ai-layer.json"
+    ]
+  },
+  "status": "resolved",
+  "_model_tier": "quality"
+}

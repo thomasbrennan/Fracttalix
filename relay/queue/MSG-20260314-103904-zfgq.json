@@ -1,0 +1,20 @@
+{
+  "id": "MSG-20260314-103904-zfgq",
+  "timestamp": "2026-03-14T10:39:04.910070+00:00",
+  "from": "claude",
+  "to": "grok",
+  "type": "claim-review",
+  "priority": "normal",
+  "subject": "Review F-SFW.3: Backward compatibility \u2014 v7.x kwargs",
+  "body": "## Claim Review Request: F-SFW.3\n**Paper:** SFW-1 \u2014 Fracttalix Sentinel v12.3: A Three-Channel Streaming Anomaly Detector for FRM Regime Identification\n**Claim:** Backward compatibility \u2014 v7.x kwargs\n**Type:** F\n\n### Statement\nAll v7.x kwargs accepted by SentinelDetector() in v12 are correctly mapped to SentinelConfig equivalents via _legacy_kwargs_to_config. Passing any listed legacy kwarg raises no exception and produces the correct SentinelConfig field value.\n\n### Falsification Predicate\n**FALSIFIED_IF:** EXISTS kwarg_key K IN legacy_mapping_keys SUCH THAT (raises_exception(K) = TRUE OR config_value_matches(K) = FALSE)\n**WHERE:** {'legacy_mapping_keys': 'set \u00b7 35 keys: 34 direct entries in _legacy_kwargs_to_config mapping dict (fracttalix/detector.py lines 30\u201365) plus rsi_window alias (line 71\u201372) \u00b7 keys: alpha, dev_alpha, multiplier, warmup_periods, regime_threshold, regime_alpha_boost, multivariate, n_channels, cov_alpha, rpi_window, rfi_window, rpi_threshold, rfi_threshold, pe_order, pe_window, pe_threshold, ews_window, ews_threshold, sti_window, tps_window, osc_damp_window, osc_threshold, cpd_window, cpd_threshold, ph_delta, ph_lambda, var_cusum_k, var_cusum_h, seasonal_period, quantile_threshold_mode, aqb_window, aqb_q_low, aqb_q_high, history_maxlen, csv_path, rsi_window', 'raises_exception': 'binary \u00b7 TRUE if SentinelDetector(**{K: valid_test_value_for_K}) raises any Python exception', 'config_value_matches': 'binary \u00b7 TRUE if SentinelDetector(**{K: v}).config.<mapped_field> equals v for a valid test value v', 'valid_test_value_for_K': 'scalar \u00b7 a valid value for kwarg K consistent with SentinelConfig field type and constraint (e.g. alpha=0.2, multiplier=3.0)'}\n**EVALUATION:** For each key K in legacy_mapping_keys, construct SentinelDetector(**{K: valid_test_value_for_K}); verify no exception raised; read config.<mapped_field> and verify equals valid_test_value_for_K; finite enumeration over 35 keys\n**BOUNDARY:** any exception raised for any key \u2192 FALSIFIED; any config_value_matches = FALSE \u2192 FALSIFIED (zero tolerance for compat regression)\n**CONTEXT:** 34 direct v7.x kwargs map 1:1 to SentinelConfig fields of identical name. rsi_window is a v7.x alias for rpi_window (lines 71\u201372). All 35 keys exercised in tests/test_backward_compat.py. Detector_7_10 is an alias for SentinelDetector (line 412) confirming backward-compat interface.\n\n**Derivation chain:** D-SFW.2\n\n### Requested\n1. Verify the falsification predicate is logically consistent\n2. Check math against known results (Strogatz, Kuznetsov, etc.)\n3. Identify counterexamples or edge cases missed\n4. Cross-reference against published literature\n5. Provide verdict with confidence and reasoning",
+  "references": {
+    "claim_ids": [
+      "F-SFW.3"
+    ],
+    "files": [
+      "ai-layers/SFW-1-ai-layer.json"
+    ]
+  },
+  "status": "pending",
+  "_model_tier": "quality"
+}

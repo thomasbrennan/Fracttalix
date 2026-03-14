@@ -1,0 +1,20 @@
+{
+  "id": "MSG-20260314-103904-6z49",
+  "timestamp": "2026-03-14T10:39:04.909504+00:00",
+  "from": "claude",
+  "to": "grok",
+  "type": "claim-review",
+  "priority": "normal",
+  "subject": "Review F-SFW.1: Three-channel detection completeness",
+  "body": "## Claim Review Request: F-SFW.1\n**Paper:** SFW-1 \u2014 Fracttalix Sentinel v12.3: A Three-Channel Streaming Anomaly Detector for FRM Regime Identification\n**Claim:** Three-channel detection completeness\n**Type:** F\n\n### Statement\nThe three-channel pipeline (statistical Channel 1 via z-score/CUSUM, oscillatory Channel 2 via FRM-derived frequency decomposition, regime Channel 3 via Hopf-grounded regime detection) jointly detects all alert conditions that any single-channel sub-pipeline would detect. No alert type is exclusive to a channel subset in a way that the combined 37-step pipeline misses.\n\n### Falsification Predicate\n**FALSIFIED_IF:** EXISTS alert_class A IN alert_type_universe SUCH THAT single_channel_detectable(A) = TRUE AND combined_pipeline_detectable(A) = FALSE\n**WHERE:** {'alert_type_universe': 'set \u00b7 all AlertType enum values \u00b7 fracttalix/types.py lines 119\u2013133 \u00b7 {POINT_ANOMALY, CONTEXTUAL_ANOMALY, COLLECTIVE_ANOMALY, DRIFT_ANOMALY, VARIANCE_ANOMALY, REGIME_CHANGE, EWS_WARNING, BAND_ANOMALY, COUPLING_DEGRADATION, STRUCTURAL_RHYTHMIC_DECOUPLING, CASCADE_PRECURSOR}', 'single_channel_detectable': 'binary \u00b7 TRUE if alert_class A is fired by at least one of {statistical_channel_steps, oscillatory_channel_steps, regime_channel_steps} operating on a synthetic test stream', 'combined_pipeline_detectable': 'binary \u00b7 TRUE if alert_class A is fired by the full 37-step _build_default_pipeline on the same synthetic test stream', 'statistical_channel_steps': 'set \u00b7 {CoreEWMAStep, CUSUMStep, VarCUSUMStep, PageHinkleyStep} \u00b7 Steps 1,4,6,7 \u00b7 fracttalix/steps/foundation.py', 'oscillatory_channel_steps': 'set \u00b7 {FrequencyDecompositionStep, RPIStep, RFIStep, SSIStep, PEStep, BandAnomalyStep, CrossFrequencyCouplingStep} \u00b7 Steps 3,12,13,14,15,21,22', 'regime_channel_steps': 'set \u00b7 {RegimeStep, EWSStep, ChannelCoherenceStep, CascadePrecursorStep} \u00b7 Steps 5,16,23,24'}\n**EVALUATION:** For each AlertType in alert_type_universe, verify it is reachable via at least one step in combined_pipeline_detectable; enumerate alert_type \u2192 step mapping in test_steps_*.py; finite enumeration over 11 AlertType values\n**BOUNDARY:** combined_pipeline_detectable = FALSE for any A where single_channel_detectable = TRUE \u2192 FALSIFIED; all 11 alert types reachable in combined pipeline \u2192 NOT FALSIFIED\n**CONTEXT:** Combined pipeline includes all 37 steps which are a superset of each channel's steps. By construction, any alert fired by a channel sub-pipeline is also firable by the full pipeline because all steps are present. Threshold: zero missed alert types \u2014 any gap is a regression.\n\n**Derivation chain:** D-SFW.1\n\n### Requested\n1. Verify the falsification predicate is logically consistent\n2. Check math against known results (Strogatz, Kuznetsov, etc.)\n3. Identify counterexamples or edge cases missed\n4. Cross-reference against published literature\n5. Provide verdict with confidence and reasoning",
+  "references": {
+    "claim_ids": [
+      "F-SFW.1"
+    ],
+    "files": [
+      "ai-layers/SFW-1-ai-layer.json"
+    ]
+  },
+  "status": "resolved",
+  "_model_tier": "quality"
+}

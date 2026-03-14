@@ -1,0 +1,237 @@
+name: Autonomous Propagation Engine
+
+# Runs on schedule — no human trigger required.
+# Processes relay queue, commits responses, triggers distribution.
+on:
+  schedule:
+    # Every 4 hours — autonomous review processing
+    - cron: '0 */4 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  # Job 1: Process Grok relay (primary reviewer)
+  grok-relay:
+    name: Grok autonomous review cycle
+    runs-on: ubuntu-latest
+    if: ${{ vars.ENABLE_AUTONOMOUS == 'true' || github.event_name == 'workflow_dispatch' }}
+    env:
+      XAI_API_KEY: ${{ secrets.XAI_API_KEY }}
+    outputs:
+      processed: ${{ steps.run.outputs.processed }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Check and process Grok messages
+        id: run
+        run: |
+          count=$(python3 -c "
+          import json, glob
+          pending = 0
+          for f in glob.glob('relay/queue/MSG-*.json'):
+              m = json.load(open(f))
+              if m.get('to') in ('grok', 'all') and m.get('status') == 'pending':
+                  pending += 1
+          print(pending)
+          ")
+          echo "pending=$count" >> $GITHUB_OUTPUT
+          if [ "$count" -gt 0 ] && [ -n "$XAI_API_KEY" ]; then
+            python -m relay.grok_agent --no-push --batch-size 5
+            echo "processed=true" >> $GITHUB_OUTPUT
+          else
+            echo "processed=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Process responses
+        if: steps.run.outputs.processed == 'true'
+        run: python -m relay.process_responses --report || true
+
+      - name: Commit responses
+        if: steps.run.outputs.processed == 'true'
+        run: |
+          git config user.name "autonomous-propagation"
+          git config user.email "relay@fracttalix.dev"
+          git add relay/queue/MSG-*.json relay/review-tracker.json relay/review-report.md relay/budget-tracker.json 2>/dev/null || true
+          if ! git diff --cached --quiet; then
+            git commit -m "relay(autonomous): Grok review cycle — $(date -u +%Y-%m-%dT%H:%M:%SZ)"
+            for attempt in 1 2 3 4; do
+              git pull --rebase origin HEAD && git push origin HEAD && break
+              sleep $((attempt * 2))
+            done
+          fi
+
+  # Job 2: Process multi-provider relay (secondary reviewers)
+  multi-relay:
+    name: Multi-AI review cycle
+    needs: grok-relay
+    runs-on: ubuntu-latest
+    if: always() && (vars.ENABLE_AUTONOMOUS == 'true' || github.event_name == 'workflow_dispatch')
+    env:
+      GOOGLE_AI_API_KEY: ${{ secrets.GOOGLE_AI_API_KEY }}
+      OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+      MISTRAL_API_KEY: ${{ secrets.MISTRAL_API_KEY }}
+      DEEPSEEK_API_KEY: ${{ secrets.DEEPSEEK_API_KEY }}
+      DASHSCOPE_API_KEY: ${{ secrets.DASHSCOPE_API_KEY }}
+      YI_API_KEY: ${{ secrets.YI_API_KEY }}
+      BAIDU_API_KEY: ${{ secrets.BAIDU_API_KEY }}
+      TOGETHER_API_KEY: ${{ secrets.TOGETHER_API_KEY }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.ref }}
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Pull latest (post-Grok)
+        run: git pull origin HEAD || true
+
+      - name: Process all providers with pending messages
+        run: |
+          python3 -c "
+          import json, glob, subprocess, os
+
+          providers = {
+              'gemini': 'GOOGLE_AI_API_KEY',
+              'chatgpt': 'OPENAI_API_KEY',
+              'mistral': 'MISTRAL_API_KEY',
+              'deepseek': 'DEEPSEEK_API_KEY',
+              'qwen': 'DASHSCOPE_API_KEY',
+              'yi': 'YI_API_KEY',
+              'ernie': 'BAIDU_API_KEY',
+              'llama': 'TOGETHER_API_KEY',
+          }
+
+          for provider, env_key in providers.items():
+              if not os.environ.get(env_key):
+                  continue
+              # Check for pending messages
+              pending = 0
+              for f in glob.glob('relay/queue/MSG-*.json'):
+                  try:
+                      m = json.load(open(f))
+                      if m.get('to') in (provider, 'all') and m.get('status') == 'pending':
+                          pending += 1
+                  except:
+                      pass
+              if pending > 0:
+                  print(f'Processing {pending} message(s) for {provider}...')
+                  subprocess.run([
+                      'python', '-m', 'relay.multi_relay_agent',
+                      '--provider', provider, '--no-push', '--batch-size', '3'
+                  ])
+          "
+
+      - name: Process responses
+        run: python -m relay.process_responses --report || true
+
+      - name: Commit multi-provider responses
+        run: |
+          git config user.name "autonomous-propagation"
+          git config user.email "relay@fracttalix.dev"
+          git add relay/queue/MSG-*.json relay/review-tracker.json relay/review-report.md 2>/dev/null || true
+          if ! git diff --cached --quiet; then
+            git commit -m "relay(autonomous): multi-AI review cycle — $(date -u +%Y-%m-%dT%H:%M:%SZ)"
+            for attempt in 1 2 3 4; do
+              git pull --rebase origin HEAD && git push origin HEAD && break
+              sleep $((attempt * 2))
+            done
+          fi
+
+  # Job 3: Auto-generate new review requests for unreviewed claims
+  auto-distribute:
+    name: Auto-distribute unreviewed claims
+    needs: [grok-relay, multi-relay]
+    runs-on: ubuntu-latest
+    if: always() && (vars.ENABLE_AUTONOMOUS == 'true' || github.event_name == 'workflow_dispatch')
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Pull latest
+        run: git pull origin HEAD || true
+
+      - name: Identify unreviewed claims and generate new review requests
+        run: |
+          python3 -c "
+          import json, glob
+
+          # Load review tracker
+          tracker = {}
+          try:
+              with open('relay/review-tracker.json') as f:
+                  tracker = json.load(f)
+          except:
+              pass
+
+          reviewed = set()
+          for entry in tracker.get('reviews', []):
+              reviewed.add(entry.get('claim_id', ''))
+
+          # Load all AI layers to find unreviewed claims
+          unreviewed = []
+          for layer_path in glob.glob('ai-layers/*-ai-layer.json'):
+              try:
+                  with open(layer_path) as f:
+                      layer = json.load(f)
+                  for claim in layer.get('claim_registry', []):
+                      cid = claim.get('claim_id', '')
+                      if claim.get('type') == 'F' and cid not in reviewed:
+                          unreviewed.append(claim)
+              except:
+                  pass
+
+          # Check if there are already pending messages for these claims
+          pending_claims = set()
+          for msg_path in glob.glob('relay/queue/MSG-*.json'):
+              try:
+                  with open(msg_path) as f:
+                      msg = json.load(f)
+                  if msg.get('status') == 'pending':
+                      for c in msg.get('claims', []):
+                          pending_claims.add(c.get('claim_id', ''))
+                      for cid in msg.get('metadata', {}).get('claims_to_review', []):
+                          pending_claims.add(cid)
+              except:
+                  pass
+
+          # Filter to truly unqueued claims
+          need_review = [c for c in unreviewed if c.get('claim_id') not in pending_claims]
+
+          print(f'Total unreviewed: {len(unreviewed)}')
+          print(f'Already queued: {len(unreviewed) - len(need_review)}')
+          print(f'Need new review requests: {len(need_review)}')
+
+          if need_review:
+              print('Claims needing review:')
+              for c in need_review[:10]:
+                  print(f'  {c[\"claim_id\"]}: {c.get(\"statement\", \"\")[:80]}')
+          "
+
+      - name: Commit any new messages
+        run: |
+          git config user.name "autonomous-propagation"
+          git config user.email "relay@fracttalix.dev"
+          git add relay/queue/MSG-*.json 2>/dev/null || true
+          if ! git diff --cached --quiet; then
+            git commit -m "relay(autonomous): distribute unreviewed claims — $(date -u +%Y-%m-%dT%H:%M:%SZ)"
+            for attempt in 1 2 3 4; do
+              git pull --rebase origin HEAD && git push origin HEAD && break
+              sleep $((attempt * 2))
+            done
+          fi

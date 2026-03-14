@@ -1,0 +1,108 @@
+name: 'DRS-MP Validate'
+description: 'Validate Dual Reader Standard Message Protocol (DRS-MP) messages in your repository. Ensures inter-AI communication messages carry properly structured epistemological content.'
+author: 'Thomas Brennan'
+
+branding:
+  icon: 'check-circle'
+  color: 'blue'
+
+inputs:
+  path:
+    description: 'Path to message files or directory (supports glob patterns)'
+    required: false
+    default: 'relay/queue/MSG-*.json'
+  fail-on-error:
+    description: 'Fail the action if validation errors are found'
+    required: false
+    default: 'true'
+
+outputs:
+  total:
+    description: 'Total messages validated'
+    value: ${{ steps.validate.outputs.total }}
+  errors:
+    description: 'Number of validation errors'
+    value: ${{ steps.validate.outputs.errors }}
+  valid:
+    description: 'Whether all messages are valid (true/false)'
+    value: ${{ steps.validate.outputs.valid }}
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Validate DRS-MP messages
+      id: validate
+      shell: bash
+      run: |
+        python3 -c "
+        import glob, json, sys
+
+        CLAIM_TYPES = {'A', 'D', 'F'}
+        VERDICT_VALUES = {'confirmed', 'disputed', 'inconclusive', 'needs-revision'}
+        PREDICATE_PARTS = ['FALSIFIED_IF', 'WHERE', 'EVALUATION', 'BOUNDARY', 'CONTEXT']
+
+        files = sorted(glob.glob('${{ inputs.path }}'))
+        if not files:
+            print('No DRS-MP messages found at: ${{ inputs.path }}')
+            print('total=0' )
+            print('errors=0')
+            print('valid=true')
+            sys.exit(0)
+
+        total_errors = 0
+        for path in files:
+            try:
+                with open(path) as f:
+                    msg = json.load(f)
+                errors = []
+
+                # Required fields
+                for field in ['msg_id', 'timestamp', 'from', 'to', 'type', 'subject', 'body']:
+                    if field not in msg:
+                        errors.append(f'Missing required field: {field}')
+
+                # Validate claims
+                for claim in msg.get('claims', []):
+                    cid = claim.get('claim_id', '?')
+                    if claim.get('type') not in CLAIM_TYPES:
+                        errors.append(f'Claim {cid}: invalid type {claim.get(\"type\")}')
+                    if claim.get('type') == 'F':
+                        pred = claim.get('falsification_predicate', {})
+                        for part in PREDICATE_PARTS:
+                            if not pred.get(part):
+                                errors.append(f'Claim {cid}: predicate missing {part}')
+
+                # Validate verdicts
+                for verdict in msg.get('verdicts', []):
+                    vid = verdict.get('claim_id', '?')
+                    if verdict.get('verdict') not in VERDICT_VALUES:
+                        errors.append(f'Verdict {vid}: invalid verdict {verdict.get(\"verdict\")}')
+                    conf = verdict.get('confidence', -1)
+                    if not (0 <= conf <= 1):
+                        errors.append(f'Verdict {vid}: confidence {conf} out of range')
+
+                if errors:
+                    print(f'FAIL  {path}')
+                    for e in errors:
+                        print(f'      {e}')
+                    total_errors += len(errors)
+                else:
+                    n_claims = len(msg.get('claims', []))
+                    n_verdicts = len(msg.get('verdicts', []))
+                    print(f'OK    {path} ({n_claims} claims, {n_verdicts} verdicts)')
+
+            except Exception as e:
+                print(f'ERROR {path}: {e}')
+                total_errors += 1
+
+        valid = 'true' if total_errors == 0 else 'false'
+        print(f'\nTotal: {len(files)} messages, {total_errors} errors')
+
+        with open('$GITHUB_OUTPUT', 'a') as f:
+            f.write(f'total={len(files)}\n')
+            f.write(f'errors={total_errors}\n')
+            f.write(f'valid={valid}\n')
+
+        if total_errors > 0 and '${{ inputs.fail-on-error }}' == 'true':
+            sys.exit(1)
+        "

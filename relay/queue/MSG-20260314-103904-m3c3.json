@@ -1,0 +1,20 @@
+{
+  "id": "MSG-20260314-103904-m3c3",
+  "timestamp": "2026-03-14T10:39:04.907059+00:00",
+  "from": "claude",
+  "to": "grok",
+  "type": "claim-review",
+  "priority": "normal",
+  "subject": "Review C-3.REG: FRM Regression Protocol",
+  "body": "## Claim Review Request: C-3.REG\n**Paper:** P3 \u2014 FRM Measurement and Diagnostics: Standard Protocol for Extracting Parameters, Computing Goodness-of-Fit, and Diagnosing Scope Boundaries\n**Claim:** FRM Regression Protocol\n**Type:** F\n\n### Statement\nThe FRM regression protocol consists of steps R1\u2013R9 and produces: R\u00b2_frm, \u03b2_measured, T_char, \u03c3_\u03b2, and classification \u2208 {CONFIRMED, EXCLUDED, ANOMALOUS}. The protocol preserves the zero-free-parameter constraint of P1 I-7.\n\n### Falsification Predicate\n**FALSIFIED_IF:** (protocol_produces_free_parameter = true) OR (R2_frm_computation_is_undefined = true) OR (beta_measured_extraction_is_undefined = true) OR (T_char_computation_deviates_from_4tau_gen = true)\n**WHERE:** protocol_produces_free_parameter: BOOLEAN \u2014 TRUE if any D-3.2 step fits \u03c4_gen to observable O(t). R2_frm_computation_is_undefined: BOOLEAN \u2014 TRUE if formula (1\u2212SS_res/SS_tot) with FRM prediction not explicitly stated. beta_measured_extraction_is_undefined: BOOLEAN \u2014 TRUE if \u03b2_measured=\u03c9_fit\u00b7\u03c4_gen/\u03c0 not stated. T_char_computation_deviates_from_4tau_gen: BOOLEAN \u2014 TRUE if T_char\u22602\u03c0/\u03c9_fit beyond numerical precision.\n**EVALUATION:** Step 1: check D-3.2 for free-parameter \u03c4_gen. Step 2: check R\u00b2 formula in Section 4. Step 3: check \u03b2_measured formula. Step 4: check T_char = 4\u00b7\u03c4_gen. Each step binary. 4 steps total.\n**BOUNDARY:** All four conditions false \u2192 NOT FALSIFIED. Satisfied by zero-free-parameter protocol with explicit formulae for R\u00b2, \u03b2, T_char.\n**CONTEXT:** C-3.REG. FRM has zero free parameters (P1 I-7). Measurement protocol must preserve this property. A protocol fitting \u03c4_gen to data introduces a free parameter equivalent to a 5-parameter model. HR-3.1 resolution: \u03b2_measured is always 1/2 analytically; empirical content is T_obs vs T_char ratio across substrates.\n\n**Derivation chain:** D-1.1 \u2192 D-3.1 \u2192 D-3.2 \u2192 F-1.4\n\n### Requested\n1. Verify the falsification predicate is logically consistent\n2. Check math against known results (Strogatz, Kuznetsov, etc.)\n3. Identify counterexamples or edge cases missed\n4. Cross-reference against published literature\n5. Provide verdict with confidence and reasoning",
+  "references": {
+    "claim_ids": [
+      "C-3.REG"
+    ],
+    "files": [
+      "ai-layers/P3-ai-layer.json"
+    ]
+  },
+  "status": "resolved",
+  "_model_tier": "quality"
+}

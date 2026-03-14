@@ -1,0 +1,147 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Fracttalix Distributed Docs Network Manifest",
+  "version": "1.0.0",
+  "description": "Topology definition for the distributed documentation network. A network persists; a node invites loss.",
+  "network": {
+    "name": "fracttalix-ddn",
+    "minimum_replicas": 3,
+    "quorum_threshold": 2,
+    "sync_interval_minutes": 60,
+    "health_check_interval_minutes": 360
+  },
+  "nodes": [
+    {
+      "id": "github-primary",
+      "type": "git-remote",
+      "provider": "github",
+      "url": "https://github.com/thomasbrennan/Fracttalix.git",
+      "role": "primary",
+      "capabilities": ["git-push", "git-pull", "ci-cd", "issues", "releases"],
+      "health_endpoint": "https://api.github.com/repos/thomasbrennan/Fracttalix",
+      "enabled": true,
+      "priority": 1
+    },
+    {
+      "id": "gitlab-mirror",
+      "type": "git-remote",
+      "provider": "gitlab",
+      "url": "https://gitlab.com/thomasbrennan/Fracttalix.git",
+      "role": "mirror",
+      "capabilities": ["git-push", "git-pull", "ci-cd"],
+      "health_endpoint": "https://gitlab.com/api/v4/projects/thomasbrennan%2FFracttalix",
+      "enabled": true,
+      "priority": 2
+    },
+    {
+      "id": "codeberg-mirror",
+      "type": "git-remote",
+      "provider": "codeberg",
+      "url": "https://codeberg.org/thomasbrennan/Fracttalix.git",
+      "role": "mirror",
+      "capabilities": ["git-push", "git-pull"],
+      "health_endpoint": "https://codeberg.org/api/v1/repos/thomasbrennan/Fracttalix",
+      "enabled": true,
+      "priority": 3
+    },
+    {
+      "id": "bitbucket-mirror",
+      "type": "git-remote",
+      "provider": "bitbucket",
+      "url": "https://bitbucket.org/thomasbrennan/Fracttalix.git",
+      "role": "mirror",
+      "capabilities": ["git-push", "git-pull"],
+      "health_endpoint": "https://api.bitbucket.org/2.0/repositories/thomasbrennan/Fracttalix",
+      "enabled": true,
+      "priority": 4
+    },
+    {
+      "id": "zenodo-archive",
+      "type": "archive",
+      "provider": "zenodo",
+      "url": "https://zenodo.org/records/18859299",
+      "role": "archive",
+      "capabilities": ["versioned-snapshot", "doi"],
+      "doi": "10.5281/zenodo.18859299",
+      "enabled": true,
+      "priority": 5
+    },
+    {
+      "id": "software-heritage",
+      "type": "archive",
+      "provider": "software-heritage",
+      "url": "https://archive.softwareheritage.org/browse/origin/?origin_url=https://github.com/thomasbrennan/Fracttalix",
+      "role": "archive",
+      "capabilities": ["immutable-snapshot", "swhid"],
+      "enabled": true,
+      "priority": 6
+    },
+    {
+      "id": "internet-archive",
+      "type": "archive",
+      "provider": "internet-archive",
+      "url": "https://web.archive.org/web/https://github.com/thomasbrennan/Fracttalix",
+      "role": "archive",
+      "capabilities": ["wayback-snapshot"],
+      "enabled": true,
+      "priority": 7
+    },
+    {
+      "id": "ipfs-snapshot",
+      "type": "content-addressed",
+      "provider": "ipfs",
+      "url": null,
+      "role": "immutable-archive",
+      "capabilities": ["content-addressed", "decentralized", "immutable"],
+      "cid": null,
+      "pin_services": ["pinata", "web3.storage", "infura"],
+      "enabled": true,
+      "priority": 8
+    }
+  ],
+  "sync_policy": {
+    "on_push_to_main": {
+      "targets": ["gitlab-mirror", "codeberg-mirror", "bitbucket-mirror"],
+      "strategy": "force-mirror",
+      "retry": {
+        "max_attempts": 4,
+        "backoff": "exponential",
+        "base_delay_seconds": 2
+      }
+    },
+    "on_release": {
+      "targets": ["zenodo-archive", "software-heritage", "internet-archive", "ipfs-snapshot"],
+      "strategy": "snapshot",
+      "include_patterns": [
+        "**/*.md", "**/*.json", "**/*.py", "**/*.yml",
+        "**/*.cff", "**/*.bib", "LICENSE", "**/*.ipynb"
+      ]
+    },
+    "periodic": {
+      "targets": ["gitlab-mirror", "codeberg-mirror", "bitbucket-mirror"],
+      "strategy": "incremental-sync",
+      "interval_minutes": 60
+    }
+  },
+  "recovery": {
+    "strategy": "quorum-rebuild",
+    "description": "If any node fails, rebuild from the quorum of surviving nodes. Any 2 of the git mirrors can restore the full repository state.",
+    "fallback_order": [
+      "github-primary",
+      "gitlab-mirror",
+      "codeberg-mirror",
+      "bitbucket-mirror",
+      "ipfs-snapshot",
+      "zenodo-archive"
+    ]
+  },
+  "integrity": {
+    "method": "git-commit-hash",
+    "description": "All git mirrors share the same commit history. Integrity is verified by comparing HEAD commit hashes across nodes.",
+    "additional_checks": [
+      "branch-count-match",
+      "tag-count-match",
+      "docs-file-count"
+    ]
+  }
+}

@@ -1,6 +1,6 @@
 {
-  "title": "Fracttalix Sentinel: Three-Channel Streaming Anomaly Detector",
-  "description": "Fracttalix: a research corpus comprising the Fractal Rhythm Model (FRM), Meta-Kaizen series, and the Dual Reader Standard (DRS). The FRM describes association dynamics via f(t) = B + A·exp(−λt)·cos(ωt+φ) across scales from quantum decoherence to cosmological structure. The Meta-Kaizen series (6 papers) derives a measurement-theoretic governance framework from six axioms. The DRS is a verification architecture comprising two protocols: the Dual Reader Protocol (DRP) for text and the Grounded Verification Protocol (GVP) for software. The DRS Architecture specification formally defines the complete standard including the Falsification Kernel K=(P,O,M,B), six verification tiers, and the machine lingua franca property. Every claim carries a machine-evaluable falsification predicate that reduces to embedded binary logic — a deterministic single-bit verdict independent of human language. Includes Fracttalix Sentinel v12.3, a three-channel streaming anomaly detector implementing the FRM (zero dependencies, 2.6% normal FPR at production defaults). 23 corpus objects, 162 machine-readable claims with falsification predicates, 21 AI layers, and full DRS compliance.",
+  "title": "Fracttalix: Unified Scientific Corpus — Fractal Rhythm Model, Meta-Kaizen Series, Dual Reader Standard, and DRS Message Protocol for Inter-AI Communication",
+  "description": "Fracttalix: a unified scientific corpus comprising the Fractal Rhythm Model (FRM), Meta-Kaizen governance series (8 papers), the Dual Reader Standard (DRS), and the DRS Message Protocol (DRS-MP) for inter-AI communication. The FRM describes association dynamics via f(t) = B + A·exp(−λt)·cos(ωt+φ) across scales from quantum decoherence to cosmological structure. The Meta-Kaizen series (8 papers) derives a measurement-theoretic governance framework from six axioms, formalizes the Canonical Build Plan (CBP) with proved monotonic quality improvement (Paper 7), and introduces the DRS Message Protocol for epistemologically grounded inter-AI messaging (Paper 8). The DRS is a verification architecture comprising two protocols: the Dual Reader Protocol (DRP) for text and the Grounded Verification Protocol (GVP) for software. DRS-MP extends DRS to inter-AI communication — the first protocol to carry epistemologically typed claims with full 5-part falsification predicates as structured machine-readable objects in inter-AI exchanges. The DRS Architecture specification formally defines the complete standard including the Falsification Kernel K=(P,O,M,B), six verification tiers, and the machine lingua franca property. Every claim carries a machine-evaluable falsification predicate that reduces to embedded binary logic — a deterministic single-bit verdict independent of human language. Includes Fracttalix Sentinel v12.3, a three-channel streaming anomaly detector implementing the FRM (zero dependencies, 2.6% normal FPR at production defaults). The multi-AI relay system enables autonomous hostile review across 9 AI providers (Claude, Grok, Gemini, ChatGPT, Mistral, DeepSeek, Qwen, Yi, ERNIE/Llama). 25+ corpus objects, 175+ machine-readable claims with falsification predicates, 21+ AI layers, and full DRS compliance.",
   "upload_type": "software",
   "license": {
     "id": "CC0-1.0"
@@ -45,7 +45,25 @@
     "falsification kernel",
     "machine-evaluable claims",
     "verification architecture",
-    "binary logic"
+    "binary logic",
+    "inter-AI communication",
+    "multi-agent systems",
+    "DRS message protocol",
+    "DRS-MP",
+    "epistemological messaging",
+    "canonical build plan",
+    "AI peer review",
+    "machine-verifiable research",
+    "structured claims",
+    "falsification predicates",
+    "hostile review",
+    "adversarial review",
+    "AI governance",
+    "agent-to-agent protocol",
+    "A2A",
+    "MCP",
+    "transport-independent protocol",
+    "Layer 4 epistemology"
   ],
   "subjects": [
     {
@@ -65,5 +83,5 @@
   "version": "12.3.0",
   "language": "eng",
   "access_right": "open",
-  "notes": "v12.3.0: FPR elimination (35%→2.6%) and drift recovery. SeasonalPreprocessStep (FFT deseasonalization), ConsensusGate (≥2 soft alerts required), VarCUSUM/CUSUM k correction (0.5→1.0), null-distribution threshold recalibration, non-adaptive drift CUSUM. Mean F1 +25% (0.500→0.625). 405 tests passing. Theoretical foundation: Fractal Rhythm Model (FRM) — 11 axioms. Meta-Kaizen series — 6 papers deriving KVS from measurement-theoretic axioms and extending the DRS to software. Dual Reader Standard (DRS) — verification architecture with DRP (text protocol) and GVP (software protocol), with standalone Architecture Specification. Falsification Kernel K=(P,O,M,B) reduces every claim to embedded binary logic. 23 corpus objects across two tracks. 162 claims, 21 AI layers, schema v3-S51. Introduced by Thomas Brennan with AI collaborators Claude (Anthropic) and Grok (xAI)."
+  "notes": "v12.3.0: Includes MK-P7 (Canonical Build Plan with proved monotonic quality, adversarial detection advantage, and folded dominance theorems) and MK-P8 (DRS Message Protocol for inter-AI communication — first protocol with epistemologically typed claims in multi-agent messaging). Multi-AI relay system distributing hostile reviews to 9 AI providers. FPR elimination (35%→2.6%) and drift recovery. 175+ machine-verifiable claims across 25+ corpus objects. Meta-Kaizen series — 8 papers. Dual Reader Standard (DRS) — verification architecture with DRP (text protocol), GVP (software protocol), and DRS-MP (inter-AI messaging protocol). Falsification Kernel K=(P,O,M,B) reduces every claim to embedded binary logic. Historical milestone: first DRS-MP v2 inter-AI message transmitted March 14, 2026. Introduced by Thomas Brennan with AI collaborators Claude (Anthropic) and Grok (xAI)."
 }

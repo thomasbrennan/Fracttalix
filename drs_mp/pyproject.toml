@@ -1,0 +1,55 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "drs-mp"
+version = "0.1.0"
+description = "Dual Reader Standard Message Protocol — structured inter-AI communication with epistemologically typed claims"
+readme = "README.md"
+license = { text = "CC0-1.0" }
+authors = [
+    { name = "Thomas Brennan" }
+]
+keywords = [
+    "inter-AI-communication",
+    "multi-agent-systems",
+    "dual-reader-standard",
+    "DRS",
+    "DRS-MP",
+    "machine-verifiable-claims",
+    "falsification-predicates",
+    "epistemology",
+    "AI-peer-review",
+    "structured-messaging",
+    "hostile-review",
+    "claim-verification",
+    "agent-communication",
+    "A2A",
+    "MCP",
+]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Science/Research",
+    "Intended Audience :: Developers",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "License :: CC0 1.0 Universal (CC0 1.0) Public Domain Dedication",
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
+    "Topic :: Communications",
+    "Operating System :: OS Independent",
+]
+requires-python = ">=3.9"
+# Zero dependencies — stdlib only
+
+[project.urls]
+Homepage = "https://github.com/thomasbrennan/Fracttalix"
+Documentation = "https://github.com/thomasbrennan/Fracttalix/blob/main/relay/protocol-v2.json"
+"Paper (MK-P8)" = "https://github.com/thomasbrennan/Fracttalix/blob/main/paper/meta-kaizen/MK-P8-DRSForInterAICommunication.md"
+"Protocol Schema" = "https://github.com/thomasbrennan/Fracttalix/blob/main/relay/protocol-v2.json"
+
+[project.scripts]
+drs-mp = "drs_mp.__main__:main"

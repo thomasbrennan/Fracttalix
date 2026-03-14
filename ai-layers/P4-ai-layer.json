@@ -81,7 +81,7 @@
       "type": "D",
       "label": "Mathematical structure of FRM",
       "name": "Mathematical structure of FRM",
-      "statement": "The FRM is the exact transient solution of the Stuart-Landau normal form for μ < 0. The mathematical properties (exponential decay envelope, oscillatory core, phase offset) are derivable from the DDE characteristic equation.",
+      "statement": "The FRM is the approximate transient solution of the Stuart-Landau normal form in the linear regime for μ < 0. Nonlinear terms add extra damping beyond leading-order FRM (slope k=1.10). The mathematical properties (exponential decay envelope, oscillatory core, phase offset) are derivable from the DDE characteristic equation.",
       "derivation_source": [
         "F-1.7",
         "F-1.4",

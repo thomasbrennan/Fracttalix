@@ -1,0 +1,321 @@
+{
+  "total_budget_usd": 25.0,
+  "spent_usd": 0.632397,
+  "transactions": [
+    {
+      "msg_id": "MSG-20260314-102948-3i8h",
+      "model": "grok-4-latest",
+      "input_tokens": 2168,
+      "output_tokens": 496,
+      "cost_usd": 0.013944
+    },
+    {
+      "msg_id": "MSG-20260314-102948-69il",
+      "model": "grok-4-latest",
+      "input_tokens": 2136,
+      "output_tokens": 600,
+      "cost_usd": 0.015408
+    },
+    {
+      "msg_id": "MSG-20260314-102948-8tau",
+      "model": "grok-4-latest",
+      "input_tokens": 2069,
+      "output_tokens": 422,
+      "cost_usd": 0.012537
+    },
+    {
+      "msg_id": "MSG-20260314-102948-a2op",
+      "model": "grok-4-latest",
+      "input_tokens": 2086,
+      "output_tokens": 525,
+      "cost_usd": 0.014133
+    },
+    {
+      "msg_id": "MSG-20260314-102948-cuv3",
+      "model": "grok-4-latest",
+      "input_tokens": 2077,
+      "output_tokens": 596,
+      "cost_usd": 0.015171
+    },
+    {
+      "msg_id": "MSG-20260314-102948-e65g",
+      "model": "grok-4-latest",
+      "input_tokens": 2127,
+      "output_tokens": 603,
+      "cost_usd": 0.015426
+    },
+    {
+      "msg_id": "MSG-20260314-102948-kfaw",
+      "model": "grok-4-latest",
+      "input_tokens": 2119,
+      "output_tokens": 536,
+      "cost_usd": 0.014397
+    },
+    {
+      "msg_id": "MSG-20260314-102948-m800",
+      "model": "grok-4-latest",
+      "input_tokens": 2199,
+      "output_tokens": 470,
+      "cost_usd": 0.013647
+    },
+    {
+      "msg_id": "MSG-20260314-102948-u2aw",
+      "model": "grok-4-latest",
+      "input_tokens": 2102,
+      "output_tokens": 533,
+      "cost_usd": 0.014301
+    },
+    {
+      "msg_id": "MSG-20260314-102948-ubys",
+      "model": "grok-4-latest",
+      "input_tokens": 2103,
+      "output_tokens": 531,
+      "cost_usd": 0.014274
+    },
+    {
+      "msg_id": "MSG-20260314-103904-0e9n",
+      "model": "grok-4-latest",
+      "input_tokens": 2046,
+      "output_tokens": 451,
+      "cost_usd": 0.012903
+    },
+    {
+      "msg_id": "MSG-20260314-103904-1bgt",
+      "model": "grok-4-latest",
+      "input_tokens": 2309,
+      "output_tokens": 541,
+      "cost_usd": 0.015042
+    },
+    {
+      "msg_id": "MSG-20260314-103904-2ppl",
+      "model": "grok-4-latest",
+      "input_tokens": 2139,
+      "output_tokens": 378,
+      "cost_usd": 0.012087
+    },
+    {
+      "msg_id": "MSG-20260314-103904-32kw",
+      "model": "grok-4-latest",
+      "input_tokens": 2164,
+      "output_tokens": 500,
+      "cost_usd": 0.013992
+    },
+    {
+      "msg_id": "MSG-20260314-103904-475y",
+      "model": "grok-4-latest",
+      "input_tokens": 2332,
+      "output_tokens": 407,
+      "cost_usd": 0.013101
+    },
+    {
+      "msg_id": "MSG-20260314-103904-4mcf",
+      "model": "grok-4-latest",
+      "input_tokens": 2060,
+      "output_tokens": 422,
+      "cost_usd": 0.01251
+    },
+    {
+      "msg_id": "MSG-20260314-103904-4rn2",
+      "model": "grok-4-latest",
+      "input_tokens": 2197,
+      "output_tokens": 474,
+      "cost_usd": 0.013701
+    },
+    {
+      "msg_id": "MSG-20260314-103904-59um",
+      "model": "grok-4-latest",
+      "input_tokens": 2282,
+      "output_tokens": 532,
+      "cost_usd": 0.014826
+    },
+    {
+      "msg_id": "MSG-20260314-103904-6bwu",
+      "model": "grok-4-latest",
+      "input_tokens": 2131,
+      "output_tokens": 349,
+      "cost_usd": 0.011628
+    },
+    {
+      "msg_id": "MSG-20260314-103904-6c7k",
+      "model": "grok-4-latest",
+      "input_tokens": 2083,
+      "output_tokens": 555,
+      "cost_usd": 0.014574
+    },
+    {
+      "msg_id": "MSG-20260314-103904-6ivf",
+      "model": "grok-4-latest",
+      "input_tokens": 2220,
+      "output_tokens": 512,
+      "cost_usd": 0.01434
+    },
+    {
+      "msg_id": "MSG-20260314-103904-6mm1",
+      "model": "grok-4-latest",
+      "input_tokens": 2189,
+      "output_tokens": 513,
+      "cost_usd": 0.014262
+    },
+    {
+      "msg_id": "MSG-20260314-103904-6z49",
+      "model": "grok-4-latest",
+      "input_tokens": 2435,
+      "output_tokens": 564,
+      "cost_usd": 0.015765
+    },
+    {
+      "msg_id": "MSG-20260314-103904-7tux",
+      "model": "grok-4-latest",
+      "input_tokens": 2188,
+      "output_tokens": 584,
+      "cost_usd": 0.015324
+    },
+    {
+      "msg_id": "MSG-20260314-103904-81ra",
+      "model": "grok-4-latest",
+      "input_tokens": 2172,
+      "output_tokens": 542,
+      "cost_usd": 0.014646
+    },
+    {
+      "msg_id": "MSG-20260314-103904-88ug",
+      "model": "grok-4-latest",
+      "input_tokens": 2181,
+      "output_tokens": 438,
+      "cost_usd": 0.013113
+    },
+    {
+      "msg_id": "MSG-20260314-103904-8d9g",
+      "model": "grok-4-latest",
+      "input_tokens": 2133,
+      "output_tokens": 415,
+      "cost_usd": 0.012624
+    },
+    {
+      "msg_id": "MSG-20260314-103904-8dja",
+      "model": "grok-4-latest",
+      "input_tokens": 2174,
+      "output_tokens": 371,
+      "cost_usd": 0.012087
+    },
+    {
+      "msg_id": "MSG-20260314-103904-8dwe",
+      "model": "grok-4-latest",
+      "input_tokens": 2166,
+      "output_tokens": 506,
+      "cost_usd": 0.014088
+    },
+    {
+      "msg_id": "MSG-20260314-103904-9sms",
+      "model": "grok-4-latest",
+      "input_tokens": 2052,
+      "output_tokens": 470,
+      "cost_usd": 0.013206
+    },
+    {
+      "msg_id": "MSG-20260314-103904-c3dy",
+      "model": "grok-4-latest",
+      "input_tokens": 2183,
+      "output_tokens": 591,
+      "cost_usd": 0.015414
+    },
+    {
+      "msg_id": "MSG-20260314-103904-c8n1",
+      "model": "grok-4-latest",
+      "input_tokens": 2140,
+      "output_tokens": 543,
+      "cost_usd": 0.014565
+    },
+    {
+      "msg_id": "MSG-20260314-103904-cdnf",
+      "model": "grok-4-latest",
+      "input_tokens": 2078,
+      "output_tokens": 466,
+      "cost_usd": 0.013224
+    },
+    {
+      "msg_id": "MSG-20260314-103904-cjd0",
+      "model": "grok-4-latest",
+      "input_tokens": 2284,
+      "output_tokens": 469,
+      "cost_usd": 0.013887
+    },
+    {
+      "msg_id": "MSG-20260314-103904-d7kc",
+      "model": "grok-4-latest",
+      "input_tokens": 2103,
+      "output_tokens": 468,
+      "cost_usd": 0.013329
+    },
+    {
+      "msg_id": "MSG-20260314-103904-dxuj",
+      "model": "grok-4-latest",
+      "input_tokens": 2235,
+      "output_tokens": 561,
+      "cost_usd": 0.01512
+    },
+    {
+      "msg_id": "MSG-20260314-103904-eb82",
+      "model": "grok-4-latest",
+      "input_tokens": 2248,
+      "output_tokens": 638,
+      "cost_usd": 0.016314
+    },
+    {
+      "msg_id": "MSG-20260314-103904-figk",
+      "model": "grok-4-latest",
+      "input_tokens": 2271,
+      "output_tokens": 466,
+      "cost_usd": 0.013803
+    },
+    {
+      "msg_id": "MSG-20260314-103904-gm96",
+      "model": "grok-4-latest",
+      "input_tokens": 2323,
+      "output_tokens": 521,
+      "cost_usd": 0.014784
+    },
+    {
+      "msg_id": "MSG-20260314-103904-hwew",
+      "model": "grok-4-latest",
+      "input_tokens": 2099,
+      "output_tokens": 688,
+      "cost_usd": 0.016617
+    },
+    {
+      "msg_id": "MSG-20260314-103904-ioqq",
+      "model": "grok-4-latest",
+      "input_tokens": 2085,
+      "output_tokens": 466,
+      "cost_usd": 0.013245
+    },
+    {
+      "msg_id": "MSG-20260314-103904-j5tt",
+      "model": "grok-4-latest",
+      "input_tokens": 2054,
+      "output_tokens": 398,
+      "cost_usd": 0.012132
+    },
+    {
+      "msg_id": "MSG-20260314-103904-jqis",
+      "model": "grok-4-latest",
+      "input_tokens": 2199,
+      "output_tokens": 504,
+      "cost_usd": 0.014157
+    },
+    {
+      "msg_id": "MSG-20260314-103904-ky9y",
+      "model": "grok-4-latest",
+      "input_tokens": 2143,
+      "output_tokens": 403,
+      "cost_usd": 0.012474
+    },
+    {
+      "msg_id": "MSG-20260314-103904-m3c3",
+      "model": "grok-4-latest",
+      "input_tokens": 2280,
+      "output_tokens": 629,
+      "cost_usd": 0.016275
+    }
+  ]
+}

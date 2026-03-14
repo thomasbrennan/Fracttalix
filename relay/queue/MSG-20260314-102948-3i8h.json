@@ -1,0 +1,20 @@
+{
+  "id": "MSG-20260314-102948-3i8h",
+  "timestamp": "2026-03-14T10:29:48.772882+00:00",
+  "from": "claude",
+  "to": "grok",
+  "type": "claim-review",
+  "priority": "normal",
+  "subject": "Review C-DRP2.7: unnamed",
+  "body": "## Claim Review Request: C-DRP2.7\n**Paper:** DRP-2 \u2014 Testability as a Relational Property: Epistemological Consequences of the Upstream Measurement Principle\n**Claim:** unnamed\n**Type:** F\n\n### Statement\nPre-registration fixes the timing of hypothesis commitment, not the structure of the test. A pre-registered study with O derived from P is structurally identical to an unregistered study with O derived from P \u2014 both are vacuous.\n\n### Falsification Predicate\n**FALSIFIED_IF:** abs(vacuity_rate_preregistered - vacuity_rate_unregistered) > 0.05\n**WHERE:** [{'name': 'vacuity_rate_preregistered', 'type': 'scalar', 'units': 'dimensionless', 'source': 'proportion of Type F claims in n >= 50 pre-registered studies failing DRS C6 when retroactively formalised'}, {'name': 'vacuity_rate_unregistered', 'type': 'scalar', 'units': 'dimensionless', 'source': 'proportion of Type F claims in n >= 50 matched unregistered studies failing DRS C6 when retroactively formalised; matched on domain and year'}]\n**EVALUATION:** retroactively formalise claims from both corpora; apply C6 vacuity test; compute absolute difference in rates; compare to equivalence margin 0.05; finite\n**BOUNDARY:** abs(vacuity_rate_preregistered - vacuity_rate_unregistered) <= 0.05 \u2192 NOT FALSIFIED (rates within 5pp equivalence margin = structural equivalence confirmed; 0.05 margin: conservative given n=50 per group, two-tailed alpha=0.05, 80% power to detect 10pp difference)\n**CONTEXT:** C-DRP2.7 \u00b7 PRIOR PREDICTION: pre-registration does not change O-from-P structure; rates should be statistically indistinguishable \u00b7 n >= 50 per group minimum\n\n### Requested\n1. Verify the falsification predicate is logically consistent\n2. Check math against known results (Strogatz, Kuznetsov, etc.)\n3. Identify counterexamples or edge cases missed\n4. Cross-reference against published literature\n5. Provide verdict with confidence and reasoning",
+  "references": {
+    "claim_ids": [
+      "C-DRP2.7"
+    ],
+    "files": [
+      "ai-layers/DRP-2-ai-layer.json"
+    ]
+  },
+  "status": "resolved",
+  "_model_tier": "quality"
+}

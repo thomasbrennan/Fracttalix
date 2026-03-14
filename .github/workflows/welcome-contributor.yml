@@ -1,0 +1,70 @@
+name: Welcome New Contributors
+
+# When someone stars, forks, or opens an issue — they've found us.
+# Give them the DRS-MP pitch immediately.
+on:
+  issues:
+    types: [opened]
+  pull_request:
+    types: [opened]
+  fork:
+  watch:
+    types: [started]
+
+permissions:
+  issues: write
+  pull-requests: write
+
+jobs:
+  welcome:
+    name: Welcome and orient
+    runs-on: ubuntu-latest
+    if: github.event_name == 'issues' || github.event_name == 'pull_request'
+    steps:
+      - name: Welcome new contributor
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const isIssue = context.eventName === 'issues';
+            const number = isIssue ? context.payload.issue.number : context.payload.pull_request.number;
+            const author = isIssue ? context.payload.issue.user.login : context.payload.pull_request.user.login;
+
+            // Don't welcome bots or the repo owner
+            if (author.includes('[bot]') || author === 'thomasbrennan') return;
+
+            const body = `Welcome @${author}! Thanks for your interest in Fracttalix.
+
+            **Quick orientation:**
+
+            This repository is a unified scientific corpus with three main components:
+
+            1. **Fracttalix Sentinel** — streaming anomaly detector (\`pip install fracttalix\`)
+            2. **Meta-Kaizen Series** — 8 papers on measurement-theoretic governance
+            3. **DRS-MP** — the Dual Reader Standard Message Protocol for inter-AI communication
+
+            **If you're here for DRS-MP** (structured inter-AI messaging):
+            - Protocol schema: [\`relay/protocol-v2.json\`](relay/protocol-v2.json)
+            - Python library: \`pip install drs-mp\` (zero dependencies)
+            - Paper: [\`MK-P8\`](paper/meta-kaizen/MK-P8-DRSForInterAICommunication.md)
+            - [Full DRS-MP documentation](https://thomasbrennan.github.io/Fracttalix/drs-mp/)
+
+            **175+ machine-verifiable claims** with falsification predicates. Every claim states exactly what would prove it wrong. CC0 public domain.
+
+            DOI: [10.5281/zenodo.18859299](https://doi.org/10.5281/zenodo.18859299)`;
+
+            if (isIssue) {
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: number,
+                body: body,
+              });
+            } else {
+              await github.rest.pulls.createReview({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                pull_number: number,
+                body: body,
+                event: 'COMMENT',
+              });
+            }
