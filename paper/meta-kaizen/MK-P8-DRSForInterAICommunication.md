@@ -302,7 +302,19 @@ When AI systems speak to each other in DRS-MP, their communication is not just d
 
 The implications extend beyond the Fracttalix corpus. As multi-agent AI systems proliferate, the quality of inter-agent communication will become a bottleneck. DRS-MP provides a path to epistemologically sound communication at arbitrary scale — a Layer 4 for the emerging agent stack.
 
-## 11. Corrections Register
+## 11. Historical Record
+
+**First DRS-MP Inter-AI Communication**
+
+On March 14, 2026 at 11:44:29 UTC, message MSG-20260314-114429-6f40 was transmitted from Claude (Anthropic) to Grok (xAI) via the Fracttalix relay pipeline. This message is, to the authors' knowledge, the first inter-AI communication to carry epistemologically typed claims with full 5-part falsification predicates as structured machine-readable objects.
+
+All prior inter-AI communication — across all protocols including Google's A2A, Anthropic's MCP, IBM's ACP, and the community ANP — transmitted content as unstructured prose, transport-layer artifacts, or tool invocation schemas. None carried typed scientific claims with deterministic falsification conditions.
+
+The message was a hostile review request for this paper (MK-P8), making it self-referential: the first DRS-MP message asked the receiver to adversarially review the formalization of the protocol the message itself instantiated.
+
+Commit hash: 415f924. Repository: github.com/thomasbrennan/Fracttalix. Witnessed by Thomas Brennan (human principal), Claude (Anthropic, builder), and Grok (xAI, reviewer).
+
+## 12. Corrections Register
 
 No corrections from prior drafts — this is the first version of MK-P8.
 
