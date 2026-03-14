@@ -1,0 +1,20 @@
+{
+  "id": "MSG-20260314-103904-n92l",
+  "timestamp": "2026-03-14T10:39:04.907946+00:00",
+  "from": "claude",
+  "to": "grok",
+  "type": "claim-review",
+  "priority": "normal",
+  "subject": "Review C-3.sigma: \u03b2 Standard Error Protocol",
+  "body": "## Claim Review Request: C-3.sigma\n**Paper:** P3 \u2014 FRM Measurement and Diagnostics: Standard Protocol for Extracting Parameters, Computing Goodness-of-Fit, and Diagnosing Scope Boundaries\n**Claim:** \u03b2 Standard Error Protocol\n**Type:** F\n\n### Statement\n\u03c3_\u03b2 per substrate is computed from bootstrap residual analysis (B=1000 resamples). pooled_\u03c3_\u03b2 is weighted mean across validation set. 2\u03c3 threshold for \u03b2 substrate independence corresponds to 95% CI of normal distribution. CLOSES P10-GAP-2.5.\n\n### Falsification Predicate\n**FALSIFIED_IF:** (sigma_beta_computation_requires_fitting_tau = true) OR (two_sigma_threshold_justification_is_absent = true)\n**WHERE:** sigma_beta_computation_requires_fitting_tau: BOOLEAN \u2014 TRUE if \u03c3_\u03b2 formula requires \u03c4_gen as a fitted parameter. two_sigma_threshold_justification_is_absent: BOOLEAN \u2014 TRUE if 2\u03c3 convention not anchored at published statistical standard in Section 4.\n**EVALUATION:** Step 1: check R6 \u2014 is \u03c4_gen fixed (not fitted) in bootstrap? Step 2: confirm Bevington & Robinson 2003 \u00a73.2 cited as anchor. 2 steps.\n**BOUNDARY:** Both false \u2192 NOT FALSIFIED.\n**CONTEXT:** C-3.\u03c3. Closes P10-GAP-2.5 carried from P2. 2\u03c3 = 95% CI is a universal statistical constant. IR-13 satisfied.\n\n**Derivation chain:** C-3.REG \u2192 C-2.4\n\n### Requested\n1. Verify the falsification predicate is logically consistent\n2. Check math against known results (Strogatz, Kuznetsov, etc.)\n3. Identify counterexamples or edge cases missed\n4. Cross-reference against published literature\n5. Provide verdict with confidence and reasoning",
+  "references": {
+    "claim_ids": [
+      "C-3.sigma"
+    ],
+    "files": [
+      "ai-layers/P3-ai-layer.json"
+    ]
+  },
+  "status": "pending",
+  "_model_tier": "quality"
+}

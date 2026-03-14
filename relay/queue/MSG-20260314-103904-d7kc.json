@@ -1,0 +1,20 @@
+{
+  "id": "MSG-20260314-103904-d7kc",
+  "timestamp": "2026-03-14T10:39:04.906953+00:00",
+  "from": "claude",
+  "to": "grok",
+  "type": "claim-review",
+  "priority": "normal",
+  "subject": "Review C-2.5: RG Fixed-Point Stability",
+  "body": "## Claim Review Request: C-2.5\n**Paper:** P2 \u2014 Derivation and Universality: The \u03b2=1/2 Critical Exponent as a Universal Law\n**Claim:** RG Fixed-Point Stability\n**Type:** F\n\n### Statement\nThe \u03b2=1/2 fixed point is stable under perturbation of the class membership conditions. Shift in \u03b2 is O(\u03b5) for perturbation of size \u03b5.\n\n### Falsification Predicate\n**FALSIFIED_IF:** (beta_shift_exceeds_order_epsilon = true) OR (fixed_point_eigenvalue_exceeds_unity = true)\n**WHERE:** beta_shift_exceeds_order_epsilon: BOOLEAN \u2014 TRUE if |beta(epsilon) - 0.5| grows faster than linearly in epsilon as epsilon->0. fixed_point_eigenvalue_exceeds_unity: BOOLEAN \u2014 TRUE if any eigenvalue of dT/dx at x*=0.5 has magnitude >= 1 in the amplitude direction.\n**EVALUATION:** From derivation table S10: amplitude direction eigenvalue = exp(\u2212\u03bb\u00b7\u03c4_RG). Verify \u03bb>0 from P1 scope_boundary. Perturb D-2.1 by epsilon, compute beta(epsilon), evaluate \u0394\u03b2/\u03b5 as \u03b5->0.\n**BOUNDARY:** ALL amplitude-direction eigenvalues must be < 1. Single eigenvalue >= 1 falsifies. Stability is of the amplitude envelope, not the phase angle.\n**CONTEXT:** C-2.5. Standard RG stability criterion (IR-11). Without stability, \u03b2=1/2 holds only for fine-tuned systems.\n\n**Derivation chain:** C-2.1\n\n### Requested\n1. Verify the falsification predicate is logically consistent\n2. Check math against known results (Strogatz, Kuznetsov, etc.)\n3. Identify counterexamples or edge cases missed\n4. Cross-reference against published literature\n5. Provide verdict with confidence and reasoning",
+  "references": {
+    "claim_ids": [
+      "C-2.5"
+    ],
+    "files": [
+      "ai-layers/P2-ai-layer.json"
+    ]
+  },
+  "status": "pending",
+  "_model_tier": "quality"
+}

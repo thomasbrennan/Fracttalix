@@ -1,0 +1,20 @@
+{
+  "id": "MSG-20260314-103904-2ppl",
+  "timestamp": "2026-03-14T10:39:04.907656+00:00",
+  "from": "claude",
+  "to": "grok",
+  "type": "claim-review",
+  "priority": "normal",
+  "subject": "Review C-3.DIAG: Scope Boundary Diagnostics",
+  "body": "## Claim Review Request: C-3.DIAG\n**Paper:** P3 \u2014 FRM Measurement and Diagnostics: Standard Protocol for Extracting Parameters, Computing Goodness-of-Fit, and Diagnosing Scope Boundaries\n**Claim:** Scope Boundary Diagnostics\n**Type:** F\n\n### Statement\nThe P3 diagnostic tool produces classification \u2208 {CONFIRMED, EXCLUDED, ANOMALOUS} by a fully computable decision rule. ANOMALOUS cases (D-2.1 satisfied AND R\u00b2<0.85) are corpus-level C-2.2 falsification candidates and generate flagged observation records.\n\n### Falsification Predicate\n**FALSIFIED_IF:** (classification_rule_requires_judgment = true) OR (ANOMALOUS_case_definition_is_absent = true)\n**WHERE:** classification_rule_requires_judgment: BOOLEAN \u2014 TRUE if any decision node in the R8 decision tree requires human judgment not reducible to a computable condition. ANOMALOUS_case_definition_is_absent: BOOLEAN \u2014 TRUE if protocol does not specify D-2.1 satisfied AND R\u00b2<0.85 as the ANOMALOUS trigger.\n**EVALUATION:** Step 1: read R8 decision rule \u2014 is it fully computable? Step 2: confirm ANOMALOUS = D-2.1 satisfied AND R\u00b2<0.85 is stated. 2 steps.\n**BOUNDARY:** Both false \u2192 NOT FALSIFIED.\n**CONTEXT:** C-3.DIAG. IR-12 enforcement. ANOMALOUS cases are the most scientifically significant output \u2014 potential P2 C-2.2 falsification events. HR-3.2 resolution: propagation procedure specified above.\n\n**Derivation chain:** C-3.REG \u2192 D-2.1\n\n### Requested\n1. Verify the falsification predicate is logically consistent\n2. Check math against known results (Strogatz, Kuznetsov, etc.)\n3. Identify counterexamples or edge cases missed\n4. Cross-reference against published literature\n5. Provide verdict with confidence and reasoning",
+  "references": {
+    "claim_ids": [
+      "C-3.DIAG"
+    ],
+    "files": [
+      "ai-layers/P3-ai-layer.json"
+    ]
+  },
+  "status": "pending",
+  "_model_tier": "quality"
+}

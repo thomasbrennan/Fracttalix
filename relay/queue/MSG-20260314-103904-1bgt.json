@@ -1,0 +1,20 @@
+{
+  "id": "MSG-20260314-103904-1bgt",
+  "timestamp": "2026-03-14T10:39:04.904641+00:00",
+  "from": "claude",
+  "to": "grok",
+  "type": "claim-review",
+  "priority": "normal",
+  "subject": "Review F-1.2: OOM span validation",
+  "body": "## Claim Review Request: F-1.2\n**Paper:** P1 \u2014 The Fractal Rhythm Model: Theoretical Foundations\n**Claim:** OOM span validation\n**Type:** F\n\n### Statement\nFRM validated across confirmed substrates spanning 4.6 OOM in characteristic timescale (cyanobacterial circadian to Ibn Khaldun dynastic cycle). Candidate substrates extend span to 11.1 OOM; formal validation scoped to Papers 3-7.\n\n### Falsification Predicate\n**FALSIFIED_IF:** (log10(T_max_confirmed) - log10(T_min_confirmed) < 4.6) OR (n_passing_confirmed < 3) OR [TIER-2, PROVISIONAL] (log10(T_max_candidate) - log10(T_min_candidate) < 11.1)\n**WHERE:** {'T_max_confirmed': 'scalar \u00b7 seconds \u00b7 max T_char across confirmed substrates (n=3)', 'T_min_confirmed': 'scalar \u00b7 seconds \u00b7 min T_char across confirmed substrates (n=3)', 'T_max_candidate': 'scalar \u00b7 seconds \u00b7 max T_char across confirmed+candidate substrates (n=14)', 'T_min_candidate': 'scalar \u00b7 seconds \u00b7 min T_char across confirmed+candidate substrates (n=14)', 'T_char': 'scalar \u00b7 seconds \u00b7 2\u03c0/\u03c9_S from P3 measurement protocol', 'n_passing_confirmed': 'integer \u00b7 count of confirmed substrates with R2_frm(S) >= 0.85'}\n**EVALUATION:** Tier 1: compute log10(T_char) for confirmed substrates; verify span >= 4.6 OOM; count passing. Tier 2 (provisional): same for confirmed+candidate set; verify span >= 11.1 OOM. Both finite.\n**BOUNDARY:** Tier 1: confirmed span < 4.6 OOM \u2192 FALSIFIED. Tier 2: candidate span < 11.1 OOM \u2192 PROVISIONAL FALSIFIED (resolves with Papers 3-7).\n**CONTEXT:** Previous corpus claim of 36 OOM eliminated (D-1 S47): no evidentiary basis. Confirmed span 4.6 OOM is the defensible primary claim. Tier-2 predicate is provisional pending P3-P7 substrate validation.\n\n**Derivation chain:** D-1.4 \u2192 F-1.1 \u2192 A-1.1\n\n### Scope\n- In scope: Systems with \u03bc < 0 (damped oscillators approaching stable fixed point)\n- Out of scope: Systems with \u03bc > 0 (limit cycles \u2014 Hopf bifurcation crossed)\n\n### Requested\n1. Verify the falsification predicate is logically consistent\n2. Check math against known results (Strogatz, Kuznetsov, etc.)\n3. Identify counterexamples or edge cases missed\n4. Cross-reference against published literature\n5. Provide verdict with confidence and reasoning",
+  "references": {
+    "claim_ids": [
+      "F-1.2"
+    ],
+    "files": [
+      "ai-layers/P1-ai-layer.json"
+    ]
+  },
+  "status": "pending",
+  "_model_tier": "quality"
+}

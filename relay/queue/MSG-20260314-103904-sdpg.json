@@ -1,0 +1,20 @@
+{
+  "id": "MSG-20260314-103904-sdpg",
+  "timestamp": "2026-03-14T10:39:04.902882+00:00",
+  "from": "claude",
+  "to": "grok",
+  "type": "claim-review",
+  "priority": "normal",
+  "subject": "Review F-MK6.1: Kernel universality \u2014 K applies to software without modification",
+  "body": "## Claim Review Request: F-MK6.1\n**Paper:** MK-P6 \u2014 The Dual Reader Standard for Software: Measurement-Theoretic Falsification Applied to Executable Systems\n**Claim:** Kernel universality \u2014 K applies to software without modification\n**Type:** F\n\n### Statement\nThe falsification kernel K = (P, O, M, B) as defined in falsification-kernel.md v1.1 applies to software behavioral claims without modification. The same grammar, evaluation semantics, and validity constraints that govern scientific Type F claims govern software Type F claims.\n\n### Falsification Predicate\n**FALSIFIED_IF:** EXISTS software_claim C SUCH THAT is_falsifiable(C) = TRUE AND is_expressible_as_K(C) = FALSE\n**WHERE:** {'C': 'string \u00b7 a behavioral claim about software that is empirically falsifiable by testing', 'is_falsifiable': 'binary \u00b7 TRUE if C can be contradicted by an observable test outcome', 'is_expressible_as_K': 'binary \u00b7 TRUE if C can be expressed as a well-formed (FALSIFIED_IF, WHERE, EVALUATION, BOUNDARY, CONTEXT) 4-tuple satisfying all constraints in falsification-kernel.md Sections 3\u20136'}\n**EVALUATION:** Attempt to express each of the 7 Type F claims in SFW-1 v2 as K 4-tuples; verify all are well-formed; if any cannot be expressed, identify the kernel constraint that prevents expression; finite\n**BOUNDARY:** any software claim that is falsifiable but inexpressible as K \u2192 FALSIFIED; all 7 expressible \u2192 NOT FALSIFIED for the demonstration scope\n**CONTEXT:** The kernel constraints (determinism, finiteness, no self-reference, completeness of operands) are general enough to accommodate any finite test procedure. The claim is that no software-specific extension to the kernel grammar is needed.\n\n**Derivation chain:** A-MK6.2\n\n### Requested\n1. Verify the falsification predicate is logically consistent\n2. Check math against known results (Strogatz, Kuznetsov, etc.)\n3. Identify counterexamples or edge cases missed\n4. Cross-reference against published literature\n5. Provide verdict with confidence and reasoning",
+  "references": {
+    "claim_ids": [
+      "F-MK6.1"
+    ],
+    "files": [
+      "ai-layers/MK-P6-ai-layer.json"
+    ]
+  },
+  "status": "pending",
+  "_model_tier": "quality"
+}
