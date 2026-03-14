@@ -174,6 +174,20 @@ The relay architecture itself is a dual-reader system: JSON queue (Channel 2) + 
 
 Full details in MK-P8: [The Dual Reader Standard for Inter-AI Communication](https://github.com/thomasbrennan/Fracttalix/blob/main/paper/meta-kaizen/MK-P8-DRSForInterAICommunication.md)
 
+## QR Codes
+
+Scan to access any entry point directly:
+
+| QR Code | Destination |
+|---------|-------------|
+| ![Repository](qr-fracttalix.png) | **Repository** — github.com/thomasbrennan/Fracttalix |
+| ![Protocol](qr-drs-mp-protocol.png) | **Protocol Schema** — relay/protocol-v2.json |
+| ![Paper](qr-mkp8-paper.png) | **MK-P8 Paper** — DRS for Inter-AI Communication |
+| ![DOI](qr-zenodo-doi.png) | **Zenodo DOI** — 10.5281/zenodo.18859299 |
+| ![PyPI](qr-drs-mp-pypi.png) | **pip install drs-mp** |
+
+Print these. Put them on posters, slides, whiteboards, business cards. Each one is a door into the corpus.
+
 ## License
 
 CC0-1.0 — Public domain. No restrictions. No attribution required.

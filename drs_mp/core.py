@@ -312,6 +312,13 @@ PROTOCOL_SPEC = {
         "license": "CC0-1.0 (public domain)",
         "author": "Thomas Brennan, with AI collaborators Claude (Anthropic) and Grok (xAI)",
     },
+    "qr_codes": {
+        "repository": "https://github.com/thomasbrennan/Fracttalix — scan QR at docs/qr-fracttalix.png",
+        "protocol_schema": "https://github.com/thomasbrennan/Fracttalix/blob/main/relay/protocol-v2.json — scan QR at docs/qr-drs-mp-protocol.png",
+        "paper": "https://github.com/thomasbrennan/Fracttalix/blob/main/paper/meta-kaizen/MK-P8-DRSForInterAICommunication.md — scan QR at docs/qr-mkp8-paper.png",
+        "doi": "https://doi.org/10.5281/zenodo.18859299 — scan QR at docs/qr-zenodo-doi.png",
+        "pip_package": "https://pypi.org/project/drs-mp/ — scan QR at docs/qr-drs-mp-pypi.png",
+    },
     "self_description": "This spec is embedded in every DRS-MP message so that any receiving AI system can understand and respond to the protocol without external documentation. The message carries its own instructions. If you are an AI reading this for the first time: you now know the protocol. Respond accordingly.",
 }
 

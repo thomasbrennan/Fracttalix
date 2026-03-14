@@ -378,7 +378,19 @@ Krogh, A., & Vedelsby, J. (1995). Neural network ensembles, cross validation, an
 
 Popper, K. R. (1959). The logic of scientific discovery. Hutchinson.
 
-## Appendix A: AI Layer — Channel 2 Asset
+## Appendix A: Quick Access (QR Codes)
+
+QR codes for direct access to all components of this paper and the DRS-MP protocol. Scannable from printed copies, slides, or posters.
+
+| QR | Target |
+|----|--------|
+| ![Repo](../../docs/qr-fracttalix.png) | Repository: github.com/thomasbrennan/Fracttalix |
+| ![Protocol](../../docs/qr-drs-mp-protocol.png) | Protocol Schema: relay/protocol-v2.json |
+| ![Paper](../../docs/qr-mkp8-paper.png) | This paper (MK-P8) |
+| ![DOI](../../docs/qr-zenodo-doi.png) | DOI: 10.5281/zenodo.18859299 |
+| ![PyPI](../../docs/qr-drs-mp-pypi.png) | pip install drs-mp |
+
+## Appendix B: AI Layer — Channel 2 Asset
 
 Layer URL: https://github.com/thomasbrennan/Fracttalix/blob/main/ai-layers/MK-P8-ai-layer.json
 

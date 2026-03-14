@@ -1105,6 +1105,17 @@ Machine-readable falsification layers for the Fracttalix corpus. All layers conf
 
 ---
 
+## Quick Access — QR Codes
+
+| | |
+|---|---|
+| ![Repository QR](docs/qr-fracttalix.png) | ![Protocol QR](docs/qr-drs-mp-protocol.png) |
+| **Repository** | **DRS-MP Protocol Schema** |
+| ![Paper QR](docs/qr-mkp8-paper.png) | ![DOI QR](docs/qr-zenodo-doi.png) |
+| **MK-P8 Paper** | **Zenodo DOI** |
+
+---
+
 ## Authors & License
 
 **Authors:** Thomas Brennan & Claude (Anthropic) & Grok (xAI)
