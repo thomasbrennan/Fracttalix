@@ -117,7 +117,7 @@ class TestSeasonalStep:
         ctx = make_ctx()
         step.update(ctx)
         # Should populate seasonal key
-        assert "seasonal_period" in ctx.scratch or "seasonal" in ctx.scratch or True
+        assert "seasonal_err" in ctx.scratch
 
     def test_state_dict_returns_dict(self):
         step = SeasonalStep(SentinelConfig())
