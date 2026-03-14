@@ -1,6 +1,6 @@
 # Grok Review Report
 
-**Generated:** 2026-03-14T10:52:40Z
+**Generated:** 2026-03-14T11:36:40Z
 
 ## Summary
 
@@ -8,10 +8,10 @@
 |--------|-------|
 | Total falsifiable | 70 |
 | Sent to Grok | 70 |
-| Reviewed by Grok | 20 |
-| Confirmed | 2 |
-| Disputed | 5 |
-| Inconclusive | 6 |
+| Reviewed by Grok | 25 |
+| Confirmed | 3 |
+| Disputed | 6 |
+| Inconclusive | 9 |
 | Needs revision | 7 |
 
 ## Disputed Claims (Action Required)
@@ -46,6 +46,12 @@
 - **Reasoning:** The falsification predicate is not logically consistent with the stated claim. The claim asserts that an observation class O (from the past) 'cannot be a logical function of x(t+τ)' (future state), wh
 - **Message:** MSG-20260314-104054-ckuj
 
+### F-1.5
+- **Confidence:** 0.95
+- **Model:** grok-4-latest
+- **Reasoning:** The claim states that Γ = |dh/dλ|* = |1 + iπ/2| = 1 + π²/4 ≈ 3.467. However, this contains a fundamental mathematical error. The magnitude of a complex number |a + bi| is sqrt(a² + b²), so |1 + i(π/2)
+- **Message:** MSG-20260314-113640-e7p6
+
 ## Needs Revision
 
 - **C-DRP2.3** (confidence: 0.75): The falsification predicate is mostly logically consistent in structure: it defines a clear test (benchmark construction, evaluation, threshold comparison) that could in principle falsify the claim. T
@@ -60,5 +66,6 @@
 
 | Claim | Confidence | Model |
 |-------|-----------|-------|
+| C-2.4 | 0.85 | grok-4-latest |
 | C-3.DIAG | 0.92 | grok-4-latest |
 | F-SFW.4 | 0.95 | grok-4-latest |

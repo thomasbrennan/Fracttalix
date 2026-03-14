@@ -590,15 +590,60 @@
       "confidence": 0.65,
       "model_used": "grok-4-latest",
       "reasoning_preview": "The falsification predicate is logically consistent: it clearly defines conditions for falsification based on R\u00b2 threshold and parameter signs, with well-specified variables, evaluation steps, boundar"
+    },
+    "C-2.4": {
+      "msg_id": "MSG-20260314-113429-5nyi",
+      "parent_msg_id": "MSG-20260314-103904-6ivf",
+      "timestamp": "2026-03-14T11:34:29.805447+00:00",
+      "verdict": "confirmed",
+      "confidence": 0.85,
+      "model_used": "grok-4-latest",
+      "reasoning_preview": "The falsification predicate is logically consistent: it correctly guards against invalid counterexamples by requiring systems to satisfy D-2.1 criteria, and the 2-sigma bound provides a statistical th"
+    },
+    "C-MK3.4": {
+      "msg_id": "MSG-20260314-113557-u1nv",
+      "parent_msg_id": "MSG-20260314-103904-7tux",
+      "timestamp": "2026-03-14T11:35:57.398274+00:00",
+      "verdict": "inconclusive",
+      "confidence": 0.65,
+      "model_used": "grok-4-latest",
+      "reasoning_preview": "The falsification predicate is logically consistent in structure, defining a clear simulation-based test with thresholds (Q_L(200) > 0.95 not falsified, < 0.80 falsified) that approximates asymptotic "
+    },
+    "F-1.5": {
+      "msg_id": "MSG-20260314-113640-e7p6",
+      "parent_msg_id": "MSG-20260314-103904-81ra",
+      "timestamp": "2026-03-14T11:36:40.044985+00:00",
+      "verdict": "disputed",
+      "confidence": 0.95,
+      "model_used": "grok-4-latest",
+      "reasoning_preview": "The claim states that \u0393 = |dh/d\u03bb|* = |1 + i\u03c0/2| = 1 + \u03c0\u00b2/4 \u2248 3.467. However, this contains a fundamental mathematical error. The magnitude of a complex number |a + bi| is sqrt(a\u00b2 + b\u00b2), so |1 + i(\u03c0/2)"
+    },
+    "F-MK6.4": {
+      "msg_id": "MSG-20260314-113456-lj8r",
+      "parent_msg_id": "MSG-20260314-103904-6mm1",
+      "timestamp": "2026-03-14T11:34:56.422694+00:00",
+      "verdict": "inconclusive",
+      "confidence": 0.65,
+      "model_used": "grok-4-latest",
+      "reasoning_preview": "The falsification predicate is logically consistent: it clearly defines falsification as occurring if any of the three gap categories has zero counts, with well-defined variables, a finite evaluation "
+    },
+    "F-SFW.1": {
+      "msg_id": "MSG-20260314-113525-2jaz",
+      "parent_msg_id": "MSG-20260314-103904-6z49",
+      "timestamp": "2026-03-14T11:35:25.684874+00:00",
+      "verdict": "inconclusive",
+      "confidence": 0.65,
+      "model_used": "grok-4-latest",
+      "reasoning_preview": "The falsification predicate is logically consistent: it clearly defines falsification as the existence of an alert type detectable by a single channel but not by the combined pipeline, with well-defin"
     }
   },
   "summary": {
     "total_falsifiable": 70,
     "sent_to_grok": 70,
-    "reviewed_by_grok": 20,
-    "confirmed": 2,
-    "disputed": 5,
-    "inconclusive": 6,
+    "reviewed_by_grok": 25,
+    "confirmed": 3,
+    "disputed": 6,
+    "inconclusive": 9,
     "needs_revision": 7
   }
 }
