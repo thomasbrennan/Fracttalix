@@ -185,7 +185,7 @@ class CoreEWMAStep(DetectorStep):
             # window bank to accumulate deseasonalized signal, eliminating
             # seasonal false positives in all downstream steps.
             ds_val = ctx.scratch.get("deseasonalized_value")
-            sv = float(ds_val) if ds_val is not None else float(v)
+            sv = float(ds_val) if (ds_val is not None and math.isfinite(float(ds_val))) else float(v)
             result = self._scalar_update(sv, ctx)
 
         ctx.bank.append(sv)

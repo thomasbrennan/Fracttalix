@@ -136,6 +136,8 @@ class MaintenanceBurdenStep(DetectorStep):
 
     def update(self, ctx: StepContext) -> None:
         mean_coupling = ctx.scratch.get("mean_coupling_strength", 0.0)
+        if not math.isfinite(mean_coupling):
+            mean_coupling = 0.0
         kappa = max(0.0, min(1.0, mean_coupling))
 
         # v10.0 legacy (kept as alias)
@@ -747,7 +749,7 @@ class SequenceOrderingStep(DetectorStep):
         if len(series) < 4:
             return fallback
         mu = sum(series) / len(series)
-        var = sum((x - mu) ** 2 for x in series) / len(series)
+        var = sum((x - mu) ** 2 for x in series) / (len(series) - 1)
         std = math.sqrt(var) if var > 0 else 0.0
         return -factor * std if std > 1e-10 else fallback
 

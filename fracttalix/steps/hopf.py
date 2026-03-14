@@ -275,8 +275,9 @@ class HopfDetectorStep(DetectorStep):
             r_squared = 0.0
             converged = False
 
-        # Track λ
-        self._lambda_history.append(lam_fit)
+        # Track λ (guard against NaN/Inf from failed fits)
+        if math.isfinite(lam_fit):
+            self._lambda_history.append(lam_fit)
 
         # Compute dλ/dt and time-to-bifurcation
         lam_rate, time_to_bif, confidence = self._compute_lambda_trend()

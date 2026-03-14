@@ -198,7 +198,7 @@ class EWSStep(DetectorStep):
         ac1 = self._ac1(w)
 
         alpha = 0.1
-        self._var_ewma = alpha * var + (1 - alpha) * self._var_ewma
+        self._var_ewma = max(1e-10, alpha * var + (1 - alpha) * self._var_ewma)
         self._ac1_ewma = alpha * ac1 + (1 - alpha) * self._ac1_ewma
 
         # EWS score: combine rising var + rising AC(1)
@@ -479,6 +479,9 @@ class RRSStep(DetectorStep):
         arr = np.array(list(w)[-n:])
         arr = arr - arr.mean()
         spec = np.abs(np.fft.rfft(arr)) ** 2
+        if len(spec) <= 2:
+            ctx.scratch["rrs"] = 0.0
+            return
         total = spec.sum()
         if total < 1e-12:
             ctx.scratch["rrs"] = 0.0
