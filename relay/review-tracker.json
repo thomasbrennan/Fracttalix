@@ -698,15 +698,60 @@
       "confidence": 0.65,
       "model_used": "grok-4-latest",
       "reasoning_preview": "The falsification predicate is logically consistent: it defines clear boolean conditions for falsification based on scaling differences or non-universality of expressions, with well-structured WHERE, "
+    },
+    "C-2.5": {
+      "msg_id": "MSG-20260314-120521-rvrr",
+      "parent_msg_id": "MSG-20260314-103904-d7kc",
+      "timestamp": "2026-03-14T12:05:21.784034+00:00",
+      "verdict": "confirmed",
+      "confidence": 0.92,
+      "model_used": "grok-4-latest",
+      "reasoning_preview": "The falsification predicate is logically consistent: it clearly defines two boolean conditions for falsification based on linear perturbation response and eigenvalue magnitude, aligning with standard "
+    },
+    "C-MK5.4": {
+      "msg_id": "MSG-20260314-120455-3yhg",
+      "parent_msg_id": "MSG-20260314-103904-cjd0",
+      "timestamp": "2026-03-14T12:04:55.487365+00:00",
+      "verdict": "needs-revision",
+      "confidence": 0.95,
+      "model_used": "grok-4-latest",
+      "reasoning_preview": "The falsification predicate is not logically consistent due to an error in the specified normal form for the fold bifurcation. The equation dx = (mu(t) - x^2)dt + sigma dW with mu increasing from -1 t"
+    },
+    "F-5.3": {
+      "msg_id": "MSG-20260314-120340-wczy",
+      "parent_msg_id": "MSG-20260314-103904-cdnf",
+      "timestamp": "2026-03-14T12:03:40.651120+00:00",
+      "verdict": "needs-revision",
+      "confidence": 0.65,
+      "model_used": "grok-4-latest",
+      "reasoning_preview": "The falsification predicate is partially consistent but incomplete: it only explicitly tests the AMOC fit (R\u00b2 threshold and modification check), while the claim statement asserts scale independence ac"
+    },
+    "F-1.3": {
+      "msg_id": "MSG-20260314-120308-g7ju",
+      "parent_msg_id": "MSG-20260314-103904-c8n1",
+      "timestamp": "2026-03-14T12:03:08.409698+00:00",
+      "verdict": "inconclusive",
+      "confidence": 0.65,
+      "model_used": "grok-4-latest",
+      "reasoning_preview": "The falsification predicate is logically consistent: it defines a clear statistical test (2\u03c3 deviation from 0.5) using mean \u03b2 across substrate classes, with well-defined variables and evaluation proce"
+    },
+    "C-MK5.3": {
+      "msg_id": "MSG-20260314-120244-p9ec",
+      "parent_msg_id": "MSG-20260314-103904-c3dy",
+      "timestamp": "2026-03-14T12:02:44.852201+00:00",
+      "verdict": "disputed",
+      "confidence": 1.0,
+      "model_used": "grok-4-latest",
+      "reasoning_preview": "The claimed formula for E[min(T_1,...,T_k)] = (1/lambda)(1 - 1/k) is incorrect. The correct expected value for the minimum of k i.i.d. exponential random variables with rate lambda is 1/(k lambda), wh"
     }
   },
   "summary": {
     "total_falsifiable": 70,
     "sent_to_grok": 70,
-    "reviewed_by_grok": 30,
-    "confirmed": 4,
-    "disputed": 6,
-    "inconclusive": 12,
-    "needs_revision": 8
+    "reviewed_by_grok": 35,
+    "confirmed": 5,
+    "disputed": 7,
+    "inconclusive": 13,
+    "needs_revision": 10
   }
 }

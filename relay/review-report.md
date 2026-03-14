@@ -1,6 +1,6 @@
 # Grok Review Report
 
-**Generated:** 2026-03-14T11:50:14Z
+**Generated:** 2026-03-14T12:05:21Z
 
 ## Summary
 
@@ -8,11 +8,11 @@
 |--------|-------|
 | Total falsifiable | 70 |
 | Sent to Grok | 70 |
-| Reviewed by Grok | 30 |
-| Confirmed | 4 |
-| Disputed | 6 |
-| Inconclusive | 12 |
-| Needs revision | 8 |
+| Reviewed by Grok | 35 |
+| Confirmed | 5 |
+| Disputed | 7 |
+| Inconclusive | 13 |
+| Needs revision | 10 |
 
 ## Disputed Claims (Action Required)
 
@@ -46,6 +46,12 @@
 - **Reasoning:** The falsification predicate is not logically consistent with the stated claim. The claim asserts that an observation class O (from the past) 'cannot be a logical function of x(t+τ)' (future state), wh
 - **Message:** MSG-20260314-104054-ckuj
 
+### C-MK5.3
+- **Confidence:** 1.0
+- **Model:** grok-4-latest
+- **Reasoning:** The claimed formula for E[min(T_1,...,T_k)] = (1/lambda)(1 - 1/k) is incorrect. The correct expected value for the minimum of k i.i.d. exponential random variables with rate lambda is 1/(k lambda), wh
+- **Message:** MSG-20260314-120244-p9ec
+
 ### F-1.5
 - **Confidence:** 0.95
 - **Model:** grok-4-latest
@@ -58,9 +64,11 @@
 - **C-DRP2.7** (confidence: 0.65): The falsification predicate is logically consistent: it sets up a clear equivalence test comparing vacuity rates between pre-registered and unregistered studies, with a defined margin (0.05) and sampl
 - **C-MK4.2** (confidence: 0.95): The mathematical formula delta_min = 1 - (epsilon/r_0)^{1/H_plan} is correct for achieving r_H = epsilon exactly under the geometric decay r_t = (1 - delta)^t * r_0. However, the claim states delta_mi
 - **C-MK4.4** (confidence: 0.65): The falsification predicate is logically consistent in its definition, as it clearly specifies conditions for a 'broken' loop based on component connections, with well-defined variables and evaluation
+- **C-MK5.4** (confidence: 0.95): The falsification predicate is not logically consistent due to an error in the specified normal form for the fold bifurcation. The equation dx = (mu(t) - x^2)dt + sigma dW with mu increasing from -1 t
 - **F-1.2** (confidence: 0.65): The falsification predicate is logically consistent in structure, defining clear conditions for Tier 1 (confirmed substrates) and Tier 2 (provisional candidates) based on log10 spans and a passing cou
 - **F-1.6** (confidence: 0.75): The falsification predicate is logically consistent: it clearly defines falsification based on predicted T bounds and a minimum number of independent sources, with well-specified variables, evaluation
 - **F-4.2** (confidence: 0.65): The falsification predicate is mostly logically consistent, as it defines a clear inequality based on self-similarity indices, with ε providing a tolerance for noise. However, the predicate is incompl
+- **F-5.3** (confidence: 0.65): The falsification predicate is partially consistent but incomplete: it only explicitly tests the AMOC fit (R² threshold and modification check), while the claim statement asserts scale independence ac
 - **F-SFW.6** (confidence: 0.75): The falsification predicate is mostly logically consistent, defining clear conditions for falsification based on step counter equality and result key set matching. The evaluation procedure is determin
 
 ## Confirmed Claims
@@ -68,6 +76,7 @@
 | Claim | Confidence | Model |
 |-------|-----------|-------|
 | C-2.4 | 0.85 | grok-4-latest |
+| C-2.5 | 0.92 | grok-4-latest |
 | C-3.DIAG | 0.92 | grok-4-latest |
 | C-MK4.3 | 0.95 | grok-4-latest |
 | F-SFW.4 | 0.95 | grok-4-latest |
