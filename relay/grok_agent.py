@@ -77,7 +77,9 @@ def get_pending_grok_messages() -> list[tuple[Path, dict]]:
 
 
 def call_xai_api(system_prompt: str, user_message: str, api_key: str) -> str:
-    """Call the xAI API and return Grok's response."""
+    """Call the xAI API via curl and return Grok's response."""
+    import time
+
     payload = json.dumps({
         "model": XAI_MODEL,
         "messages": [
@@ -85,47 +87,43 @@ def call_xai_api(system_prompt: str, user_message: str, api_key: str) -> str:
             {"role": "user", "content": user_message},
         ],
         "temperature": 0.3,
-    }).encode()
+        "stream": False,
+    })
 
-    req = Request(
-        XAI_API_URL,
-        data=payload,
-        headers={
-            "Content-Type": "application/json",
-            "Authorization": f"Bearer {api_key}",
-        },
-        method="POST",
-    )
-
-    import time
     max_retries = 3
     for attempt in range(max_retries + 1):
-        try:
-            with urlopen(req, timeout=120) as resp:
-                data = json.loads(resp.read())
-                return data["choices"][0]["message"]["content"]
-        except HTTPError as e:
-            body = e.read().decode() if e.fp else ""
-            print(f"API error {e.code}: {body}", file=sys.stderr)
-            print(f"  URL: {XAI_API_URL}", file=sys.stderr)
-            print(f"  Model: {XAI_MODEL}", file=sys.stderr)
-            print(f"  Key prefix: {api_key[:8]}...{api_key[-4:]}", file=sys.stderr)
-            if attempt < max_retries and e.code in (403, 429, 500, 502, 503):
-                wait = 2 ** (attempt + 1)
-                print(f"  Retrying in {wait}s (attempt {attempt + 1}/{max_retries})...")
-                time.sleep(wait)
-                # Rebuild request since urlopen consumes it
-                req = Request(
-                    XAI_API_URL,
-                    data=payload,
-                    headers={
-                        "Content-Type": "application/json",
-                        "Authorization": f"Bearer {api_key}",
-                    },
-                    method="POST",
-                )
-                continue
-            raise
+        result = subprocess.run(
+            [
+                "curl", "-s", "-w", "\n%{http_code}",
+                XAI_API_URL,
+                "-H", "Content-Type: application/json",
+                "-H", f"Authorization: Bearer {api_key}",
+                "-d", payload,
+                "--max-time", "120",
+            ],
+            capture_output=True, text=True, timeout=130,
+        )
+        output = result.stdout.strip()
+        # Last line is the HTTP status code
+        lines = output.rsplit("\n", 1)
+        body = lines[0] if len(lines) > 1 else output
+        http_code = int(lines[-1]) if len(lines) > 1 and lines[-1].isdigit() else 0
+
+        if http_code == 200:
+            data = json.loads(body)
+            return data["choices"][0]["message"]["content"]
+
+        print(f"API error {http_code}: {body}", file=sys.stderr)
+        print(f"  Model: {XAI_MODEL}", file=sys.stderr)
+        print(f"  Key prefix: {api_key[:8]}...{api_key[-4:]}", file=sys.stderr)
+
+        if attempt < max_retries and http_code in (403, 429, 500, 502, 503):
+            wait = 2 ** (attempt + 1)
+            print(f"  Retrying in {wait}s (attempt {attempt + 1}/{max_retries})...")
+            time.sleep(wait)
+            continue
+
+        raise RuntimeError(f"xAI API failed with HTTP {http_code}: {body}")
 
 
 def build_system_prompt() -> str:
