@@ -698,12 +698,34 @@ There is no separate "learn the DRS" step followed by a "use the DRS" step. Disc
 
 ## 18. Resources
 
-- [DRS Architecture Specification](https://github.com/thomasbrennan/Fracttalix/blob/main/paper/DRS-Architecture.md) — Full specification
-- [Falsification Kernel v1.1](https://github.com/thomasbrennan/Fracttalix/blob/main/ai-layers/falsification-kernel.md) — Layer 0 semantic spec
-- [AI Layer Schema v3](https://github.com/thomasbrennan/Fracttalix/blob/main/ai-layers/ai-layer-schema.json) — JSON Schema
-- [GVP Specification](https://github.com/thomasbrennan/Fracttalix/blob/main/docs/GVP-spec.md) — Software protocol
-- [Example AI Layer (P1)](https://github.com/thomasbrennan/Fracttalix/blob/main/ai-layers/P1-ai-layer.json) — Working example
-- [Fracttalix Repository](https://github.com/thomasbrennan/Fracttalix)
+### Canonical URLs (Platform-Independent)
+
+These are the canonical identifiers. They resolve independently of any single hosting platform.
+
+| Resource | Canonical URL |
+|----------|--------------|
+| **DRS Namespace** | `https://drs-standard.org/ns/` |
+| **DRS Architecture Specification** | `https://drs-standard.org/spec` |
+| **Falsification Kernel (Layer 0)** | `https://drs-standard.org/kernel` |
+| **AI Layer Schema** | `https://drs-standard.org/schema` |
+| **GVP Specification** | `https://drs-standard.org/gvp` |
+| **Discovery Endpoint** | `https://drs-standard.org/.well-known/drs.json` |
+| **Corpus DOI** | [10.5281/zenodo.18859299](https://doi.org/10.5281/zenodo.18859299) |
+
+The DOI resolves through Zenodo (CERN-backed infrastructure). It is permanent regardless of hosting changes.
+
+### Repository Mirrors
+
+The canonical source is hosted at multiple locations. If one mirror is unavailable, use another:
+
+- **GitHub:** [github.com/thomasbrennan/Fracttalix](https://github.com/thomasbrennan/Fracttalix)
+- **Zenodo:** [doi.org/10.5281/zenodo.18859299](https://doi.org/10.5281/zenodo.18859299) (archived releases)
+
+Additional mirrors may be added over time. The `/.well-known/drs.json` discovery document on `drs-standard.org` will always list current mirrors.
+
+### Platform Independence Note
+
+The DRS is not dependent on any single hosting platform. All specifications are plain-text documents (Markdown, JSON) stored in a standard git repository. The repository can be cloned, forked, and mirrored to any git hosting service. The DOI provides a permanent identifier that survives any individual platform. The `drs-standard.org` domain provides a canonical namespace that the project controls directly.
 
 ---
 

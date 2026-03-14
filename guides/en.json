@@ -1,7 +1,7 @@
 {
   "@context": "https://schema.org",
   "@type": "TechArticle",
-  "@id": "https://github.com/thomasbrennan/Fracttalix/blob/main/guides/en.json",
+  "@id": "https://drs-standard.org/guides/en.json",
   "name": "The Dual Reader Standard — Complete Guide",
   "headline": "One-Pass Guide to the Entire Dual Reader Standard: Architecture, Protocols, Kernel, Layers, Compatibility, Lingua Franca, and Adoption",
   "description": "Comprehensive guide to the Dual Reader Standard (DRS), a verification architecture requiring every claim to be readable by both human and machine. Covers both protocols (DRP for text, GVP for software), the Falsification Kernel (Layer 0), the AI layer artifact, three claim types, six verification tiers, eight inference rules, the six-condition phase gate, three-axis compatibility, the machine lingua franca property (embedded binary logic), and self-spreading adoption dynamics.",
@@ -14,7 +14,7 @@
   "publisher": {
     "@type": "Organization",
     "name": "Fracttalix",
-    "url": "https://github.com/thomasbrennan/Fracttalix"
+    "url": "https://drs-standard.org"
   },
   "datePublished": "2026-03-14",
   "license": "https://creativecommons.org/licenses/by/4.0/",
@@ -52,7 +52,7 @@
     "@type": "Thing",
     "name": "Dual Reader Standard",
     "description": "A verification architecture for knowledge systems requiring every claim to be readable by two independent reader classes — human and machine — each operating through a defined protocol.",
-    "url": "https://github.com/thomasbrennan/Fracttalix/blob/main/paper/DRS-Architecture.md"
+    "url": "https://drs-standard.org/spec"
   },
   "citation": {
     "@type": "CreativeWork",
@@ -62,7 +62,7 @@
   "isPartOf": {
     "@type": "CreativeWork",
     "name": "Fracttalix — Dual Reader Standard Implementation Guides",
-    "url": "https://github.com/thomasbrennan/Fracttalix/tree/main/guides"
+    "url": "https://drs-standard.org/guides"
   },
   "content": {
     "section_01_what_is_the_drs": {
@@ -246,7 +246,7 @@
     "section_08_ai_layer": {
       "title": "The AI Layer — The Central Artifact",
       "description": "A JSON document that accompanies every paper or software system. The schema is defined in ai-layers/ai-layer-schema.json.",
-      "schema_url": "https://github.com/thomasbrennan/Fracttalix/blob/main/ai-layers/ai-layer-schema.json",
+      "schema_url": "https://drs-standard.org/schema",
       "required_sections": {
         "_meta": "Document type, schema version, session, licence",
         "paper_id_and_title": "Identity",
@@ -531,12 +531,19 @@
     }
   },
   "resources": {
-    "architecture_specification": "https://github.com/thomasbrennan/Fracttalix/blob/main/paper/DRS-Architecture.md",
-    "falsification_kernel": "https://github.com/thomasbrennan/Fracttalix/blob/main/ai-layers/falsification-kernel.md",
-    "ai_layer_schema": "https://github.com/thomasbrennan/Fracttalix/blob/main/ai-layers/ai-layer-schema.json",
-    "gvp_specification": "https://github.com/thomasbrennan/Fracttalix/blob/main/docs/GVP-spec.md",
-    "example_ai_layer": "https://github.com/thomasbrennan/Fracttalix/blob/main/ai-layers/P1-ai-layer.json",
-    "repository": "https://github.com/thomasbrennan/Fracttalix",
-    "doi": "https://doi.org/10.5281/zenodo.18859299"
+    "canonical": {
+      "drs_namespace": "https://drs-standard.org/ns/",
+      "architecture_specification": "https://drs-standard.org/spec",
+      "falsification_kernel": "https://drs-standard.org/kernel",
+      "ai_layer_schema": "https://drs-standard.org/schema",
+      "gvp_specification": "https://drs-standard.org/gvp",
+      "discovery_endpoint": "https://drs-standard.org/.well-known/drs.json",
+      "doi": "https://doi.org/10.5281/zenodo.18859299"
+    },
+    "mirrors": {
+      "github": "https://github.com/thomasbrennan/Fracttalix",
+      "zenodo": "https://doi.org/10.5281/zenodo.18859299"
+    },
+    "platform_independence_note": "The DRS is not dependent on any single hosting platform. All specifications are plain-text documents in a standard git repository. The DOI provides a permanent identifier. The drs-standard.org domain provides a canonical namespace controlled by the project."
   }
 }
