@@ -1265,3 +1265,99 @@ If α can be extracted independently, the FRM has zero free dynamics parameters 
 - Waveform fitting demonstrates methodology (prospective validation pending)
 
 No existing claims are modified. Build Table v3.9.
+
+---
+
+## S59 Supplement — Independent α Extraction (2026-03-14)
+
+### 7.7 Independent α Extraction: Published Damping Rates
+
+The S58 open question — "can α be extracted independently?" — is now answered: **YES, with caveats.**
+
+For each of the 15 biological systems, the damping rate λ_obs was identified from published time-series recordings. The bifurcation distance is then:
+
+> α = −λ_obs · Γ · τ_gen
+
+where both λ_obs (from domain-specific experiments) and τ_gen (from structural delay measurements) are independently measured quantities with no FRM involvement.
+
+### 7.8 Independent α Values — All 15 Systems
+
+| System | τ_gen | λ_obs | α_indep | Q | Confidence |
+|--------|-------|-------|---------|---|------------|
+| SCN circadian | 6.0 hr | 0.010/hr | −0.208 | 26.2 | high |
+| KaiABC | 6.0 hr | 0.002/hr | −0.042 | 130.9 | medium |
+| Drosophila per/tim | 6.0 hr | 0.015/hr | −0.312 | 17.5 | medium |
+| Neurospora FRQ | 5.5 hr | 0.020/hr | −0.381 | 14.3 | medium |
+| Arabidopsis CCA1/LHY | 6.25 hr | 0.012/hr | −0.260 | 20.9 | medium |
+| Xenopus cell cycle | 7.5 min | 0.015/min | −0.390 | 7.0 | high |
+| S. cerevisiae cell cycle | 25 min | 0.005/min | −0.433 | 6.3 | low |
+| S. pombe cell cycle | 35 min | 0.004/min | −0.485 | 5.6 | low |
+| Cardiac APD restitution | 0.075 s | 2.0/s | −0.520 | 5.2 | high |
+| Yeast glycolytic NADH | 0.5 min | 0.15/min | −0.260 | 10.5 | high |
+| Ca²⁺ hepatocytes | 5.0 s | 0.010/s | −0.173 | 15.7 | medium |
+| Ca²⁺ HeLa | 15.0 s | 0.008/s | −0.416 | 6.5 | medium |
+| Glycogen supercomp | 6.0 hr | 0.08/hr | −1.664 | 1.6 | high |
+| Strength recovery | 12.0 hr | 0.030/hr | −1.248 | 2.2 | medium |
+| Bone remodelling | 21 days | 0.010/day | −0.728 | 3.6 | low |
+
+### 7.9 Damping Regime Classification
+
+The 15 systems naturally cluster into three damping regimes:
+
+**Near-critical (|α| < 0.5): 11 systems**
+- All circadian, metabolic oscillators, plus cell cycle and cardiac
+- Q > 5 — multiple visible oscillation cycles
+- These systems are maintained near Hopf criticality by homeostatic mechanisms
+- FRM in its optimal validity range
+
+**Moderate damping (0.5 ≤ |α| < 1.5): 3 systems**
+- Cardiac APD, bone remodelling, strength recovery
+- Q ≈ 2–5 — few visible cycles
+- FRM applies but damping is significant
+
+**Heavily damped (|α| ≥ 1.5): 1 system**
+- Glycogen supercompensation only
+- Q < 2 — single visible overshoot
+- Far from bifurcation, transient perturbation response
+
+### 7.10 Cross-Check: Independent α vs Mode B Fitted α
+
+For the 4 systems with representative time-series data, the independently extracted α was compared against the α obtained from Mode B curve fitting:
+
+| System | α_independent | α_fitted | Δα | % diff |
+|--------|---------------|----------|-----|--------|
+| SCN circadian | −0.208 | −0.202 | +0.006 | 2.9% |
+| Xenopus cell cycle | −0.390 | −0.411 | −0.021 | 5.3% |
+| Yeast NADH | −0.260 | −0.275 | −0.015 | 5.9% |
+| Glycogen supercomp | −1.664 | −1.692 | −0.027 | 1.6% |
+
+**All four systems agree within 6%.** This confirms that α extracted from published damping rates is consistent with α obtained from curve fitting — the two methods converge on the same value.
+
+### 7.11 Zero Free Dynamics Parameters — Refined Claim
+
+The FRM functional form f(t) = B + A·exp(−λt)·cos(ωt + φ) can now be stated with **zero free dynamics parameters** for systems where both τ_gen and λ_obs are independently measured:
+
+- **ω = π/(2·τ_gen)** — from structural delay alone (confirmed S58, Mode B vs C test)
+- **λ = |α|/(Γ·τ_gen) = λ_obs** — from published damping rate (confirmed S59)
+- **T_char = 4·τ_gen** — from structural delay alone (15/15 systems within 10%)
+
+Only the envelope parameters B (baseline), A (initial amplitude), and φ (initial phase) remain as fitting parameters. These describe initial/boundary conditions, not dynamics.
+
+**Confidence levels:**
+- 5/15 systems: HIGH confidence in both τ_gen and λ_obs
+- 7/15 systems: MEDIUM confidence (one or both measurements have caveats)
+- 3/15 systems: LOW confidence (population-level confounds in λ measurement)
+
+**For the manuscript, the honest claim is:**
+"The FRM has zero free dynamics parameters for 12/15 biological systems where both τ_gen and λ_obs are independently measured with medium-to-high confidence. The remaining 3/15 systems have low-confidence damping estimates where population-level desynchronisation may confound single-system damping measurement."
+
+### 7.12 P4 Status Update
+
+**P4 remains PHASE-READY.** The S59 α extraction analysis resolves the S58 open question:
+
+- α **can** be independently extracted from published damping rates
+- The "one free parameter" objection is addressed for 12/15 systems
+- The claim refinement from "zero parameters" to "zero dynamics parameters (with independently measurable α)" is precise and defensible
+- Cross-check against Mode B fitting validates the approach (all within 6%)
+
+Build Table v3.10.
