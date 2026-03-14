@@ -107,6 +107,9 @@ def call_xai_api(system_prompt: str, user_message: str, api_key: str) -> str:
         except HTTPError as e:
             body = e.read().decode() if e.fp else ""
             print(f"API error {e.code}: {body}", file=sys.stderr)
+            print(f"  URL: {XAI_API_URL}", file=sys.stderr)
+            print(f"  Model: {XAI_MODEL}", file=sys.stderr)
+            print(f"  Key prefix: {api_key[:8]}...{api_key[-4:]}", file=sys.stderr)
             if attempt < max_retries and e.code in (403, 429, 500, 502, 503):
                 wait = 2 ** (attempt + 1)
                 print(f"  Retrying in {wait}s (attempt {attempt + 1}/{max_retries})...")
