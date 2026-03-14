@@ -1,6 +1,6 @@
 # Grok Review Report
 
-**Generated:** 2026-03-14T11:50:14Z
+**Generated:** 2026-03-14T12:35:26Z
 
 ## Summary
 
@@ -8,11 +8,11 @@
 |--------|-------|
 | Total falsifiable | 70 |
 | Sent to Grok | 70 |
-| Reviewed by Grok | 30 |
-| Confirmed | 4 |
-| Disputed | 6 |
-| Inconclusive | 12 |
-| Needs revision | 8 |
+| Reviewed by Grok | 35 |
+| Confirmed | 5 |
+| Disputed | 8 |
+| Inconclusive | 13 |
+| Needs revision | 9 |
 
 ## Disputed Claims (Action Required)
 
@@ -46,14 +46,27 @@
 - **Reasoning:** The falsification predicate is not logically consistent with the stated claim. The claim asserts that an observation class O (from the past) 'cannot be a logical function of x(t+τ)' (future state), wh
 - **Message:** MSG-20260314-104054-ckuj
 
+### C-MK5.3
+- **Confidence:** 1.0
+- **Model:** grok-4-latest
+- **Reasoning:** The claimed formula for E[min(T_1,...,T_k)] = (1/lambda)(1 - 1/k) is mathematically incorrect. The correct expected value for the minimum of k independent Exp(lambda) random variables is 1/(k lambda),
+- **Message:** MSG-20260314-123254-ny4d
+
 ### F-1.5
 - **Confidence:** 0.95
 - **Model:** grok-4-latest
 - **Reasoning:** The claim states that Γ = |dh/dλ|* = |1 + iπ/2| = 1 + π²/4 ≈ 3.467. However, this contains a fundamental mathematical error. The magnitude of a complex number |a + bi| is sqrt(a² + b²), so |1 + i(π/2)
 - **Message:** MSG-20260314-113640-e7p6
 
+### F-5.3
+- **Confidence:** 0.65
+- **Model:** grok-4-latest
+- **Reasoning:** The falsification predicate is logically consistent in structure, defining clear conditions for falsification based on R² thresholds and modifications. However, the threshold of 0.85 appears arbitrary
+- **Message:** MSG-20260314-123355-vqff
+
 ## Needs Revision
 
+- **C-2.5** (confidence: 0.65): The falsification predicate is mostly logically consistent, defining clear boolean conditions for falsification based on beta shift and eigenvalues. It aligns with standard RG stability criteria where
 - **C-DRP2.3** (confidence: 0.75): The falsification predicate is mostly logically consistent in structure: it defines a clear test (benchmark construction, evaluation, threshold comparison) that could in principle falsify the claim. T
 - **C-DRP2.7** (confidence: 0.65): The falsification predicate is logically consistent: it sets up a clear equivalence test comparing vacuity rates between pre-registered and unregistered studies, with a defined margin (0.05) and sampl
 - **C-MK4.2** (confidence: 0.95): The mathematical formula delta_min = 1 - (epsilon/r_0)^{1/H_plan} is correct for achieving r_H = epsilon exactly under the geometric decay r_t = (1 - delta)^t * r_0. However, the claim states delta_mi
@@ -70,4 +83,5 @@
 | C-2.4 | 0.85 | grok-4-latest |
 | C-3.DIAG | 0.92 | grok-4-latest |
 | C-MK4.3 | 0.95 | grok-4-latest |
+| C-MK5.4 | 0.85 | grok-4-latest |
 | F-SFW.4 | 0.95 | grok-4-latest |

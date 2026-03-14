@@ -698,15 +698,60 @@
       "confidence": 0.65,
       "model_used": "grok-4-latest",
       "reasoning_preview": "The falsification predicate is logically consistent: it defines clear boolean conditions for falsification based on scaling differences or non-universality of expressions, with well-structured WHERE, "
+    },
+    "C-MK5.3": {
+      "msg_id": "MSG-20260314-123254-ny4d",
+      "parent_msg_id": "MSG-20260314-103904-c3dy",
+      "timestamp": "2026-03-14T12:32:54.072226+00:00",
+      "verdict": "disputed",
+      "confidence": 1.0,
+      "model_used": "grok-4-latest",
+      "reasoning_preview": "The claimed formula for E[min(T_1,...,T_k)] = (1/lambda)(1 - 1/k) is mathematically incorrect. The correct expected value for the minimum of k independent Exp(lambda) random variables is 1/(k lambda),"
+    },
+    "C-2.5": {
+      "msg_id": "MSG-20260314-123526-7w0w",
+      "parent_msg_id": "MSG-20260314-103904-d7kc",
+      "timestamp": "2026-03-14T12:35:26.320610+00:00",
+      "verdict": "needs-revision",
+      "confidence": 0.65,
+      "model_used": "grok-4-latest",
+      "reasoning_preview": "The falsification predicate is mostly logically consistent, defining clear boolean conditions for falsification based on beta shift and eigenvalues. It aligns with standard RG stability criteria where"
+    },
+    "F-5.3": {
+      "msg_id": "MSG-20260314-123355-vqff",
+      "parent_msg_id": "MSG-20260314-103904-cdnf",
+      "timestamp": "2026-03-14T12:33:55.040285+00:00",
+      "verdict": "disputed",
+      "confidence": 0.65,
+      "model_used": "grok-4-latest",
+      "reasoning_preview": "The falsification predicate is logically consistent in structure, defining clear conditions for falsification based on R\u00b2 thresholds and modifications. However, the threshold of 0.85 appears arbitrary"
+    },
+    "C-MK5.4": {
+      "msg_id": "MSG-20260314-123458-qicc",
+      "parent_msg_id": "MSG-20260314-103904-cjd0",
+      "timestamp": "2026-03-14T12:34:58.659525+00:00",
+      "verdict": "confirmed",
+      "confidence": 0.85,
+      "model_used": "grok-4-latest",
+      "reasoning_preview": "The falsification predicate is logically consistent: it provides a clear, simulation-based test using a standard stochastic fold bifurcation model, with well-defined variables, evaluation steps, and b"
+    },
+    "F-1.3": {
+      "msg_id": "MSG-20260314-123328-k0t5",
+      "parent_msg_id": "MSG-20260314-103904-c8n1",
+      "timestamp": "2026-03-14T12:33:28.262103+00:00",
+      "verdict": "inconclusive",
+      "confidence": 0.65,
+      "model_used": "grok-4-latest",
+      "reasoning_preview": "The falsification predicate is logically consistent: it defines a clear statistical test using mean \u03b2 per substrate class against a 2\u03c3 threshold around 0.5, with well-defined variables and evaluation "
     }
   },
   "summary": {
     "total_falsifiable": 70,
     "sent_to_grok": 70,
-    "reviewed_by_grok": 30,
-    "confirmed": 4,
-    "disputed": 6,
-    "inconclusive": 12,
-    "needs_revision": 8
+    "reviewed_by_grok": 35,
+    "confirmed": 5,
+    "disputed": 8,
+    "inconclusive": 13,
+    "needs_revision": 9
   }
 }
