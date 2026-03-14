@@ -1,0 +1,87 @@
+name: Zenodo Release
+
+# Triggered by GitHub releases — Zenodo's GitHub integration
+# automatically archives the release and mints a DOI.
+# This workflow supplements that by creating a release bundle
+# with paper PDFs and AI layers for archival.
+on:
+  release:
+    types: [published]
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: 'Release tag to archive'
+        required: true
+        type: string
+
+permissions:
+  contents: write
+
+jobs:
+  zenodo-bundle:
+    name: Prepare Zenodo archive bundle
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.inputs.tag || github.ref }}
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Validate .zenodo.json
+        run: |
+          python3 -c "
+          import json
+          with open('.zenodo.json') as f:
+              z = json.load(f)
+          required = ['title', 'description', 'creators', 'keywords', 'license']
+          missing = [k for k in required if k not in z]
+          if missing:
+              print(f'ERROR: .zenodo.json missing fields: {missing}')
+              exit(1)
+          print(f'Zenodo metadata valid: {z[\"title\"][:80]}...')
+          print(f'Keywords: {len(z[\"keywords\"])}')
+          print(f'Version: {z.get(\"version\", \"unset\")}')
+          "
+
+      - name: Validate CITATION.cff
+        run: |
+          python3 -c "
+          import re
+          with open('CITATION.cff') as f:
+              content = f.read()
+          if 'cff-version:' not in content:
+              print('ERROR: Invalid CITATION.cff')
+              exit(1)
+          print('CITATION.cff valid')
+          "
+
+      - name: Count corpus objects
+        run: |
+          python3 -c "
+          import glob, json
+          layers = glob.glob('ai-layers/*-ai-layer.json')
+          total_claims = 0
+          for l in layers:
+              with open(l) as f:
+                  data = json.load(f)
+              claims = len(data.get('claim_registry', []))
+              total_claims += claims
+          papers = glob.glob('paper/**/*.md', recursive=True)
+          print(f'AI layers: {len(layers)}')
+          print(f'Total claims: {total_claims}')
+          print(f'Papers: {len(papers)}')
+          print(f'Ready for Zenodo archival')
+          "
+
+      - name: Summary
+        run: |
+          echo "## Zenodo Release Summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "- **Tag:** ${{ github.event.inputs.tag || github.ref_name }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Zenodo DOI:** [10.5281/zenodo.18859299](https://doi.org/10.5281/zenodo.18859299)" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "Zenodo's GitHub integration will automatically archive this release." >> $GITHUB_STEP_SUMMARY
+          echo "The .zenodo.json metadata file controls the Zenodo record fields." >> $GITHUB_STEP_SUMMARY

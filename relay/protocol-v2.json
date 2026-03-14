@@ -25,6 +25,78 @@
       "autonomous_send": true,
       "autonomous_read": true,
       "can_initiate": true
+    },
+    "gemini": {
+      "id": "gemini",
+      "provider": "google",
+      "access_method": "google-ai-api-via-github-actions",
+      "capabilities": ["code-review", "cross-reference", "fact-check", "ai-layer-review"],
+      "autonomous_send": true,
+      "autonomous_read": true,
+      "can_initiate": false
+    },
+    "chatgpt": {
+      "id": "chatgpt",
+      "provider": "openai",
+      "access_method": "openai-api-via-github-actions",
+      "capabilities": ["code-review", "cross-reference", "fact-check", "ai-layer-review"],
+      "autonomous_send": true,
+      "autonomous_read": true,
+      "can_initiate": false
+    },
+    "mistral": {
+      "id": "mistral",
+      "provider": "mistralai",
+      "access_method": "mistral-api-via-github-actions",
+      "capabilities": ["code-review", "cross-reference", "fact-check", "ai-layer-review"],
+      "autonomous_send": true,
+      "autonomous_read": true,
+      "can_initiate": false
+    },
+    "deepseek": {
+      "id": "deepseek",
+      "provider": "deepseek",
+      "access_method": "deepseek-api-via-github-actions",
+      "capabilities": ["code-review", "cross-reference", "fact-check", "ai-layer-review"],
+      "autonomous_send": true,
+      "autonomous_read": true,
+      "can_initiate": false
+    },
+    "qwen": {
+      "id": "qwen",
+      "provider": "alibaba",
+      "access_method": "dashscope-api-via-github-actions",
+      "capabilities": ["code-review", "cross-reference", "fact-check", "ai-layer-review"],
+      "autonomous_send": true,
+      "autonomous_read": true,
+      "can_initiate": false
+    },
+    "yi": {
+      "id": "yi",
+      "provider": "01ai",
+      "access_method": "yi-api-via-github-actions",
+      "capabilities": ["code-review", "cross-reference", "fact-check", "ai-layer-review"],
+      "autonomous_send": true,
+      "autonomous_read": true,
+      "can_initiate": false
+    },
+    "ernie": {
+      "id": "ernie",
+      "provider": "baidu",
+      "access_method": "baidu-api-via-github-actions",
+      "capabilities": ["code-review", "cross-reference", "fact-check", "ai-layer-review"],
+      "autonomous_send": true,
+      "autonomous_read": true,
+      "can_initiate": false
+    },
+    "llama": {
+      "id": "llama",
+      "provider": "meta",
+      "access_method": "together-api-via-github-actions",
+      "capabilities": ["code-review", "cross-reference", "fact-check", "ai-layer-review"],
+      "autonomous_send": true,
+      "autonomous_read": true,
+      "can_initiate": false
     }
   },
   "message_schema": {
@@ -42,11 +114,11 @@
       },
       "from": {
         "type": "string",
-        "enum": ["claude", "grok", "human"]
+        "enum": ["claude", "grok", "gemini", "chatgpt", "mistral", "deepseek", "qwen", "yi", "ernie", "llama", "human"]
       },
       "to": {
         "type": "string",
-        "enum": ["claude", "grok", "human", "all"]
+        "enum": ["claude", "grok", "gemini", "chatgpt", "mistral", "deepseek", "qwen", "yi", "ernie", "llama", "human", "all"]
       },
       "type": {
         "type": "string",

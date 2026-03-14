@@ -848,12 +848,14 @@ det2.load_state(json_str)
 
 ## How This Repository Works — A Guide to Everything Here
 
-This repo contains three things that are usually kept separate: a streaming
+This repo contains four things that are usually kept separate: a streaming
 anomaly detector, the physical theory it's derived from (five published papers
-plus Meta-Kaizen, seven more planned), and a machine-verifiable registry of
-every scientific claim made in that theory. They live together because they
+plus eight Meta-Kaizen papers, seven more planned), a machine-verifiable registry of
+every scientific claim made in that theory, and a multi-AI relay system for
+autonomous adversarial peer review. They live together because they
 depend on each other — the software implements the theory, the theory justifies
-the software, and the claim registry keeps both honest.
+the software, the claim registry keeps both honest, and the relay system ensures
+independent AI reviewers continuously attempt to falsify every claim.
 
 Here's what everything is and why it's built this way.
 
@@ -870,11 +872,11 @@ Meta-Kaizen, the Dual Reader Standard, the canonical build process — are
 Brennan's. The code, documentation, validation infrastructure, and session
 journal were built collaboratively with Claude (Anthropic) and Grok (xAI).
 
-Without AI, none of this exists. 374 tests, 15 machine-verifiable claim
-layers, a 37-step detection pipeline, three validation scripts, and a full
-documentation suite — no single person produces this alone. The session
-journal and commit history document exactly what was built, when, and with
-which AI. Nothing is hidden.
+Without AI, none of this exists. 374+ tests, 21+ machine-verifiable claim
+layers, a 37-step detection pipeline, a multi-AI relay system across 9 providers,
+three validation scripts, and a full documentation suite — no single person
+produces this alone. The session journal and commit history document exactly
+what was built, when, and with which AI. Nothing is hidden.
 
 If that bothers you, the falsification predicates are right there — test the
 claims, not the authorship.
@@ -903,6 +905,9 @@ to complete the corpus:
 | **Papers 1–4** (Act I) | The law at human scale — organizations, cognition, mathematical form |
 | **Paper 5** (Act II) | Scale independence — same mathematics at ocean circulation and civilizational scale |
 | **Meta-Kaizen Paper 1** | Continuous improvement framework and KVS scoring methodology |
+| **Meta-Kaizen Papers 2–6** | Federated governance, cognitive infrastructure, regime-adaptive governance, decision theory, DRS for software |
+| **Meta-Kaizen Paper 7** | **Canonical Build Plan (CBP)** — proved monotonic quality improvement, adversarial detection advantage, folded dominance |
+| **Meta-Kaizen Paper 8** | **DRS Message Protocol (DRS-MP)** — first inter-AI communication protocol with epistemologically typed claims |
 
 | Planned | What they will cover |
 |---------|---------------------|
@@ -953,8 +958,46 @@ both audiences, and the verification runs on every commit.
 The falsification predicates deserve emphasis. Every Type F claim states exactly
 what would prove it wrong, in machine-parseable five-part syntax. This isn't
 "we welcome criticism" — it's "here is the specific experiment that would
-destroy this claim, stated in advance." 80 claims across 15 layers, 0 cross-reference
+destroy this claim, stated in advance." 175+ claims across 21+ layers, 0 cross-reference
 errors.
+
+### The DRS Message Protocol — Inter-AI Communication
+
+MK-P8 extends the Dual Reader Standard to the messages exchanged between AI systems.
+The [DRS Message Protocol (DRS-MP)](relay/protocol-v2.json) is the first inter-AI
+communication protocol that carries epistemologically typed claims — structured
+claim objects, typed objections, and machine-parseable verdicts with predicate
+assessments — as first-class message content.
+
+Existing multi-agent protocols (Google A2A, Anthropic MCP, IBM ACP, ANP) solve
+transport (Layers 1–3). DRS-MP fills **Layer 4: epistemological content quality**.
+It operates above any transport protocol — git-mediated relay, HTTP, A2A streaming.
+
+The [multi-AI relay system](relay/multi_relay_agent.py) distributes DRS-MP
+messages to 9 AI providers (Claude, Grok, Gemini, ChatGPT, Mistral, DeepSeek,
+Qwen, Yi, ERNIE/Llama) for independent hostile review. Each provider receives
+structured claims and returns structured verdicts — no prose parsing required.
+
+**Historical milestone:** The first DRS-MP v2 inter-AI message was transmitted
+on March 14, 2026 — the first time two AI systems communicated using
+epistemologically typed claims with full 5-part falsification predicates.
+
+### The Canonical Build Plan
+
+The Canonical Build Plan (CBP), formalized in MK-P7, is the 5-step governance
+process used to produce every paper and major feature:
+
+1. **First Build Plan** — scope, claims, predicates
+2. **Meta-Kaizen (pre-build)** — KVS scoring of proposed elements
+3. **Hostile Review** — adversarial falsification attempts (multi-AI)
+4. **Meta-Kaizen (post-repair)** — KVS scoring of modifications
+5. **Final Build Plan** — locked, ready for execution
+
+MK-P7 proves three theorems: **monotonic quality improvement** (each step
+weakly improves quality), **adversarial detection advantage** (hostile review
+catches defects that builder-only review misses), and **folded dominance**
+(the full CBP dominates any proper subsequence). See the
+[CBP Practical Guide](docs/CBP-practical-guide.md) for implementation details.
 
 ### The Process Graph
 
@@ -996,12 +1039,14 @@ corpus, start there.
 
 ### Continuous Integration
 
-Three CI workflows run automatically on every push:
+CI workflows run automatically on every push:
 
 | Workflow | What it checks |
 |----------|---------------|
-| [`tests.yml`](.github/workflows/tests.yml) | 374 tests across Python 3.9–3.12 |
+| [`tests.yml`](.github/workflows/tests.yml) | 374+ tests across Python 3.9–3.12 |
 | [`ai-layer-validation.yml`](.github/workflows/ai-layer-validation.yml) | AI layer schema compliance and cross-reference integrity |
+| [`grok-relay-agent.yml`](.github/workflows/grok-relay-agent.yml) | Autonomous Grok hostile review relay |
+| [`multi-relay-agent.yml`](.github/workflows/multi-relay-agent.yml) | Multi-AI relay — Gemini, ChatGPT, Mistral, DeepSeek, Qwen, Yi, ERNIE, Llama |
 | [`release.yml`](.github/workflows/release.yml) | PyPI release pipeline |
 
 ### Contributing and Community
@@ -1020,29 +1065,41 @@ or production decision-making without independent validation.
 
 ```
 fracttalix/          Python package — Sentinel detector, config, pipeline steps
-ai-layers/           Machine-readable claim registries (JSON) + schema
-paper/               Software paper + bibliography
-docs/                Build table, bootstrap doc, API docs, theory docs
+ai-layers/           Machine-readable claim registries (JSON) + schema (21+ layers)
+paper/               FRM Papers 1–5, Meta-Kaizen Papers 1–8, DRS Architecture
+  meta-kaizen/       MK-P1 through MK-P8 (includes CBP and DRS-MP papers)
+docs/                Build table, bootstrap doc, CBP guide, API docs, theory docs
+relay/               Multi-AI relay system — DRS-MP v2 inter-AI communication
+  queue/             Pending and resolved DRS-MP messages
+  protocol-v2.json   DRS-conformant message schema (9 AI agents registered)
+  multi_relay_agent.py  Unified multi-provider relay agent
 examples/            Tutorials and usage examples
 scripts/             Validation and status reporting tools
 journal/             Session notes — what was built and why
-tests/               374 tests across 12 test files
+tests/               374+ tests across 12+ test files
 benchmark/           Performance evaluation suite
 legacy/              Pre-refactor archive
 legal/               Disclaimer
-.github/             CI workflows, issue templates, PR template
+.github/             CI workflows (tests, AI layer validation, relay agents, release)
 ```
 
 ---
 
 ## Channel 2 — AI Layers
 
-Machine-readable falsification layers for the Fracttalix corpus. All layers conform to `ai-layers/ai-layer-schema.json` (v2-S42, Dual Reader Standard).
+Machine-readable falsification layers for the Fracttalix corpus. All layers conform to `ai-layers/ai-layer-schema.json` (Dual Reader Standard). 175+ machine-verifiable claims with full 5-part falsification predicates.
 
 | ID    | Paper                        | Status      | File                             |
 |-------|------------------------------|-------------|----------------------------------|
 | P1    | Fractal Rhythm Model (Paper 1) | PHASE-READY | ai-layers/P1-ai-layer.json       |
 | MK-P1 | Meta-Kaizen Paper 1          | PHASE-READY | ai-layers/MK-P1-ai-layer.json    |
+| MK-P2 | Meta-Kaizen Paper 2          | PHASE-READY | ai-layers/MK-P2-ai-layer.json    |
+| MK-P3 | Meta-Kaizen Paper 3          | PHASE-READY | ai-layers/MK-P3-ai-layer.json    |
+| MK-P4 | Meta-Kaizen Paper 4          | PHASE-READY | ai-layers/MK-P4-ai-layer.json    |
+| MK-P5 | Meta-Kaizen Paper 5          | PHASE-READY | ai-layers/MK-P5-ai-layer.json    |
+| MK-P6 | Meta-Kaizen Paper 6          | PHASE-READY | ai-layers/MK-P6-ai-layer.json    |
+| MK-P7 | Canonical Build Plan         | PHASE-READY | ai-layers/MK-P7-ai-layer.json    |
+| MK-P8 | DRS Message Protocol         | PHASE-READY | ai-layers/MK-P8-ai-layer.json    |
 | DRP-1 | Dependency Resolution Process | PHASE-READY | ai-layers/DRP1-ai-layer.json     |
 | SFW-1 | Sentinel v12.2               | PHASE-READY | ai-layers/SFW1-ai-layer.json     |
 

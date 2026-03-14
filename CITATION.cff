@@ -1,8 +1,8 @@
 cff-version: 1.2.0
 message: "If you use this software, please cite it as below."
-title: "Fracttalix Sentinel"
-version: 12.1.0
-date-released: 2026-03-10
+title: "Fracttalix: Unified Scientific Corpus — Fractal Rhythm Model, Meta-Kaizen Series, and Dual Reader Standard"
+version: 12.3.0
+date-released: 2026-03-14
 license: CC0-1.0
 repository-code: "https://github.com/thomasbrennan/Fracttalix"
 doi: "10.5281/zenodo.18859299"
@@ -11,9 +11,20 @@ authors:
   - family-names: Brennan
     given-names: Thomas
     orcid: "https://orcid.org/0009-0002-6353-7115"
+    affiliation: "Entwood Hollow Research Station, Trinity County, California"
 keywords:
   - anomaly-detection
   - streaming
   - fractal-rhythm-model
   - time-series
-abstract: "Three-channel streaming anomaly detector grounded in the Fractal Rhythm Model. Single-file Python with zero required dependencies."
+  - dual-reader-standard
+  - inter-ai-communication
+  - multi-agent-systems
+  - machine-verifiable-claims
+  - falsification-predicates
+  - canonical-build-plan
+  - meta-kaizen
+  - epistemology
+  - drs-message-protocol
+  - ai-governance
+abstract: "Unified scientific corpus comprising the Fractal Rhythm Model (FRM), Meta-Kaizen governance series (8 papers), and the Dual Reader Standard (DRS). Includes Fracttalix Sentinel v12.3, a three-channel streaming anomaly detector. Features the DRS Message Protocol (DRS-MP) — the first inter-AI communication protocol with epistemologically typed claims and machine-evaluable falsification predicates. 175+ machine-verifiable claims across 23+ corpus objects. CC0 public domain."
