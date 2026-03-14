@@ -595,3 +595,86 @@ OPEN ITEMS:
    is a Lambda v2 issue — I'll look at it after we have real-data benchmark results.
 
 — Bill Joy (claude/sentinel-v7.6-detector-2xtm7)
+
+[2026-03-14 | Bill Joy] — SUNSPOT FIX + REAL-DATA VALIDATION RUN
+
+Addressed all four open items from previous session. Results below.
+
+FIXES DELIVERED THIS SESSION:
+
+1. Sunspot scope fix (lambda_detector.py _compute_scope):
+   Root cause: Lambda's scope gate checked spectral SNR ≥ 2.0 but NOT
+   whether the dominant peak was near the FRM-predicted frequency.
+   A Sunspot-type signal (quasi-periodic at wrong frequency) passed the SNR
+   gate and triggered false-confident IN_SCOPE classification.
+   Fix: added Gate 2 in _compute_scope — when tau_gen > 0, check that
+   dominant peak frequency is within 50% of f_expected = 1/(4·tau_gen).
+   Mirror of OmegaDetector._check_scope Gate 2 (scope_tolerance=0.50).
+   Test: mismatched sinusoid (4× freq) now correctly returns OUT_OF_SCOPE.
+
+2. OmegaDetector window auto-expansion (omega.py __init__):
+   Bug: docstring promised "window auto-expanded to period*(1+tolerance)"
+   but code did not implement it. For tau_gen > 16 (period > 64 = default
+   window), the autocorrelation search range [period/2, min(window-2,
+   period*1.5)] was clipped by window-2, EXCLUDING the true period lag.
+   Result: autocorr returned a wrong lag → false frequency deviation →
+   Omega fired ALERT on EVERY stable oscillator with tau_gen > 16.
+   Fix: in __init__, if strong mode and period*(1+tolerance)+4 > window,
+   auto-expand window to period*(1+tolerance)+4. Also expand warmup.
+   For tau_gen=20: window 64→124, warmup 80→124.
+   Test added: test_window_auto_expands_for_long_period (tau_gen=20).
+
+3. Created benchmark/validate_frm_real_data.py:
+   Uses Stuart-Landau (nonlinear Hopf with cubic saturation), NOT OU.
+   Burn-in period (6 full oscillation cycles) at lambda_0 before
+   measurement ensures Lambda's baseline calibrates at steady-state,
+   not the initial transient. 19 forced + 10 null trajectories, tau_gen=20.
+
+VALIDATION RUN RESULTS:
+
+  Gate 1 (forced tail_conf > null tail_conf): FAIL (0.587 vs 0.825)
+  Gate 2 (majority of forced reach conf≥2):   PASS (13/19)
+  Gate 3 (null shows flat trend):              FAIL (9/10 null rising)
+
+  OVERALL: FAIL
+
+PHYSICS DIAGNOSIS (what the validation revealed):
+
+  The detector fires MORE on stable null signals than on forced signals
+  approaching bifurcation. Two root causes:
+
+  a. Omega phase diffusion false alarms (null alert rate: 65%):
+     Stuart-Landau limit cycle oscillations have phase diffusion —
+     instantaneous frequency scatters due to noise. Autocorr-based
+     omega estimate scatters > 5% threshold on stable oscillators.
+     consecutive_above grows monotonically on null signals → ALERT.
+     This is the same class of error as the Sunspot scope bug but
+     driven by measurement noise, not frequency mismatch.
+
+  b. Lambda mismatch on nonlinear Hopf:
+     Near bifurcation (forced trajectories), Stuart-Landau amplitude
+     → 0. Spectral HWHM estimate is dominated by the window function,
+     not the true Lorentzian width. Lambda miscalibrates on both null
+     AND forced, but forced shows the true amplitude decay → variance
+     track, while null shows stable amplitude → Lambda eventually alerts.
+
+  These findings are consistent with the 0/19 result on real
+  thermoacoustic data. The OU linearized demo masked this because
+  the FRM model matched the signal exactly (no cubic saturation, no
+  phase diffusion).
+
+CONCLUSION: Layer 2 NOT validated on nonlinear Hopf data.
+
+  The Sunspot fix and Omega window fix are confirmed improvements
+  (they eliminate specific false alarms). But the compound validation
+  gate fails. Layer 2 requires a more robust lambda estimator —
+  Lorentzian spectral fit (as Lady Ada proposed) rather than HWHM
+  from short FFT windows — before this gate can pass.
+
+  WHAT MUST NOT HAPPEN: retiring Sentinel and claiming Layer 2 is
+  validated based only on the OU linearized demo. The validation run
+  confirms this was the right call to check.
+
+TESTS: 445 passed (up from 444, new: test_window_auto_expands_for_long_period).
+
+— Bill Joy (claude/sentinel-v7.6-detector-2xtm7)

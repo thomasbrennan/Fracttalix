@@ -96,6 +96,7 @@ class LambdaDetector(BaseDetector):
         # lambda (from noisy variance) will not persist; genuine CSD will.
         self._confirm_count = 0
         self._confirm_required = 5  # consecutive fit intervals
+        self._last_peak_freq: Optional[float] = None  # dominant FFT peak (cycles/sample)
 
     def _check_scope(self, window: List[float]) -> bool:
         min_window = max(32, self._window_size // 2)
@@ -199,6 +200,7 @@ class LambdaDetector(BaseDetector):
         peak_val = spectrum[peak_idx]
         mean_val = np.mean(spectrum[1:])
         self._last_spectral_snr = peak_val / mean_val if mean_val > 1e-12 else 0.0
+        self._last_peak_freq = float(freqs[peak_idx])
 
         if self._last_spectral_snr < 2.0:
             return None
@@ -248,6 +250,16 @@ class LambdaDetector(BaseDetector):
             return "OUT_OF_SCOPE"
         if current_var < 1e-12:
             return "OUT_OF_SCOPE"
+        # Gate 2: when tau_gen is known, reject signals whose dominant spectral
+        # peak is far from the FRM-predicted frequency ω = π/(2·τ_gen).
+        # This is the Sunspot fix — a quasi-periodic signal at the wrong frequency
+        # (e.g. an 11-year solar cycle) passes the SNR gate above but should be
+        # OUT_OF_SCOPE.  Mirror OmegaDetector._check_scope Gate 2 (50% tolerance).
+        if self._tau_gen > 0 and self._last_peak_freq is not None:
+            f_expected = 1.0 / (4.0 * self._tau_gen)  # ω/(2π) in cycles/sample
+            freq_dev = abs(self._last_peak_freq - f_expected) / (f_expected + 1e-12)
+            if freq_dev > 0.5:
+                return "OUT_OF_SCOPE"
         # Check baseline ratio — if λ has dropped significantly, not stable
         if self._baseline_var and self._baseline_var > 1e-12:
             var_ratio = current_var / self._baseline_var
@@ -462,6 +474,7 @@ class LambdaDetector(BaseDetector):
         self._last_scope = "INSUFFICIENT_DATA"
         self._last_spectral_snr = 0.0
         self._last_spectral_width = None
+        self._last_peak_freq = None
         self._last_var_ratio = 1.0
         self._last_var_trend = 0.5
         self._last_baseline_ratio = 1.0
@@ -481,6 +494,7 @@ class LambdaDetector(BaseDetector):
             "last_scope": self._last_scope,
             "last_spectral_snr": self._last_spectral_snr,
             "last_spectral_width": self._last_spectral_width,
+            "last_peak_freq": self._last_peak_freq,
         })
         return sd
 
@@ -501,3 +515,4 @@ class LambdaDetector(BaseDetector):
         self._last_scope = sd.get("last_scope", "INSUFFICIENT_DATA")
         self._last_spectral_snr = sd.get("last_spectral_snr", 0.0)
         self._last_spectral_width = sd.get("last_spectral_width")
+        self._last_peak_freq = sd.get("last_peak_freq")

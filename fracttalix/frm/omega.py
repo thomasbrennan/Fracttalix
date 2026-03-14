@@ -175,16 +175,33 @@ class OmegaDetector(BaseDetector):
         alert_steps: int = 3,
         scope_tolerance: float = 0.50,
     ):
-        super().__init__("OmegaDetector", warmup=warmup, window_size=max(window, warmup))
-        self._tau_gen = tau_gen
-        self._deviation_threshold = deviation_threshold
-        self._alert_steps = alert_steps
-        self._window_size_fft = window
         self._omega_predicted = (
             math.pi / (2.0 * tau_gen) if tau_gen is not None and tau_gen > 0 else None
         )
         self._strong_mode = (self._omega_predicted is not None)
         self._scope_tolerance = scope_tolerance  # OUT_OF_SCOPE if |Δω/ω| > this
+
+        # In strong mode: auto-expand FFT window so the autocorrelation search
+        # range [period*(1-tol), period*(1+tol)] fits inside the window.
+        # Minimum window = period*(1+scope_tolerance) + 4.
+        # The docstring promised this; here it is implemented.
+        # For tau_gen=10 (period=40), window_needed=64 = default.
+        # For tau_gen=20 (period=80), window_needed=124 — without expansion,
+        # autocorrelation searches [40,62] and misses the peak at lag=80,
+        # causing Omega to report false deviations and spurious ALERT on all
+        # oscillatory signals (including stable null trajectories).
+        if self._strong_mode and self._omega_predicted is not None:
+            period = 2.0 * math.pi / self._omega_predicted  # = 4 * tau_gen
+            min_window = int(period * (1.0 + scope_tolerance)) + 4
+            if min_window > window:
+                window = min_window
+            warmup = max(warmup, window)
+
+        super().__init__("OmegaDetector", warmup=warmup, window_size=max(window, warmup))
+        self._tau_gen = tau_gen
+        self._deviation_threshold = deviation_threshold
+        self._alert_steps = alert_steps
+        self._window_size_fft = window
         self._consecutive_above: int = 0
         self._omega_history: deque = deque(maxlen=20)
 

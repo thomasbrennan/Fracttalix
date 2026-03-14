@@ -222,6 +222,36 @@ class TestOmegaDetector:
             f"deviation {dev:.3f} exceeds 5% threshold."
         )
 
+    def test_window_auto_expands_for_long_period(self):
+        """Window is auto-expanded when period > default window (Sunspot window fix).
+
+        tau_gen=20 gives period=80 samples.  With the default window=64, the
+        autocorrelation search range [40, min(62, 120)] = [40, 62] cannot contain
+        the true peak at lag=80, so autocorr returns a wrong frequency and Omega
+        fires spuriously on every stable oscillator with tau_gen > 16.
+
+        After the fix, the window is auto-expanded to int(80*1.5)+4 = 124 so that
+        lag=80 falls within the search range [40, 122].
+        """
+        tau_gen = 20.0
+        omega = math.pi / (2.0 * tau_gen)  # period = 80 samples
+        det = OmegaDetector(tau_gen=tau_gen)
+        # Window must be at least period*(1+scope_tolerance)+4 = 80*1.5+4 = 124
+        assert det._window_size_fft >= 124, (
+            f"Window not auto-expanded for tau_gen=20: got {det._window_size_fft}, expected ≥124"
+        )
+        # Stable sinusoid at the predicted frequency should not alert
+        rng = random.Random(42)
+        signal = [3.0 * math.sin(omega * i) + rng.gauss(0, 0.1) for i in range(500)]
+        post_warmup_alerts = sum(
+            1 for r in [det.update(x) for x in signal]
+            if r.status == ScopeStatus.ALERT
+        )
+        assert post_warmup_alerts == 0, (
+            f"Omega (tau_gen=20) fired {post_warmup_alerts} false ALERTs on stable "
+            f"sinusoid — window auto-expansion required to find period=80 in autocorr."
+        )
+
 
 # ---------------------------------------------------------------------------
 # VirtuDetector
