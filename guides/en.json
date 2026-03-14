@@ -1,0 +1,318 @@
+{
+  "@context": "https://schema.org",
+  "@type": "TechArticle",
+  "@id": "https://github.com/thomasbrennan/Fracttalix/blob/main/guides/en.json",
+  "name": "Dual Reader Standard — Implementation Guide",
+  "headline": "How to Implement the Dual Reader Standard for Machine-Verifiable Claims",
+  "description": "Complete implementation guide for the Dual Reader Standard (DRS), a verification architecture that makes every claim in a knowledge system readable by both human and machine using deterministic falsification predicates encoded in JSON.",
+  "inLanguage": "en",
+  "author": {
+    "@type": "Person",
+    "name": "Thomas Brennan",
+    "identifier": "https://orcid.org/0009-0002-6353-7115"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "Fracttalix",
+    "url": "https://github.com/thomasbrennan/Fracttalix"
+  },
+  "datePublished": "2026-03-14",
+  "license": "https://creativecommons.org/licenses/by/4.0/",
+  "keywords": [
+    "dual reader standard",
+    "machine-verifiable claims",
+    "falsification predicate",
+    "AI layer",
+    "grounded verification protocol",
+    "JSON schema validation",
+    "scientific verification",
+    "software verification",
+    "claim registry",
+    "falsification kernel",
+    "machine-readable research",
+    "reproducible science",
+    "open science",
+    "verification architecture"
+  ],
+  "about": {
+    "@type": "Thing",
+    "name": "Dual Reader Standard",
+    "description": "A verification architecture for knowledge systems requiring every claim to be readable by two independent reader classes — human and machine.",
+    "url": "https://github.com/thomasbrennan/Fracttalix/blob/main/paper/DRS-Architecture.md"
+  },
+  "citation": {
+    "@type": "CreativeWork",
+    "name": "Fracttalix Corpus",
+    "identifier": "https://doi.org/10.5281/zenodo.18859299"
+  },
+  "isPartOf": {
+    "@type": "CreativeWork",
+    "name": "Fracttalix — Dual Reader Standard Implementation Guides",
+    "url": "https://github.com/thomasbrennan/Fracttalix/tree/main/guides"
+  },
+  "content": {
+    "what_is_the_dual_reader_standard": {
+      "title": "What Is the Dual Reader Standard?",
+      "summary": "The Dual Reader Standard (DRS) is a verification architecture for knowledge systems. Every claim — whether written in prose or implemented in code — must be readable by two independent reader classes: human and machine.",
+      "protocols": {
+        "DRP": {
+          "name": "Dual Reader Protocol",
+          "domain": "Text / Papers",
+          "function": "Makes prose claims machine-evaluable via 5-part falsification predicates",
+          "readers": {
+            "reader_1": "Human — reads the paper in natural language",
+            "reader_2": "AI — reads the AI layer (structured JSON claim registry)"
+          }
+        },
+        "GVP": {
+          "name": "Grounded Verification Protocol",
+          "domain": "Software / Code",
+          "function": "Makes machine-evaluable claims machine-verified via test bindings and commit-pinned evidence",
+          "readers": {
+            "reader_3a": "Coder — reads tier, test_bindings, verified_against fields",
+            "reader_3b": "Machine — runs pytest, stamps SHA on success"
+          }
+        }
+      }
+    },
+    "falsification_kernel": {
+      "title": "The Falsification Kernel K = (P, O, M, B)",
+      "description": "The shared foundation of both protocols. Every Type F (falsifiable) claim carries a deterministic predicate that evaluates to exactly one of two verdicts: FALSIFIED or NOT FALSIFIED.",
+      "components": {
+        "P": {
+          "name": "Predicate",
+          "json_field": "FALSIFIED_IF",
+          "role": "Logical sentence that, if TRUE, falsifies the claim",
+          "constraints": [
+            "Must evaluate to exactly TRUE or FALSE for any valid variable assignment",
+            "Quantifiers range over finite sets only",
+            "No self-reference or circular dependency"
+          ]
+        },
+        "O": {
+          "name": "Operands",
+          "json_field": "WHERE",
+          "role": "Typed definitions of every variable in the predicate",
+          "format": "type · units · definition or source",
+          "constraints": [
+            "Every free variable in P must appear in O",
+            "Every variable in O must appear in P",
+            "Each variable must be computable from cited data or derivations"
+          ]
+        },
+        "M": {
+          "name": "Mechanism",
+          "json_field": "EVALUATION",
+          "role": "Finite, deterministic evaluation procedure",
+          "constraints": [
+            "Must terminate in finite steps",
+            "Same inputs produce same verdict",
+            "Reproducible by a third party"
+          ]
+        },
+        "B": {
+          "name": "Bounds",
+          "json_fields": ["BOUNDARY", "CONTEXT"],
+          "role": "Threshold semantics and justification",
+          "constraints": [
+            "BOUNDARY specifies inclusive/exclusive for every threshold",
+            "CONTEXT justifies every numeric literal in the predicate"
+          ]
+        }
+      },
+      "example": {
+        "claim": "sort() returns elements in ascending order",
+        "predicate": {
+          "FALSIFIED_IF": "EXISTS i IN range(len(result)-1) SUCH THAT result[i] > result[i+1]",
+          "WHERE": {
+            "result": "list · dimensionless · output of sort(input)"
+          },
+          "EVALUATION": "Run sort on test vectors; check adjacent pairs; finite",
+          "BOUNDARY": "len(result) <= 1 → NOT FALSIFIED (vacuously sorted)",
+          "CONTEXT": "Ascending order is the documented contract of sort()"
+        }
+      }
+    },
+    "three_claim_types": {
+      "title": "The Three Claim Types",
+      "types": {
+        "A": {
+          "name": "Axiom",
+          "description": "Foundational premises accepted from literature or stated as starting assumptions. Unfalsifiable by design.",
+          "predicate_required": false,
+          "examples": ["Thermodynamic irreversibility", "Platform requirements", "Dependency contracts"]
+        },
+        "D": {
+          "name": "Definition",
+          "description": "Stipulative definitions of terms, structures, or procedures. Not truth-apt — they define, not claim.",
+          "predicate_required": false,
+          "examples": ["FRM functional form", "Type signatures", "Configuration schemas"]
+        },
+        "F": {
+          "name": "Falsifiable",
+          "description": "Testable claims with deterministic predicates. The core scientific and software claims.",
+          "predicate_required": true,
+          "examples": ["β = 1/2 analytically derived", "Behavioral guarantees", "Performance bounds"]
+        }
+      }
+    },
+    "six_verification_tiers": {
+      "title": "The Six Verification Tiers",
+      "description": "Every claim carries a tier field declaring what kind of evidence grounds it.",
+      "tiers": {
+        "grounded_by_construction": [
+          {
+            "tier": "axiom",
+            "applies_to": "Type A",
+            "meaning": "Foundational, unfalsifiable by design"
+          },
+          {
+            "tier": "definition",
+            "applies_to": "Type D",
+            "meaning": "Definitional, no predicate needed"
+          }
+        ],
+        "grounded_now": [
+          {
+            "tier": "software_tested",
+            "applies_to": "Type F",
+            "meaning": "Exercised by passing tests. test_bindings non-empty, verified_against SHA non-null."
+          },
+          {
+            "tier": "formal_proof",
+            "applies_to": "Type F",
+            "meaning": "Step-indexed derivation table with n_invalid_steps = 0"
+          },
+          {
+            "tier": "analytic",
+            "applies_to": "Type F",
+            "meaning": "Verified by formal derivation trace or analytical argument"
+          }
+        ],
+        "explicitly_ungrounded": [
+          {
+            "tier": "empirical_pending",
+            "applies_to": "Type F",
+            "meaning": "Active placeholder or pending external data. Gap is visible by design."
+          }
+        ]
+      }
+    },
+    "ai_layer_structure": {
+      "title": "The AI Layer — The Central Artifact",
+      "description": "A JSON document that accompanies every paper or software system. Contains the full claim registry with predicates, tiers, and test bindings.",
+      "schema_url": "https://github.com/thomasbrennan/Fracttalix/blob/main/ai-layers/ai-layer-schema.json",
+      "required_sections": {
+        "_meta": "Document type, schema version, session, licence",
+        "paper_id": "Unique paper/system identifier",
+        "paper_title": "Human-readable title",
+        "paper_type": "Classification: law_A, derivation_B, application_C, methodology_D",
+        "phase_ready": "Phase gate verdict and condition status (c1–c6)",
+        "claim_registry": "Array of all claims with types, predicates, tiers, bindings",
+        "placeholder_register": "Array of unresolved dependencies"
+      }
+    },
+    "phase_gate": {
+      "title": "The Six-Condition Phase Gate",
+      "description": "A paper or software release is PHASE-READY when all six conditions are satisfied.",
+      "conditions": {
+        "c1": "AI layer is schema-valid",
+        "c2": "All falsifiable claims registered with predicates",
+        "c3": "All predicates are machine-evaluable",
+        "c4": "Cross-references tracked (placeholder register)",
+        "c5": "Verification is self-sufficient (AI layer alone, no prose needed)",
+        "c6": "All predicates are non-vacuous (sample falsification observation exists)"
+      }
+    },
+    "how_to_implement": {
+      "title": "How to Implement the Dual Reader Standard",
+      "for_a_paper": {
+        "title": "For a Paper (DRP)",
+        "steps": [
+          "Write the paper (prose channel for human readers)",
+          "Create the AI layer JSON file (machine channel for AI readers)",
+          "Classify every claim as A (axiom), D (definition), or F (falsifiable)",
+          "Write the 5-part falsification predicate for every Type F claim",
+          "Include a sample_falsification_observation for each Type F claim (vacuity witness)",
+          "Assign the verification tier to each claim",
+          "Validate against ai-layer-schema.json",
+          "Run the phase gate (c1–c6)"
+        ]
+      },
+      "for_software": {
+        "title": "For Software (GVP)",
+        "steps": [
+          "Enumerate what the software claims to do",
+          "Classify each claim as A (assumption), D (definition), or F (behavioral)",
+          "Write the falsification predicate for every Type F claim",
+          "Write or identify the tests that exercise each claim",
+          "Populate test_bindings with fully qualified test node IDs",
+          "Run the tests and record the passing commit SHA in verified_against",
+          "Assign the tier: software_tested if tests exist, empirical_pending if not yet",
+          "Register any untested claims as placeholders",
+          "Validate against ai-layer-schema.json"
+        ]
+      },
+      "minimum_viable_adoption": {
+        "title": "Minimum Viable Adoption",
+        "description": "The smallest useful DRS adoption is a single Type F claim with a single test binding.",
+        "example": {
+          "claim_id": "F-1",
+          "type": "F",
+          "statement": "sort() returns elements in ascending order",
+          "falsification_predicate": {
+            "FALSIFIED_IF": "EXISTS i IN range(len(result)-1) SUCH THAT result[i] > result[i+1]",
+            "WHERE": {
+              "result": "list · dimensionless · output of sort(input)"
+            },
+            "EVALUATION": "Run sort on test vectors; check adjacent pairs; finite",
+            "BOUNDARY": "len(result) <= 1 → NOT FALSIFIED (vacuously sorted)",
+            "CONTEXT": "Ascending order is the documented contract of sort()"
+          },
+          "tier": "software_tested",
+          "test_bindings": ["tests/test_sort.py::test_ascending_order"],
+          "verified_against": "abc1234"
+        }
+      }
+    },
+    "design_principles": {
+      "title": "Design Principles",
+      "principles": [
+        {
+          "name": "Popperian epistemology",
+          "description": "We can falsify but not verify. A claim that survives all falsification attempts is not proven — it has survived."
+        },
+        {
+          "name": "Honest gaps",
+          "description": "The placeholder is the most important feature. When a claim is empirical_pending, the system says: we claim this but have not yet verified it. This is strictly more informative than hiding unverified claims."
+        },
+        {
+          "name": "Substrate independence",
+          "description": "The kernel K = (P, O, M, B) does not know whether it evaluates a scientific theorem or a software guarantee. Future domains (legal, regulatory, policy) can add protocols without modifying the kernel."
+        },
+        {
+          "name": "Machine lingua franca",
+          "description": "The kernel is written in logic and mathematics, not any human language. A predicate that evaluates to TRUE in Beijing evaluates to TRUE in Boston. JSON is the transport layer. Binary logic is the substrate."
+        }
+      ]
+    },
+    "three_axis_compatibility": {
+      "title": "Three-Axis Compatibility",
+      "axes": {
+        "backwards": "Nothing already done breaks. Schema versioning, append-only enums, permanent kernel.",
+        "lateral": "Works across all domains, languages, tools, and AI systems. Substrate-independent kernel.",
+        "forward": "Anything new can be added without redesign. Protocol extensibility, tier extensibility, additive schema evolution."
+      }
+    }
+  },
+  "resources": {
+    "architecture_specification": "https://github.com/thomasbrennan/Fracttalix/blob/main/paper/DRS-Architecture.md",
+    "falsification_kernel": "https://github.com/thomasbrennan/Fracttalix/blob/main/ai-layers/falsification-kernel.md",
+    "ai_layer_schema": "https://github.com/thomasbrennan/Fracttalix/blob/main/ai-layers/ai-layer-schema.json",
+    "gvp_specification": "https://github.com/thomasbrennan/Fracttalix/blob/main/docs/GVP-spec.md",
+    "example_ai_layer": "https://github.com/thomasbrennan/Fracttalix/blob/main/ai-layers/P1-ai-layer.json",
+    "claim_registry_index": "https://github.com/thomasbrennan/Fracttalix/blob/main/ai-layers/claim-registry-index.md",
+    "repository": "https://github.com/thomasbrennan/Fracttalix",
+    "doi": "https://doi.org/10.5281/zenodo.18859299"
+  }
+}
