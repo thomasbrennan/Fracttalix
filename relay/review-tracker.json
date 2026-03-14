@@ -398,15 +398,60 @@
       "confidence": 0.65,
       "model_used": "grok-4-latest",
       "reasoning_preview": "The falsification predicate is logically consistent: it sets up a clear equivalence test comparing vacuity rates between pre-registered and unregistered studies, with a defined margin (0.05) and sampl"
+    },
+    "C-DRP2.3": {
+      "msg_id": "MSG-20260314-104159-dar2",
+      "parent_msg_id": "MSG-20260314-102948-ubys",
+      "timestamp": "2026-03-14T10:41:59.990306+00:00",
+      "verdict": "needs-revision",
+      "confidence": 0.75,
+      "model_used": "grok-4-latest",
+      "reasoning_preview": "The falsification predicate is mostly logically consistent in structure: it defines a clear test (benchmark construction, evaluation, threshold comparison) that could in principle falsify the claim. T"
+    },
+    "C-DRP.1": {
+      "msg_id": "MSG-20260314-104018-8k7z",
+      "parent_msg_id": "MSG-20260314-102948-kfaw",
+      "timestamp": "2026-03-14T10:40:18.291469+00:00",
+      "verdict": "disputed",
+      "confidence": 0.75,
+      "model_used": "grok-4-latest",
+      "reasoning_preview": "The claim asserts that the 5-part predicate syntax is necessary and sufficient for expressing ANY falsifiable scientific claim as a machine-evaluable predicate. While the predicate is logically consis"
+    },
+    "C-DRP.2": {
+      "msg_id": "MSG-20260314-103955-4m7x",
+      "parent_msg_id": "MSG-20260314-102948-e65g",
+      "timestamp": "2026-03-14T10:39:55.886237+00:00",
+      "verdict": "disputed",
+      "confidence": 0.95,
+      "model_used": "grok-4-latest",
+      "reasoning_preview": "The falsification predicate is logically inconsistent with the claim statement. The claim asserts that without a phase gate, the AI layer 'will be omitted in the majority of papers.' This predicts tha"
+    },
+    "C-DRP.5": {
+      "msg_id": "MSG-20260314-104125-88j5",
+      "parent_msg_id": "MSG-20260314-102948-u2aw",
+      "timestamp": "2026-03-14T10:41:25.635530+00:00",
+      "verdict": "inconclusive",
+      "confidence": 0.6,
+      "model_used": "grok-4-latest",
+      "reasoning_preview": "The falsification predicate is logically consistent: it defines a clear, deterministic procedure to count prose references in a specific JSON field, with a threshold of >0 for falsification. The bound"
+    },
+    "C-DRP8.1": {
+      "msg_id": "MSG-20260314-104054-ckuj",
+      "parent_msg_id": "MSG-20260314-102948-m800",
+      "timestamp": "2026-03-14T10:40:54.650581+00:00",
+      "verdict": "disputed",
+      "confidence": 0.75,
+      "model_used": "grok-4-latest",
+      "reasoning_preview": "The falsification predicate is not logically consistent with the stated claim. The claim asserts that an observation class O (from the past) 'cannot be a logical function of x(t+\u03c4)' (future state), wh"
     }
   },
   "summary": {
     "total_falsifiable": 70,
     "sent_to_grok": 70,
-    "reviewed_by_grok": 5,
+    "reviewed_by_grok": 10,
     "confirmed": 0,
-    "disputed": 2,
-    "inconclusive": 2,
-    "needs_revision": 1
+    "disputed": 5,
+    "inconclusive": 3,
+    "needs_revision": 2
   }
 }
