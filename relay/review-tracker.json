@@ -53,14 +53,60 @@
       "paper_id": "DRP-8"
     }
   },
-  "claims_reviewed": {},
+  "claims_reviewed": {
+    "C-DRP2.2": {
+      "msg_id": "MSG-20260314-103209-fyj6",
+      "parent_msg_id": "MSG-20260314-102948-8tau",
+      "timestamp": "2026-03-14T10:32:09.359631+00:00",
+      "verdict": "disputed",
+      "confidence": 0.9,
+      "model_used": "grok-4-latest",
+      "reasoning_preview": "The falsification predicate is logically consistent in structure: it defines falsification based on the existence of at least one counterexample where a predicate on O (derived from P) provides non-ze"
+    },
+    "C-DRP2.9": {
+      "msg_id": "MSG-20260314-103124-dqo1",
+      "parent_msg_id": "MSG-20260314-102948-69il",
+      "timestamp": "2026-03-14T10:31:24.824477+00:00",
+      "verdict": "inconclusive",
+      "confidence": 0.65,
+      "model_used": "grok-4-latest",
+      "reasoning_preview": "The falsification predicate is logically consistent: it defines a clear, measurable threshold (accuracy gap <= 0.10) with well-specified variables, evaluation procedure (training matched systems at mu"
+    },
+    "C-DRP2.1": {
+      "msg_id": "MSG-20260314-103302-95v0",
+      "parent_msg_id": "MSG-20260314-102948-cuv3",
+      "timestamp": "2026-03-14T10:33:02.117624+00:00",
+      "verdict": "disputed",
+      "confidence": 0.65,
+      "model_used": "grok-4-latest",
+      "reasoning_preview": "The falsification predicate is logically consistent in its structure: it defines a clear comparison between vacuity rates in prose-based and DRS-based corpora, with a falsification condition if prose "
+    },
+    "C-DRP2.8": {
+      "msg_id": "MSG-20260314-103237-o3aq",
+      "parent_msg_id": "MSG-20260314-102948-a2op",
+      "timestamp": "2026-03-14T10:32:37.215948+00:00",
+      "verdict": "inconclusive",
+      "confidence": 0.65,
+      "model_used": "grok-4-latest",
+      "reasoning_preview": "The falsification predicate is logically consistent: it defines a clear, testable condition (effect_size_full <= effect_size_filtered) that would disprove the claim of systematic bias toward larger ef"
+    },
+    "C-DRP2.7": {
+      "msg_id": "MSG-20260314-103055-8s8m",
+      "parent_msg_id": "MSG-20260314-102948-3i8h",
+      "timestamp": "2026-03-14T10:30:55.687312+00:00",
+      "verdict": "needs-revision",
+      "confidence": 0.65,
+      "model_used": "grok-4-latest",
+      "reasoning_preview": "The falsification predicate is logically consistent: it sets up a clear equivalence test comparing vacuity rates between pre-registered and unregistered studies, with a defined margin (0.05) and sampl"
+    }
+  },
   "summary": {
     "total_falsifiable": 13,
     "sent_to_grok": 10,
-    "reviewed_by_grok": 0,
+    "reviewed_by_grok": 5,
     "confirmed": 0,
-    "disputed": 0,
-    "inconclusive": 0,
-    "needs_revision": 0
+    "disputed": 2,
+    "inconclusive": 2,
+    "needs_revision": 1
   }
 }
