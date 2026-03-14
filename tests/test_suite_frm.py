@@ -7,13 +7,15 @@ OUT_OF_SCOPE, STABLE, IN_SCOPE.  r_squared property returns spectral SNR.
 
 import math
 
-import numpy as np
+import pytest
 
 from fracttalix.suite import (
     LambdaDetector,
     OmegaDetector,
     VirtuDetector,
 )
+
+np = pytest.importorskip("numpy")
 
 # ── Helpers ──
 
