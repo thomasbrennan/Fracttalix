@@ -1,6 +1,6 @@
 # Grok Review Report
 
-**Generated:** 2026-03-14T11:36:40Z
+**Generated:** 2026-03-14T11:50:14Z
 
 ## Summary
 
@@ -8,11 +8,11 @@
 |--------|-------|
 | Total falsifiable | 70 |
 | Sent to Grok | 70 |
-| Reviewed by Grok | 25 |
-| Confirmed | 3 |
+| Reviewed by Grok | 30 |
+| Confirmed | 4 |
 | Disputed | 6 |
-| Inconclusive | 9 |
-| Needs revision | 7 |
+| Inconclusive | 12 |
+| Needs revision | 8 |
 
 ## Disputed Claims (Action Required)
 
@@ -57,6 +57,7 @@
 - **C-DRP2.3** (confidence: 0.75): The falsification predicate is mostly logically consistent in structure: it defines a clear test (benchmark construction, evaluation, threshold comparison) that could in principle falsify the claim. T
 - **C-DRP2.7** (confidence: 0.65): The falsification predicate is logically consistent: it sets up a clear equivalence test comparing vacuity rates between pre-registered and unregistered studies, with a defined margin (0.05) and sampl
 - **C-MK4.2** (confidence: 0.95): The mathematical formula delta_min = 1 - (epsilon/r_0)^{1/H_plan} is correct for achieving r_H = epsilon exactly under the geometric decay r_t = (1 - delta)^t * r_0. However, the claim states delta_mi
+- **C-MK4.4** (confidence: 0.65): The falsification predicate is logically consistent in its definition, as it clearly specifies conditions for a 'broken' loop based on component connections, with well-defined variables and evaluation
 - **F-1.2** (confidence: 0.65): The falsification predicate is logically consistent in structure, defining clear conditions for Tier 1 (confirmed substrates) and Tier 2 (provisional candidates) based on log10 spans and a passing cou
 - **F-1.6** (confidence: 0.75): The falsification predicate is logically consistent: it clearly defines falsification based on predicted T bounds and a minimum number of independent sources, with well-specified variables, evaluation
 - **F-4.2** (confidence: 0.65): The falsification predicate is mostly logically consistent, as it defines a clear inequality based on self-similarity indices, with ε providing a tolerance for noise. However, the predicate is incompl
@@ -68,4 +69,5 @@
 |-------|-----------|-------|
 | C-2.4 | 0.85 | grok-4-latest |
 | C-3.DIAG | 0.92 | grok-4-latest |
+| C-MK4.3 | 0.95 | grok-4-latest |
 | F-SFW.4 | 0.95 | grok-4-latest |
