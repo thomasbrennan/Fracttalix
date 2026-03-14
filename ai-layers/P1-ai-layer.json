@@ -69,7 +69,7 @@
       "value": 3.4674,
       "expression": "1 + π²/4",
       "status": "DERIVED",
-      "derivation": "Universal loop impedance constant. Magnitude of dh/dλ at critical point (1+iπ/2). Session 43.",
+      "derivation": "Universal loop impedance constant. Squared magnitude of dh/dλ at critical point: |1+iπ/2|² = 1 + π²/4. Arises from rationalizing 1/(1+iπ/2) in the implicit function theorem step. Session 43. Corrected S58: was incorrectly described as |dh/dλ|* (magnitude); actual derivation uses |dh/dλ|*² (magnitude squared) via denominator rationalization.",
       "physical_meaning": "Feedback loop impedance at resonant frequency — energy absorbed/redistributed per unit bifurcation distance"
     }
   },
@@ -367,7 +367,7 @@
       "type": "F",
       "label": "[TYPE:F]",
       "name": "λ derivation — leading order",
-      "statement": "The FRM damping rate λ ≈ |α|/(Γ·τ_gen) where Γ = 1+π²/4 ≈ 3.467 is the universal loop impedance constant, derived from the DDE characteristic equation via perturbation expansion about the Hopf critical point.",
+      "statement": "The FRM damping rate λ ≈ |α|/(Γ·τ_gen) where Γ = |1+iπ/2|² = 1+π²/4 ≈ 3.467 is the universal loop impedance constant, derived from the DDE characteristic equation via perturbation expansion about the Hopf critical point.",
       "source": "P1 Theoretical Foundations Section 4, Session 43",
       "predicate": {
         "FALSIFIED_IF": "(n_invalid_steps_lambda > 0) OR (mean_ratio_fit_theory > 1.15) OR (mean_ratio_fit_theory < 0.85)",
@@ -377,7 +377,7 @@
         },
         "EVALUATION": "Trace perturbation derivation step-by-step; compute λ_theory = |α|/Γ for each α; fit FRM to DDE simulation; compute ratio; average; finite",
         "BOUNDARY": "ratio > 1.15 or < 0.85 → FALSIFIED. Note: leading-order expression is valid near criticality; deviation expected to grow with |α|.",
-        "CONTEXT": "Mean ratio observed: 1.036 ± 0.089 across stable regime. Γ = |dh/dλ|* = |1+iπ/2| = 1+π²/4 falls out of the quarter-wave geometry. Second-order correction reduces mean error to 0.06%."
+        "CONTEXT": "Mean ratio observed: 1.036 ± 0.089 across stable regime. Γ = |dh/dλ|*² = |1+iπ/2|² = 1+π²/4 ≈ 3.467 falls out of rationalizing the implicit function theorem denominator (quarter-wave geometry). Note: |1+iπ/2| = √(1+π²/4) ≈ 1.862; the squared magnitude appears because Re(1/(a+bi)) = a/(a²+b²). Second-order correction reduces mean error to 0.06%."
       },
       "derivation_trace": [
         {

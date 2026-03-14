@@ -1,0 +1,347 @@
+{
+  "_meta": {
+    "document_type": "AI_LAYER",
+    "schema_version": "v2-S42+S48",
+    "schema_url": "https://github.com/thomasbrennan/Fracttalix/blob/main/ai-layers/ai-layer-schema.json",
+    "schema_amendments": [
+      {
+        "amendment_id": "S48-A1",
+        "session": "S48",
+        "field_added": "principle_10_audit",
+        "description": "Array tracking derivation path for every constant or structural condition. principle_10_compliant true only when all entries anchored at live edges or IR axioms."
+      },
+      {
+        "amendment_id": "S48-A2",
+        "session": "S48",
+        "field_added": "principle_10_compliant",
+        "description": "Boolean gate. Circularity detection: paths must terminate at (a) live edge from published AI layer or (b) IR rule applied to mathematical axiom."
+      }
+    ],
+    "produced_session": "S56",
+    "produced_by": "Claude (Anthropic) — DRP-3 Phase 4 (AI layer), S56",
+    "licence": "CC BY 4.0",
+    "phase_produced": "Phase 5 — CBT I-9 PASS — PHASE-READY",
+    "cbp_version": "v2 (S39) + S42 two-state gate + Principle 10 (S48)",
+    "source_documents": [
+      "journal/DRP3-D3-0.0-IR-audit-results.md",
+      "journal/DRP3-D3-1.0-claim-identification.md",
+      "journal/DRP3-D3-2.0-derivation-table.md",
+      "journal/DRP3-D3-3.0-falsification-predicates.md"
+    ]
+  },
+  "paper_id": "DRP-3",
+  "paper_title": "Evaluation Convergence and Physical Stability: The M↔C2 Isomorphism",
+  "paper_type": "derivation_B",
+  "series": "DRP Series",
+  "series_position": "DRP-3 of 8",
+  "version": "v1",
+  "session": "S56",
+  "scope_boundary": {
+    "IN": "FRM universality class systems (D-2.1) with associated falsification predicates satisfying DRS Falsification Kernel K = (P, O, M, B)",
+    "OUT": [
+      "Systems outside the FRM universality class",
+      "Predicates without well-defined M (evaluation function)",
+      "Non-DRS evaluation frameworks"
+    ],
+    "scope_note": "The M↔C2 isomorphism applies wherever both T(P,O,M) and the Hopf stability condition are simultaneously operative. DRP-3 proves the structural equivalence; DRP-4 receives C-DRP3.5 for the full conservation law."
+  },
+  "inbound_edges": [
+    {
+      "edge_id": "C-DRP2.4→DRP3",
+      "source_paper": "DRP-2",
+      "source_claim": "C-DRP2.4",
+      "label": "Testability Relation T(P,O,M) — ternary relational definition",
+      "ai_layer_version": "DRP-2 AI Layer v1.2 (S54)",
+      "status": "LIVE",
+      "received_as": "C-DRP3.1 (Type A axiom)"
+    },
+    {
+      "edge_id": "C-2.1→DRP3",
+      "source_paper": "P2",
+      "source_claim": "C-2.1",
+      "label": "β=1/2 universality and Hopf stability criterion (μ<0)",
+      "ai_layer_version": "P2 AI Layer v4 (S48)",
+      "status": "LIVE",
+      "received_as": "C-DRP3.2 (Type A axiom)"
+    }
+  ],
+  "outbound_edges_register": [
+    {
+      "edge_id": "C-DRP3.5→DRP-4",
+      "type": "PASS_FORWARD",
+      "source_claim": "C-DRP3.5",
+      "target_paper": "DRP-4",
+      "label": "Convergence Principle: M-termination ↔ μ<0. Received as Type A axiom in DRP-4.",
+      "status": "LIVE — pending DRP-3 PHASE-READY"
+    }
+  ],
+  "inference_rules": [
+    {
+      "id": "IR-DRP3-1",
+      "name": "Structural Isomorphism",
+      "form": "If two systems S1, S2 satisfy the same abstract convergence criterion C by independent derivation, they are structurally isomorphic with respect to C."
+    },
+    {
+      "id": "IR-DRP3-2",
+      "name": "Received Axiom",
+      "form": "A claim proved in a prior paper with LIVE status may be received as a Type A axiom in a downstream paper without re-derivation."
+    },
+    {
+      "id": "IR-DRP3-3",
+      "name": "Exhaustive Partition (Convergence)",
+      "form": "A convergence condition partitions the system into exactly two cases: convergent and divergent. No third case exists (boundary point μ=0 is not a stable operating state)."
+    },
+    {
+      "id": "IR-DRP3-4",
+      "name": "Level Distinction",
+      "form": "Two derivations operate at different levels of description iff neither derivation cites the other as a premise. Structural correspondence discovered post-derivation does not constitute derivation dependence."
+    },
+    {
+      "id": "IR-DRP3-5",
+      "name": "Vacuity Witness",
+      "form": "A falsification predicate is non-vacuous (C6) iff a coherent observation exists that would trigger FALSIFIED."
+    }
+  ],
+  "claim_registry": [
+    {
+      "claim_id": "C-DRP3.1",
+      "type": "A",
+      "label": "Testability Relation — received from DRP-2",
+      "statement": "Testability is a ternary relation T(P, O, M). T = TRUE iff: (a) O causally independent of P; (b) M is a finite deterministic function O → {FALSIFIED, NOT FALSIFIED, INDETERMINATE}; (c) M(o) = FALSIFIED for at least one o ∈ O.",
+      "derivation_source": [
+        "DRP-2 C-DRP2.4"
+      ],
+      "falsification_predicate": null,
+      "tier": "axiom",
+      "test_bindings": [],
+      "verified_against": null
+    },
+    {
+      "claim_id": "C-DRP3.2",
+      "type": "A",
+      "label": "Hopf stability criterion — received from P2",
+      "statement": "β=1/2 is the universal critical exponent for FRM universality class systems, derived from the Hopf bifurcation condition. μ < 0 is necessary and sufficient for convergent oscillation (stable limit cycle). μ > 0 produces divergent trajectory. μ = 0 is the bifurcation point (boundary, not stable operating state).",
+      "derivation_source": [
+        "P2 C-2.1"
+      ],
+      "falsification_predicate": null,
+      "tier": "axiom",
+      "test_bindings": [],
+      "verified_against": null
+    },
+    {
+      "claim_id": "C-DRP3.3",
+      "type": "D",
+      "label": "M-termination",
+      "statement": "M terminates iff M reaches a definite output in a finite number of evaluation steps for every input o ∈ O. M terminates ↔ M is a finite deterministic function per C-DRP3.1 condition (b). Failure modes: cycling (infinite loop), divergence (output grows without bound), or interpretation-dependence (requires human judgment).",
+      "derivation_source": [
+        "C-DRP3.1 condition (b)",
+        "D3-2.0 Step 1"
+      ],
+      "falsification_predicate": null,
+      "tier": "definition",
+      "test_bindings": [],
+      "verified_against": null
+    },
+    {
+      "claim_id": "C-DRP3.4",
+      "type": "D",
+      "label": "Convergence equivalence class",
+      "statement": "Two systems S1 and S2 belong to the same convergence equivalence class with respect to condition C iff: (a) both independently require C for well-defined operation; (b) the requirement is derivable from the same abstract mathematical structure; (c) the failure modes are structurally isomorphic.",
+      "derivation_source": [
+        "C-DRP3.1",
+        "C-DRP3.2",
+        "C-DRP3.3",
+        "D3-2.0 Step 2"
+      ],
+      "falsification_predicate": null,
+      "tier": "definition",
+      "test_bindings": [],
+      "verified_against": null
+    },
+    {
+      "claim_id": "C-DRP3.5",
+      "type": "F",
+      "label": "The M↔C2 Isomorphism",
+      "statement": "M-termination (the requirement that the measurement function of a falsification predicate reach a definite output in finite steps) is epistemically equivalent to μ<0 (the Hopf stability condition for convergent oscillation in FRM-class physical systems). Both are instances of the same abstract fixed-point convergence requirement, derivable from the same Hopf stability analysis applied at two levels of description. They belong to the same convergence equivalence class (C-DRP3.4).",
+      "derivation_source": [
+        "C-DRP3.1 condition (b)",
+        "C-DRP3.2 (μ<0 Hopf condition)",
+        "C-DRP3.3",
+        "C-DRP3.4",
+        "D3-2.0 Steps 3-4",
+        "IR-DRP3-1",
+        "IR-DRP3-3"
+      ],
+      "falsification_predicate": {
+        "FALSIFIED_IF": "n_counterexamples > 0",
+        "WHERE": {
+          "n_counterexamples": "integer, dimensionless. Count of systems S satisfying: (a-c) S is FRM-class (D-2.1), S has μ<0 (physically convergent), AND the associated falsification predicate K=(P,O,M,B) has non-terminating M (cycling, divergence, or interpretation-dependence per C-DRP3.3); OR (d-e) M terminates (K satisfies C-DRP3.3) AND the physical analogue has μ>0 (Hopf system unstable). A single instance of either disjunct suffices."
+        },
+        "EVALUATION": "For sub-condition (a-c): (1) Identify FRM-class system S (verify D-2.1(a)-(c)). (2) Confirm μ<0 via P3 measurement protocol (C-3.REG). (3) Construct K for S's central claim. (4) Apply C-DRP3.3 termination test: (i) loop without exit? (ii) intermediate values diverge? (iii) judgment call required? (5) If any of (i)-(iii): n_counterexamples += 1. For sub-condition (d-e): (1) Identify K with terminating M. (2) Identify associated physical system. (3) Measure μ via P3. (4) If μ>0: n_counterexamples += 1. Output: n_counterexamples. Finite procedure.",
+        "BOUNDARY": "n_counterexamples = 0 → NOT FALSIFIED. n_counterexamples = 1 → FALSIFIED (single instance suffices; universal structural claim).",
+        "CONTEXT": "C-DRP3.5 · Type F · M↔C2 Isomorphism — central claim. Tests whether convergence conditions can come apart. Threshold: 0. One instance falsifies universally. UMP SATISFIED: O (FRM-class systems with measured μ and predicate structure) is determined by physical measurement and predicate text, upstream of P (isomorphism holds). C6 SATISFIED: counterexample system would produce FALSIFIED."
+      },
+      "sample_falsification_observation": "An FRM-class oscillator with μ<0 (confirmed stable limit cycle via P3 measurement) whose associated evaluation predicate has a non-terminating M — specifically, where the measurement procedure requires human judgment at some step whether the oscillation counts as stable.",
+      "tier": "formal_proof",
+      "test_bindings": [],
+      "verified_against": null
+    },
+    {
+      "claim_id": "C-DRP3.6",
+      "type": "F",
+      "label": "Failure mode equivalence",
+      "statement": "Non-terminating M (M fails condition (b) of T(P,O,M)) is the exact epistemological analogue of μ>0 (unstable limit cycle in a physical FRM-class system). In both cases: the system has no definite output or stable state; the failure is structural, not contingent on measurement error; no amount of additional evaluation steps or observations resolves the failure. The failure modes are structurally isomorphic under C-DRP3.4.",
+      "derivation_source": [
+        "C-DRP3.5 (convergent case)",
+        "C-DRP3.4",
+        "C-DRP3.1",
+        "C-DRP3.2",
+        "D3-2.0 Step 4",
+        "IR-DRP3-3"
+      ],
+      "falsification_predicate": {
+        "FALSIFIED_IF": "n_asymmetric_failures > 0",
+        "WHERE": {
+          "n_asymmetric_failures": "integer, dimensionless. Count of systems or predicates satisfying: Case X — physical failure without epistemological failure: system S with μ>0 (unstable) whose K has terminating M returning NOT FALSIFIED or INDETERMINATE (M fails to respond to physical failure; NOTE: M terminating with FALSIFIED for μ>0 is not Case X — that is correct detection). Case Y — epistemological failure without physical failure: K with non-terminating M whose physical system has μ<0 (stable). Case Z — different failure structure: both μ>0 and non-terminating M but failure modes structurally distinct (e.g. bounded divergence vs hard cycling — not both instances of failure to converge to fixed point)."
+        },
+        "EVALUATION": "For Cases X and Y: (1) Identify system S and predicate K. (2) Measure μ via P3 protocol. (3) Apply C-DRP3.3 termination test to M. (4) If μ>0 and M terminates with NOT FALSIFIED or INDETERMINATE (Case X): increment. If M non-terminates and μ<0 (Case Y): increment. NOTE: μ>0 with M terminating FALSIFIED is not Case X. For Case Z: (1) Identify system where both μ>0 and M non-terminates. (2) Characterise physical failure mode. (3) Characterise epistemological failure mode. (4) Determine whether both are instances of failure to converge to fixed point; if abstract structure differs: increment. Output: n_asymmetric_failures. Finite procedure.",
+        "BOUNDARY": "n_asymmetric_failures = 0 → NOT FALSIFIED. n_asymmetric_failures = 1 → FALSIFIED (single instance sufficient; universal structural claim).",
+        "CONTEXT": "C-DRP3.6 · Type F · Failure mode equivalence. Divergent complement of C-DRP3.5. Together they constitute the full isomorphism via IR-DRP3-3 (exhaustive partition). Tests whether failure modes can come apart asymmetrically (Cases X, Y) or structurally (Case Z). Threshold: 0. One instance falsifies. UMP SATISFIED: O (μ measurement and M-termination status) upstream of P. C6 SATISFIED: asymmetric failure system would produce FALSIFIED."
+      },
+      "sample_falsification_observation": "An FRM-class oscillator with μ>0 (unstable, confirmed via P3) whose evaluation predicate K has a terminating M that returns NOT FALSIFIED or INDETERMINATE — M runs to completion and fails to detect the physical instability. Physical system divergent while evaluation epistemologically convergent.",
+      "tier": "formal_proof",
+      "test_bindings": [],
+      "verified_against": null
+    },
+    {
+      "claim_id": "C-DRP3.7",
+      "type": "F",
+      "label": "Level independence of the isomorphism",
+      "statement": "The M↔C2 isomorphism (C-DRP3.5) is not a definitional equivalence or engineered correspondence. It holds because the convergence requirement in each domain was derived independently from the same abstract mathematical structure. The DRS condition (b) — M finite deterministic — was derived from the Falsification Kernel's completeness requirement (DRP-1 §10.7.1). The Hopf condition μ<0 was derived from delay differential equation analysis (P2, C-2.1). Neither derivation cites the other. The isomorphism is a structural discovery, not a constructed equivalence.",
+      "derivation_source": [
+        "C-DRP3.1",
+        "C-DRP3.2",
+        "D3-2.0 Step 5",
+        "IR-DRP3-4",
+        "IR-DRP3-2"
+      ],
+      "falsification_predicate": {
+        "FALSIFIED_IF": "n_citations > 0",
+        "WHERE": {
+          "n_citations": "integer, dimensionless. Count of instances in the published formal derivation chain where the derivation of condition (b) of T(P,O,M) in one domain cites or depends on the convergence criterion from the other domain. Arm 1: count of locations in DRP-1 v1.1 §10.7.1 (derivation of finite-deterministic requirement for M) citing P2, Hopf bifurcation analysis, eigenvalue conditions, DDE stability, or any physical oscillation model. Scope: §10.7.1 derivation chain only — §10.7.3 post-derivation structural observations excluded. Arm 2: count of locations in P2 derivation of C-2.1 citing DRP-1, DRS, falsification predicates, condition (b), or any epistemological evaluation framework. n_citations = Arm 1 count + Arm 2 count."
+        },
+        "EVALUATION": "Arm 1: (1) Obtain DRP-1 v1.1 §10.7. (2) Identify §10.7.1 derivation of condition (b). (3) For each step, determine whether it cites or logically requires Hopf/eigenvalue/DDE analysis from P2. (4) Count. NOTE: §10.7.3 observation of structural correspondence is not part of derivation chain and does not increment. Arm 2: (1) Obtain P2. (2) Identify derivation of C-2.1. (3) For each step, determine whether it cites DRS/DRP-1/falsification predicates. (4) Count. Output: n_citations. Finite procedure — both texts are finite published documents. Arm 1 audit result (S54): 0 citations. Arm 2 audit result (S54): 0 citations. Current evaluation: n_citations = 0. NOT FALSIFIED.",
+        "BOUNDARY": "n_citations = 0 → NOT FALSIFIED. n_citations = 1 → FALSIFIED (single citation in either direction establishes derivation dependence).",
+        "CONTEXT": "C-DRP3.7 · Type F · Level independence. Tests whether two convergence requirements were derived independently. If condition (b) imported Hopf analysis, or μ<0 imported DRS framework, isomorphism would be definitional (engineered) not structural (discovered). Threshold: 0. One citation in either direction falsifies. UMP SATISFIED: O (published text of §10.7 and P2) is fixed independently of P (independence claim). C6 SATISFIED: citation found → FALSIFIED."
+      },
+      "sample_falsification_observation": "A version of DRP-1 §10.7.1 in which the derivation of condition (b) states: 'The requirement that M be finite deterministic follows from the Hopf stability condition μ<0 (P2, C-2.1): just as the physical system requires eigenvalue convergence, the evaluation procedure requires termination.' If §10.7.1 contained such a passage, Arm 1 count > 0 → FALSIFIED.",
+      "tier": "formal_proof",
+      "test_bindings": [],
+      "verified_against": null
+    }
+  ],
+  "placeholder_register": [
+    {
+      "placeholder_id": "PH-DRP3.1",
+      "source_claim": "C-DRP3.5",
+      "description": "Outbound pass-forward: C-DRP3.5 (Convergence Principle) → DRP-4. DRP-4 receives as Type A axiom and proves full conservation law I=0 for all M. ARCH-2 placeholder resolved when DRP-3 reaches PHASE-READY.",
+      "resolved": false,
+      "blocks_phase_ready": false,
+      "c4_tracking": true,
+      "target_paper": "DRP-4",
+      "target_claim": "Convergence Principle (Type A axiom in DRP-4)",
+      "target_session": "OPEN — DRP-4 Phase 1"
+    }
+  ],
+  "pass_forward_register": [
+    {
+      "entry_id": "DRP3→DRP4",
+      "claim_id": "C-DRP3.5",
+      "label": "Convergence Principle: M-termination ↔ μ<0. DRP-4 receives as Type A and proves full conservation law.",
+      "target_paper": "DRP-4",
+      "axiom_label_in_DRP4": "TBD — DRP-4 Phase 1",
+      "status": "LIVE — pending DRP-3 PHASE-READY"
+    }
+  ],
+  "derivation_table_reference": {
+    "document": "journal/DRP3-D3-2.0-derivation-table.md",
+    "step_count": 6,
+    "steps": [
+      {"step": "S0", "description": "Received inputs: C-DRP3.1 (A), C-DRP3.2 (A)", "rule": "IR-DRP3-2", "output": "C-DRP3.1, C-DRP3.2"},
+      {"step": "1", "description": "Definition: M-termination — expand condition (b) into failure modes", "rule": "IR-DRP3-2", "output": "C-DRP3.3 (D)"},
+      {"step": "2", "description": "Definition: Convergence equivalence class — abstract framework", "rule": "IR-DRP3-1", "output": "C-DRP3.4 (D)"},
+      {"step": "3", "description": "Convergent case: M-termination ↔ μ<0 — check C-DRP3.4 membership", "rule": "IR-DRP3-1", "output": "C-DRP3.5 (F) partial"},
+      {"step": "4", "description": "Divergent case: non-terminating M ↔ μ>0 — exhaustive partition", "rule": "IR-DRP3-3", "output": "C-DRP3.6 (F) + C-DRP3.5 (F) COMPLETE"},
+      {"step": "5", "description": "Independence audit: citation trace of derivation chains", "rule": "IR-DRP3-4, IR-DRP3-2", "output": "C-DRP3.7 (F)"}
+    ],
+    "n_invalid_steps": 0,
+    "principle_10_compliance": "All constants and conditions trace to live edges (C-DRP3.1, C-DRP3.2) or IR axioms. No orphaned constants."
+  },
+  "principle_10_audit": [
+    {
+      "constant_or_condition": "M-termination (finite deterministic evaluation)",
+      "derivation_path": "Definitional expansion of condition (b) of T(P,O,M) from C-DRP3.1 (live edge from DRP-2 C-DRP2.4). Three failure modes derived by logical structure of 'finite deterministic function'. No new constants.",
+      "gap_id": null
+    },
+    {
+      "constant_or_condition": "μ < 0 (Hopf stability condition)",
+      "derivation_path": "Received as C-DRP3.2 (Type A axiom from P2 C-2.1, live edge). Eigenvalue condition Re(λ)<0 from Hopf bifurcation analysis. Not stipulated.",
+      "gap_id": null
+    },
+    {
+      "constant_or_condition": "Convergence equivalence class — three membership conditions",
+      "derivation_path": "Derived from logical requirements of IR-DRP3-1 (Structural Isomorphism). Conditions (a), (b), (c) are necessary for a valid isomorphism assertion. No empirical constants introduced.",
+      "gap_id": null
+    },
+    {
+      "constant_or_condition": "μ = 0 exclusion (not stable operating state)",
+      "derivation_path": "Mathematical property of Hopf bifurcation: μ=0 is the bifurcation point, not a stable state. Follows from C-DRP3.2 (P2 C-2.1 live edge). Standard bifurcation theory (Guckenheimer & Holmes 1983).",
+      "gap_id": null
+    }
+  ],
+  "principle_10_compliant": true,
+  "principle_10_compliant_note": "All 4 audit entries have derivation_path values anchored at live edges (DRP-2 C-DRP2.4, P2 C-2.1) or IR axioms. No free constants or stipulated conditions. Confirmed at Phase 5 CBT Step 4: PASS.",
+  "phase_ready": {
+    "verdict": "PHASE-READY",
+    "c1": "SATISFIED",
+    "c2": "SATISFIED",
+    "c3": "SATISFIED",
+    "c4_mode": "PHASE-READY-TRACKING",
+    "c5": "SATISFIED",
+    "c6": "SATISFIED",
+    "placeholder_count": 1,
+    "placeholder_blocking_count": 0,
+    "note": "CBT I-9 all 7 steps PASS — Session S56. Phases 0-2 complete (S53-S54). D3-3.0 (falsification predicates) complete (S54). Phase 4 (AI layer) complete S56. Phase 5 (CBT I-9) complete S56. 1 C4-tracking placeholder (PH-DRP3.1: C-DRP3.5 → DRP-4), non-blocking. All 3 Type F claims have full 5-part predicates, vacuity witnesses, UMP compliance checks. All inbound edges LIVE. Principle 10 audit: 4 entries, all anchored at live edges or IR axioms. Pass-forward: C-DRP3.5 → DRP-4 LIVE. Registry update: 168 + 7 = 175 claims, 17 papers.",
+    "cbt_session": "S56",
+    "cbt_steps": {
+      "step_1_schema": "PASS — schema_version v2-S42+S48, paper_type derivation_B, principle_10_compliant field present, principle_10_audit array present (4 entries)",
+      "step_2_predicates": "PASS — 3 Type F claims with 5-part predicates (FALSIFIED_IF/WHERE/EVALUATION/BOUNDARY/CONTEXT). 2 Type D with derivation paths. 2 Type A with null predicates. All 7 registered.",
+      "step_3_derivation": "PASS — 6-step derivation table D3-2.0. All steps IR-cited. No circular steps. 0 invalid steps.",
+      "step_4_principle_10": "PASS — 4/4 audit entries have derivation_path anchored at live edges or IR axioms. No gap_ids remaining. principle_10_compliant=true.",
+      "step_5_dependency": "PASS — C4 mode PHASE-READY-TRACKING. 1 C4-tracking placeholder (PH-DRP3.1), non-blocking. Pass-forward C-DRP3.5→DRP-4 registered LIVE.",
+      "step_5b_where_scan": "PASS — All WHERE field external references (D-2.1, C-3.REG, DRP-1 §10.7, P2 C-2.1) have corresponding inbound edges, internal claims, or are evaluation procedure / observation class references.",
+      "step_6_cross_corpus": "PASS — No unregistered cross-corpus references. DRP-4 pass-forward registered.",
+      "step_7_holistic": "PASS — 7 claims (2A+2D+3F) all present in registry matching D3-1.0 inventory. All Type F predicates have UMP compliance and C6 vacuity witnesses. Derivation table complete and consistent."
+    },
+    "thomas_signoff_required": false,
+    "thomas_signoff_session": "S56",
+    "thomas_signoff_note": "Phase 6 PHASE-READY confirmed by Thomas Brennan, S56. DRP-3 now PHASE-READY. C-DRP3.5 pass-forward to DRP-4 activated.",
+    "github_publication": {
+      "target_path": "ai-layers/DRP3-ai-layer.json",
+      "status": "PUBLISHED — PHASE-READY (Thomas sign-off S56)"
+    }
+  },
+  "summary": {
+    "total_claims": 7,
+    "type_A": 2,
+    "type_D": 2,
+    "type_F": 3,
+    "placeholder_count": 1,
+    "placeholder_blocking_count": 0,
+    "phase_ready": true,
+    "session_produced": "S56",
+    "inference_rules_count": 5,
+    "corpus_registry_update": "168 + 7 = 175 claims, 17 papers"
+  }
+}

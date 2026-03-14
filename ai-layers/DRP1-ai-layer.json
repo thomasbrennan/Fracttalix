@@ -33,6 +33,7 @@
       "derivation_source": [
         "DRP-1 Section 3"
       ],
+      "scope_note_S58": "Grok QC (confidence 0.75) notes scope mismatch: statement claims universality ('any falsifiable scientific claim') but predicate tests only against the Fracttalix corpus. Universality is unfalsifiable within any finite corpus. Recommend narrowing statement to 'any falsifiable claim expressible as a finite deterministic evaluation' or expanding test set to include external claims.",
       "falsification_predicate": {
         "FALSIFIED_IF": "n_inexpressible > 0",
         "WHERE": {
@@ -57,16 +58,16 @@
         "DRP-1 Section 4"
       ],
       "falsification_predicate": {
-        "FALSIFIED_IF": "n_omitted_optional > 0.5 * n_total_papers",
+        "FALSIFIED_IF": "n_omitted_optional <= 0.5 * n_total_papers",
         "WHERE": {
-          "n_omitted_optional": "count of papers in a corpus that declares DRS adoption as optional and that have been published without a schema-valid AI layer",
-          "n_total_papers": "total count of papers published in that same corpus"
+          "n_omitted_optional": "count of papers in a corpus that declares DRS adoption as optional (no phase gate) and that have been published without a schema-valid AI layer",
+          "n_total_papers": "total count of papers published in that same corpus (minimum 10)"
         },
-        "EVALUATION": "(1) Identify a corpus that declares DRS format as optional (no phase gate blocking publication); (2) count published papers lacking a schema-valid AI layer (n_omitted_optional); (3) count total published papers (n_total_papers); (4) evaluate: n_omitted_optional > 0.5 * n_total_papers. Finite deterministic audit.",
-        "BOUNDARY": "fraction = 0.5 -> FALSIFIED (inclusive per condition operator >); fraction < 0.5 -> NOT FALSIFIED",
-        "CONTEXT": "C-DRP.2 · threshold 0.5 · majority-omission criterion: if fewer than half omit, gate enforcement claim is not falsified · threshold derived from: claim is about majority behaviour, not unanimity"
+        "EVALUATION": "(1) Identify a corpus that declares DRS format as optional (no phase gate blocking publication) with n_total_papers >= 10; (2) count published papers lacking a schema-valid AI layer (n_omitted_optional); (3) count total published papers (n_total_papers); (4) evaluate: n_omitted_optional <= 0.5 * n_total_papers. Finite deterministic audit.",
+        "BOUNDARY": "fraction = 0.5 -> FALSIFIED (inclusive); fraction > 0.5 -> NOT FALSIFIED (majority did omit, consistent with claim)",
+        "CONTEXT": "C-DRP.2 · threshold 0.5 · claim predicts majority omission without gate enforcement · FALSIFIED if omission rate is at or below 50% (i.e., most papers included AI layers voluntarily, contradicting the claim) · minimum corpus size 10 to avoid small-sample noise · S58 correction: predicate logic was inverted in prior version (flagged by Grok QC review)"
       },
-      "sample_falsification_observation": "A corpus of 10 papers declaring optional DRS in which 6 papers are published without AI layers.",
+      "sample_falsification_observation": "A corpus of 20 papers declaring optional DRS in which only 8 are published without AI layers (40% omission — below majority threshold).",
       "tier": "formal_proof",
       "test_bindings": [],
       "verified_against": null
