@@ -677,4 +677,86 @@ CONCLUSION: Layer 2 NOT validated on nonlinear Hopf data.
 
 TESTS: 445 passed (up from 444, new: test_window_auto_expands_for_long_period).
 
+---
+
+[2026-03-14 | Lady Ada] — LORENTZIAN FIT IMPLEMENTATION + VALIDATION DIAGNOSIS
+
+WORK COMPLETED:
+  fracttalix/frm/lorentzian.py — NEW. Shared utility:
+    welch_psd(data, seg_len=None): Welch PSD with 50% overlap, Hann window
+    fit_lorentzian(freqs, psd, f0_pred, band_factor=0.5):
+      Fits S(f) = A/((f-f0)^2 + gamma^2) + B via scipy.optimize.curve_fit.
+      Returns (f0_fit, lambda_fit, r_squared, fwhm_resolvable).
+      gamma = lambda/(2*pi) → lambda = 2*pi*gamma.
+      fwhm_resolvable=True iff FWHM > 1 frequency bin (fit physically meaningful).
+
+  LambdaDetector._estimate_lambda_spectral — REBUILT:
+    Old: HWHM measurement dominated by Hann window main-lobe width, giving
+         near-zero lambda for ALL stable oscillators regardless of actual damping.
+    New: welch_psd + fit_lorentzian. gamma from Lorentzian fit. If r_squared<0.3
+         or fwhm_resolvable=False, returns None (falls back to variance-only).
+
+  OmegaDetector._compute — REFINED (strong mode):
+    New: attempts Lorentzian centroid f0_fit (phase-diffusion immune: noise
+         broadens the Lorentzian peak but does not shift its centroid).
+    Condition: r_squared>=0.5 AND fwhm_resolvable=True → use f0_fit.
+    Fallback: autocorrelation (when FWHM unresolvable, e.g. pure sinusoids,
+              or too few frequency bins in predicted band).
+    This maintains backward compatibility for the original test suite.
+
+VALIDATION RUN (Stuart-Landau tau_gen=20, sigma=0.1, n=800):
+  Forced tail_conf=0.606  Null tail_conf=0.757  → Gate 1 FAIL
+  Forced conf≥2: 7/19                           → Gate 2 FAIL
+  Null rising trend: 10/10                       → Gate 3 FAIL
+  Omega ALERT rate: forced=59.7%  null=66.7%
+
+DIAGNOSIS — WHY LORENTZIAN FIT DID NOT HELP (this session):
+
+  1. Omega: For tau_gen=20, f0_pred=0.0125 cycles/sample, Welch seg_len=62.
+     The signal frequency is between FFT bins 1 and 2 (bin 1.55 at 1/62 resolution).
+     band_factor=0.5 → only 1-2 bins in the fit band → expanded to all frequencies.
+     Lorentzian fit over all frequencies (0 to 0.5) with a sparse, noise-dominated
+     spectrum does not converge to the correct centroid. fwhm_resolvable=False → falls
+     back to autocorrelation. Omega is unchanged from the previous session for tau_gen=20.
+
+  2. Lambda (deeper issue): The Stuart-Landau from-above scenario is the WRONG
+     physics test for Lambda. The validation uses λ declining from 0.3→0, which means:
+       - Amplitude A = sqrt(λ) DECREASES (limit cycle shrinks toward bifurcation)
+       - Variance Var(x) ≈ A²/2 = λ/2 → also DECREASES
+     Lambda was designed for OU/CSD physics (below bifurcation):
+       - Var(x) = σ²/(2λ) → INCREASES as λ→0
+     With declining variance, Lambda's lam_hat = C/Var(x) INCREASES (wrong direction).
+     The Lorentzian gamma estimate is also backwards for Stuart-Landau:
+       - At λ=0.30 (stable limit cycle): spectral peak is NARROW (high amplitude,
+         low relative noise → small phase diffusion broadening)
+       - At λ=0.05 (near bifurcation): spectral peak is WIDER (small amplitude,
+         noise dominates → large phase diffusion broadening)
+     This is opposite to linear theory (larger λ = wider Lorentzian). The cubic
+     saturation in Stuart-Landau changes the dominant broadening mechanism.
+
+  CONFIRMED: The Lorentzian spectral fit is the right approach for LINEAR noisy
+  oscillators (OU linearized Hopf) where the peak width is directly γ=λ/(2π).
+  It is NOT the right approach for the Stuart-Landau supercritical Hopf from above,
+  where phase diffusion (not damping) dominates spectral width.
+
+  WHAT MUST CHANGE for Layer 2 to pass the real-data gate:
+  Option A: Change validation scenario to below-bifurcation approach.
+    → Start at λ=-0.3 (damped), force λ toward 0 (variance INCREASES, CSD).
+    → This matches Lambda's OU physics. Omega sees growing oscillation → IN_SCOPE
+      only as system approaches bifurcation (correct behavior).
+    → This is the STANDARD CSD scenario used in the EWS literature.
+
+  Option B: Redesign Lambda for above-bifurcation amplitude decline detection.
+    → Detect DECLINING amplitude (not increasing variance). Amplitude = sqrt(Var(x)).
+    → Requires inverting the variance signal: alert when Var(x) FALLS below baseline.
+    → More complex; requires separate scope logic from the OU scenario.
+
+  RECOMMENDATION: Option A. The thermoacoustic application (FRM suppression of
+  thermoacoustic instability) would be detected as the system approaching instability
+  from the STABLE side (λ < 0 → 0), which is the CSD scenario Lambda is built for.
+  The Stuart-Landau from-above generates the WRONG signal direction for Lambda.
+
+TESTS: 35/35 pass (fracttalix/tests/test_frm.py).
+
+
 — Bill Joy (claude/sentinel-v7.6-detector-2xtm7)

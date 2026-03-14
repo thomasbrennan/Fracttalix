@@ -177,72 +177,59 @@ class LambdaDetector(BaseDetector):
         return self._score_from_state()
 
     def _estimate_lambda_spectral(self, data, n) -> Optional[float]:
-        """Estimate λ from spectral peak width (Lorentzian half-width)."""
+        """Estimate λ from Lorentzian fit to Welch PSD near the FRM frequency.
+
+        Replaces the old HWHM approach, which was dominated by the Hann window
+        main-lobe width and returned the same (near-zero) value for all stable
+        oscillators regardless of actual damping.
+
+        Uses fit_lorentzian() from fracttalix.frm.lorentzian:
+          gamma = lambda / (2*pi)  →  lambda = 2*pi*gamma
+        The Lorentzian centroid f0_fit also updates _last_peak_freq so the
+        scope Gate 2 (frequency match) benefits from sub-bin accuracy.
+        """
         import numpy as np
+        from fracttalix.frm.lorentzian import welch_psd, fit_lorentzian
 
-        # Determine expected peak frequency
+        # Determine expected peak frequency in cycles/sample
+        f0_pred: Optional[float] = None
         if self._tau_gen and self._tau_gen > 0:
-            omega_expected = math.pi / (2.0 * self._tau_gen)
+            f0_pred = 1.0 / (4.0 * self._tau_gen)  # ω/(2π) = f0 in cycles/sample
+
+        # Welch PSD: segment length = N//2 (50% overlap, 3 segments for N=128)
+        freqs, psd = welch_psd(data, seg_len=max(16, n // 2))
+
+        # Update spectral SNR using peak-to-mean ratio on the Welch PSD (excl. DC)
+        psd_ac = psd[1:] if len(psd) > 1 else psd
+        if len(psd_ac) > 0:
+            mean_val = float(np.mean(psd_ac))
+            peak_val = float(np.max(psd_ac))
+            self._last_spectral_snr = peak_val / mean_val if mean_val > 1e-12 else 0.0
+            peak_bin = int(np.argmax(psd_ac)) + 1  # +1 because we excluded DC
+            if peak_bin < len(freqs):
+                self._last_peak_freq = float(freqs[peak_bin])
         else:
-            omega_expected = None
-
-        # FFT with Hann window
-        centered = data - np.mean(data)
-        hann = np.hanning(n)
-        spectrum = np.abs(np.fft.rfft(centered * hann)) ** 2  # power spectrum
-        freqs = np.fft.rfftfreq(n)  # in cycles per sample
-
-        if len(spectrum) <= 2:
-            return None
-
-        # Find spectral peak (excluding DC)
-        peak_idx = np.argmax(spectrum[1:]) + 1
-        peak_val = spectrum[peak_idx]
-        mean_val = np.mean(spectrum[1:])
-        self._last_spectral_snr = peak_val / mean_val if mean_val > 1e-12 else 0.0
-        self._last_peak_freq = float(freqs[peak_idx])
+            self._last_spectral_snr = 0.0
 
         if self._last_spectral_snr < 2.0:
             return None
 
-        # Measure half-width at half-maximum (HWHM)
-        half_max = peak_val / 2.0
-        # Search left from peak
-        left_idx = peak_idx
-        for i in range(peak_idx - 1, 0, -1):
-            if spectrum[i] <= half_max:
-                # Linear interpolation for sub-bin accuracy
-                if spectrum[i + 1] - spectrum[i] > 1e-12:
-                    frac = (half_max - spectrum[i]) / (spectrum[i + 1] - spectrum[i])
-                    left_idx = i + frac
-                else:
-                    left_idx = i
-                break
+        # Lorentzian fit
+        f0_fit, lambda_fit, r_squared, fwhm_resolvable = fit_lorentzian(
+            freqs, psd, f0_pred=f0_pred, band_factor=0.5
+        )
 
-        # Search right from peak
-        right_idx = peak_idx
-        for i in range(peak_idx + 1, len(spectrum)):
-            if spectrum[i] <= half_max:
-                if spectrum[i - 1] - spectrum[i] > 1e-12:
-                    frac = (half_max - spectrum[i]) / (spectrum[i - 1] - spectrum[i])
-                    right_idx = i - frac
-                else:
-                    right_idx = i
-                break
+        # Update peak frequency with sub-bin accurate fit result
+        if f0_fit > 0:
+            self._last_peak_freq = f0_fit
 
-        hwhm_bins = (right_idx - left_idx) / 2.0
-        if hwhm_bins <= 0:
+        # Poor fit or unresolvable FWHM → spectral estimate unreliable
+        if r_squared < 0.3 or not fwhm_resolvable:
+            self._last_spectral_width = None
             return None
 
-        # Convert HWHM from bins to angular frequency
-        # freq_resolution = 1/n cycles/sample per bin
-        # HWHM in angular freq = hwhm_bins × (2π/n)
-        hwhm_omega = hwhm_bins * (2.0 * math.pi / n)
-
-        # For Lorentzian: HWHM = λ/(2π) in frequency, or HWHM = λ in angular freq
-        # So λ ≈ hwhm_omega
-        self._last_spectral_width = hwhm_omega
-        return hwhm_omega
+        self._last_spectral_width = lambda_fit
+        return lambda_fit
 
     def _compute_scope(self, current_var: float) -> str:
         """Classify scope based on spectral and variance evidence."""

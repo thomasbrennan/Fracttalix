@@ -40,6 +40,7 @@ from collections import deque
 from typing import Any, Dict, List, Optional
 
 from fracttalix.suite.base import BaseDetector, DetectorResult, ScopeStatus
+from fracttalix.frm.lorentzian import welch_psd, fit_lorentzian
 
 
 def _estimate_omega_fft(data) -> float:
@@ -240,10 +241,11 @@ class OmegaDetector(BaseDetector):
     def _compute(self, window: List[float]):
         """Estimate observed ω and compare to FRM prediction.
 
-        Strong mode: compare omega_obs (via autocorrelation) to omega_predicted.
-          Autocorrelation adapts within ~1 period after a frequency shift, avoiding
-          the FFT quantisation bias that occurs when the signal period is not an
-          integer multiple of the window length.
+        Strong mode: compare omega_obs (via Lorentzian centroid) to omega_predicted.
+          Lorentzian f0_fit is immune to phase diffusion: noise broadens the peak
+          but does not shift its centroid, unlike autocorrelation lag which scatters
+          by D = sigma^2/(2A^2) per sample step.  Falls back to autocorrelation when
+          Lorentzian fit is poor (r_squared < 0.5 or FWHM unresolvable).
           Fires ALERT after alert_steps consecutive deviations > threshold.
         Weak mode: track omega stability over recent history via FFT + CV.
           Fires ALERT when frequency wanders > 20% of its mean.
@@ -252,11 +254,30 @@ class OmegaDetector(BaseDetector):
         fft_window = np.array(window[-self._window_size_fft:], dtype=float)
 
         if self._strong_mode and self._omega_predicted is not None:
-            # Autocorrelation-based estimate: accurate for any period length,
-            # adapts in ~1 period after a frequency change.
-            omega_obs = _estimate_omega_autocorr(
-                list(fft_window), self._omega_predicted, self._scope_tolerance
+            # Predicted peak frequency in cycles/sample
+            f0_pred = self._omega_predicted / (2.0 * math.pi)
+
+            # Lorentzian fit via Welch PSD — phase-diffusion immune centroid
+            freqs, psd = welch_psd(fft_window, seg_len=max(16, len(fft_window) // 2))
+            f0_fit, _lam, r_squared, fwhm_resolvable = fit_lorentzian(
+                freqs, psd, f0_pred=f0_pred, band_factor=self._scope_tolerance
             )
+
+            if r_squared >= 0.5 and fwhm_resolvable and f0_fit > 0:
+                # Lorentzian centroid: stable under phase diffusion (noise broadens
+                # the peak symmetrically without shifting its centroid).
+                omega_obs = 2.0 * math.pi * f0_fit
+                method = "lorentzian"
+            else:
+                # Fallback to autocorrelation: superior to FFT parabolic when the
+                # signal period is non-integer in the FFT window (avoids bin
+                # quantisation scatter). Lorentzian is preferred when FWHM is
+                # resolvable (broad peaks from damped/noisy oscillators).
+                omega_obs = _estimate_omega_autocorr(
+                    list(fft_window), self._omega_predicted, self._scope_tolerance
+                )
+                method = "autocorr"
+
             self._omega_history.append(omega_obs)
 
             deviation = abs(omega_obs - self._omega_predicted) / self._omega_predicted
@@ -269,7 +290,8 @@ class OmegaDetector(BaseDetector):
             score = min(1.0, self._consecutive_above / self._alert_steps)
             msg = (
                 f"omega_obs={omega_obs:.4f} omega_pred={self._omega_predicted:.4f} "
-                f"deviation={deviation:.3f} consecutive={self._consecutive_above} mode=strong"
+                f"deviation={deviation:.3f} consecutive={self._consecutive_above} "
+                f"r2={r_squared:.2f} method={method} mode=strong"
             )
             return score, msg
 
