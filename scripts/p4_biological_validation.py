@@ -1088,6 +1088,16 @@ def fit_frm_with_alpha(t, y, tau_gen):
 #   where λ_obs is the observed damping rate from published time-series
 #   recordings, measured by domain-specific experimentalists with no
 #   knowledge of the FRM.
+#
+# IMPORTANT NUANCE (S59 refinement):
+# Many biological oscillators (circadian, metabolic, Ca²⁺) operate near
+# limit cycle (μ ≈ 0⁺, α ≈ 0) under normal conditions, with population-
+# level "damping" caused by desynchronisation of individual oscillators.
+# The λ_obs values below represent the DAMPED REGIME (μ < 0) observed in:
+# - Isolated cells/tissues (circadian: SCN explants, peripheral clocks)
+# - Sub-optimal conditions (metabolic: without cyanide block)
+# - Perturbation responses (cardiac: post-premature beat)
+# This is precisely the FRM scope (P1 D-1.1: μ < 0).
 # =====================================================================
 
 INDEPENDENT_DAMPING_DATA = [

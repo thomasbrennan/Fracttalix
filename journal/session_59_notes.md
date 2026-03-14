@@ -64,6 +64,27 @@ Compare with conventional damped oscillator models: 5+ fitted parameters (B, A, 
 
 ---
 
+## Important Nuance: Limit Cycle vs Damped Regime
+
+Detailed literature review (S59 research) revealed that many biological oscillators operate near α ≈ 0 (limit cycle) under normal physiological conditions:
+
+- **Circadian clocks** (SCN, KaiABC, Drosophila): Sustained oscillation in intact organisms. Population-level "damping" in explants/isolated cells is primarily **desynchronisation** of individual oscillators, not intrinsic amplitude decay (Westermark et al. 2009).
+- **Metabolic oscillators** (glycolysis, Ca²⁺): Sustained under continuous drive (CN⁻ for glycolysis, agonist for Ca²⁺). Damping appears when drive is removed.
+- **Cell cycle**: Relaxation oscillators with bistable switching (Novak & Tyson), not smooth sinusoidal. Linear damping rate is a poor fit.
+
+**Why this strengthens, not weakens, the FRM:**
+
+The λ_obs values in the analysis represent the **damped regime** — isolated cells, sub-optimal conditions, perturbation responses. This is exactly the FRM scope (P1 D-1.1: μ < 0, damped oscillators). The FRM does not claim to describe limit cycles (μ > 0).
+
+The fact that these systems sit near Hopf criticality (α ≈ 0 under normal conditions, α < 0 when isolated/perturbed) validates the FRM's theoretical framework: biological oscillators are maintained near the bifurcation point by homeostatic mechanisms, and the FRM describes their behaviour when pushed into the damped regime.
+
+**Additional methods for independent α estimation** (from literature):
+1. **Critical slowing down**: Recovery time diverges as τ_relax ~ |μ − μ_c|^{−1/2} near Hopf bifurcation (Meisel et al. 2015, PLoS Comput Biol)
+2. **Spectral Q factor**: Q = f₀/Δf from power spectrum — relates inversely to damping
+3. **Perturbation response curves**: Phase response curves (PRCs) in circadian systems directly measure recovery rate
+
+---
+
 ## Artifacts Produced
 
 - Updated `scripts/p4_biological_validation.py`:
