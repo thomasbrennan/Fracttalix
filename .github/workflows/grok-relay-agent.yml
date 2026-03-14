@@ -20,8 +20,9 @@ jobs:
   grok-process:
     name: Process pending Grok messages
     runs-on: ubuntu-latest
-    # Only run if XAI_API_KEY secret exists
-    if: ${{ vars.RELAY_ENABLED == 'true' }}
+    # Runs whenever the workflow triggers — gated by XAI_API_KEY existing
+    env:
+      XAI_API_KEY: ${{ secrets.XAI_API_KEY }}
     steps:
       - uses: actions/checkout@v4
         with:
@@ -47,9 +48,7 @@ jobs:
           echo "Found $count pending message(s) for Grok"
 
       - name: Run Grok Relay Agent
-        if: steps.check.outputs.pending != '0'
-        env:
-          XAI_API_KEY: ${{ secrets.XAI_API_KEY }}
+        if: steps.check.outputs.pending != '0' && env.XAI_API_KEY != ''
         run: |
           cd $GITHUB_WORKSPACE
           python -m relay.grok_agent --no-push

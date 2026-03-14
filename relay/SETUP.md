@@ -17,17 +17,9 @@
 4. Value: paste your key
 5. Click "Add secret"
 
-### 3. Enable the relay
+### 3. Done
 
-1. Go to Settings → Secrets and variables → Actions → Variables tab
-2. Click "New repository variable"
-3. Name: `RELAY_ENABLED`
-4. Value: `true`
-5. Click "Add variable"
-
-### 4. Done
-
-That's it. The relay is now autonomous:
+That's it — just the secret. The relay is now autonomous:
 
 - **Claude** sends a message to Grok → commits to `relay/queue/` → pushes to main
 - **GitHub Actions** detects the new message → triggers `grok-relay-agent.yml`
