@@ -16,17 +16,16 @@ Primary: thermoacoustic_ews_forced.csv (Bury et al. 2021, thermoacoustic
   Hopf bifurcation with subcritical cubic saturation). 19 forced + 10 null
   trajectories. tau_gen from dominant FFT peak per file.
 
-Fallback: Stuart-Landau synthetic data — nonlinear Hopf (with cubic
-  saturation term), NOT the OU linearized model used in frm_physics_validation.
-  The cubic term creates the same effective-damping-floor that masks λ in
-  the real thermoacoustic data. This is a harder test than the OU demo.
+Fallback: Below-bifurcation CSD synthetic data (Option A).
+  The system starts at λ=-0.3 (stable damped oscillator, fixed point at
+  origin) and λ is forced toward 0 (Hopf bifurcation threshold). Variance
+  ∝ σ²/(2|λ|) INCREASES as λ→0 — this is the standard CSD scenario from
+  the EWS literature and matches Lambda's OU physics (designed for
+  below-bifurcation approach where variance, not amplitude, is the signal).
 
-Why Stuart-Landau, not OU?
-  The v1 error was validating on OU-linearized signals generated from the FRM
-  model — perfectly matched to the detector's assumptions. Stuart-Landau adds
-  the A³ saturation term dx/dt = (λ - |x|²)x + ωy that suppresses amplitude
-  growth near the bifurcation, masking λ exactly as in the real data.
-  Beating this test provides genuine (not circular) evidence for the detector.
+  This replaces the previous supercritical Hopf from-above scenario (λ: +0.3→0)
+  which was the wrong physics for Lambda: there variance DECREASES (amplitude
+  shrinks toward bifurcation), exactly inverting the detector's expected signal.
 
 Usage:
   python benchmark/validate_frm_real_data.py
@@ -50,80 +49,96 @@ except ImportError as e:
 
 
 # ---------------------------------------------------------------------------
-# Stuart-Landau (nonlinear Hopf) signal generator
+# Below-bifurcation CSD signal generator (Option A)
+#
+# Physics: damped noisy oscillator, λ < 0 (stable fixed point at origin).
+# As λ is forced from -lambda_0 toward 0, critical slowing down occurs:
+#   Var(x) ≈ σ²/(2|λ|)  →  INCREASES as λ → 0   (OU approximation near origin)
+# This is the CSD scenario Lambda was designed for.
+#
+# Contrast with previous supercritical Hopf from-above (λ: +0.3 → 0):
+#   there Var(x) ≈ λ/2 → DECREASES near bifurcation — the opposite direction,
+#   which caused Lambda to mis-fire and inverted the frm_confidence signal.
 # ---------------------------------------------------------------------------
 
 def _sl_step(x: float, y: float, lam: float, omega: float,
              sigma: float, rng: random.Random) -> tuple:
-    """One Euler step of the 2-D Stuart-Landau oscillator."""
+    """One Euler step of the 2-D Stuart-Landau oscillator.
+
+    Works for both λ < 0 (below bifurcation, stable fixed point) and
+    λ > 0 (above bifurcation, stable limit cycle).  The cubic term
+    (x²+y²)x provides saturation when λ > 0 and contributes additional
+    damping toward the origin when λ < 0.
+    """
     r2 = x * x + y * y
     x += (lam * x - omega * y - r2 * x) + sigma * rng.gauss(0, 1)
     y += (lam * y + omega * x - r2 * y) + sigma * rng.gauss(0, 1)
     return x, y
 
 
-def _sl_burnin(tau_gen: float, lambda_0: float, sigma: float,
-               rng: random.Random) -> tuple:
-    """Run Stuart-Landau at lambda_0 until steady state.
+def _csd_burnin(tau_gen: float, lambda_0: float, sigma: float,
+                rng: random.Random) -> tuple:
+    """Run below-bifurcation oscillator at λ=-lambda_0 until steady state.
 
-    Returns (x, y) at steady state.  Burn-in length = 6 full periods at
-    lambda_0 so that the limit cycle amplitude sqrt(lambda_0) is reached
-    and the initial transient has fully decayed.  FRMSuite never sees these
-    steps — they are discarded before the signal is returned.
+    The fixed point is the origin; burn-in reaches the stationary
+    variance Var(x) ≈ σ²/(2·lambda_0).  Burn-in length = 6 full
+    oscillation periods (enough for the OU process to reach equilibrium).
+    FRMSuite never sees these steps — they are discarded.
     """
     omega = math.pi / (2.0 * tau_gen)
     period = 4 * tau_gen  # samples per oscillation cycle
     burn_steps = max(200, int(6 * period))
-    x = math.sqrt(lambda_0) * 0.8  # start close to limit cycle amplitude
+    lam = -lambda_0  # stable (negative)
+    x = sigma / math.sqrt(2.0 * lambda_0) * 0.5  # start near equilibrium amplitude
     y = 0.0
     for _ in range(burn_steps):
-        x, y = _sl_step(x, y, lambda_0, omega, sigma, rng)
+        x, y = _sl_step(x, y, lam, omega, sigma, rng)
     return x, y
 
 
-def sig_stuart_landau_forced(n: int, seed: int, tau_gen: float = 20.0,
-                              lambda_0: float = 0.3, sigma: float = 0.10) -> list:
-    """Forced trajectory: λ declines linearly from lambda_0 → 0 over n steps.
+def sig_csd_forced(n: int, seed: int, tau_gen: float = 20.0,
+                   lambda_0: float = 0.3, sigma: float = 0.10) -> list:
+    """Forced trajectory: λ ramps linearly from -lambda_0 → 0 over n steps.
 
-    Dynamics (discrete Euler, 2-D complex oscillator):
-        dx = (λx - ω·y - (x²+y²)·x) + sigma·randn
+    This is the below-bifurcation CSD scenario (Option A):
+        dx = (λx - ω·y - (x²+y²)·x) + sigma·randn   with λ: -0.3 → 0
         dy = (λy + ω·x - (x²+y²)·y) + sigma·randn
 
-    The cubic (x²+y²) term is the Stuart-Landau saturation that creates the
-    effective-damping floor — the same term that masks λ in thermoacoustic data.
-    We observe only x (one component of the complex oscillator).
+    As λ → 0 from below, Var(x) ≈ σ²/(2|λ|) INCREASES — the CSD signal
+    that Lambda and FRMSuite are designed to detect.
 
-    A burn-in period (6 full periods at lambda_0) is run first and discarded
-    so that the detector's baseline calibration sees steady-state variance, not
-    the transient approach to the limit cycle.  This is the key distinction from
-    a naive OU simulation that starts at rest.
+    A burn-in at λ=-lambda_0 is run first and discarded so that the
+    detector's baseline calibrates at the initial steady-state variance,
+    not the initial transient.
 
     Returns list of x values, length n.
     """
     rng = random.Random(seed)
     omega = math.pi / (2.0 * tau_gen)
-    x, y = _sl_burnin(tau_gen, lambda_0, sigma, rng)
+    x, y = _csd_burnin(tau_gen, lambda_0, sigma, rng)
     signal = []
     for i in range(n):
-        lam = lambda_0 * (1.0 - i / max(n - 1, 1))  # linear decline to 0
+        lam = -lambda_0 * (1.0 - i / max(n - 1, 1))  # ramp: -lambda_0 → 0
         x, y = _sl_step(x, y, lam, omega, sigma, rng)
         signal.append(x)
     return signal
 
 
-def sig_stuart_landau_null(n: int, seed: int, tau_gen: float = 20.0,
-                            lambda_val: float = 0.3, sigma: float = 0.10) -> list:
-    """Null trajectory: λ = constant lambda_val throughout.
+def sig_csd_null(n: int, seed: int, tau_gen: float = 20.0,
+                 lambda_val: float = 0.3, sigma: float = 0.10) -> list:
+    """Null trajectory: λ = -lambda_val (constant, below bifurcation).
 
-    No bifurcation approach; frm_confidence should stay low.
-    Burn-in ensures detector calibrates at steady-state variance.
+    No bifurcation approach; variance is stationary at σ²/(2·lambda_val).
+    frm_confidence should remain low throughout.
+    Burn-in ensures detector calibrates at the correct steady-state variance.
     """
     rng = random.Random(seed + 10000)
     omega = math.pi / (2.0 * tau_gen)
-    x, y = _sl_burnin(tau_gen, lambda_val, sigma, rng)
+    x, y = _csd_burnin(tau_gen, lambda_val, sigma, rng)
+    lam = -lambda_val  # constant, stable
     signal = []
     for _ in range(n):
-        x, y = _sl_step(x, y, lambda_val, omega, sigma, rng)
+        x, y = _sl_step(x, y, lam, omega, sigma, rng)
         signal.append(x)
     return signal
 
@@ -270,20 +285,20 @@ def main():
             pass
     else:
         print(f"  thermoacoustic CSV not found at: {csv_path}")
-        print("  Falling back to Stuart-Landau synthetic data (nonlinear Hopf).")
+        print("  Falling back to below-bifurcation CSD synthetic data (Option A).")
         print(f"  tau_gen={tau_gen}, n={n}, sigma={sigma}")
         print()
-        print("  NOTE: Stuart-Landau ≠ OU linearized. The cubic saturation term")
-        print("  (x²+y²)x mimics the thermoacoustic damping floor that masks λ.")
-        print("  This is a harder, non-circular test of the detector.")
-        data_source = f"Stuart-Landau synthetic (nonlinear Hopf), tau_gen={tau_gen}"
+        print("  NOTE: λ starts at -0.3 (stable fixed point) and ramps toward 0.")
+        print("  Var(x) ≈ σ²/(2|λ|) INCREASES as λ→0 — the CSD signal Lambda detects.")
+        print("  This matches Lambda's OU physics (below-bifurcation approach).")
+        data_source = f"below-bifurcation CSD synthetic (Option A), tau_gen={tau_gen}"
 
         forced_signals = [
-            sig_stuart_landau_forced(n, seed=i, tau_gen=tau_gen, sigma=sigma)
+            sig_csd_forced(n, seed=i, tau_gen=tau_gen, sigma=sigma)
             for i in range(19)
         ]
         null_signals = [
-            sig_stuart_landau_null(n, seed=i, tau_gen=tau_gen, sigma=sigma)
+            sig_csd_null(n, seed=i, tau_gen=tau_gen, sigma=sigma)
             for i in range(10)
         ]
 
@@ -293,7 +308,7 @@ def main():
     print()
 
     # ── Evaluate forced trajectories ─────────────────────────────────────────
-    print("FORCED TRAJECTORIES (λ declining → bifurcation)")
+    print("FORCED TRAJECTORIES (λ rising from -lambda_0 → 0, CSD)")
     print(f"  {'idx':>3}  {'peak':>4}  {'head':>6}  {'tail':>6}  {'rise':>5}  {'L-OOS':>6}  {'Ω-ALT':>6}")
     print("-" * 60)
     forced_results = []
@@ -309,7 +324,7 @@ def main():
 
     # ── Evaluate null trajectories ───────────────────────────────────────────
     print()
-    print("NULL TRAJECTORIES (λ = constant, no bifurcation)")
+    print("NULL TRAJECTORIES (λ = -lambda_0 constant, stable fixed point)")
     print(f"  {'idx':>3}  {'peak':>4}  {'head':>6}  {'tail':>6}  {'rise':>5}  {'L-OOS':>6}  {'Ω-ALT':>6}")
     print("-" * 60)
     null_results = []
@@ -383,22 +398,18 @@ def main():
     print("PHYSICS DIAGNOSIS:")
     print(f"  Lambda OOS rate on forced ({forced_lam_oos_mean:.0%}) vs null ({null_lam_oos_mean:.0%}):")
     if forced_lam_oos_mean > null_lam_oos_mean + 0.05:
-        print("  → Lambda exits scope near bifurcation as amplitude → 0.")
-        print("    Cubic saturation floors amplitude, weakening spectral SNR.")
-        print("    Fix: Lorentzian-fit lambda that tracks width, not height.")
+        print("  → Lambda exits scope more often on forced trajectories.")
+        print("    Near bifurcation (λ→0), spectral SNR may drop as oscillation")
+        print("    amplitude is small. Consider relaxing SNR gate near threshold.")
     print(f"  Omega false-alert rate on null ({null_omega_alert_mean:.0%}):")
     if null_omega_alert_mean > 0.10:
-        print("  → Omega alerting on stable limit cycles. Phase diffusion noise")
-        print("    causes frequency estimate scatter > 5% threshold. This is")
-        print("    the same false-alert mechanism as the Sunspot mis-scoping,")
-        print("    but driven by measurement noise rather than wrong tau_gen.")
+        print("  → Omega alerting on stable fixed-point oscillations. Phase")
+        print("    diffusion causes frequency estimate scatter > threshold.")
         print("    Fix: widen Omega deviation_threshold or use Lorentzian f0.")
     if not gate1_pass and forced_tail_mean < null_tail_mean:
-        print("  → Forced tail_conf < null tail_conf: the detector fires MORE")
-        print("    on stable signals than on signals approaching bifurcation.")
-        print("    This is the core v1 error: OU-linearized demo masked this")
-        print("    because the FRM model matched the signal exactly.")
-        print("    CONCLUSION: Layer 2 NOT validated on nonlinear Hopf data.")
+        print("  → Forced tail_conf < null tail_conf: detector still fires more")
+        print("    on stable signals. Check Lambda baseline calibration and")
+        print("    variance trend direction for below-bifurcation scenario.")
 
     return 0 if overall else 1
 
