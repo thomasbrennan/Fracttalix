@@ -526,7 +526,7 @@ The DRS currently has two protocols (DRP for text, GVP for software). Future dom
 
 The format is a convention, not a constraint. The field accepts any string that uniquely identifies a test.
 
-**16.9 AI system independence.** The AI layer is a JSON document. Any AI system — Claude, GPT, Gemini, Llama, or systems that don't exist yet — can read it. The DRS does not depend on any specific AI system's capabilities. The `semantic_spec_url` field points to the kernel specification, which is written in plain prose. Any system that can read English and parse JSON can evaluate the standard.
+**16.9 AI system independence.** The AI layer is a JSON document. Any AI system — Claude, GPT, Gemini, Grok, Llama, or systems that don't exist yet — can read it. The DRS does not depend on any specific AI system's capabilities. The `semantic_spec_url` field points to the kernel specification, which is written in plain prose. Any system that can read English and parse JSON can evaluate the standard.
 
 **16.10 Serialisation independence.** The Falsification Kernel (Layer 0) is defined in prose (`falsification-kernel.md`), not in JSON Schema. The current implementation uses JSON, but the kernel's semantics are independent of encoding. A future implementation could use:
 
@@ -751,6 +751,7 @@ This predicate means the same thing to:
 - A Claude instance running in English
 - A GPT instance running in Mandarin
 - A Gemini instance running in French
+- A Grok instance running in Turkish
 - A Llama instance running in Arabic
 - An AI system that hasn't been built yet, running in a language that doesn't exist yet
 

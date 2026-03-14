@@ -1,0 +1,500 @@
+{
+  "@context": "https://schema.org",
+  "@type": "TechArticle",
+  "@id": "https://github.com/thomasbrennan/Fracttalix/blob/main/guides/de.json",
+  "name": "Der Dual Reader Standard — Vollständiger Leitfaden",
+  "headline": "Leitfaden in einem Durchgang zum gesamten Dual Reader Standard: Architektur, Protokolle, Kernel, Schichten, Kompatibilität, Lingua Franca und Verbreitung",
+  "description": "Umfassender Leitfaden zum Dual Reader Standard (DRS), einer Verifikationsarchitektur, die verlangt, dass jede Behauptung sowohl von Menschen als auch von Maschinen lesbar ist. Behandelt beide Protokolle (DRP für Text, GVP für Software), den Falsifikationskernel (Layer 0), das KI-Schicht-Artefakt, drei Behauptungstypen, sechs Verifikationsstufen, acht Inferenzregeln, das Sechs-Bedingungen-Phase-Gate, Drei-Achsen-Kompatibilität, die maschinelle Lingua-Franca-Eigenschaft (eingebettete binäre Logik) und selbstverbreitende Einführungsdynamiken.",
+  "inLanguage": "de",
+  "author": {
+    "@type": "Person",
+    "name": "Thomas Brennan",
+    "identifier": "https://orcid.org/0009-0002-6353-7115"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "Fracttalix",
+    "url": "https://github.com/thomasbrennan/Fracttalix"
+  },
+  "datePublished": "2026-03-14",
+  "license": "https://creativecommons.org/licenses/by/4.0/",
+  "keywords": [
+    "dual reader standard",
+    "DRS",
+    "machine-verifiable claims",
+    "maschinenverifizierbare Behauptungen",
+    "falsification predicate",
+    "Falsifikationsprädikat",
+    "falsification kernel",
+    "Falsifikationskernel",
+    "AI layer",
+    "KI-Schicht",
+    "dual reader protocol",
+    "DRP",
+    "grounded verification protocol",
+    "GVP",
+    "Layer 0",
+    "embedded binary logic",
+    "eingebettete binäre Logik",
+    "machine lingua franca",
+    "maschinelle Lingua Franca",
+    "JSON schema validation",
+    "JSON-Schema-Validierung",
+    "scientific verification",
+    "wissenschaftliche Verifikation",
+    "software verification",
+    "Softwareverifikation",
+    "claim registry",
+    "Behauptungsregister",
+    "verification tiers",
+    "Verifikationsstufen",
+    "phase gate",
+    "Phase Gate",
+    "inference rules",
+    "Inferenzregeln",
+    "three-axis compatibility",
+    "Drei-Achsen-Kompatibilität",
+    "substrate independence",
+    "Substratunabhängigkeit",
+    "serialisation independence",
+    "Serialisierungsunabhängigkeit",
+    "machine-readable research",
+    "maschinenlesbare Forschung",
+    "reproducible science",
+    "reproduzierbare Wissenschaft",
+    "open science",
+    "offene Wissenschaft",
+    "verification architecture",
+    "Verifikationsarchitektur",
+    "Popperian epistemology",
+    "Poppersche Epistemologie"
+  ],
+  "about": {
+    "@type": "Thing",
+    "name": "Dual Reader Standard",
+    "description": "Eine Verifikationsarchitektur für Wissenssysteme, die verlangt, dass jede Behauptung von zwei unabhängigen Leserklassen lesbar ist — Mensch und Maschine — wobei jede über ein definiertes Protokoll operiert.",
+    "url": "https://github.com/thomasbrennan/Fracttalix/blob/main/paper/DRS-Architecture.md"
+  },
+  "citation": {
+    "@type": "CreativeWork",
+    "name": "Fracttalix Corpus",
+    "identifier": "https://doi.org/10.5281/zenodo.18859299"
+  },
+  "isPartOf": {
+    "@type": "CreativeWork",
+    "name": "Fracttalix — Implementierungsleitfäden zum Dual Reader Standard",
+    "url": "https://github.com/thomasbrennan/Fracttalix/tree/main/guides"
+  },
+  "content": {
+    "section_01_what_is_the_drs": {
+      "title": "Was der Dual Reader Standard ist",
+      "summary": "Der DRS ist eine Verifikationsarchitektur für Wissenssysteme. Er verlangt, dass jede Behauptung — ob in Prosa verfasst oder in Code implementiert — von zwei unabhängigen Leserklassen lesbar ist: Mensch und Maschine. Er ist kein Paper und kein Werkzeug. Er ist der Standard, der beide Protokolle enthält.",
+      "protocols": {
+        "DRP": {
+          "name": "Dual Reader Protocol",
+          "domain": "Text / Papers",
+          "function": "Macht Prosa-Behauptungen maschinell auswertbar mittels 5-teiliger Falsifikationsprädikate"
+        },
+        "GVP": {
+          "name": "Grounded Verification Protocol",
+          "domain": "Software / Code",
+          "function": "Macht maschinell auswertbare Behauptungen maschinell verifiziert mittels Test-Bindungen und Commit-gepinnter Evidenz"
+        }
+      },
+      "relationship": "Das DRP macht Behauptungen maschinell auswertbar. Das GVP macht sie maschinell verifiziert. Keines ist ohne das andere vollständig. Zusammen bilden sie den DRS."
+    },
+    "section_02_two_protocols": {
+      "title": "Die zwei Protokolle",
+      "DRP": {
+        "name": "Dual Reader Protocol (Text)",
+        "description": "Regelt, wie Prosa-Behauptungen maschinell auswertbar werden.",
+        "readers": {
+          "reader_1_human": "Liest das Paper in natürlicher Sprache. Versteht Kontext, Motivation und Narrativ. Kann nicht jede Behauptung systematisch prüfen.",
+          "reader_2_ai": "Liest die KI-Schicht — ein strukturiertes JSON-Dokument, das jedes Paper begleitet. Enthält das vollständige Behauptungsregister. Kann jede Behauptung prüfen, ohne die Prosa zu lesen."
+        },
+        "requirements": [
+          "Behauptungsklassifikation: jede Behauptung wird als A (Axiom), D (Definition) oder F (falsifizierbar) typisiert",
+          "Falsifikationsprädikate: jede Typ-F-Behauptung trägt ein deterministisches 5-teiliges Prädikat",
+          "Phase Gates: sechs Bedingungen (c1–c6) vor dem PHASE-READY-Status",
+          "Platzhalter-Tracking: Behauptungen, die von ungelösten Ergebnissen abhängen, werden als Platzhalter registriert"
+        ],
+        "guarantee": "Jedes KI-System mit Zugang zur KI-Schicht kann jede falsifizierbare Behauptung auswerten, ohne die Prosa zu lesen. Eigenständigkeit wird durch Phase-Gate-Bedingung c5 durchgesetzt."
+      },
+      "GVP": {
+        "name": "Grounded Verification Protocol (Software)",
+        "description": "Regelt, wie maschinell auswertbare Behauptungen maschinell verifiziert werden.",
+        "readers": {
+          "reader_3a_coder": "Liest das tier-Feld für die Art der Evidenz, test_bindings für die Tests, die Behauptungen prüfen, verified_against für den Zeitpunkt des letzten Bestehens.",
+          "reader_3b_machine": "Führt den Testrunner gegen das test_bindings-Array aus. Zeichnet Bestanden/Nicht bestanden auf. Stempelt den verified_against-SHA bei Erfolg."
+        },
+        "required_fields_per_claim": {
+          "tier": "Die Verifikationsstufe (einer von sechs Werten)",
+          "test_bindings": "Array voll qualifizierter Test-Node-IDs, die die Behauptung prüfen",
+          "verified_against": "Git-Commit-SHA, bei dem diese Tests zuletzt bestanden haben"
+        },
+        "guarantee": "Für jede Behauptung: (a) welche Evidenz sie stützt, (b) welche Tests sie prüfen, (c) bei welchem Commit diese Tests bestanden haben. Wenn die Stufe empirical_pending ist, ist die Lücke sichtbar. Wenn verified_against null ist, deckt kein Softwaretest sie ab."
+      }
+    },
+    "section_03_falsification_kernel": {
+      "title": "Das gemeinsame Fundament — Falsifikationskernel (Layer 0)",
+      "description": "Beide Protokolle operieren auf demselben Fundament. Dies ist Layer 0 des DRS — er definiert, was ein Falsifikationsprädikat bedeutet, unabhängig von jedem Serialisierungsformat. Das semantic_spec_url-Feld einer KI-Schicht verweist auf diese Spezifikation.",
+      "kernel_tuple": "K = (P, O, M, B)",
+      "components": {
+        "P": {
+          "name": "Prädikat",
+          "json_field": "FALSIFIED_IF",
+          "role": "Logischer Satz, der bei TRUE die Behauptung falsifiziert",
+          "grammar": [
+            "Benannte Variablen (definiert in WHERE)",
+            "Vergleichsoperatoren: <, >, <=, >=, =, !=",
+            "Logische Konnektoren: AND, OR, NOT",
+            "Quantoren: EXISTS ... SUCH THAT, FOR ALL ... IN",
+            "Arithmetik: +, -, *, /, ^, log10(), exp(), abs(), max(), min()",
+            "Mengenoperatoren: IN, ∩, ∪, |...| (Kardinalität)",
+            "Funktionsanwendung: f(x) wobei f in WHERE definiert ist"
+          ],
+          "constraints": [
+            "Determinismus: muss exakt zu TRUE oder FALSE auswerten",
+            "Endlichkeit: Quantoren beziehen sich nur auf endliche Mengen",
+            "Keine Selbstreferenz: keine zirkulären Prädikatsabhängigkeiten",
+            "Vollständigkeit: jede Variable in FALSIFIED_IF muss in WHERE definiert sein und umgekehrt"
+          ]
+        },
+        "O": {
+          "name": "Operanden",
+          "json_field": "WHERE",
+          "role": "Typisierte Definitionen jeder Variable im Prädikat",
+          "format": "Typ · Einheit · Definition oder Quelle",
+          "variable_types": ["scalar", "integer", "binary", "set", "string", "function"],
+          "constraints": [
+            "Vollständigkeit: jede freie Variable in P muss in O vorkommen",
+            "Keine Waisen: jede Variable in O muss in P vorkommen",
+            "Berechenbar: jede Variable muss aus Daten oder Ableitungen berechenbar sein, nicht aus subjektiver Beurteilung"
+          ]
+        },
+        "M": {
+          "name": "Mechanismus",
+          "json_field": "EVALUATION",
+          "role": "Endliches, deterministisches Auswertungsverfahren",
+          "constraints": [
+            "Endlich: terminiert in endlich vielen Schritten (bestätigt durch 'finite' am Ende)",
+            "Deterministisch: gleiche Eingaben erzeugen gleiches Ergebnis",
+            "Reproduzierbar: ein Dritter kann das Verfahren unabhängig ausführen"
+          ]
+        },
+        "B": {
+          "name": "Grenzen",
+          "json_fields": ["BOUNDARY", "CONTEXT"],
+          "role": "Schwellenwertsemantik und Begründung",
+          "BOUNDARY": "Spezifiziert inklusiv/exklusiv für jeden Schwellenwert und Verdikt bei exakter Gleichheit",
+          "CONTEXT": "Begründet jeden numerischen Schwellenwert: warum dieser Wert, welches Fachwissen ihn stützt, abgeleitet oder konventionell"
+        }
+      },
+      "verdict_mapping": {
+        "P_is_TRUE": "FALSIFIED",
+        "P_is_FALSE": "NOT FALSIFIED"
+      },
+      "example": {
+        "claim": "sort() gibt Elemente in aufsteigender Reihenfolge zurück",
+        "predicate": {
+          "FALSIFIED_IF": "EXISTS i IN range(len(result)-1) SUCH THAT result[i] > result[i+1]",
+          "WHERE": {
+            "result": "list · dimensionless · output of sort(input)"
+          },
+          "EVALUATION": "Run sort on test vectors; check adjacent pairs; finite",
+          "BOUNDARY": "len(result) <= 1 → NOT FALSIFIED (vacuously sorted)",
+          "CONTEXT": "Ascending order is the documented contract of sort()"
+        },
+        "note": "Dieses Prädikat bedeutet dasselbe für jedes KI-System in jeder Sprache. Keine Übersetzung erforderlich."
+      }
+    },
+    "section_04_three_claim_types": {
+      "title": "Die drei Behauptungstypen",
+      "types": {
+        "A": {
+          "name": "Axiom / Annahme",
+          "in_papers": "Aus der Literatur akzeptierte Prämissen",
+          "in_software": "Plattformanforderungen, Abhängigkeitsverträge",
+          "predicate_required": false,
+          "predicate_value": "null"
+        },
+        "D": {
+          "name": "Definition",
+          "in_papers": "Stipulative Begriffe und Verfahren",
+          "in_software": "Typsignaturen, Datenstrukturen, Schemata",
+          "predicate_required": false,
+          "predicate_value": "null"
+        },
+        "F": {
+          "name": "Falsifizierbar",
+          "in_papers": "Theoreme, empirische Vorhersagen, abgeleitete Ergebnisse",
+          "in_software": "Verhaltensgarantien, Korrektheitsinvarianten, Leistungsgrenzen",
+          "predicate_required": true,
+          "predicate_value": "Vollständiges K = (P, O, M, B)"
+        }
+      }
+    },
+    "section_05_six_verification_tiers": {
+      "title": "Die sechs Verifikationsstufen",
+      "description": "Jede Behauptung trägt ein tier-Feld, das deklariert, welche Art von Evidenz sie stützt.",
+      "grounded_by_construction": [
+        {"tier": "axiom", "type": "A", "meaning": "Grundlegende Prämisse. Designbedingt unfalsifizierbar.", "test_bindings": "[] (leer)", "verified_against": "null"},
+        {"tier": "definition", "type": "D", "meaning": "Definitorisch. Stipuliert einen Begriff oder eine Struktur. Nicht wahrheitsfähig.", "test_bindings": "[] (leer)", "verified_against": "null"}
+      ],
+      "grounded_now": [
+        {"tier": "software_tested", "type": "F", "meaning": "Durch bestandene Tests geprüft. test_bindings nicht leer, verified_against nicht null.", "test_bindings": "Nicht leer", "verified_against": "Nicht null (7–40 Hex-Zeichen)"},
+        {"tier": "formal_proof", "type": "F", "meaning": "Schrittindizierte Ableitung mit n_invalid_steps = 0. Beweis befindet sich in der KI-Schicht.", "test_bindings": "Kann leer sein", "verified_against": "Kann null sein"},
+        {"tier": "analytic", "type": "F", "meaning": "Verifiziert durch formale Ableitungsspur oder analytisches Argument.", "test_bindings": "Kann leer sein", "verified_against": "Kann null sein"}
+      ],
+      "explicitly_ungrounded": [
+        {"tier": "empirical_pending", "type": "F", "meaning": "Aktiver Platzhalter oder ausstehende Daten. Lücke ist designbedingt sichtbar.", "test_bindings": "Kann leer sein", "verified_against": "Kann null sein"}
+      ]
+    },
+    "section_06_vacuity_witness": {
+      "title": "Der Vakuitätszeuge",
+      "description": "Jede Typ-F-Behauptung muss ein sample_falsification_observation-Feld enthalten: eine konkrete, hypothetische Beobachtung, die das Prädikat zu TRUE auswerten lassen würde. Dies beweist, dass das Prädikat nicht trivialerweise unfalsifizierbar ist. Durchgesetzt durch Phase-Gate-Bedingung c6."
+    },
+    "section_07_placeholder_predicates": {
+      "title": "Platzhalterprädikate",
+      "description": "Wenn eine Behauptung von Ergebnissen eines Papers abhängt, das noch nicht den PHASE-READY-Status hat, kann das Prädikat Platzhalterreferenzen enthalten.",
+      "fields": {
+        "placeholder": "true im Behauptungsobjekt",
+        "placeholder_id": "verknüpft mit dem placeholder_register",
+        "predicate_text": "kann [PLACEHOLDER: pending ...] enthalten"
+      },
+      "behaviour": "Platzhalterbehauptungen sind gültig, aber nicht auswertbar, bis die Abhängigkeit aufgelöst wird. Sie blockieren den PHASE-READY-Status nicht, es sei denn blocks_phase_ready ist true."
+    },
+    "section_08_ai_layer": {
+      "title": "Die KI-Schicht — Das zentrale Artefakt",
+      "description": "Ein JSON-Dokument, das jedes Paper oder Softwaresystem begleitet. Das Schema ist definiert in ai-layers/ai-layer-schema.json.",
+      "schema_url": "https://github.com/thomasbrennan/Fracttalix/blob/main/ai-layers/ai-layer-schema.json",
+      "required_sections": {
+        "_meta": "Dokumenttyp, Schemaversion, Sitzung, Lizenz",
+        "paper_id_and_title": "Identität",
+        "paper_type": "Klassifikation: law_A, derivation_B, application_C, methodology_D",
+        "phase_ready": "Phase-Gate-Verdikt und Bedingungsstatus (c1–c6)",
+        "claim_registry": "Array aller Behauptungen mit Typen, Prädikaten, Stufen, Bindungen und SHAs",
+        "placeholder_register": "Array ungelöster Abhängigkeiten",
+        "summary": "Behauptungszählungen und Status",
+        "semantic_spec_url": "Verweist auf den Falsifikationskernel (Layer 0)"
+      },
+      "role_in_protocols": {
+        "DRP": "Verlangt, dass sie existiert, Prädikate enthält und das Phase Gate besteht",
+        "GVP": "Verlangt, dass sie für jede Behauptung tier, test_bindings und verified_against enthält"
+      }
+    },
+    "section_09_phase_gate": {
+      "title": "Das Phase Gate",
+      "description": "Ein Paper oder Software-Release ist PHASE-READY, wenn sechs Bedingungen erfüllt sind.",
+      "conditions": {
+        "c1": "KI-Schicht ist schemakonform",
+        "c2": "Alle falsifizierbaren Behauptungen sind mit Prädikaten registriert",
+        "c3": "Alle Prädikate sind maschinell auswertbar",
+        "c4": "Querverweise werden nachverfolgt (Platzhalterregister)",
+        "c5": "Verifikation ist eigenständig (KI-Schicht allein, keine Prosa erforderlich)",
+        "c6": "Alle Prädikate sind nicht-vakuös (Beispiel-Falsifikationsbeobachtung vorhanden)"
+      },
+      "corpus_complete": "Wird ausgelöst, wenn alle Papers PHASE-READY sind und alle Platzhalter über alle Objekte hinweg aufgelöst sind."
+    },
+    "section_10_inference_rules": {
+      "title": "Die Inferenzregeln",
+      "description": "Kanonisches Inventar für Ableitungsspuren in Behauptungen der Stufe formal_proof. Nur erweiterbar: neue Regeln können hinzugefügt, bestehende nie geändert oder entfernt werden.",
+      "rules": [
+        {"id": "IR-1", "name": "Modus Ponens", "description": "Wenn P und P→Q, dann Q"},
+        {"id": "IR-2", "name": "Universelle Instantiierung", "description": "Wenn ∀x P(x), dann P(a) für ein beliebiges spezifisches a"},
+        {"id": "IR-3", "name": "Substitution von Gleichen", "description": "Wenn a=b, dann ersetze a durch b"},
+        {"id": "IR-4", "name": "Definitionserweiterung", "description": "Ersetze einen definierten Begriff durch seine Definition"},
+        {"id": "IR-5", "name": "Algebraische Manipulation", "description": "Gültige algebraische Transformation unter Erhaltung der Gleichheit"},
+        {"id": "IR-6", "name": "Logische Äquivalenz", "description": "Ersetze durch logisch äquivalenten Ausdruck"},
+        {"id": "IR-7", "name": "Statistische Inferenz", "description": "Wende ein benanntes statistisches Verfahren auf Daten an"},
+        {"id": "IR-8", "name": "Parsimonie / Modellierungsprinzipauswahl", "description": "Wähle kanonischen Wert aus axiomkonsistenter Familie"}
+      ],
+      "validation": "Jeder Schritt in einer Ableitungstabelle zitiert eine Inferenzregel und listet Prämissen auf. Gültig wenn n_invalid_steps = 0."
+    },
+    "section_11_architecture_stack": {
+      "title": "Architekturstapel",
+      "description": "Der Kernel ist das gemeinsame Fundament. Das DRP erzeugt Prädikate aus Prosa. Das GVP bindet Prädikate an ausführbare Evidenz. Die KI-Schicht ist das Artefakt, das beides trägt.",
+      "layers_top_to_bottom": [
+        "DRS (übergreifender Standard)",
+        "DRP (Textprotokoll) + GVP (Softwareprotokoll)",
+        "Leser: Mensch, KI, Entwickler, Maschine",
+        "KI-Schicht (*-ai-layer.json) — Behauptungen + Prädikate + Stufen + Bindungen + SHAs",
+        "Falsifikationskernel K = (P, O, M, B) — Layer 0"
+      ]
+    },
+    "section_12_how_to_implement": {
+      "title": "Implementierung",
+      "for_a_paper_DRP": [
+        "Das Paper schreiben (Prosakanal für menschliche Leser)",
+        "Die KI-Schicht-JSON-Datei erstellen (Maschinenkanal für KI-Leser)",
+        "Jede Behauptung als A (Axiom), D (Definition) oder F (falsifizierbar) klassifizieren",
+        "Das 5-teilige Falsifikationsprädikat für jede Typ-F-Behauptung schreiben",
+        "Eine sample_falsification_observation für jede Typ-F-Behauptung einschließen (Vakuitätszeuge)",
+        "Die Verifikationsstufe jeder Behauptung zuweisen",
+        "Gegen ai-layer-schema.json validieren",
+        "Das Phase Gate ausführen (c1–c6)"
+      ],
+      "for_software_GVP": [
+        "Auflisten, was die Software zu tun beansprucht",
+        "Jede Behauptung als A (Annahme), D (Definition) oder F (verhaltensbezogen) klassifizieren",
+        "Das Falsifikationsprädikat für jede Typ-F-Behauptung schreiben",
+        "Die Tests schreiben oder identifizieren, die jede Behauptung prüfen",
+        "test_bindings mit voll qualifizierten Test-Node-IDs befüllen",
+        "Die Tests ausführen und den bestandenen Commit-SHA in verified_against aufzeichnen",
+        "Die Stufe zuweisen: software_tested wenn Tests existieren, empirical_pending wenn noch nicht",
+        "Alle ungetesteten Behauptungen als Platzhalter registrieren",
+        "Gegen ai-layer-schema.json validieren"
+      ],
+      "for_both": "Die KI-Schicht ist dasselbe Artefakt. Das Schema ist dasselbe. Der Kernel ist derselbe. Der einzige Unterschied ist, welches Protokoll den Inhalt erzeugt und welches Protokoll ihn verifiziert.",
+      "minimum_viable_adoption": {
+        "description": "Die kleinste nützliche DRS-Einführung ist eine Typ-F-Behauptung mit einer Test-Bindung.",
+        "example": {
+          "claim_id": "F-1",
+          "type": "F",
+          "statement": "sort() gibt Elemente in aufsteigender Reihenfolge zurück",
+          "falsification_predicate": {
+            "FALSIFIED_IF": "EXISTS i IN range(len(result)-1) SUCH THAT result[i] > result[i+1]",
+            "WHERE": {"result": "list · dimensionless · output of sort(input)"},
+            "EVALUATION": "Run sort on test vectors; check adjacent pairs; finite",
+            "BOUNDARY": "len(result) <= 1 → NOT FALSIFIED (vacuously sorted)",
+            "CONTEXT": "Ascending order is the documented contract of sort()"
+          },
+          "tier": "software_tested",
+          "test_bindings": ["tests/test_sort.py::test_ascending_order"],
+          "verified_against": "abc1234"
+        },
+        "note": "Eine Behauptung. Ein Test. Ein SHA. Der DRS ist aktiv."
+      }
+    },
+    "section_13_design_principles": {
+      "title": "Designprinzipien",
+      "principles": [
+        {
+          "name": "Poppersche Epistemologie",
+          "description": "Wir können falsifizieren, aber nicht verifizieren. Eine Behauptung, die alle Falsifikationsversuche übersteht, ist nicht bewiesen — sie hat überlebt."
+        },
+        {
+          "name": "Ehrliche Lücken",
+          "description": "Der Platzhalter ist das wichtigste Merkmal. Wenn eine Behauptung empirical_pending ist, sagt das System: Wir behaupten dies, haben es aber noch nicht verifiziert. Strikt informativer als das Verbergen unverifizierter Behauptungen."
+        },
+        {
+          "name": "Substratunabhängigkeit",
+          "description": "Der Kernel K = (P, O, M, B) weiß nicht, ob er ein wissenschaftliches Theorem oder eine Softwaregarantie auswertet. Zukünftige Domänen fügen eigene Protokolle hinzu, ohne den Kernel zu ändern."
+        },
+        {
+          "name": "Maschine zuerst, menschenlesbar",
+          "description": "Die KI-Schicht ist das primäre Artefakt. Prosa und Quellcode sind sekundäre Kanäle. Die KI-Schicht ist das, was validiert, geprüft und versioniert wird."
+        }
+      ]
+    },
+    "section_14_three_axis_compatibility": {
+      "title": "Drei-Achsen-Kompatibilität",
+      "invariant": "Der Falsifikationskernel K = (P, O, M, B) ist der Fixpunkt. Er kennt weder die Domäne noch das Jahr noch das Serialisierungsformat. Der Kernel ist permanent. Alles andere ist erweiterbar.",
+      "axis_1_backwards": {
+        "name": "Vergangenheitssicherung (Abwärtskompatibilität)",
+        "mechanisms": [
+          "Schema-Versionierung: KI-Schichten zeichnen die Schemaversion auf; v2-Schichten bleiben für immer gültig; v3-Validatoren lesen v2-Schichten",
+          "Prädikatspermanenz: Kernel-Grammatik verwendet permanent definierte mathematische/logische Operatoren",
+          "Inferenzregelstabilität: IR-1 bis IR-8 nur erweiterbar, nie geändert oder entfernt",
+          "Stufenstabilität: sechs Stufen nur erweiterbar, nie entfernt oder umdefiniert"
+        ],
+        "contract": "Jede KI-Schicht, die bei ihrer Erstellung gültig war, bleibt für immer gültig."
+      },
+      "axis_2_lateral": {
+        "name": "Lateralsicherung (Domänenübergreifende Kompatibilität)",
+        "mechanisms": {
+          "domain_independence": {
+            "description": "Der Kernel funktioniert über jede Wissensdomäne hinweg",
+            "domains": {
+              "science": {"A": "Literaturprämissen", "D": "Stipulative Begriffe", "F": "Theoreme, Vorhersagen"},
+              "software": {"A": "Plattformanforderungen", "D": "Typsignaturen, Schemata", "F": "Verhaltensgarantien"},
+              "legal": {"A": "Gesetzliche Grundlage", "D": "Definierte Begriffe", "F": "Rechtliche Schlussfolgerungen"},
+              "regulatory": {"A": "Rahmenannahmen", "D": "Standarddefinitionen", "F": "Konformitätsaussagen"},
+              "policy": {"A": "Wertprämissen", "D": "Politikbegriffe", "F": "Wirkungsvorhersagen"},
+              "education": {"A": "Pädagogische Axiome", "D": "Lernziele", "F": "Bewertungsbehauptungen"}
+            }
+          },
+          "language_independence": "test_bindings akzeptiert jeden String: pytest, Jest, cargo test, go test, JUnit",
+          "ai_system_independence": "Jedes KI-System kann JSON und die Kernel-Spezifikation lesen. semantic_spec_url verweist auf Layer 0.",
+          "serialisation_independence": "Layer 0 ist in Prosa definiert, nicht in JSON Schema. JSON ist der aktuelle Transport; Kernel-Semantik ist kodierungsunabhängig. Zukunft: YAML, Protocol Buffers, CBOR oder noch nicht erfundene Formate.",
+          "tool_independence": "Bettet sich in bestehende Arbeitsabläufe ein: Git-SHAs, jeder Testrunner, jeder JSON-Schema-Validator, jede CI-Pipeline."
+        },
+        "contract": "Die Einführung des DRS in einer Domäne, Sprache, einem Werkzeug oder KI-System erzeugt keine Abhängigkeit."
+      },
+      "axis_3_forward": {
+        "name": "Zukunftssicherung (Vorwärtskompatibilität)",
+        "mechanisms": [
+          "Protokollerweiterbarkeit: neue Domänen fügen neue Protokolle hinzu (Legal VP, Regulatory VP usw.), die Kernel, Behauptungstypen und KI-Schicht-Schema teilen",
+          "Stufenerweiterbarkeit: zukünftige Stufen (regulatory_certified, peer_reviewed, formally_verified, field_tested, community_validated) werden zum Enum hinzugefügt, bestehende Stufen bleiben",
+          "Inferenzregelerweiterbarkeit: IR-9+ werden bei Bedarf hinzugefügt, alte Ableitungen bleiben gültig per stabiler ID",
+          "Schemaerweiterbarkeit: v1→v2→v3→v4+, jede Version fügt hinzu, keine entfernt",
+          "Unbekannte zukünftige Leser: autonome Agenten, korpusübergreifende Prüfer, Compliance-Engines, Paketmanager-Integrationen"
+        ],
+        "contract": "Jede zukünftige Innovation kann als neues Protokoll, neue Stufe, neue Inferenzregel oder neues Schemafeld hinzugefügt werden — ohne etwas Bestehendes zu ändern."
+      },
+      "guarantee_table": {
+        "past": {"promise": "Nichts Bestehendes bricht", "mechanism": "Schema-Versionierung, nur erweiterbare Enums, permanenter Kernel"},
+        "lateral": {"promise": "Funktioniert über alle Domänen, Sprachen, Werkzeuge, KI-Systeme", "mechanism": "Substratunabhängiger Kernel, stringtypisierte Bindungen, prosabasierte Semantik"},
+        "forward": {"promise": "Alles Neue kann ohne Neudesign hinzugefügt werden", "mechanism": "Protokollerweiterbarkeit, Stufenerweiterbarkeit, additive Schemaentwicklung"}
+      }
+    },
+    "section_15_machine_lingua_franca": {
+      "title": "Die maschinelle Lingua Franca",
+      "description": "Die tiefste Eigenschaft des DRS. Nicht entworfen — entdeckt.",
+      "the_translation_problem": "Wissenschaftliches Wissen ist hinter menschlichen Sprachen eingesperrt. Übersetzung ist teuer, verlustbehaftet und langsam. Wissen fragmentiert entlang sprachlicher Grenzen. Dies ist ein Substrat-Problem: natürliche Sprache ist von Natur aus nicht interoperabel.",
+      "the_kernel_dissolves_it": {
+        "description": "Der Falsifikationskernel ist in keiner menschlichen Sprache geschrieben. Er ist in Logik und Mathematik geschrieben.",
+        "example": {
+          "FALSIFIED_IF": "R2_best_alt > R2_frm + 0.05",
+          "WHERE": {
+            "R2_best_alt": "scalar · dimensionless · best R² from competing models",
+            "R2_frm": "scalar · dimensionless · R² from FRM regression"
+          },
+          "EVALUATION": "Run regression for each model; compare R² values; finite",
+          "BOUNDARY": "R2_best_alt = R2_frm + 0.05 → FALSIFIED (threshold inclusive)",
+          "CONTEXT": "0.05 margin from standard model comparison practice"
+        },
+        "universality": "Dieses Prädikat bedeutet dasselbe für Claude auf Englisch, GPT auf Mandarin, Gemini auf Französisch und KI-Systeme, die noch nicht gebaut wurden."
+      },
+      "json_as_transport": "JSON ist das De-facto-Austauschformat — jede Sprache, jedes KI-System, jede API. Der DRS erbt die Universalität von JSON. Ein Team in jedem Land veröffentlicht Prädikate in mathematischer Notation. Jedes andere Team kann sie ohne Übersetzung lesen.",
+      "qualification": "Die WHERE-Felddefinitionen enthalten derzeit englische Prosa. Der operative Inhalt (Typen, Einheiten, Operatoren, Schwellenwerte) ist sprachneutral. Bei gegebenen konkreten Werten wertet jedes System das Prädikat unabhängig von der Sprache aus.",
+      "embedded_binary_logic": {
+        "description": "Jedes DRS-Prädikat reduziert sich auf eingebettete binäre Logik.",
+        "evaluation_chain": "Behauptung → Prädikat → Variablen + Operatoren → Boolean → 1 oder 0",
+        "explanation": "WHERE typisiert Variablen. FALSIFIED_IF kombiniert sie mit Operatoren. EVALUATION berechnet Eingaben. BOUNDARY löst Grenzfälle. Die Ausgabe ist immer ein einzelnes Bit: FALSIFIED oder NOT FALSIFIED.",
+        "consequence": "Man kann 1 oder 0 nicht falsch übersetzen. Man kann > nicht fehlinterpretieren. Die Bedeutung liegt in der Struktur, nicht in irgendeiner Sprache. Ein Prädikat, das in Peking TRUE ist, ist auch in Boston, São Paulo, Lagos und auf einem Server ohne Gebietsschema TRUE. Der DRS kodiert Wissen im Substrat der Logik selbst."
+      }
+    },
+    "section_16_self_spreading_adoption": {
+      "title": "Selbstverbreitende Einführung",
+      "internal_incentive": "Das Erstellen einer KI-Schicht zwingt dazu aufzulisten, was man behauptet. Man entdeckt ungetestete Behauptungen, undokumentierte Grenzen und unregistrierte Abhängigkeiten. Die Lücken existieren, ob man sie dokumentiert oder nicht — der DRS macht sie sichtbar.",
+      "network_effect": {
+        "claim_aware_dependencies": "Wenn Bibliothek A eine KI-Schicht veröffentlicht und B von A abhängt, weiß B programmatisch, welche Behauptungen von welchen Annahmen abhängen. Brechende Änderungen werden auf spezifische gefährdete Behauptungen abgebildet.",
+        "cross_project_audit": "KI-Leser durchlaufen mehrere KI-Schichten, prüfen Querverweise, identifizieren Inkonsistenzen über Ökosysteme hinweg.",
+        "auditable_trust": "Vertrauen verschiebt sich von sozialen Signalen (Sternchen, Downloads) zu struktureller Evidenz (tier, test_bindings, verified_against)."
+      },
+      "ai_as_catalyst": {
+        "generate": "KI listet Behauptungen auf, klassifiziert, schreibt Prädikate, identifiziert Test-Bindungen. Der Mensch überprüft. Stunden werden zu Minuten.",
+        "maintain": "KI aktualisiert das Behauptungsregister bei Codeänderungen, passt Bindungen an, markiert veraltete SHAs. Der Mensch genehmigt.",
+        "audit": "KI liest KI-Schichten von Abhängigkeiten, bildet Annahmeabhängigkeiten ab, markiert Risiken automatisch."
+      },
+      "embedding_strategy": {
+        "tests": "test_bindings referenziert bestehende Test-Node-IDs. Kein neues Framework.",
+        "schema": "Standard-JSON-Schema. Jeder Validator.",
+        "vcs": "verified_against ist ein Git-SHA. Kein neues VCS.",
+        "ci": "Schema-Validierung als CI-Schritt neben bestehenden Pipelines.",
+        "total_cost": "Eine Datei (*-ai-layer.json). Drei Felder pro Behauptung (tier, test_bindings, verified_against)."
+      },
+      "self_referential_property": "Der DRS verifiziert sich selbst. Die DRP-1-KI-Schicht enthält Behauptungen über den DRS mit Falsifikationsprädikaten, die ausgewertet und mit verified_against-SHA gestempelt werden. Selbstreferentiell wie ein Compiler, der sich selbst kompiliert."
+    }
+  },
+  "resources": {
+    "architecture_specification": "https://github.com/thomasbrennan/Fracttalix/blob/main/paper/DRS-Architecture.md",
+    "falsification_kernel": "https://github.com/thomasbrennan/Fracttalix/blob/main/ai-layers/falsification-kernel.md",
+    "ai_layer_schema": "https://github.com/thomasbrennan/Fracttalix/blob/main/ai-layers/ai-layer-schema.json",
+    "gvp_specification": "https://github.com/thomasbrennan/Fracttalix/blob/main/docs/GVP-spec.md",
+    "example_ai_layer": "https://github.com/thomasbrennan/Fracttalix/blob/main/ai-layers/P1-ai-layer.json",
+    "repository": "https://github.com/thomasbrennan/Fracttalix",
+    "doi": "https://doi.org/10.5281/zenodo.18859299"
+  }
+}

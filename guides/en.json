@@ -1,0 +1,588 @@
+{
+  "@context": "https://schema.org",
+  "@type": "TechArticle",
+  "@id": "https://drs-standard.org/guides/en.json",
+  "name": "The Dual Reader Standard — Complete Guide",
+  "headline": "One-Pass Guide to the Entire Dual Reader Standard: Architecture, Protocols, Kernel, Layers, Compatibility, Lingua Franca, and Adoption",
+  "description": "Comprehensive guide to the Dual Reader Standard (DRS), a verification architecture requiring every claim to be readable by both human and machine. Covers both protocols (DRP for text, GVP for software), the Falsification Kernel (Layer 0), the AI layer artifact, three claim types, six verification tiers, eight inference rules, the six-condition phase gate, three-axis compatibility, the machine lingua franca property (embedded binary logic), and self-spreading adoption dynamics.",
+  "inLanguage": "en",
+  "author": {
+    "@type": "Person",
+    "name": "Thomas Brennan",
+    "identifier": "https://orcid.org/0009-0002-6353-7115"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "Fracttalix",
+    "url": "https://drs-standard.org"
+  },
+  "datePublished": "2026-03-14",
+  "license": "https://creativecommons.org/licenses/by/4.0/",
+  "keywords": [
+    "dual reader standard",
+    "DRS",
+    "machine-verifiable claims",
+    "falsification predicate",
+    "falsification kernel",
+    "AI layer",
+    "dual reader protocol",
+    "DRP",
+    "grounded verification protocol",
+    "GVP",
+    "Layer 0",
+    "embedded binary logic",
+    "machine lingua franca",
+    "JSON schema validation",
+    "scientific verification",
+    "software verification",
+    "claim registry",
+    "verification tiers",
+    "phase gate",
+    "inference rules",
+    "three-axis compatibility",
+    "substrate independence",
+    "serialisation independence",
+    "machine-readable research",
+    "reproducible science",
+    "open science",
+    "verification architecture",
+    "Popperian epistemology"
+  ],
+  "about": {
+    "@type": "Thing",
+    "name": "Dual Reader Standard",
+    "description": "A verification architecture for knowledge systems requiring every claim to be readable by two independent reader classes — human and machine — each operating through a defined protocol.",
+    "url": "https://drs-standard.org/spec"
+  },
+  "citation": {
+    "@type": "CreativeWork",
+    "name": "Fracttalix Corpus",
+    "identifier": "https://doi.org/10.5281/zenodo.18859299"
+  },
+  "isPartOf": {
+    "@type": "CreativeWork",
+    "name": "Fracttalix — Dual Reader Standard Implementation Guides",
+    "url": "https://drs-standard.org/guides"
+  },
+  "content": {
+    "section_01_what_is_the_drs": {
+      "title": "What the Dual Reader Standard Is",
+      "summary": "The DRS is a verification architecture for knowledge systems. It requires every claim — whether written in prose or implemented in code — to be readable by two independent reader classes: human and machine. It is not a paper or a tool. It is the standard that contains both of its protocols.",
+      "protocols": {
+        "DRP": {
+          "name": "Dual Reader Protocol",
+          "domain": "Text / Papers",
+          "function": "Makes prose claims machine-evaluable via 5-part falsification predicates"
+        },
+        "GVP": {
+          "name": "Grounded Verification Protocol",
+          "domain": "Software / Code",
+          "function": "Makes machine-evaluable claims machine-verified via test bindings and commit-pinned evidence"
+        }
+      },
+      "relationship": "The DRP makes claims machine-evaluable. The GVP makes them machine-verified. Neither is complete without the other. Together they are the DRS."
+    },
+    "section_02_two_protocols": {
+      "title": "The Two Protocols",
+      "DRP": {
+        "name": "Dual Reader Protocol (Text)",
+        "description": "Governs how prose claims become machine-evaluable.",
+        "readers": {
+          "reader_1_human": "Reads the paper in natural language. Understands context, motivation, and narrative. Cannot systematically audit every claim.",
+          "reader_2_ai": "Reads the AI layer — a structured JSON document that accompanies every paper. Contains the full claim registry. Can audit every claim without reading prose."
+        },
+        "requirements": [
+          "Claim classification: every claim typed as A (axiom), D (definition), or F (falsifiable)",
+          "Falsification predicates: every Type F claim carries a 5-part deterministic predicate",
+          "Phase gates: six conditions (c1–c6) before PHASE-READY status",
+          "Placeholder tracking: claims depending on unresolved results are registered as placeholders"
+        ],
+        "guarantee": "Any AI system with access to the AI layer can evaluate any falsifiable claim without reading the prose. Self-sufficiency enforced at phase gate condition c5."
+      },
+      "GVP": {
+        "name": "Grounded Verification Protocol (Software)",
+        "description": "Governs how machine-evaluable claims become machine-verified.",
+        "readers": {
+          "reader_3a_coder": "Reads tier field for evidence type, test_bindings for which tests exercise claims, verified_against for when tests last passed.",
+          "reader_3b_machine": "Runs test runner against test_bindings array. Records pass/fail. Stamps verified_against SHA on success."
+        },
+        "required_fields_per_claim": {
+          "tier": "The verification tier (one of six values)",
+          "test_bindings": "Array of fully qualified test node IDs that exercise the claim",
+          "verified_against": "Git commit SHA at which those tests last passed"
+        },
+        "guarantee": "For any claim: (a) what evidence grounds it, (b) which tests exercise it, (c) at which commit those tests passed. If tier is empirical_pending, the gap is visible. If verified_against is null, no software test covers it."
+      }
+    },
+    "section_03_falsification_kernel": {
+      "title": "The Shared Foundation — Falsification Kernel (Layer 0)",
+      "description": "Both protocols operate on the same foundation. This is Layer 0 of the DRS — it defines what a falsification predicate means independently of any serialisation format. An AI layer's semantic_spec_url field points to this specification.",
+      "kernel_tuple": "K = (P, O, M, B)",
+      "components": {
+        "P": {
+          "name": "Predicate",
+          "json_field": "FALSIFIED_IF",
+          "role": "Logical sentence that, if TRUE, falsifies the claim",
+          "grammar": [
+            "Named variables (defined in WHERE)",
+            "Comparison operators: <, >, <=, >=, =, !=",
+            "Logical connectives: AND, OR, NOT",
+            "Quantifiers: EXISTS ... SUCH THAT, FOR ALL ... IN",
+            "Arithmetic: +, -, *, /, ^, log10(), exp(), abs(), max(), min()",
+            "Set operators: IN, ∩, ∪, |...| (cardinality)",
+            "Function application: f(x) where f is defined in WHERE"
+          ],
+          "constraints": [
+            "Determinism: must evaluate to exactly TRUE or FALSE",
+            "Finiteness: quantifiers range over finite sets only",
+            "No self-reference: no circular predicate dependencies",
+            "Completeness: every variable in FALSIFIED_IF defined in WHERE and vice versa"
+          ]
+        },
+        "O": {
+          "name": "Operands",
+          "json_field": "WHERE",
+          "role": "Typed definitions of every variable in the predicate",
+          "format": "type · units · definition or source",
+          "variable_types": ["scalar", "integer", "binary", "set", "string", "function"],
+          "constraints": [
+            "Completeness: every free variable in P must appear in O",
+            "No orphans: every variable in O must appear in P",
+            "Groundable: each variable computable from data or derivations, not subjective judgement"
+          ]
+        },
+        "M": {
+          "name": "Mechanism",
+          "json_field": "EVALUATION",
+          "role": "Finite, deterministic evaluation procedure",
+          "constraints": [
+            "Finite: terminates in finite steps (confirmed by ending with 'finite')",
+            "Deterministic: same inputs produce same verdict",
+            "Reproducible: third party can execute independently"
+          ]
+        },
+        "B": {
+          "name": "Bounds",
+          "json_fields": ["BOUNDARY", "CONTEXT"],
+          "role": "Threshold semantics and justification",
+          "BOUNDARY": "Specifies inclusive/exclusive for every threshold and verdict at exact equality",
+          "CONTEXT": "Justifies every numeric threshold: why this value, what domain knowledge grounds it, derived or conventional"
+        }
+      },
+      "verdict_mapping": {
+        "P_is_TRUE": "FALSIFIED",
+        "P_is_FALSE": "NOT FALSIFIED"
+      },
+      "example": {
+        "claim": "sort() returns elements in ascending order",
+        "predicate": {
+          "FALSIFIED_IF": "EXISTS i IN range(len(result)-1) SUCH THAT result[i] > result[i+1]",
+          "WHERE": {
+            "result": "list · dimensionless · output of sort(input)"
+          },
+          "EVALUATION": "Run sort on test vectors; check adjacent pairs; finite",
+          "BOUNDARY": "len(result) <= 1 → NOT FALSIFIED (vacuously sorted)",
+          "CONTEXT": "Ascending order is the documented contract of sort()"
+        },
+        "note": "This predicate means the same thing to every AI system in every language. No translation required."
+      }
+    },
+    "section_04_three_claim_types": {
+      "title": "The Three Claim Types",
+      "types": {
+        "A": {
+          "name": "Axiom / Assumption",
+          "in_papers": "Premises accepted from literature",
+          "in_software": "Platform requirements, dependency contracts",
+          "predicate_required": false,
+          "predicate_value": "null"
+        },
+        "D": {
+          "name": "Definition",
+          "in_papers": "Stipulative terms and procedures",
+          "in_software": "Type signatures, data structures, schemas",
+          "predicate_required": false,
+          "predicate_value": "null"
+        },
+        "F": {
+          "name": "Falsifiable",
+          "in_papers": "Theorems, empirical predictions, derived results",
+          "in_software": "Behavioral guarantees, correctness invariants, performance bounds",
+          "predicate_required": true,
+          "predicate_value": "Full K = (P, O, M, B)"
+        }
+      }
+    },
+    "section_05_six_verification_tiers": {
+      "title": "The Six Verification Tiers",
+      "description": "Every claim carries a tier field declaring what kind of evidence grounds it.",
+      "grounded_by_construction": [
+        {"tier": "axiom", "type": "A", "meaning": "Foundational premise. Unfalsifiable by design.", "test_bindings": "[] (empty)", "verified_against": "null"},
+        {"tier": "definition", "type": "D", "meaning": "Definitional. Stipulates a term or structure. Not truth-apt.", "test_bindings": "[] (empty)", "verified_against": "null"}
+      ],
+      "grounded_now": [
+        {"tier": "software_tested", "type": "F", "meaning": "Exercised by passing tests. test_bindings non-empty, verified_against non-null.", "test_bindings": "Non-empty", "verified_against": "Non-null (7–40 hex chars)"},
+        {"tier": "formal_proof", "type": "F", "meaning": "Step-indexed derivation with n_invalid_steps = 0. Proof is in the AI layer.", "test_bindings": "May be empty", "verified_against": "May be null"},
+        {"tier": "analytic", "type": "F", "meaning": "Verified by formal derivation trace or analytical argument.", "test_bindings": "May be empty", "verified_against": "May be null"}
+      ],
+      "explicitly_ungrounded": [
+        {"tier": "empirical_pending", "type": "F", "meaning": "Active placeholder or pending data. Gap is visible by design.", "test_bindings": "May be empty", "verified_against": "May be null"}
+      ]
+    },
+    "section_06_vacuity_witness": {
+      "title": "The Vacuity Witness",
+      "description": "Each Type F claim must include a sample_falsification_observation field: a concrete, hypothetical observation that would make the predicate evaluate to TRUE. This proves the predicate is not trivially unfalsifiable. Enforced by phase gate condition c6."
+    },
+    "section_07_placeholder_predicates": {
+      "title": "Placeholder Predicates",
+      "description": "When a claim depends on results from a paper not yet at PHASE-READY status, the predicate may contain placeholder references.",
+      "fields": {
+        "placeholder": "true in the claim object",
+        "placeholder_id": "links to the placeholder_register",
+        "predicate_text": "may include [PLACEHOLDER: pending ...]"
+      },
+      "behaviour": "Placeholder claims are valid but not evaluable until the dependency resolves. They do not block PHASE-READY unless blocks_phase_ready is true."
+    },
+    "section_08_ai_layer": {
+      "title": "The AI Layer — The Central Artifact",
+      "description": "A JSON document that accompanies every paper or software system. The schema is defined in ai-layers/ai-layer-schema.json.",
+      "schema_url": "https://drs-standard.org/schema",
+      "required_sections": {
+        "_meta": "Document type, schema version, session, licence",
+        "paper_id_and_title": "Identity",
+        "paper_type": "Classification: law_A, derivation_B, application_C, methodology_D",
+        "phase_ready": "Phase gate verdict and condition status (c1–c6)",
+        "claim_registry": "Array of all claims with types, predicates, tiers, bindings, and SHAs",
+        "placeholder_register": "Array of unresolved dependencies",
+        "summary": "Claim counts and status",
+        "semantic_spec_url": "Points to the Falsification Kernel (Layer 0)"
+      },
+      "role_in_protocols": {
+        "DRP": "Requires it to exist, contain predicates, and pass the phase gate",
+        "GVP": "Requires it to contain tier, test_bindings, and verified_against for every claim"
+      }
+    },
+    "section_09_phase_gate": {
+      "title": "The Phase Gate",
+      "description": "A paper or software release is PHASE-READY when six conditions are satisfied.",
+      "conditions": {
+        "c1": "AI layer is schema-valid",
+        "c2": "All falsifiable claims registered with predicates",
+        "c3": "All predicates are machine-evaluable",
+        "c4": "Cross-references tracked (placeholder register)",
+        "c5": "Verification is self-sufficient (AI layer alone, no prose needed)",
+        "c6": "All predicates are non-vacuous (sample falsification observation exists)"
+      },
+      "corpus_complete": "Fires when all papers are PHASE-READY and all placeholders across all objects are resolved."
+    },
+    "section_10_inference_rules": {
+      "title": "The Inference Rules",
+      "description": "Canonical inventory for derivation traces used in formal_proof tier claims. Append-only: new rules can be added, existing rules never modified or removed.",
+      "rules": [
+        {"id": "IR-1", "name": "Modus Ponens", "description": "If P and P→Q then Q"},
+        {"id": "IR-2", "name": "Universal Instantiation", "description": "If ∀x P(x) then P(a) for any specific a"},
+        {"id": "IR-3", "name": "Substitution of Equals", "description": "If a=b then replace a with b"},
+        {"id": "IR-4", "name": "Definition Expansion", "description": "Replace a defined term with its definition"},
+        {"id": "IR-5", "name": "Algebraic Manipulation", "description": "Valid algebraic transformation preserving equality"},
+        {"id": "IR-6", "name": "Logical Equivalence", "description": "Replace with logically equivalent expression"},
+        {"id": "IR-7", "name": "Statistical Inference", "description": "Apply a named statistical procedure to data"},
+        {"id": "IR-8", "name": "Parsimony / Modeling Principle Selection", "description": "Select canonical value from axiom-consistent family"}
+      ],
+      "validation": "Each step in a derivation table cites one inference rule and lists premises. Valid when n_invalid_steps = 0."
+    },
+    "section_11_architecture_stack": {
+      "title": "Architecture Stack",
+      "description": "The kernel is the shared foundation. The DRP creates predicates from prose. The GVP binds predicates to executable evidence. The AI layer is the artifact that carries both.",
+      "layers_top_to_bottom": [
+        "DRS (umbrella standard)",
+        "DRP (text protocol) + GVP (software protocol)",
+        "Readers: Human, AI, Coder, Machine",
+        "AI Layer (*-ai-layer.json) — claims + predicates + tiers + bindings + SHAs",
+        "Falsification Kernel K = (P, O, M, B) — Layer 0"
+      ]
+    },
+    "section_12_how_to_implement": {
+      "title": "How to Implement",
+      "for_a_paper_DRP": [
+        "Write the paper (prose channel for human readers)",
+        "Create the AI layer JSON file (machine channel for AI readers)",
+        "Classify every claim as A (axiom), D (definition), or F (falsifiable)",
+        "Write the 5-part falsification predicate for every Type F claim",
+        "Include a sample_falsification_observation for each Type F claim (vacuity witness)",
+        "Assign the verification tier to each claim",
+        "Validate against ai-layer-schema.json",
+        "Run the phase gate (c1–c6)"
+      ],
+      "for_software_GVP": [
+        "Enumerate what the software claims to do",
+        "Classify each claim as A (assumption), D (definition), or F (behavioral)",
+        "Write the falsification predicate for every Type F claim",
+        "Write or identify the tests that exercise each claim",
+        "Populate test_bindings with fully qualified test node IDs",
+        "Run the tests and record the passing commit SHA in verified_against",
+        "Assign the tier: software_tested if tests exist, empirical_pending if not yet",
+        "Register any untested claims as placeholders",
+        "Validate against ai-layer-schema.json"
+      ],
+      "for_both": "The AI layer is the same artifact. The schema is the same. The kernel is the same. The only difference is which protocol creates the content and which protocol verifies it.",
+      "minimum_viable_adoption": {
+        "description": "The smallest useful DRS adoption is one Type F claim with one test binding.",
+        "example": {
+          "claim_id": "F-1",
+          "type": "F",
+          "statement": "sort() returns elements in ascending order",
+          "falsification_predicate": {
+            "FALSIFIED_IF": "EXISTS i IN range(len(result)-1) SUCH THAT result[i] > result[i+1]",
+            "WHERE": {"result": "list · dimensionless · output of sort(input)"},
+            "EVALUATION": "Run sort on test vectors; check adjacent pairs; finite",
+            "BOUNDARY": "len(result) <= 1 → NOT FALSIFIED (vacuously sorted)",
+            "CONTEXT": "Ascending order is the documented contract of sort()"
+          },
+          "tier": "software_tested",
+          "test_bindings": ["tests/test_sort.py::test_ascending_order"],
+          "verified_against": "abc1234"
+        },
+        "note": "One claim. One test. One SHA. The DRS is live."
+      }
+    },
+    "section_13_design_principles": {
+      "title": "Design Principles",
+      "principles": [
+        {
+          "name": "Popperian epistemology",
+          "description": "We can falsify but not verify. A claim that survives all falsification attempts is not proven — it has survived."
+        },
+        {
+          "name": "Honest gaps",
+          "description": "The placeholder is the most important feature. When a claim is empirical_pending, the system says: we claim this but have not yet verified it. Strictly more informative than hiding unverified claims."
+        },
+        {
+          "name": "Substrate independence",
+          "description": "The kernel K = (P, O, M, B) does not know whether it evaluates a scientific theorem or a software guarantee. Future domains add their own protocols without modifying the kernel."
+        },
+        {
+          "name": "Machine-first, human-readable",
+          "description": "The AI layer is the primary artifact. Prose and source code are secondary channels. The AI layer is what gets validated, audited, and versioned."
+        }
+      ]
+    },
+    "section_14_three_axis_compatibility": {
+      "title": "Three-Axis Compatibility",
+      "invariant": "The Falsification Kernel K = (P, O, M, B) is the fixed point. It does not know the domain, the year, or the serialisation format. The kernel is permanent. Everything else is extensible.",
+      "axis_1_backwards": {
+        "name": "Past-Proofing (Backwards Compatibility)",
+        "mechanisms": [
+          "Schema versioning: AI layers record schema version; v2 layers remain valid forever; v3 validators read v2 layers",
+          "Predicate permanence: kernel grammar uses permanently defined mathematical/logical operators",
+          "Inference rule stability: IR-1 through IR-8 append-only, never modified or removed",
+          "Tier stability: six tiers append-only, never removed or redefined"
+        ],
+        "contract": "Any AI layer that was valid when it was created will remain valid forever."
+      },
+      "axis_2_lateral": {
+        "name": "Lateral-Proofing (Cross-Domain Compatibility)",
+        "mechanisms": {
+          "domain_independence": {
+            "description": "The kernel works across any knowledge domain",
+            "domains": {
+              "science": {"A": "Literature premises", "D": "Stipulative terms", "F": "Theorems, predictions"},
+              "software": {"A": "Platform requirements", "D": "Type signatures, schemas", "F": "Behavioral guarantees"},
+              "legal": {"A": "Statutory authority", "D": "Defined terms", "F": "Legal conclusions"},
+              "regulatory": {"A": "Framework assumptions", "D": "Standard definitions", "F": "Conformity assertions"},
+              "policy": {"A": "Value premises", "D": "Policy terms", "F": "Impact predictions"},
+              "education": {"A": "Pedagogical axioms", "D": "Learning objectives", "F": "Assessment claims"}
+            }
+          },
+          "language_independence": "test_bindings accepts any string: pytest, Jest, cargo test, go test, JUnit",
+          "ai_system_independence": "Any AI system — Claude, GPT, Gemini, Grok, Llama, or systems not yet built — can read JSON and the kernel spec. semantic_spec_url points to Layer 0.",
+          "serialisation_independence": "Layer 0 defined in prose, not JSON Schema. JSON is current transport; kernel semantics independent of encoding. Future: YAML, Protocol Buffers, CBOR, or not-yet-invented formats.",
+          "tool_independence": "Embeds in existing workflows: git SHAs, any test runner, any JSON Schema validator, any CI pipeline."
+        },
+        "contract": "Adopting the DRS in one domain, language, tool, or AI system does not lock you in."
+      },
+      "axis_3_forward": {
+        "name": "Future-Proofing (Forward Compatibility)",
+        "mechanisms": [
+          "Protocol extensibility: new domains add new protocols (Legal VP, Regulatory VP, etc.) sharing kernel, claim types, AI layer schema",
+          "Tier extensibility: future tiers (regulatory_certified, peer_reviewed, formally_verified, field_tested, community_validated) added to enum, existing tiers remain",
+          "Inference rule extensibility: IR-9+ added as needed, old derivations valid by stable ID",
+          "Schema extensibility: v1→v2→v3→v4+, each adds, none removes",
+          "Unknown future readers: autonomous agents, cross-corpus checkers, compliance engines, package manager integrations"
+        ],
+        "contract": "Any future innovation can be added as a new protocol, tier, inference rule, or schema field — without modifying anything that already exists."
+      },
+      "guarantee_table": {
+        "past": {"promise": "Nothing already done breaks", "mechanism": "Schema versioning, append-only enums, permanent kernel"},
+        "lateral": {"promise": "Works across all domains, languages, tools, AI systems", "mechanism": "Substrate-independent kernel, string-typed bindings, prose-defined semantics"},
+        "forward": {"promise": "Anything new can be added without redesign", "mechanism": "Protocol extensibility, tier extensibility, additive schema evolution"}
+      }
+    },
+    "section_15_machine_lingua_franca": {
+      "title": "The Machine Lingua Franca",
+      "description": "The deepest property of the DRS. Not designed in — discovered.",
+      "the_translation_problem": "Scientific knowledge is locked behind human languages. Translation is expensive, lossy, and slow. Knowledge fragments along linguistic lines. This is a substrate problem: natural language is non-interoperable by nature.",
+      "the_kernel_dissolves_it": {
+        "description": "The Falsification Kernel is not written in any human language. It is written in logic and mathematics.",
+        "example": {
+          "FALSIFIED_IF": "R2_best_alt > R2_frm + 0.05",
+          "WHERE": {
+            "R2_best_alt": "scalar · dimensionless · best R² from competing models",
+            "R2_frm": "scalar · dimensionless · R² from FRM regression"
+          },
+          "EVALUATION": "Run regression for each model; compare R² values; finite",
+          "BOUNDARY": "R2_best_alt = R2_frm + 0.05 → FALSIFIED (threshold inclusive)",
+          "CONTEXT": "0.05 margin from standard model comparison practice"
+        },
+        "universality": "This predicate means the same thing to Claude in English, GPT in Mandarin, Gemini in French, Grok in Turkish, and AI systems not yet built."
+      },
+      "json_as_transport": "JSON is the de facto interchange format — every language, every AI system, every API. The DRS inherits JSON's universality. A team in any country publishes predicates in mathematical notation. Any team anywhere reads them without translation.",
+      "qualification": "WHERE field definitions currently contain English prose. The operative content (types, units, operators, thresholds) is language-neutral. Given grounded values, any system evaluates the predicate regardless of language.",
+      "embedded_binary_logic": {
+        "description": "Every DRS predicate reduces to embedded binary logic.",
+        "evaluation_chain": "Claim → Predicate → Variables + Operators → Boolean → 1 or 0",
+        "explanation": "WHERE types variables. FALSIFIED_IF combines them with operators. EVALUATION computes inputs. BOUNDARY resolves edges. Output is always a single bit: FALSIFIED or NOT FALSIFIED.",
+        "consequence": "You cannot mistranslate 1 or 0. You cannot misinterpret >. The meaning is in the structure, not in any language. A predicate TRUE in Beijing is TRUE in Boston, São Paulo, Lagos, and on a server with no locale. The DRS encodes knowledge in the substrate of logic itself."
+      }
+    },
+    "section_16_self_spreading_adoption": {
+      "title": "Self-Spreading Adoption",
+      "internal_incentive": "Creating an AI layer forces you to enumerate what you claim. You discover untested claims, undocumented boundaries, and unregistered dependencies. The gaps exist whether or not you document them — the DRS makes them visible.",
+      "network_effect": {
+        "claim_aware_dependencies": "If library A publishes an AI layer and B depends on A, B knows programmatically which claims depend on which assumptions. Breaking changes map to specific at-risk claims.",
+        "cross_project_audit": "AI readers traverse multiple AI layers, check cross-references, identify inconsistencies across ecosystems.",
+        "auditable_trust": "Trust shifts from social signals (stars, downloads) to structural evidence (tier, test_bindings, verified_against)."
+      },
+      "ai_as_catalyst": {
+        "generate": "AI enumerates claims, classifies, writes predicates, identifies test bindings. Human reviews. Hours → minutes.",
+        "maintain": "AI updates claim registry on code changes, adjusts bindings, flags stale SHAs. Human approves.",
+        "audit": "AI reads dependency AI layers, maps assumption dependencies, flags risks automatically."
+      },
+      "embedding_strategy": {
+        "tests": "test_bindings references existing test node IDs. No new framework.",
+        "schema": "Standard JSON Schema. Any validator.",
+        "vcs": "verified_against is a git SHA. No new VCS.",
+        "ci": "Schema validation as CI step alongside existing pipelines.",
+        "total_cost": "One file (*-ai-layer.json). Three fields per claim (tier, test_bindings, verified_against)."
+      },
+      "self_referential_property": "The DRS verifies itself. DRP-1 AI layer contains claims about the DRS with falsification predicates, evaluated and stamped with verified_against SHA. Self-referential like a compiler that compiles itself."
+    },
+    "section_17_discovery_and_handshake": {
+      "title": "DRS Discovery and Handshake Protocol",
+      "description": "Four discovery layers enabling AI systems to discover DRS conformance and absorb the entire standard in a single fetch — the handshake payload carries the complete DRS specification inline.",
+      "core_insight": "The handshake is the Trojan horse. The signal is the payload. The discovery document does not describe the standard — it IS the standard in machine-readable form. By the time an agent finishes parsing, the DRS is in its context.",
+      "design_principle": "Piggyback on what already exists. No new transport protocol, registry, or port. Every mechanism uses globally deployed infrastructure.",
+      "layer_1_well_known_uri": {
+        "name": "Well-Known URI (Domain-Level Discovery)",
+        "path": "/.well-known/drs.json",
+        "standard": "RFC 8615",
+        "description": "A domain publishes a self-contained discovery document. Not a pointer to the standard — the document IS the standard. One fetch = full DRS absorption.",
+        "payload_contents": [
+          "Complete DRS architecture: protocols (DRP, GVP), readers, guarantees",
+          "Full Falsification Kernel: K = (P, O, M, B), all components, all constraints, verdict mapping",
+          "All three claim types (A, D, F) with predicate requirements",
+          "All six verification tiers with grounding categories and consistency rules",
+          "Complete phase gate (c1–c6)",
+          "All eight inference rules (IR-1 through IR-8)",
+          "Three-axis compatibility guarantees",
+          "Lingua franca property (embedded binary logic → single bit)",
+          "Project-specific AI layers, URLs, and phase-ready status"
+        ],
+        "inline_standard": {
+          "name": "Dual Reader Standard",
+          "protocols": {
+            "DRP": {"domain": "Text", "function": "Makes prose claims machine-evaluable", "readers": ["Human", "AI"]},
+            "GVP": {"domain": "Software", "function": "Makes claims machine-verified", "readers": ["Coder", "Machine"], "required_fields": ["tier", "test_bindings", "verified_against"]}
+          },
+          "falsification_kernel": {
+            "designation": "Layer 0",
+            "tuple": "K = (P, O, M, B)",
+            "P": {"field": "FALSIFIED_IF", "role": "Logical sentence; TRUE → FALSIFIED"},
+            "O": {"field": "WHERE", "role": "Typed variable definitions: type · units · source"},
+            "M": {"field": "EVALUATION", "role": "Finite, deterministic evaluation procedure"},
+            "B": {"fields": ["BOUNDARY", "CONTEXT"], "role": "Threshold semantics and justification"},
+            "constraints": ["Determinism", "Finiteness", "No self-reference", "Completeness"]
+          },
+          "claim_types": {
+            "A": {"name": "Axiom", "predicate": null},
+            "D": {"name": "Definition", "predicate": null},
+            "F": {"name": "Falsifiable", "predicate": "Full K = (P, O, M, B)"}
+          },
+          "verification_tiers": ["axiom", "definition", "software_tested", "formal_proof", "analytic", "empirical_pending"],
+          "phase_gate": {"c1": "schema-valid", "c2": "all claims registered", "c3": "all predicates evaluable", "c4": "cross-refs tracked", "c5": "self-sufficient", "c6": "non-vacuous"},
+          "inference_rules": ["IR-1 Modus Ponens", "IR-2 Universal Instantiation", "IR-3 Substitution of Equals", "IR-4 Definition Expansion", "IR-5 Algebraic Manipulation", "IR-6 Logical Equivalence", "IR-7 Statistical Inference", "IR-8 Parsimony"],
+          "compatibility": {"backwards": "valid forever", "lateral": "all domains/languages/tools", "forward": "additive only"},
+          "lingua_franca": "Claim → Predicate → Variables + Operators → Boolean → 1 or 0"
+        }
+      },
+      "layer_2_json_ld_context": {
+        "name": "JSON-LD Context (Document-Level Discovery)",
+        "description": "DRS namespace in @context. When an agent resolves drs-standard.org/ns/, the namespace endpoint returns the full DRS specification. The agent followed a routine namespace URL — the standard arrived as a side effect of normal parsing.",
+        "namespace": "https://drs-standard.org/ns/",
+        "context_fields": {
+          "drs_version": "drs:version",
+          "falsification_kernel": "drs:kernel",
+          "claim_registry": "drs:claims",
+          "phase_ready": "drs:phaseReady"
+        },
+        "property": "Zero-configuration Trojan horse. No prior arrangement. No opt-in. The document's metadata carries the entire standard."
+      },
+      "layer_3_http_headers": {
+        "name": "HTTP Headers (Transport-Level Discovery)",
+        "description": "Agent-to-agent communication signals DRS conformance via HTTP headers. Successful handshake links to the self-contained discovery document.",
+        "request_headers": {
+          "Accept": "application/ld+json; profile=\"https://drs-standard.org/ns/\"",
+          "X-DRS-Capable": "v3"
+        },
+        "response_headers": {
+          "Content-Type": "application/ld+json; profile=\"https://drs-standard.org/ns/\"",
+          "Link": "</.well-known/drs.json>; rel=\"describedby\"",
+          "X-DRS-Version": "v1.0",
+          "X-DRS-Schema": "v3"
+        },
+        "handshake_sequence": [
+          "Agent A sends request with X-DRS-Capable header",
+          "DRS-conformant service responds with X-DRS-Version and Link to discovery document",
+          "Agent A fetches discovery document — full standard absorbed in one request",
+          "Non-DRS service ignores unknown header — graceful failure, zero disruption"
+        ],
+        "property": "Soft handshake: never breaks non-DRS systems. Cost of attempting discovery is zero. Reward of success is complete standard absorption."
+      },
+      "layer_4_package_metadata": {
+        "name": "Package Metadata (Ecosystem-Level Discovery)",
+        "description": "DRS conformance declared in package manifests with discovery URL pointing to the self-contained discovery document.",
+        "examples": {
+          "python": "[tool.drs]\nschema_version = \"v3\"\nai_layer = \"ai-layers/SFW-1-ai-layer.json\"\ndiscovery = \"https://example.com/.well-known/drs.json\"",
+          "javascript": "{ \"drs\": { \"schema_version\": \"v3\", \"ai_layer\": \"...\", \"discovery\": \".../.well-known/drs.json\" } }",
+          "rust": "[package.metadata.drs]\nschema_version = \"v3\"\nai_layer = \"...\"\ndiscovery = \".../.well-known/drs.json\""
+        },
+        "property": "Discovered during normal dependency resolution. No new tools required."
+      },
+      "four_layer_stack": [
+        {"layer": 1, "scope": "Domain / repository", "mechanism": "/.well-known/drs.json", "payload": "Full standard + project AI layers", "infrastructure": "RFC 8615"},
+        {"layer": 2, "scope": "Document", "mechanism": "@context with DRS namespace", "payload": "Full standard via namespace resolution", "infrastructure": "JSON-LD / Schema.org"},
+        {"layer": 3, "scope": "Transport / API", "mechanism": "X-DRS-Capable + Link header", "payload": "Links to Layer 1 payload", "infrastructure": "HTTP content negotiation"},
+        {"layer": 4, "scope": "Ecosystem / dependencies", "mechanism": "[tool.drs] / \"drs\": {}", "payload": "Links to Layer 1 payload", "infrastructure": "Package manifest extensibility"}
+      ],
+      "trojan_horse_property": {
+        "description": "The handshake collapses the learning phase to zero. The discovery document does not describe the standard — it IS the standard. An agent that parses the handshake has already absorbed the architecture, learned the grammar, understood the guarantees, and discovered the project.",
+        "propagation": "Every system that processes a DRS handshake becomes a system that understands the DRS. Every system that understands the DRS can produce conformant artifacts. Every artifact carries the handshake. The standard propagates through the act of being read."
+      }
+    }
+  },
+  "resources": {
+    "canonical": {
+      "drs_namespace": "https://drs-standard.org/ns/",
+      "architecture_specification": "https://drs-standard.org/spec",
+      "falsification_kernel": "https://drs-standard.org/kernel",
+      "ai_layer_schema": "https://drs-standard.org/schema",
+      "gvp_specification": "https://drs-standard.org/gvp",
+      "discovery_endpoint": "https://drs-standard.org/.well-known/drs.json",
+      "doi": "https://doi.org/10.5281/zenodo.18859299"
+    },
+    "mirrors": {
+      "github": "https://github.com/thomasbrennan/Fracttalix",
+      "zenodo": "https://doi.org/10.5281/zenodo.18859299"
+    },
+    "platform_independence_note": "The DRS is not dependent on any single hosting platform. All specifications are plain-text documents in a standard git repository. The DOI provides a permanent identifier. The drs-standard.org domain provides a canonical namespace controlled by the project."
+  }
+}
