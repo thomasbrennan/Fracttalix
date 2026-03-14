@@ -76,8 +76,8 @@ select = ["E", "F", "W", "I"]
 ignore = ["E501"]
 
 [tool.coverage.run]
-source = ["fracttalix", "benchmark"]
-omit = ["fracttalix/extras/*", "legacy/*"]
+source = ["fracttalix"]
+omit = ["fracttalix/extras/*", "fracttalix/suite/*", "legacy/*"]
 
 [tool.coverage.report]
 show_missing = true

@@ -31,15 +31,14 @@ Data: Stochastic Hopf normal form with known transition point (λ → 0).
 """
 
 import math
-import sys
 import os
+import sys
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 import numpy as np
 
-from fracttalix.suite import LambdaDetector, OmegaDetector, VirtuDetector, ScopeStatus
-
+from fracttalix.suite import LambdaDetector, OmegaDetector, VirtuDetector
 
 # ──────────────────────────────────────────────────────────
 #  DATA GENERATORS
@@ -316,8 +315,8 @@ def main():
     virtu_errors = []
 
     # ── Part 1a: Deterministic FRM-form data (what the detector was designed for) ──
-    print(f"\n  Part 1a: Deterministic FRM-form data")
-    print(f"  (Does the detector work on its own data type?)")
+    print("\n  Part 1a: Deterministic FRM-form data")
+    print("  (Does the detector work on its own data type?)")
     det_scenarios = [
         ("Det. slow (τ=20, σ=0.2)", 600, 20.0, 0.15, 0.0, 0.2, 3.0),
         ("Det. fast (τ=10, σ=0.2)", 400, 10.0, 0.20, 0.0, 0.2, 3.0),
@@ -381,8 +380,8 @@ def main():
             conf3_total += 1
 
     # ── Part 1b: Stochastic Hopf normal form (generic bifurcation data) ──
-    print(f"\n  Part 1b: Stochastic Hopf normal form")
-    print(f"  (Does the detector work on generic bifurcation data?)")
+    print("\n  Part 1b: Stochastic Hopf normal form")
+    print("  (Does the detector work on generic bifurcation data?)")
 
     scenarios = [
         # (name, n_steps, tau_gen, lam_start, lam_end, noise_std, amplitude)
@@ -391,7 +390,7 @@ def main():
     ]
 
     print(f"\n{'─'*70}")
-    print(f"  PART 1b continued: Stochastic Hopf normal form")
+    print("  PART 1b continued: Stochastic Hopf normal form")
     print(f"  {len(scenarios)} scenarios × {len(seeds)} seeds = {len(scenarios)*len(seeds)} trials")
     print(f"{'─'*70}")
 
@@ -406,7 +405,6 @@ def main():
         scenario_virtu_errors = []
 
         for seed in seeds:
-            import sys as _sys
             print(f"    Running seed={seed}...", end=" ", flush=True)
             result = run_bifurcation_scenario(
                 f"{name} (seed={seed})",
@@ -453,7 +451,7 @@ def main():
     # ════════════════════════════════════════════
 
     print(f"\n{'─'*70}")
-    print(f"  PART 2: False positive rate on stable / noise data")
+    print("  PART 2: False positive rate on stable / noise data")
     print(f"{'─'*70}")
 
     fpr_results = []
@@ -478,10 +476,10 @@ def main():
     noise_conf3 = sum(r["conf3_count"] for r in noise_fpr)
     noise_total = sum(r["total"] for r in noise_fpr)
 
-    print(f"\n  Stable oscillation:")
+    print("\n  Stable oscillation:")
     print(f"    conf=3 steps: {stable_conf3}/{stable_total} "
           f"({stable_conf3/max(1,stable_total):.2%})")
-    print(f"  White noise:")
+    print("  White noise:")
     print(f"    conf=3 steps: {noise_conf3}/{noise_total} "
           f"({noise_conf3/max(1,noise_total):.2%})")
 
@@ -490,13 +488,13 @@ def main():
     # ════════════════════════════════════════════
 
     print(f"\n{'─'*70}")
-    print(f"  PART 3: Virtu timescale accuracy (at frm_confidence >= 3)")
+    print("  PART 3: Virtu timescale accuracy (at frm_confidence >= 3)")
     print(f"{'─'*70}")
 
     if virtu_errors:
         ve = np.array(virtu_errors)
         print(f"\n  Total conf=3 estimates with known Δt: {len(ve)}")
-        print(f"  Relative error (Virtu Δt vs actual):")
+        print("  Relative error (Virtu Δt vs actual):")
         print(f"    Median:  {np.median(ve):+.2f}")
         print(f"    Mean:    {np.mean(ve):+.2f}")
         print(f"    Std:     {np.std(ve):.2f}")
@@ -510,14 +508,14 @@ def main():
         print(f"    Overestimates (conservative): {overestimates}/{len(ve)} "
               f"({overestimates/len(ve):.0%})")
     else:
-        print(f"\n  No conf=3 Virtu estimates were produced.")
+        print("\n  No conf=3 Virtu estimates were produced.")
 
     # ════════════════════════════════════════════
     #  VERDICT
     # ════════════════════════════════════════════
 
     print(f"\n{'='*70}")
-    print(f"  VERDICT")
+    print("  VERDICT")
     print(f"{'='*70}")
 
     reliability = conf3_precedes_count / max(1, conf3_total)

@@ -16,16 +16,15 @@ Datasets:
   2. Chick heart cell period-doubling (Bury et al.)
 """
 
-import math
-import sys
 import os
+import sys
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 import numpy as np
 import pandas as pd
 
-from fracttalix.suite import LambdaDetector, OmegaDetector, VirtuDetector
+from fracttalix.suite import LambdaDetector
 
 DATA_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "data")
 

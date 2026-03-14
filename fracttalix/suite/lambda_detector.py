@@ -29,7 +29,7 @@ import math
 from collections import deque
 from typing import Any, Dict, List, Optional, Tuple
 
-from fracttalix.suite.base import BaseDetector, _mean, _variance, _std
+from fracttalix.suite.base import BaseDetector
 
 
 class LambdaDetector(BaseDetector):
@@ -181,15 +181,15 @@ class LambdaDetector(BaseDetector):
 
         # Determine expected peak frequency
         if self._tau_gen and self._tau_gen > 0:
-            omega_expected = math.pi / (2.0 * self._tau_gen)
+            _omega_expected = math.pi / (2.0 * self._tau_gen)
         else:
-            omega_expected = None
+            _omega_expected = None
 
         # FFT with Hann window
         centered = data - np.mean(data)
         hann = np.hanning(n)
         spectrum = np.abs(np.fft.rfft(centered * hann)) ** 2  # power spectrum
-        freqs = np.fft.rfftfreq(n)  # in cycles per sample
+        _freqs = np.fft.rfftfreq(n)  # in cycles per sample
 
         if len(spectrum) <= 2:
             return None

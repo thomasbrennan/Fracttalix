@@ -158,8 +158,8 @@ class HopfDetectorStep(DetectorStep):
             return
         self._scipy_checked = True
         try:
-            import scipy.optimize  # noqa: F401
             import numpy  # noqa: F401
+            import scipy.optimize  # noqa: F401
 
             self._has_scipy = True
         except ImportError:

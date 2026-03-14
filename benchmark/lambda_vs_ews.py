@@ -20,15 +20,14 @@ Multiple scenarios tested at different noise levels and decline rates.
 """
 
 import math
-import sys
 import os
+import sys
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 import numpy as np
 
 from fracttalix import SentinelConfig, SentinelDetector
-
 
 # ──────────────────────────────────────────────────────────
 #  GENERIC EWS BASELINE (Scheffer et al. 2009)
@@ -236,7 +235,7 @@ def run_scenario(name, n_steps, tau_gen, lam_start, lam_end,
 
     # ── Results ──
     print(f"\n  True λ < 0.05 at step:  {true_transition}")
-    print(f"\n  Lambda Detector:")
+    print("\n  Lambda Detector:")
     print(f"    First alert at step:  {lambda_first_alert or 'NEVER'}")
     if lambda_first_alert is not None:
         lead = true_transition - lambda_first_alert
@@ -246,7 +245,7 @@ def run_scenario(name, n_steps, tau_gen, lam_start, lam_end,
         print(f"    True λ at alert:      {lam_true[lambda_first_alert]:.4f}")
     print(f"    Total alerts:         {len(lambda_alerts)}")
 
-    print(f"\n  Generic EWS (Scheffer et al.):")
+    print("\n  Generic EWS (Scheffer et al.):")
     print(f"    First alert at step:  {ews_first_alert or 'NEVER'}")
     if ews_first_alert is not None:
         lead = true_transition - ews_first_alert
@@ -266,16 +265,16 @@ def run_scenario(name, n_steps, tau_gen, lam_start, lam_end,
             print(f"\n  VERDICT: EWS wins by {advantage} steps")
             return "EWS_WINS", advantage
         else:
-            print(f"\n  VERDICT: Tie")
+            print("\n  VERDICT: Tie")
             return "TIE", 0
     elif lambda_first_alert is not None:
-        print(f"\n  VERDICT: Lambda detects, EWS misses entirely")
+        print("\n  VERDICT: Lambda detects, EWS misses entirely")
         return "LAMBDA_ONLY", 0
     elif ews_first_alert is not None:
-        print(f"\n  VERDICT: EWS detects, Lambda misses entirely")
+        print("\n  VERDICT: EWS detects, Lambda misses entirely")
         return "EWS_ONLY", 0
     else:
-        print(f"\n  VERDICT: Neither detects")
+        print("\n  VERDICT: Neither detects")
         return "NEITHER", 0
 
 

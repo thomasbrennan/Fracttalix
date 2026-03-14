@@ -81,15 +81,15 @@ fracttalix.suite.base : Base types (ScopeStatus, DetectorResult, BaseDetector).
 fracttalix.suite.suite : DetectorSuite for running core detectors as a group.
 """
 
-from fracttalix.suite.base import ScopeStatus, DetectorResult, BaseDetector
-from fracttalix.suite.hopf import HopfDetector
+from fracttalix.suite.base import BaseDetector, DetectorResult, ScopeStatus
+from fracttalix.suite.coupling import CouplingDetector
 from fracttalix.suite.discord import DiscordDetector
 from fracttalix.suite.drift import DriftDetector
-from fracttalix.suite.variance import VarianceDetector
-from fracttalix.suite.coupling import CouplingDetector
-from fracttalix.suite.suite import DetectorSuite, SuiteResult
+from fracttalix.suite.hopf import HopfDetector
 from fracttalix.suite.lambda_detector import LambdaDetector
 from fracttalix.suite.omega_detector import OmegaDetector
+from fracttalix.suite.suite import DetectorSuite, SuiteResult
+from fracttalix.suite.variance import VarianceDetector
 from fracttalix.suite.virtu_detector import VirtuDetector
 
 __all__ = [

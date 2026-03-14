@@ -46,7 +46,7 @@ import math
 from abc import ABC, abstractmethod
 from collections import deque
 from enum import Enum
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List
 
 
 class ScopeStatus(Enum):

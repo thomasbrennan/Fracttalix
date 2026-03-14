@@ -35,7 +35,6 @@ import numpy as np
 
 from fracttalix.suite import LambdaDetector
 
-
 # ──────────────────────────────────────────────────────────
 #  DATA GENERATION
 # ──────────────────────────────────────────────────────────
@@ -283,7 +282,7 @@ def run_monte_carlo(n_forced: int = 500, n_null: int = 500, verbose: bool = True
         print(f"  {'F1':<12s}  {metrics['f1']:8.3f}")
 
         # ── Convergence check: show running metrics at 100, 200, 300, 400, 500 ──
-        print(f"\n  Convergence (TPR at N):")
+        print("\n  Convergence (TPR at N):")
         for n_check in [50, 100, 200, 300, 400, n_forced]:
             if n_check > n_forced:
                 continue
@@ -292,7 +291,7 @@ def run_monte_carlo(n_forced: int = 500, n_null: int = 500, verbose: bool = True
             width = hi - lo
             print(f"    N={n_check:4d}: TPR={val:5.1%} CI=[{lo:5.1%}, {hi:5.1%}] width={width:5.1%}")
 
-        print(f"\n  Convergence (FPR at N):")
+        print("\n  Convergence (FPR at N):")
         for n_check in [50, 100, 200, 300, 400, n_null]:
             if n_check > n_null:
                 continue

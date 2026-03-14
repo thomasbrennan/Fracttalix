@@ -22,9 +22,8 @@ Question:
   precede transitions?  Can the FRM form even fit this data?
 """
 
-import math
-import sys
 import os
+import sys
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
@@ -32,9 +31,10 @@ import numpy as np
 import pandas as pd
 
 from fracttalix.suite import (
-    LambdaDetector, OmegaDetector, VirtuDetector, ScopeStatus,
+    LambdaDetector,
+    OmegaDetector,
+    VirtuDetector,
 )
-
 
 DATA_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "data")
 
@@ -69,7 +69,7 @@ def run_frm_on_series(values, tau_gen=0.0, fit_window=128, fit_interval=8):
         v = float(val)
         lam_r = lam_det.update(v)
         omega_r = omega_det.update(v)
-        virtu_r = virtu_det.update(v)
+        _virtu_r = virtu_det.update(v)
 
         if lam_r.is_alert:
             lambda_alerts.append(t)
@@ -169,7 +169,7 @@ def test_thermoacoustic():
 
     # ── Null trajectories (no transition — FPR check) ──
     if df_null is not None:
-        print(f"\n  Null trajectories (steady-state, no transition):")
+        print("\n  Null trajectories (steady-state, no transition):")
         null_results = []
 
         for tsid in sorted(df_null.tsid.unique()):
@@ -266,7 +266,7 @@ def test_sunspots():
           result["scope_counts"].get("LIMIT_CYCLE", 0)
     total = sum(result["scope_counts"].values())
     print(f"  OOS + LIMIT_CYCLE: {oos}/{total} ({oos/max(1,total):.1%})")
-    print(f"  (Expected: mostly OUT_OF_SCOPE — quasi-periodic != damped)")
+    print("  (Expected: mostly OUT_OF_SCOPE — quasi-periodic != damped)")
 
     return result
 
@@ -278,8 +278,8 @@ def main():
     print("=" * 70)
 
     thermo = test_thermoacoustic()
-    chick = test_chick_heart()
-    sunspot = test_sunspots()
+    _chick = test_chick_heart()
+    _sunspot = test_sunspots()
 
     # ══════════════════════════════════════════════════════
     #  VERDICT

@@ -23,8 +23,8 @@ then: PHYSICS IS CORRECT, SOFTWARE IS LOOKING IN THE WRONG PLACE.
 """
 
 import math
-import sys
 import os
+import sys
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
@@ -188,7 +188,7 @@ def main():
 
     # ── Multi-seed robustness ──
     print(f"\n{'─' * 70}")
-    print(f"  Multi-seed robustness (3 seeds per λ value)")
+    print("  Multi-seed robustness (3 seeds per λ value)")
     print(f"{'─' * 70}")
 
     seeds = [42, 123, 789]
@@ -234,7 +234,7 @@ def main():
 
     # ── Sliding window: does ACF-λ track declining true-λ? ──
     print(f"\n{'─' * 70}")
-    print(f"  Sliding window: ACF-λ tracking during bifurcation approach")
+    print("  Sliding window: ACF-λ tracking during bifurcation approach")
     print(f"{'─' * 70}")
 
     # Generate approaching bifurcation
@@ -284,7 +284,7 @@ def main():
 
     # ── VERDICT ──
     print(f"\n{'=' * 70}")
-    print(f"  VERDICT")
+    print("  VERDICT")
     print(f"{'=' * 70}")
 
     # Check: does ACF-λ correlate with true λ?
@@ -305,19 +305,19 @@ def main():
         print(f"  (n={len(acf_lam_track)} windows with R² > 0.3)")
 
         if corr > 0.5:
-            print(f"\n  DIAGNOSIS: PHYSICS IS CORRECT, SOFTWARE IS WRONG")
-            print(f"  The FRM form fits the ACF and recovers λ that tracks the")
-            print(f"  true bifurcation parameter. The Lambda detector should fit")
-            print(f"  FRM to the autocorrelation function, not the raw signal.")
+            print("\n  DIAGNOSIS: PHYSICS IS CORRECT, SOFTWARE IS WRONG")
+            print("  The FRM form fits the ACF and recovers λ that tracks the")
+            print("  true bifurcation parameter. The Lambda detector should fit")
+            print("  FRM to the autocorrelation function, not the raw signal.")
         elif corr > 0.0:
-            print(f"\n  DIAGNOSIS: PHYSICS IS PARTIALLY CORRECT")
-            print(f"  ACF-λ correlates weakly with true λ. The FRM form captures")
-            print(f"  some of the dynamics but not reliably enough.")
+            print("\n  DIAGNOSIS: PHYSICS IS PARTIALLY CORRECT")
+            print("  ACF-λ correlates weakly with true λ. The FRM form captures")
+            print("  some of the dynamics but not reliably enough.")
         else:
-            print(f"\n  DIAGNOSIS: PHYSICS MAY BE WRONG (for this data type)")
-            print(f"  Neither raw nor ACF fitting recovers true λ.")
+            print("\n  DIAGNOSIS: PHYSICS MAY BE WRONG (for this data type)")
+            print("  Neither raw nor ACF fitting recovers true λ.")
     else:
-        print(f"\n  DIAGNOSIS: INCONCLUSIVE")
+        print("\n  DIAGNOSIS: INCONCLUSIVE")
         print(f"  Too few valid ACF fits ({len(acf_lam_track)}) to determine correlation.")
 
     # Also check raw signal correlation

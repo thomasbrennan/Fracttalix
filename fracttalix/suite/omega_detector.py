@@ -20,7 +20,7 @@ import math
 from collections import deque
 from typing import Any, Dict, List, Optional, Tuple
 
-from fracttalix.suite.base import BaseDetector, _mean, _std, _variance
+from fracttalix.suite.base import BaseDetector, _std
 
 
 class OmegaDetector(BaseDetector):

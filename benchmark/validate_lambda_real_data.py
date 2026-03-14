@@ -23,8 +23,8 @@ Results documented honestly — pass or fail.
 """
 
 import math
-import sys
 import os
+import sys
 
 # Add project root to path
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -123,7 +123,7 @@ def analyze_results(results, label):
     r2_values = [r["r_squared"] for r in fitted if r["r_squared"] is not None]
     if r2_values:
         r2_arr = np.array(r2_values)
-        print(f"\n  R² Statistics:")
+        print("\n  R² Statistics:")
         print(f"    Mean:   {r2_arr.mean():.4f}")
         print(f"    Median: {np.median(r2_arr):.4f}")
         print(f"    Min:    {r2_arr.min():.4f}")
@@ -139,7 +139,7 @@ def analyze_results(results, label):
     lam_values = [r["lambda"] for r in fitted if r["lambda"] is not None]
     if lam_values:
         lam_arr = np.array(lam_values)
-        print(f"\n  Lambda Statistics:")
+        print("\n  Lambda Statistics:")
         print(f"    Mean:   {lam_arr.mean():.6f}")
         print(f"    Median: {np.median(lam_arr):.6f}")
         print(f"    Min:    {lam_arr.min():.6f}")
@@ -151,7 +151,7 @@ def analyze_results(results, label):
     for r in fitted:
         s = r["scope_status"]
         scope_counts[s] = scope_counts.get(s, 0) + 1
-    print(f"\n  Scope Status Distribution:")
+    print("\n  Scope Status Distribution:")
     for s, c in sorted(scope_counts.items()):
         print(f"    {s}: {c} ({c/len(fitted):.1%})")
 
@@ -161,7 +161,7 @@ def analyze_results(results, label):
     for a in alerts:
         t = a["alert_type"] or "UNKNOWN"
         alert_types[t] = alert_types.get(t, 0) + 1
-    print(f"\n  Alerts:")
+    print("\n  Alerts:")
     print(f"    Total alerts: {len(alerts)}/{len(fitted)} "
           f"({len(alerts)/len(fitted):.1%})")
     for t, c in sorted(alert_types.items()):
@@ -172,7 +172,7 @@ def analyze_results(results, label):
            if r["time_to_transition"] is not None]
     if ttt:
         ttt_arr = np.array(ttt)
-        print(f"\n  Time-to-Transition Estimates:")
+        print("\n  Time-to-Transition Estimates:")
         print(f"    Count:  {len(ttt)}")
         print(f"    Mean:   {ttt_arr.mean():.1f}")
         print(f"    Median: {np.median(ttt_arr):.1f}")
@@ -245,8 +245,8 @@ def main():
     # ── Test E: Single solar cycle decay phase ──
     # Extract the falling phase of one sunspot cycle (peak to trough)
     # This IS a damped oscillation in real data
-    peak_idx = 251  # ~1948, solar max ≈ 151.6
-    trough_idx = 262  # ~1954, solar min
+    _peak_idx = 251  # ~1948, solar max ≈ 151.6
+    _trough_idx = 262  # ~1954, solar min
     # Take a wider window around a declining cycle
     cycle_decay = sunspots[245:275]  # ~30 years centered on decay
     results = run_validation(

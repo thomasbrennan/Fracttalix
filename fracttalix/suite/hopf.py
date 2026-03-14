@@ -31,13 +31,14 @@ Useless at
     Pure white noise (always OUT_OF_SCOPE by design).
 """
 
-import math
-from collections import deque
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any, Dict, List, Tuple
 
 from fracttalix.suite.base import (
-    BaseDetector, DetectorResult, ScopeStatus,
-    _mean, _variance, _std, _ac1,
+    BaseDetector,
+    _ac1,
+    _mean,
+    _std,
+    _variance,
 )
 
 

@@ -8,15 +8,12 @@ OUT_OF_SCOPE, STABLE, IN_SCOPE.  r_squared property returns spectral SNR.
 import math
 
 import numpy as np
-import pytest
 
 from fracttalix.suite import (
     LambdaDetector,
     OmegaDetector,
     VirtuDetector,
-    ScopeStatus,
 )
-
 
 # ── Helpers ──
 
@@ -76,7 +73,7 @@ def _frequency_shift(n=500, tau_gen=20.0, shift_point=300, freq_ratio=1.3,
     np.random.seed(seed)
     omega1 = math.pi / (2.0 * tau_gen)
     omega2 = omega1 * freq_ratio
-    t = np.arange(n, dtype=float)
+    _t = np.arange(n, dtype=float)
     values = np.zeros(n)
     for i in range(n):
         omega = omega1 if i < shift_point else omega2
