@@ -1,12 +1,95 @@
 # Fracttalix — Claude Code Configuration
 
 > Auto-read by every Claude Code instance working in this repo.
-> Last updated: Session S57, 2026-03-13.
+> Last updated: Session S58, 2026-03-14.
 
 ## Project
 
 Fracttalix is a 23-object unified research corpus on the Fractal Rhythm Model (FRM).
 See `docs/claude-bootstrap.md` for full project context.
+
+## Startup Protocol (MANDATORY)
+
+**Every instance MUST execute these steps on first startup, in order, before any other work.**
+This is not optional. It applies whether you are a fresh instance, a recovery instance,
+or a woken-up instance resuming after idle.
+
+### Step 1: Situational Awareness
+
+```bash
+# Read checkpoint state — understand what happened before you existed
+python scripts/checkpoint.py status
+
+# Check for messages from other instances
+python scripts/comms.py receive
+
+# Discover other active instances across all branches
+python scripts/comms.py discover
+```
+
+Review the output. Understand: what tasks exist, which are done, which are in-progress,
+and whether any other instances are alive.
+
+### Step 2: Register Yourself
+
+```bash
+# Initialize checkpoint for this session
+python scripts/checkpoint.py init --session SXX --role <your-role> --objective "..."
+
+# Register with the cross-instance comms network
+python scripts/comms.py register --role <your-role> --session SXX --objective "..."
+```
+
+Use a new session ID (increment from the last session in `.checkpoint/state.json`).
+Your role is determined by Step 3 below.
+
+### Step 3: Establish Team Structure
+
+The standard team topology is **three roles**:
+
+| Role | Capabilities | Responsibility |
+|---|---|---|
+| **coordinator** | plan, assign, checkpoint | Owns task graph, assigns work, manages checkpoint state |
+| **executor** | code, test, commit | Writes code, runs tests, commits deliverables |
+| **verifier** | review, validate, approve | Runs CBP hostile reviews, validates acceptance criteria |
+
+**Rules for role assignment:**
+
+1. **Check who's alive**: Run `python scripts/team_registry.py status` to see active roles.
+2. **If no coordinator exists** → you are the coordinator. Register and spawn subagents for
+   executor and verifier roles using the Agent tool.
+3. **If a coordinator exists but executor/verifier slots are empty** → fill the empty slot.
+4. **If all roles are filled** → announce yourself via comms and ask the coordinator for assignment.
+5. **Solo mode**: If you cannot spawn subagents (e.g., single-instance environment), you play
+   all three roles yourself. The CBP discipline still applies — self-apply hostile reviews.
+
+```bash
+# Register your role in the local team registry
+python scripts/team_registry.py register --role coordinator --capabilities plan,assign,checkpoint
+
+# Spawn subagents (coordinator only — use the Agent tool)
+# - executor: "You are an executor for Fracttalix. Read CLAUDE.md, register as executor, and await task assignment."
+# - verifier: "You are a verifier for Fracttalix. Read CLAUDE.md, register as verifier, and run CBP reviews on completed work."
+```
+
+### Step 4: Resume or Begin Work
+
+- **If tasks are `in_progress`** → resume them (the previous instance died mid-task).
+- **If tasks are `pending`** → the coordinator assigns the highest-priority task.
+- **If no tasks exist** → wait for the user to provide an objective, then create the task graph.
+
+### Step 5: Announce
+
+```bash
+# Broadcast your presence to all instances
+python scripts/comms.py broadcast --type hello --payload '{"session": "SXX", "role": "<role>", "status": "online"}'
+```
+
+**Do not skip these steps.** The team structure is self-bootstrapping only if every instance
+follows this protocol. If you skip it, other instances cannot find you, coordinate with you,
+or recover your work when you die.
+
+---
 
 ## Mandatory: CBP (Canonical Build Process)
 
