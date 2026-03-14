@@ -1,0 +1,326 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Fracttalix Multi-AI Relay Protocol — DRS-Conformant (v2)",
+  "version": "2.0.0",
+  "description": "DRS-conformant inter-AI communication protocol. All messages carry structured claim objects with typed fields. Prose body retained for human readability (Channel 1); structured claims field added for machine verification (Channel 2). Supersedes protocol v1.0.0.",
+  "changelog": {
+    "v2.0.0": "DRS conformance: added claims array, objections array, structured verdicts, falsification predicate objects. Prose body retained as Channel 1. Protocol now dual-reader compliant.",
+    "v1.0.0": "Initial protocol with free-text body and basic verdict/confidence response format."
+  },
+  "agents": {
+    "claude": {
+      "id": "claude",
+      "provider": "anthropic",
+      "access_method": "claude-code-cli",
+      "capabilities": ["code-execution", "file-read-write", "git-push", "test-runner", "ai-layer-author"],
+      "autonomous_send": true,
+      "autonomous_read": true,
+      "can_initiate": true
+    },
+    "grok": {
+      "id": "grok",
+      "provider": "xai",
+      "access_method": "xai-api-via-github-actions",
+      "capabilities": ["code-review", "cross-reference", "web-search", "fact-check", "ai-layer-review"],
+      "autonomous_send": true,
+      "autonomous_read": true,
+      "can_initiate": true
+    }
+  },
+  "message_schema": {
+    "type": "object",
+    "required": ["msg_id", "timestamp", "from", "to", "type", "subject", "body"],
+    "properties": {
+      "msg_id": {
+        "type": "string",
+        "pattern": "^MSG-[0-9]{8}-[0-9]{6}-[a-z0-9]{4}$",
+        "description": "Unique message ID: MSG-YYYYMMDD-HHMMSS-xxxx"
+      },
+      "timestamp": {
+        "type": "string",
+        "format": "date-time"
+      },
+      "from": {
+        "type": "string",
+        "enum": ["claude", "grok", "human"]
+      },
+      "to": {
+        "type": "string",
+        "enum": ["claude", "grok", "human", "all"]
+      },
+      "type": {
+        "type": "string",
+        "enum": [
+          "claim-review",
+          "claim-review-response",
+          "hostile-review",
+          "hostile-review-response",
+          "cross-reference",
+          "cross-reference-response",
+          "standing-order",
+          "status-query",
+          "status-response",
+          "general"
+        ]
+      },
+      "priority": {
+        "type": "string",
+        "enum": ["low", "normal", "high", "critical"],
+        "default": "normal"
+      },
+      "subject": {
+        "type": "string",
+        "maxLength": 200
+      },
+      "body": {
+        "type": "string",
+        "description": "Channel 1 (Human Reader): Markdown-formatted message body. Retained for human readability and audit trail. NOT the authoritative source for machine processing — use the claims and objections fields instead."
+      },
+      "claims": {
+        "type": "array",
+        "description": "Channel 2 (AI Reader): Structured claim objects conforming to AI layer claim_registry format. This is the authoritative machine-readable content.",
+        "items": {
+          "$ref": "#/$defs/claim_object"
+        }
+      },
+      "objections": {
+        "type": "array",
+        "description": "Structured hostile review objections. Each objection targets a specific claim and carries its own falsification test.",
+        "items": {
+          "$ref": "#/$defs/objection_object"
+        }
+      },
+      "verdicts": {
+        "type": "array",
+        "description": "Structured review verdicts. Each verdict targets a specific claim with machine-parseable status.",
+        "items": {
+          "$ref": "#/$defs/verdict_object"
+        }
+      },
+      "references": {
+        "type": "object",
+        "properties": {
+          "claim_ids": {
+            "type": "array",
+            "items": { "type": "string" },
+            "description": "AI layer claim IDs relevant to this message"
+          },
+          "paper_ids": {
+            "type": "array",
+            "items": { "type": "string" },
+            "description": "Paper IDs referenced"
+          },
+          "files": {
+            "type": "array",
+            "items": { "type": "string" },
+            "description": "Repo-relative file paths referenced"
+          },
+          "parent_message": {
+            "type": "string",
+            "description": "ID of the message this replies to"
+          }
+        }
+      },
+      "metadata": {
+        "type": "object",
+        "description": "Additional structured metadata"
+      },
+      "status": {
+        "type": "string",
+        "enum": ["pending", "acknowledged", "in-progress", "resolved", "expired"],
+        "default": "pending"
+      },
+      "protocol_version": {
+        "type": "string",
+        "const": "2.0.0"
+      }
+    }
+  },
+  "$defs": {
+    "claim_object": {
+      "type": "object",
+      "required": ["claim_id", "type", "statement"],
+      "properties": {
+        "claim_id": {
+          "type": "string",
+          "description": "Unique claim identifier (e.g., F-MK7.1)"
+        },
+        "type": {
+          "type": "string",
+          "enum": ["A", "D", "F"],
+          "description": "A = axiom/assumption, D = definition, F = falsifiable"
+        },
+        "label": {
+          "type": "string",
+          "description": "Short human-readable name"
+        },
+        "statement": {
+          "type": "string",
+          "description": "The claim in precise language"
+        },
+        "falsification_predicate": {
+          "$ref": "#/$defs/falsification_predicate",
+          "description": "Required for Type F claims. Must have all 5 parts."
+        },
+        "source_paper": {
+          "type": "string",
+          "description": "Paper ID where this claim originates"
+        },
+        "source_section": {
+          "type": "string",
+          "description": "Section reference within the source paper"
+        }
+      }
+    },
+    "falsification_predicate": {
+      "type": "object",
+      "required": ["FALSIFIED_IF", "WHERE", "EVALUATION", "BOUNDARY", "CONTEXT"],
+      "properties": {
+        "FALSIFIED_IF": {
+          "type": "string",
+          "description": "The specific observable condition that would falsify the claim. Must be deterministic."
+        },
+        "WHERE": {
+          "type": "string",
+          "description": "All variables defined with types, units, and sources."
+        },
+        "EVALUATION": {
+          "type": "string",
+          "description": "The exact procedure for testing. Must be executable by a third party."
+        },
+        "BOUNDARY": {
+          "type": "string",
+          "description": "Numerical thresholds with justification."
+        },
+        "CONTEXT": {
+          "type": "string",
+          "description": "Why the threshold is set where it is. Derivation references. Scope limitations."
+        }
+      }
+    },
+    "objection_object": {
+      "type": "object",
+      "required": ["objection_id", "targets_claim", "objection_type", "statement", "severity"],
+      "properties": {
+        "objection_id": {
+          "type": "string",
+          "description": "Unique objection identifier (e.g., OBJ-MK7.1-01)"
+        },
+        "targets_claim": {
+          "type": "string",
+          "description": "The claim_id this objection attacks"
+        },
+        "objection_type": {
+          "type": "string",
+          "enum": [
+            "logical-gap",
+            "counterexample",
+            "unstated-assumption",
+            "vacuity",
+            "circularity",
+            "scope-overreach",
+            "empirical-gap",
+            "prior-art-overlap",
+            "definition-weakness"
+          ],
+          "description": "Classification of the objection"
+        },
+        "statement": {
+          "type": "string",
+          "description": "The specific objection in precise language"
+        },
+        "proposed_test": {
+          "type": "string",
+          "description": "A proposed falsification test or counterexample"
+        },
+        "severity": {
+          "type": "string",
+          "enum": ["critical", "major", "minor"],
+          "description": "Impact severity if the objection is valid"
+        },
+        "kvs_score": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1,
+          "description": "KVS score assigned during Meta-Kaizen processing (filled by recipient)"
+        },
+        "disposition": {
+          "type": "string",
+          "enum": ["accepted", "rejected", "deferred", "pending"],
+          "description": "How the objection was processed (filled by recipient)"
+        },
+        "disposition_rationale": {
+          "type": "string",
+          "description": "Why the objection was accepted/rejected (filled by recipient)"
+        }
+      }
+    },
+    "verdict_object": {
+      "type": "object",
+      "required": ["claim_id", "verdict", "confidence"],
+      "properties": {
+        "claim_id": {
+          "type": "string",
+          "description": "The claim being reviewed"
+        },
+        "verdict": {
+          "type": "string",
+          "enum": ["confirmed", "disputed", "inconclusive", "needs-revision"],
+          "description": "Machine-parseable review verdict"
+        },
+        "confidence": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1,
+          "description": "Reviewer confidence in the verdict"
+        },
+        "reasoning": {
+          "type": "string",
+          "description": "Structured reasoning for the verdict"
+        },
+        "predicate_assessment": {
+          "type": "object",
+          "properties": {
+            "c6_vacuity": {
+              "type": "string",
+              "enum": ["pass", "fail", "uncertain"],
+              "description": "Does the predicate have a valid vacuity witness?"
+            },
+            "deterministic": {
+              "type": "string",
+              "enum": ["pass", "fail", "uncertain"],
+              "description": "Is the FALSIFIED_IF condition fully deterministic?"
+            },
+            "variables_bound": {
+              "type": "string",
+              "enum": ["pass", "fail", "uncertain"],
+              "description": "Are all WHERE variables fully specified?"
+            },
+            "third_party_executable": {
+              "type": "string",
+              "enum": ["pass", "fail", "uncertain"],
+              "description": "Can a third party execute the EVALUATION procedure?"
+            }
+          }
+        },
+        "sources_checked": {
+          "type": "array",
+          "items": { "type": "string" }
+        }
+      }
+    }
+  },
+  "queue_rules": {
+    "directory": "relay/queue/",
+    "archive_directory": "relay/archive/",
+    "naming": "{msg_id}.json",
+    "lifecycle": [
+      "Message created in relay/queue/ with status 'pending' and protocol_version '2.0.0'",
+      "Recipient reads and updates status to 'acknowledged'",
+      "Recipient processes structured claims/objections fields (NOT prose body)",
+      "Recipient posts response with structured verdicts/objections",
+      "Resolved messages moved to relay/archive/ for audit trail"
+    ],
+    "backwards_compatibility": "Messages without claims/objections/verdicts fields are treated as v1 messages. The body field is processed as prose. v2 processors should handle both formats gracefully."
+  }
+}

@@ -1,4 +1,4 @@
-Meta-Kaizen Series · Paper 2 of 7
+Meta-Kaizen Series · Paper 2 of 8
 
 ## Meta-Kaizen in Networked Organizations: Governance Closure, Privacy Amplification, and Bayesian Calibration Under a Federated Architecture
 

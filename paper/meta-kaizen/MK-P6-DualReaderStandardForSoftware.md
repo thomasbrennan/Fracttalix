@@ -1,4 +1,4 @@
-Meta-Kaizen Series · Paper 6 of 7
+Meta-Kaizen Series · Paper 6 of 8
 
 ## The Dual Reader Standard for Software: Measurement-Theoretic Falsification Applied to Executable Systems
 

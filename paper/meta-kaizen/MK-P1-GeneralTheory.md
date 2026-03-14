@@ -1,4 +1,4 @@
-Meta-Kaizen Series · Paper 1 of 7
+Meta-Kaizen Series · Paper 1 of 8
 
 Meta-Kaizen: A General Theory and Algorithmic Framework for the Mathematical Formalization of Self-Evolving Continuous Improvement Across Arbitrary Governance Substrates
 

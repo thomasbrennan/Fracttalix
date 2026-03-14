@@ -1,4 +1,4 @@
-Meta-Kaizen Series · Paper 7 of 7
+Meta-Kaizen Series · Paper 7 of 8
 
 ## The Canonical Build Plan: Adversarial Optimization Through Folded Meta-Kaizen — A Formal Theory of Monotonic Quality Improvement in Multi-Agent Knowledge Production
 

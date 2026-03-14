@@ -1,4 +1,4 @@
-Meta-Kaizen Series · Paper 5 of 7
+Meta-Kaizen Series · Paper 5 of 8
 
 ## On the Decision to Act: Strategic Convergence and the Mathematics of Intervention Timing at System Tipping Points
 

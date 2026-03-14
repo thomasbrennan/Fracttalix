@@ -11,7 +11,7 @@
   "paper_id": "MK-P7",
   "corpus_id": "Meta-Kaizen",
   "series": "Meta-Kaizen Series",
-  "series_position": "Paper 7 of 7",
+  "series_position": "Paper 7 of 8",
   "paper_title": "The Canonical Build Plan: Adversarial Optimization Through Folded Meta-Kaizen — A Formal Theory of Monotonic Quality Improvement in Multi-Agent Knowledge Production",
   "paper_type": "methodology_D",
   "paper_type_note": "Primary contribution is the formalization of the CBP as a governance process with proved monotonic quality improvement. Contains both derivational results (Theorems 1-3, Proposition 4) and methodology specification (5-step process definition).",

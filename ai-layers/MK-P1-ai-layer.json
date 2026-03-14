@@ -27,7 +27,7 @@
   "paper_id": "MK-P1",
   "corpus_id": "Meta-Kaizen",
   "series": "Meta-Kaizen Series",
-  "series_position": "Paper 1 of 7",
+  "series_position": "Paper 1 of 8",
   "paper_title": "Meta-Kaizen: A General Theory and Algorithmic Framework for the Mathematical Formalization of Self-Evolving Continuous Improvement Across Arbitrary Governance Substrates",
   "paper_type": "derivation_B",
   "paper_type_note": "Primary contribution is the axiomatic derivation of KVS functional form (Theorem 4.1). Paper also contains application demonstrations (Section 6) and pre-registered empirical path (Section 5.4). Classified derivation_B because the derivation is the novel claim; applications are illustrations, not the object of verification. The schema enum [law_A, derivation_B, application_C] does not include 'methodology'. See paper_type_flag below.",
