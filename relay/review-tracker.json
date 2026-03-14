@@ -578,15 +578,60 @@
       "confidence": 0.75,
       "model_used": "grok-4-latest",
       "reasoning_preview": "The falsification predicate is logically consistent in its structure, defining a clear existential condition for falsification based on detectability differences between single-channel and combined pi"
+    },
+    "C-MK4.1": {
+      "msg_id": "MSG-20260314-161444-8mko",
+      "parent_msg_id": "MSG-20260314-103904-8dja",
+      "timestamp": "2026-03-14T16:14:44.322269+00:00",
+      "verdict": "needs-revision",
+      "confidence": 0.75,
+      "model_used": "grok-4-latest",
+      "reasoning_preview": "The falsification predicate is logically consistent: it clearly defines two boolean conditions (S_t_zero_recovery_fails and floor_exceeds_bound) with well-specified variables and evaluation steps, inc"
+    },
+    "C-MK4.4": {
+      "msg_id": "MSG-20260314-161408-28qe",
+      "parent_msg_id": "MSG-20260314-103904-8d9g",
+      "timestamp": "2026-03-14T16:14:08.956561+00:00",
+      "verdict": "confirmed",
+      "confidence": 0.9,
+      "model_used": "grok-4-latest",
+      "reasoning_preview": "The falsification predicate is logically consistent: it clearly defines 'feedback_loop_broken' based on missing connections or absent feedback from component 6 to 1 and 2, with a finite evaluation pro"
+    },
+    "F-MK1.4": {
+      "msg_id": "MSG-20260314-161545-a1bm",
+      "parent_msg_id": "MSG-20260314-103904-9sms",
+      "timestamp": "2026-03-14T16:15:45.005083+00:00",
+      "verdict": "inconclusive",
+      "confidence": 0.4,
+      "model_used": "grok-4-latest",
+      "reasoning_preview": "The falsification predicate is logically consistent in structure: it defines a clear condition for falsification based on a recomputed point estimate falling outside the claimed 90% CI bounds, which a"
+    },
+    "C-MK4.3": {
+      "msg_id": "MSG-20260314-161346-tbw6",
+      "parent_msg_id": "MSG-20260314-103904-88ug",
+      "timestamp": "2026-03-14T16:13:46.175640+00:00",
+      "verdict": "confirmed",
+      "confidence": 0.95,
+      "model_used": "grok-4-latest",
+      "reasoning_preview": "The falsification predicate is logically consistent: it defines a clear numerical threshold for falsification based on absolute difference, with a well-specified computation in the WHERE and EVALUATIO"
+    },
+    "C-2.3": {
+      "msg_id": "MSG-20260314-161514-0rxv",
+      "parent_msg_id": "MSG-20260314-103904-8dwe",
+      "timestamp": "2026-03-14T16:15:14.253141+00:00",
+      "verdict": "inconclusive",
+      "confidence": 0.65,
+      "model_used": "grok-4-latest",
+      "reasoning_preview": "The falsification predicate is mostly logically consistent, defining clear boolean conditions for falsification based on scaling deviations or non-universal expressions. However, it relies on unresolv"
     }
   },
   "summary": {
     "total_falsifiable": 70,
     "sent_to_grok": 70,
-    "reviewed_by_grok": 25,
-    "confirmed": 2,
+    "reviewed_by_grok": 30,
+    "confirmed": 4,
     "disputed": 6,
-    "inconclusive": 8,
-    "needs_revision": 9
+    "inconclusive": 10,
+    "needs_revision": 10
   }
 }
