@@ -175,16 +175,22 @@
         "IR-1"
       ],
       "falsification_predicate": {
-        "FALSIFIED_IF": "EXISTS system S satisfying C1-C4 AND observation set O = {x(t_i): t_i ≤ t_ref} AND state x(t_ref+τ) SUCH THAT I(O; x(t_ref+τ)) > δ_causal",
+        "FALSIFIED_IF": "EXISTS system S satisfying C1-C4 AND observation set O = {x(t_i): t_i ≤ t_ref} AND state x(t_ref+τ) SUCH THAT T_{x(t_ref+τ) → O} > δ_causal",
         "WHERE": {
           "S": "DDE system satisfying C1-C4",
+          "C1": "Finite-dimensional state space: x(t) ∈ ℝ^n",
+          "C2": "Smooth C¹ right-hand side: ẋ(t) = f(x(t), x(t−τ)) with f ∈ C¹",
+          "C3": "Single fixed delay τ > 0, independently measurable via Protocol 3",
+          "C4": "Well-posed IVP on [−τ, 0]: unique solution exists for given history segment",
           "O": "Countable indexed set drawn from causal past: t_i ≤ t_ref",
-          "δ_causal": "3σ of background mutual information under shuffled-index null model"
+          "T_{x(t_ref+τ) → O}": "Transfer entropy (Schreiber 2000): T_{X→Y} = H(Y_future | Y_past) − H(Y_future | Y_past, X_past). Measures directed causal influence of x(t_ref+τ) on O. Asymmetric: T_{X→Y} ≠ T_{Y→X} in general, unlike mutual information I(X;Y) which is symmetric and would be non-zero in any deterministic DDE regardless of causal direction.",
+          "δ_causal": "3σ of background transfer entropy under time-shuffled surrogate null model (destroy temporal ordering of source while preserving marginal distribution)",
+          "noise_model": "Additive observational noise η ~ N(0, σ²_obs) with σ_obs > 0 required for transfer entropy estimation. Purely deterministic trajectories must be augmented with measurement noise floor ε ≥ instrument precision to ensure well-defined conditional entropies."
         },
-        "EVALUATION": "(1) Specify C1-C4 system S and measure τ via Protocol 3. (2) Draw O from t_i ≤ t_ref. (3) Compute I(O; x(t_ref+τ)) using KSG estimator (k=5, ≥500 paired samples). (4) Compute δ_causal from shuffled null. (5) Test I > δ_causal.",
-        "BOUNDARY": "NOT FALSIFIED if I(O; x(t_ref+τ)) ≤ δ_causal for all tested C1-C4 systems.",
-        "CONTEXT": "C-DRP8.1 | Type F | DDE causal isolation | KSG estimator k=5 | same implementation as P3 substrate validation",
-        "vacuity_witness": "C1-C4 system with backward-coupled noise injection where x(t_ref+τ) is directly fed into history. Produces I > δ_causal. Witness deliberately violates causal structure to demonstrate predicate discriminating power. C6: PASS."
+        "EVALUATION": "(1) Specify C1-C4 system S and measure τ via Protocol 3. (2) Draw O from t_i ≤ t_ref. (3) Estimate T_{x(t_ref+τ) → O} using the KSG-based transfer entropy estimator (Kraskov et al. 2004, k=5, ≥500 paired samples; see Schreiber 2000 for TE definition). (4) Construct surrogate null: shuffle temporal indices of x(t_ref+τ) series to destroy causal coupling while preserving marginal statistics. Compute δ_causal as 3σ of surrogate TE distribution (≥200 surrogates). (5) Test T_{x(t_ref+τ) → O} > δ_causal.",
+        "BOUNDARY": "NOT FALSIFIED if T_{x(t_ref+τ) → O} ≤ δ_causal for all tested C1-C4 systems. Note: symmetric mutual information I(O; x(t_ref+τ)) is NOT a valid test statistic here because I > 0 is expected in any deterministic DDE (the future is a function of the past), making MI unable to discriminate causal direction.",
+        "CONTEXT": "C-DRP8.1 | Type F | DDE causal isolation | Transfer entropy (Schreiber 2000) via KSG estimator k=5 | replaces symmetric MI (v1) following Grok review identifying MI symmetry invalidates directional causal test | same KSG implementation as P3 substrate validation",
+        "vacuity_witness": "C1-C4 system with backward-coupled noise injection where x(t_ref+τ) is directly fed into history. Produces T_{x(t_ref+τ) → O} > δ_causal. Witness deliberately violates causal structure to demonstrate predicate discriminating power. C6: PASS."
       }
     },
     {
@@ -337,8 +343,8 @@
       "gap_id": null
     },
     {
-      "constant_or_condition": "δ_causal = 3σ null model (C-DRP8.1)",
-      "derivation_path": "3σ is a standard statistical threshold (IR-7). Inherited from P1/P3 falsification predicate conventions. Not free — anchored at statistical convention with justification in CONTEXT field.",
+      "constant_or_condition": "δ_causal = 3σ surrogate transfer entropy null (C-DRP8.1)",
+      "derivation_path": "3σ is a standard statistical threshold (IR-7). Inherited from P1/P3 falsification predicate conventions. Transfer entropy (Schreiber 2000) replaces symmetric MI as test statistic. Not free — anchored at statistical convention with justification in CONTEXT field.",
       "gap_id": null
     },
     {
