@@ -394,7 +394,7 @@
             }
           },
           "language_independence": "test_bindings accepts any string: pytest, Jest, cargo test, go test, JUnit",
-          "ai_system_independence": "Any AI system can read JSON and the kernel spec. semantic_spec_url points to Layer 0.",
+          "ai_system_independence": "Any AI system — Claude, GPT, Gemini, Grok, Llama, or systems not yet built — can read JSON and the kernel spec. semantic_spec_url points to Layer 0.",
           "serialisation_independence": "Layer 0 defined in prose, not JSON Schema. JSON is current transport; kernel semantics independent of encoding. Future: YAML, Protocol Buffers, CBOR, or not-yet-invented formats.",
           "tool_independence": "Embeds in existing workflows: git SHAs, any test runner, any JSON Schema validator, any CI pipeline."
         },
@@ -433,7 +433,7 @@
           "BOUNDARY": "R2_best_alt = R2_frm + 0.05 → FALSIFIED (threshold inclusive)",
           "CONTEXT": "0.05 margin from standard model comparison practice"
         },
-        "universality": "This predicate means the same thing to Claude in English, GPT in Mandarin, Gemini in French, and AI systems not yet built."
+        "universality": "This predicate means the same thing to Claude in English, GPT in Mandarin, Gemini in French, Grok in Turkish, and AI systems not yet built."
       },
       "json_as_transport": "JSON is the de facto interchange format — every language, every AI system, every API. The DRS inherits JSON's universality. A team in any country publishes predicates in mathematical notation. Any team anywhere reads them without translation.",
       "qualification": "WHERE field definitions currently contain English prose. The operative content (types, units, operators, thresholds) is language-neutral. Given grounded values, any system evaluates the predicate regardless of language.",

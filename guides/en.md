@@ -422,7 +422,7 @@ The kernel is permanent. Everything else is extensible.
 | Education | Pedagogical axioms | Learning objectives | Assessment claims |
 
 - **Language independence.** The `test_bindings` field accepts any string that uniquely identifies a test in any framework: pytest, Jest, cargo test, go test, JUnit.
-- **AI system independence.** The AI layer is a JSON document. Any AI system — Claude, GPT, Gemini, Llama, or systems that don't exist yet — can read it. The `semantic_spec_url` field points to the kernel specification written in plain prose.
+- **AI system independence.** The AI layer is a JSON document. Any AI system — Claude, GPT, Gemini, Grok, Llama, or systems that don't exist yet — can read it. The `semantic_spec_url` field points to the kernel specification written in plain prose.
 - **Serialisation independence.** Layer 0 is defined in prose, not in JSON Schema. JSON is the current transport, but the kernel's semantics are independent of encoding. Future implementations could use YAML, Protocol Buffers, CBOR, or formats not yet invented.
 - **Tool independence.** The DRS embeds in existing workflows: git SHAs (any hosting), any test runner, any JSON Schema validator, any CI pipeline. It adds a layer on top — it does not replace anything.
 - **The contract:** Adopting the DRS in one domain, language, tool, or AI system does not lock you in.
@@ -470,7 +470,7 @@ BOUNDARY: R2_best_alt = R2_frm + 0.05 → FALSIFIED (threshold inclusive)
 CONTEXT: 0.05 margin from standard model comparison practice
 ```
 
-This predicate means the same thing to a Claude instance in English, a GPT instance in Mandarin, a Gemini instance in French, and an AI system that hasn't been built yet running in a language that doesn't exist yet. No translation required.
+This predicate means the same thing to a Claude instance in English, a GPT instance in Mandarin, a Gemini instance in French, a Grok instance in Turkish, and an AI system that hasn't been built yet running in a language that doesn't exist yet. No translation required.
 
 ### JSON as the Transport Layer
 
