@@ -1,0 +1,39 @@
+title: "DRS-MP: Inter-AI Communication Protocol with Epistemologically Typed Claims"
+labels: [drs-mp, protocol, documentation]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ## DRS-MP — Dual Reader Standard Message Protocol
+
+        This repository implements DRS-MP, the first inter-AI communication protocol
+        that carries epistemologically typed claims with full falsification predicates.
+
+        **The problem:** Existing multi-agent protocols (A2A, MCP, ACP, ANP) solve
+        transport — routing, discovery, task management. None addresses content quality.
+        An AI can deliver a perfectly routed message containing complete nonsense.
+
+        **The solution:** DRS-MP adds Layer 4 (epistemological content) above any
+        transport protocol. Every message carries:
+        - Typed claims (Axiom, Definition, Falsifiable)
+        - 5-part falsification predicates
+        - Classified objections
+        - Machine-parseable verdicts
+
+        **Working evidence:** 30+ claims reviewed through autonomous Claude-Grok hostile
+        review. Real defects caught: math errors, logic inversions, statistical measure
+        mismatches. All caught by structured field comparison, not prose parsing.
+
+        ### Quick Start
+        ```bash
+        pip install drs-mp
+        ```
+        ```python
+        from drs_mp import Message, Claim, Verdict
+        ```
+
+        ### Resources
+        - [Protocol Schema](relay/protocol-v2.json)
+        - [Paper: MK-P8](paper/meta-kaizen/MK-P8-DRSForInterAICommunication.md)
+        - [Library: drs_mp/](drs_mp/)
+        - [DOI: 10.5281/zenodo.18859299](https://doi.org/10.5281/zenodo.18859299)

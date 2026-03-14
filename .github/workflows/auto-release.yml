@@ -1,0 +1,84 @@
+name: Auto-Release and Archive
+
+# Creates GitHub releases automatically when version tags are pushed.
+# This triggers Zenodo archival (if integrated) without human intervention.
+# Can also be triggered by the autonomous propagation workflow.
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+    inputs:
+      create_release:
+        description: 'Create a release from current HEAD'
+        required: false
+        default: 'false'
+        type: boolean
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    name: Create GitHub Release
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Generate release notes
+        id: notes
+        run: |
+          # Count corpus objects
+          stats=$(python3 -c "
+          import glob, json
+          layers = glob.glob('ai-layers/*-ai-layer.json')
+          total_claims = 0
+          for l in layers:
+              with open(l) as f:
+                  data = json.load(f)
+              total_claims += len(data.get('claim_registry', []))
+          papers = glob.glob('paper/**/*.md', recursive=True)
+          queue = glob.glob('relay/queue/MSG-*.json')
+          print(f'LAYERS={len(layers)}')
+          print(f'CLAIMS={total_claims}')
+          print(f'PAPERS={len(papers)}')
+          print(f'MESSAGES={len(queue)}')
+          ")
+          eval "$stats"
+
+          cat > release_notes.md << 'NOTES'
+          ## Fracttalix Corpus Release
+
+          ### Corpus Statistics
+          - **AI Layers:** $LAYERS
+          - **Machine-verifiable claims:** $CLAIMS
+          - **Papers:** $PAPERS (FRM + Meta-Kaizen series)
+          - **Relay messages:** $MESSAGES
+
+          ### Key Components
+          - **Fracttalix Sentinel v12.3** — Three-channel streaming anomaly detector
+          - **Meta-Kaizen Series** — 8 papers on measurement-theoretic governance
+          - **Dual Reader Standard (DRS)** — Verification architecture for papers, software, and inter-AI communication
+          - **DRS Message Protocol (DRS-MP)** — First inter-AI protocol with epistemologically typed claims
+          - **Multi-AI Relay** — Autonomous hostile review across 9 AI providers
+
+          ### DRS-MP Protocol
+          The DRS Message Protocol extends the Dual Reader Standard to inter-AI communication.
+          Every message carries structured claims with 5-part falsification predicates —
+          typed, deterministic, machine-verifiable without natural language processing.
+
+          Protocol schema: `relay/protocol-v2.json`
+          Paper: `paper/meta-kaizen/MK-P8-DRSForInterAICommunication.md`
+
+          **License:** CC0-1.0 (Public Domain)
+          **DOI:** [10.5281/zenodo.18859299](https://doi.org/10.5281/zenodo.18859299)
+          NOTES
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v2
+        with:
+          body_path: release_notes.md
+          generate_release_notes: true
+          make_latest: true

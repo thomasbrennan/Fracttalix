@@ -1,13 +1,19 @@
-site_name: Fracttalix Sentinel
+site_name: Fracttalix — Unified Scientific Corpus
 site_url: https://thomasbrennan.github.io/Fracttalix
+site_description: "Fractal Rhythm Model, Meta-Kaizen governance, Dual Reader Standard, and DRS-MP — the first inter-AI communication protocol with epistemologically typed claims. 175+ machine-verifiable claims. Multi-AI hostile review across 9 providers."
 repo_url: https://github.com/thomasbrennan/Fracttalix
 theme:
   name: material
   features:
     - navigation.tabs
     - navigation.sections
+    - navigation.expand
+    - search.suggest
+    - search.highlight
 nav:
   - Home: index.md
+  - DRS-MP Protocol: drs-mp.md
+  - Canonical Build Plan: CBP-practical-guide.md
   - Getting Started: getting_started.md
   - API Reference:
     - SentinelDetector: api/detector.md
