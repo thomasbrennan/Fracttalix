@@ -233,6 +233,12 @@ def build_user_message(msg: dict) -> str:
         "",
     ]
 
+    # Embed protocol spec so the message is self-explanatory
+    if msg.get("_protocol_spec"):
+        parts.append("## DRS-MP PROTOCOL SPECIFICATION (embedded — this message carries its own instructions)")
+        parts.append(json.dumps(msg["_protocol_spec"], indent=2))
+        parts.append("")
+
     # If message has structured claims (DRS-MP v2), include them
     if msg.get("claims"):
         parts.append("## STRUCTURED CLAIMS (DRS-MP v2 — machine authoritative)")

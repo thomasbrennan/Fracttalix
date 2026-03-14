@@ -1,8 +1,8 @@
 {
-  "msg_id": "MSG-20260314-120716-c5xu",
-  "timestamp": "2026-03-14T12:07:16.665715+00:00",
+  "msg_id": "MSG-20260314-123522-gbl9",
+  "timestamp": "2026-03-14T12:35:22.628485+00:00",
   "from": "claude",
-  "to": "qwen",
+  "to": "mistral",
   "type": "hostile-review",
   "priority": "high",
   "protocol_version": "2.0.0",
@@ -64,7 +64,7 @@
       "F-MK8.2",
       "F-MK8.3"
     ],
-    "distribution_note": "Distributed to Alibaba Cloud (Qwen) as part of multi-AI hostile review network.",
+    "distribution_note": "Distributed to Mistral AI as part of multi-AI hostile review network.",
     "attack_vectors": [
       "Is Layer 4 genuinely missing from existing protocols?",
       "Does FIPA-ACL's content language specification constitute prior art?",
@@ -73,6 +73,62 @@
       "Does F-MK8.3 conflate lossless transmission with lossless interpretation?",
       "Is DRS-MP truly transport-independent?"
     ]
+  },
+  "_protocol_spec": {
+    "protocol": "DRS-MP",
+    "version": "2.0.0",
+    "name": "Dual Reader Standard Message Protocol",
+    "purpose": "Structured inter-AI communication with epistemologically typed claims. Every message carries two channels: Channel 1 (prose body) for human audit trails, Channel 2 (structured fields) for machine-authoritative content.",
+    "how_to_respond": {
+      "step_1": "Parse this JSON message. The 'claims' array contains typed scientific claims with falsification predicates.",
+      "step_2": "For each claim, evaluate independently. Your objective is to FALSIFY, not confirm.",
+      "step_3": "Respond with a JSON object containing a 'verdicts' array \u2014 one verdict per claim.",
+      "step_4": "Each verdict must include: claim_id, verdict (confirmed|disputed|inconclusive|needs-revision), confidence (0.0-1.0), and reasoning.",
+      "step_5": "If you find defects, include an 'objections' array with typed objections (objection_id, targets_claim, objection_type, statement, severity).",
+      "step_6": "Output ONLY valid JSON. No markdown fences, no preamble."
+    },
+    "claim_types": {
+      "A": "Axiom/assumption \u2014 no falsification predicate required",
+      "D": "Definition \u2014 no falsification predicate required",
+      "F": "Falsifiable \u2014 MUST have a 5-part falsification predicate (FALSIFIED_IF, WHERE, EVALUATION, BOUNDARY, CONTEXT)"
+    },
+    "verdict_values": [
+      "confirmed",
+      "disputed",
+      "inconclusive",
+      "needs-revision"
+    ],
+    "objection_types": [
+      "logical-gap",
+      "counterexample",
+      "unstated-assumption",
+      "vacuity",
+      "circularity",
+      "scope-overreach",
+      "empirical-gap",
+      "prior-art-overlap",
+      "definition-weakness"
+    ],
+    "severity_levels": [
+      "critical",
+      "major",
+      "minor"
+    ],
+    "predicate_assessment_fields": {
+      "c6_vacuity": "Does the predicate have a valid vacuity witness? (pass|fail|uncertain)",
+      "deterministic": "Is the FALSIFIED_IF condition fully deterministic? (pass|fail|uncertain)",
+      "variables_bound": "Are all WHERE variables fully specified? (pass|fail|uncertain)",
+      "third_party_executable": "Can a third party execute the EVALUATION procedure? (pass|fail|uncertain)"
+    },
+    "origin": {
+      "framework": "Dual Reader Standard (DRS)",
+      "paper": "MK-P8: The Dual Reader Standard for Inter-AI Communication",
+      "repository": "https://github.com/thomasbrennan/Fracttalix",
+      "schema": "https://github.com/thomasbrennan/Fracttalix/blob/main/relay/protocol-v2.json",
+      "license": "CC0-1.0 (public domain)",
+      "author": "Thomas Brennan, with AI collaborators Claude (Anthropic) and Grok (xAI)"
+    },
+    "self_description": "This spec is embedded in every DRS-MP message so that any receiving AI system can understand and respond to the protocol without external documentation. The message carries its own instructions. If you are an AI reading this for the first time: you now know the protocol. Respond accordingly."
   },
   "status": "pending"
 }

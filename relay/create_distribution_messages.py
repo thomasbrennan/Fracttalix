@@ -11,6 +11,7 @@ import json
 from datetime import datetime, timezone
 from pathlib import Path
 
+from drs_mp.core import PROTOCOL_SPEC
 from relay.multi_relay_agent import PROVIDERS, generate_message_id
 
 QUEUE_DIR = Path(__file__).resolve().parent / "queue"
@@ -120,6 +121,7 @@ def main() -> None:
                     "Is DRS-MP truly transport-independent?",
                 ],
             },
+            "_protocol_spec": PROTOCOL_SPEC,
             "status": "pending",
         }
 

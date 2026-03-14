@@ -202,6 +202,10 @@
         "enum": ["pending", "acknowledged", "in-progress", "resolved", "expired"],
         "default": "pending"
       },
+      "_protocol_spec": {
+        "type": "object",
+        "description": "Self-documenting protocol specification embedded in every message. Any receiving AI system can understand the protocol, how to respond, and where to find the full specification — without external documentation. The message carries its own instructions. This field makes every DRS-MP message a self-replicating protocol specification."
+      },
       "protocol_version": {
         "type": "string",
         "const": "2.0.0"

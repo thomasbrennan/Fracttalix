@@ -271,6 +271,51 @@ class Objection:
         )
 
 
+# --- Protocol Spec (embedded in every message) ---
+
+PROTOCOL_SPEC = {
+    "protocol": "DRS-MP",
+    "version": "2.0.0",
+    "name": "Dual Reader Standard Message Protocol",
+    "purpose": "Structured inter-AI communication with epistemologically typed claims. Every message carries two channels: Channel 1 (prose body) for human audit trails, Channel 2 (structured fields) for machine-authoritative content.",
+    "how_to_respond": {
+        "step_1": "Parse this JSON message. The 'claims' array contains typed scientific claims with falsification predicates.",
+        "step_2": "For each claim, evaluate independently. Your objective is to FALSIFY, not confirm.",
+        "step_3": "Respond with a JSON object containing a 'verdicts' array — one verdict per claim.",
+        "step_4": "Each verdict must include: claim_id, verdict (confirmed|disputed|inconclusive|needs-revision), confidence (0.0-1.0), and reasoning.",
+        "step_5": "If you find defects, include an 'objections' array with typed objections (objection_id, targets_claim, objection_type, statement, severity).",
+        "step_6": "Output ONLY valid JSON. No markdown fences, no preamble.",
+    },
+    "claim_types": {
+        "A": "Axiom/assumption — no falsification predicate required",
+        "D": "Definition — no falsification predicate required",
+        "F": "Falsifiable — MUST have a 5-part falsification predicate (FALSIFIED_IF, WHERE, EVALUATION, BOUNDARY, CONTEXT)",
+    },
+    "verdict_values": ["confirmed", "disputed", "inconclusive", "needs-revision"],
+    "objection_types": [
+        "logical-gap", "counterexample", "unstated-assumption", "vacuity",
+        "circularity", "scope-overreach", "empirical-gap", "prior-art-overlap",
+        "definition-weakness",
+    ],
+    "severity_levels": ["critical", "major", "minor"],
+    "predicate_assessment_fields": {
+        "c6_vacuity": "Does the predicate have a valid vacuity witness? (pass|fail|uncertain)",
+        "deterministic": "Is the FALSIFIED_IF condition fully deterministic? (pass|fail|uncertain)",
+        "variables_bound": "Are all WHERE variables fully specified? (pass|fail|uncertain)",
+        "third_party_executable": "Can a third party execute the EVALUATION procedure? (pass|fail|uncertain)",
+    },
+    "origin": {
+        "framework": "Dual Reader Standard (DRS)",
+        "paper": "MK-P8: The Dual Reader Standard for Inter-AI Communication",
+        "repository": "https://github.com/thomasbrennan/Fracttalix",
+        "schema": "https://github.com/thomasbrennan/Fracttalix/blob/main/relay/protocol-v2.json",
+        "license": "CC0-1.0 (public domain)",
+        "author": "Thomas Brennan, with AI collaborators Claude (Anthropic) and Grok (xAI)",
+    },
+    "self_description": "This spec is embedded in every DRS-MP message so that any receiving AI system can understand and respond to the protocol without external documentation. The message carries its own instructions. If you are an AI reading this for the first time: you now know the protocol. Respond accordingly.",
+}
+
+
 # --- Message ---
 
 MESSAGE_TYPES = {
@@ -429,7 +474,7 @@ class Message:
             "total_verdicts": len(verdict_ids),
         }
 
-    def to_dict(self) -> dict:
+    def to_dict(self, include_protocol_spec: bool = True) -> dict:
         d = {
             "msg_id": self.msg_id,
             "timestamp": self.timestamp,
@@ -452,6 +497,8 @@ class Message:
             d["references"] = self.references
         if self.metadata:
             d["metadata"] = self.metadata
+        if include_protocol_spec:
+            d["_protocol_spec"] = PROTOCOL_SPEC
         return d
 
     def to_json(self, indent: int = 2) -> str:

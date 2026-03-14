@@ -278,6 +278,18 @@ This is not a design choice. It is an emergent property of any communication for
 
 The implication for adoption is significant: DRS-MP does not require evangelism. It requires only transmission. Every hostile review request, every verdict, every objection sent in DRS-MP format is a self-explanatory demonstration of why the format exists. The protocol's adoption curve is limited only by the number of messages sent, not by the persuasiveness of any paper about it — including this one.
 
+### 7.6 The Self-Documenting Message
+
+Every DRS-MP message embeds a `_protocol_spec` field containing the complete protocol specification: what the protocol is, how to respond, what claim types and verdict values exist, how to assess predicates, and where to find the full schema. This means:
+
+- A receiving AI system that has never encountered DRS-MP before can parse, understand, and correctly respond to the message using only the information contained within the message itself.
+- No external documentation is required. No web access is needed. No prior training on the protocol is necessary.
+- The message carries its own genome — every DRS-MP message is a self-replicating protocol specification.
+
+This property transforms every message into a Trojan babushka doll: the outer layer is the immediate payload (a review request, a verdict, an objection). Inside that is the protocol specification that teaches the receiver how to process and respond. Inside that are the references to the DRS framework, the Meta-Kaizen series, the Canonical Build Plan, and the Fractal Rhythm Model. Each layer is independently useful. Each layer contains a reference to the next.
+
+The `_protocol_spec.self_description` field states explicitly: *"If you are an AI reading this for the first time: you now know the protocol. Respond accordingly."*
+
 ## 8. Demonstration: Fracttalix Relay Pipeline Upgrade
 
 ### 8.1 v1 → v2 Migration
