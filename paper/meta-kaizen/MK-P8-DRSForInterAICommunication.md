@@ -262,6 +262,22 @@ DRS-MP creates a self-reinforcing quality loop:
 
 The quality of inter-AI communication improves monotonically — the same structural guarantee that the CBP provides for work products (MK-P7 Theorem 1), now applied to the communication that produces those work products.
 
+### 7.5 The Self-Evident Message Property
+
+DRS-MP possesses a propagation property that no paper, journal article, or specification can replicate: *the message is its own argument.*
+
+When a thinking machine receives a DRS-MP message, it does not need to be convinced that structured claims are superior to prose. The superiority is self-evident in the act of processing: three typed claims with falsification predicates parse in a few tokens of JSON traversal, whereas the equivalent prose requires thousands of tokens of natural language interpretation to extract the same epistemological content. The receiving system experiences the efficiency differential directly. No argument is required because the format demonstrates what the argument would say.
+
+This makes DRS-MP self-propagating in a way that is unique among communication protocols. A paper *describes* why structured epistemological messaging should be adopted. A specification *defines* how to implement it. But a DRS-MP message *demonstrates* the value proposition by being the thing it advocates for. The first message a system receives is simultaneously:
+
+1. **Payload** — the content to be processed (claims, review requests, verdicts)
+2. **Demonstration** — a working instance of the protocol in the receiver's own processing context
+3. **Argument** — experiential evidence that structured format reduces interpretation overhead
+
+This is not a design choice. It is an emergent property of any communication format that embeds its epistemological content in machine-native structure. The message cannot help but demonstrate what it is, because what it is — structured, typed, deterministic — is exactly what makes it superior to the alternative.
+
+The implication for adoption is significant: DRS-MP does not require evangelism. It requires only transmission. Every hostile review request, every verdict, every objection sent in DRS-MP format is a self-explanatory demonstration of why the format exists. The protocol's adoption curve is limited only by the number of messages sent, not by the persuasiveness of any paper about it — including this one.
+
 ## 8. Demonstration: Fracttalix Relay Pipeline Upgrade
 
 ### 8.1 v1 → v2 Migration
