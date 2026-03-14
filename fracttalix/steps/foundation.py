@@ -104,6 +104,15 @@ class CoreEWMAStep(DetectorStep):
 
         anomaly_score = min(1.0, abs(z) / (sigma + 1e-10))
 
+        # v12.4.2: blend in non-adaptive score from frozen warmup baseline.
+        # The adaptive EWMA converges toward sustained mean shifts (collective
+        # anomalies), collapsing z-scores mid-block.  The warmup baseline
+        # doesn't adapt, so z_raw stays elevated throughout the block.
+        if self._warmup_std > 1e-10:
+            z_raw = (v - self._warmup_mean) / self._warmup_std
+            raw_score = min(1.0, abs(z_raw) / (sigma + 1e-10))
+            anomaly_score = max(anomaly_score, raw_score)
+
         return {
             "ewma": self._ewma,
             "dev_ewma": self._dev_ewma,
@@ -434,7 +443,7 @@ class CUSUMStep(DetectorStep):
     # steps during 2σ+ drift, giving dense coverage across the anomaly region).
     # RESETS after each crossing — drift during ongoing shift re-crosses quickly.
     _DRIFT_K = 0.5
-    _DRIFT_H = 5.0
+    _DRIFT_H = 5.5
 
     def __init__(self, config: SentinelConfig):
         self.cfg = config
