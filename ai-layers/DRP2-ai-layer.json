@@ -129,6 +129,7 @@
       "statement": "The Upstream Measurement Principle is a conservation law for epistemic information: a falsification predicate with O derived from P contains zero falsification content — no new information about P can be extracted from the test.",
       "prose_section": "§3",
       "scope_note": "Proved here for binary M: O → {FALSIFIED, NOT FALSIFIED}. Generalisation to continuous and probabilistic M: same argument structure holds; formal proof deferred (DRP-2 §8 disclosed gap). DRP-4 receives this as binary-scoped and proves the full generalisation.",
+      "dispute_note_S58": "DISPUTED by independent review (Grok QC, confidence 0.90) and internal audit (Claude). Two issues: (1) The proof step 'observing h(P) does not update the prior on P' is invalid under standard information theory — I(f(X);X) = H(f(X)) >= 0, not 0 (Cover & Thomas Ch. 2). (2) Under the charitable interpretation where 'O=f(P)' means O is determined by the statement of P rather than its truth value, the result is trivially true and subsumed by the Data Processing Inequality (1991). Recommend: downgrade from 'conservation law' to 'design constraint' — the UMP itself (C-DRP.8) is the load-bearing claim; the I=0 framing adds notation but not substance.",
       "falsification_predicate": {
         "condition": "n_counterexamples > 0",
         "inputs": [

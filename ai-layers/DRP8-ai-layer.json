@@ -175,17 +175,19 @@
         "IR-1"
       ],
       "falsification_predicate": {
-        "FALSIFIED_IF": "EXISTS system S satisfying C1-C4 AND observation set O = {x(t_i): t_i ≤ t_ref} AND state x(t_ref+τ) SUCH THAT I(O; x(t_ref+τ)) > δ_causal",
+        "FALSIFIED_IF": "EXISTS system S satisfying C1-C4 AND observation set O = {x(t_i): t_i ≤ t_ref} AND state x(t_ref+τ) SUCH THAT T_directed(x(t_ref+τ) → O) > δ_causal",
         "WHERE": {
           "S": "DDE system satisfying C1-C4",
           "O": "Countable indexed set drawn from causal past: t_i ≤ t_ref",
-          "δ_causal": "3σ of background mutual information under shuffled-index null model"
+          "T_directed(x(t_ref+τ) → O)": "Transfer entropy from future state to past observations. T_{X→Y} = H(Y_future | Y_past) − H(Y_future | Y_past, X_future). Asymmetric: non-zero only if future causally influences past, not vice versa (Schreiber 2000).",
+          "δ_causal": "3σ of background transfer entropy under shuffled-index null model"
         },
-        "EVALUATION": "(1) Specify C1-C4 system S and measure τ via Protocol 3. (2) Draw O from t_i ≤ t_ref. (3) Compute I(O; x(t_ref+τ)) using KSG estimator (k=5, ≥500 paired samples). (4) Compute δ_causal from shuffled null. (5) Test I > δ_causal.",
-        "BOUNDARY": "NOT FALSIFIED if I(O; x(t_ref+τ)) ≤ δ_causal for all tested C1-C4 systems.",
-        "CONTEXT": "C-DRP8.1 | Type F | DDE causal isolation | KSG estimator k=5 | same implementation as P3 substrate validation",
-        "vacuity_witness": "C1-C4 system with backward-coupled noise injection where x(t_ref+τ) is directly fed into history. Produces I > δ_causal. Witness deliberately violates causal structure to demonstrate predicate discriminating power. C6: PASS."
-      }
+        "EVALUATION": "(1) Specify C1-C4 system S and measure τ via Protocol 3. (2) Draw O from t_i ≤ t_ref. (3) Compute transfer entropy T(x(t_ref+τ) → O) using KSG estimator (k=5, ≥500 paired samples). (4) Compute δ_causal from shuffled null. (5) Test T > δ_causal.",
+        "BOUNDARY": "NOT FALSIFIED if T(x(t_ref+τ) → O) ≤ δ_causal for all tested C1-C4 systems.",
+        "CONTEXT": "C-DRP8.1 | Type F | DDE causal isolation | KSG estimator k=5 | same implementation as P3 substrate validation | S58 correction: replaced symmetric mutual information I(O; x(t+τ)) with asymmetric transfer entropy T(x(t+τ)→O), per Grok QC review. MI is symmetric and high in deterministic DDEs where future depends on past — it does not test the directionality claim. Transfer entropy (Schreiber, Phys Rev Lett 85:461, 2000) is the standard directed information-theoretic measure.",
+        "vacuity_witness": "C1-C4 system with backward-coupled noise injection where x(t_ref+τ) is directly fed into history. Produces T > δ_causal. Witness deliberately violates causal structure to demonstrate predicate discriminating power. C6: PASS."
+      },
+      "dispute_note_S58": "Grok QC (confidence 0.75) correctly identified that mutual information I(O; x(t+τ)) is symmetric and therefore cannot distinguish 'past depends on future' from 'future depends on past'. Fixed by switching to transfer entropy."
     },
     {
       "claim_id": "C-DRP8.2",
