@@ -84,6 +84,7 @@ class VirtuDetector(BaseDetector):
         time_to_bif: Optional[float],
         omega_in_scope: bool,
         step: int,
+        baseline_ratio: float = 1.0,
     ) -> DetectorResult:
         """FRMSuite-native update: receives pre-computed Lambda/Omega outputs.
 
@@ -99,6 +100,10 @@ class VirtuDetector(BaseDetector):
             Whether OmegaDetector is currently in scope (FRM structure intact).
         step : int
             Current observation step (from FRMSuite).
+        baseline_ratio : float
+            Ratio of current λ to baseline λ (from LambdaDetector.baseline_ratio).
+            Values < 0.5 indicate significant critical slowing down and activate
+            Virtu even when lam_rate is too smooth to cross the rate threshold.
         """
         self._step += 1
 
@@ -111,15 +116,38 @@ class VirtuDetector(BaseDetector):
                 step=step,
             )
 
-        # Require actively declining λ — stable or rising λ means no bifurcation signal
-        if time_to_bif is None or lam_rate >= -1e-3:
+        # Activate if either:
+        # 1. Lambda rate is rapidly declining (rate-based, responsive to fast changes)
+        # 2. Lambda baseline_ratio < 0.5 (ratio-based, catches gradual sustained decline)
+        #    The 20-window rolling rate estimate is often too smooth to cross -1e-3;
+        #    baseline_ratio gives a direct measure of cumulative λ decline.
+        rate_declining = lam_rate < -1e-3
+        ratio_declining = baseline_ratio < 0.5
+
+        if not rate_declining and not ratio_declining:
             return DetectorResult(
                 detector=self._name,
                 status=ScopeStatus.NORMAL,
                 score=0.0,
-                message="lambda stable or insufficient data",
+                message=f"lambda stable (rate={lam_rate:.5f} ratio={baseline_ratio:.2f})",
                 step=step,
             )
+
+        # Need at least a time-to-bif estimate for urgency scoring.
+        # When ratio-based activation fires without a rate-based ttb, estimate
+        # ttb from baseline_ratio: at ratio=0.5, halfway to bifurcation.
+        if time_to_bif is None:
+            if ratio_declining and lambda_val is not None and lambda_val > 0:
+                # Rough estimate: remaining distance ∝ lambda_val × lambda_window
+                time_to_bif = lambda_val * 20.0 * 4.0  # 20-window × fit_interval
+            else:
+                return DetectorResult(
+                    detector=self._name,
+                    status=ScopeStatus.NORMAL,
+                    score=0.0,
+                    message="no ttb estimate available",
+                    step=step,
+                )
 
         # omega_trust gate: if FRM structure (ω) is uncertain, report OUT_OF_SCOPE
         if self._omega_trust and not omega_in_scope:
@@ -136,21 +164,26 @@ class VirtuDetector(BaseDetector):
         ttb_conservative = time_to_bif / max(self._safety_factor, 1e-10)
         self._last_ttb = ttb_conservative
 
-        # Confidence grading based on rate stability
+        # Confidence grading: rate takes precedence; ratio gives LOW confidence
         if lam_rate < -0.01:
             confidence = "HIGH"
         elif lam_rate < -0.003:
             confidence = "MEDIUM"
+        elif rate_declining:
+            confidence = "LOW"
         else:
+            # ratio-only activation — less precise than rate-based
             confidence = "LOW"
         self._last_confidence = confidence
 
         # Urgency score: 0 = distant (ttb >> horizon), 1 = imminent (ttb → 0)
         score = 1.0 - min(1.0, ttb_conservative / _HORIZON)
 
+        activation = "rate" if rate_declining else "ratio"
         omega_confirmed = omega_in_scope
         msg = (
             f"ttb={ttb_conservative:.1f} confidence={confidence} "
+            f"activation={activation} ratio={baseline_ratio:.2f} "
             f"safety_factor={self._safety_factor:.2f} omega_confirmed={omega_confirmed}"
         )
 

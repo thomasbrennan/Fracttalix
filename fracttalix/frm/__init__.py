@@ -23,11 +23,13 @@
 from fracttalix.frm.frm_suite import FRMSuite, FRMSuiteResult
 from fracttalix.frm.omega import OmegaDetector
 from fracttalix.frm.virtu import VirtuDetector
+from fracttalix.suite.lambda_detector import LambdaDetector
 from fracttalix.suite.base import ScopeStatus, DetectorResult
 
 __all__ = [
     "FRMSuite",
     "FRMSuiteResult",
+    "LambdaDetector",
     "OmegaDetector",
     "VirtuDetector",
     "ScopeStatus",

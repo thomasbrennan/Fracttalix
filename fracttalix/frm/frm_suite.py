@@ -6,8 +6,8 @@
 #     HopfDetector(ews), DiscordDetector, DriftDetector,
 #     VarianceDetector, CouplingDetector
 #
-#   Layer 2 (FRM physics, scipy required):
-#     Lambda  = HopfDetector(frm)  — track λ → 0
+#   Layer 2 (FRM physics, numpy only):
+#     Lambda  = LambdaDetector v2  — track λ → 0 via variance-inversion + spectral width
 #     Omega   = OmegaDetector      — track ω vs π/(2·τ_gen)   [Lady Ada]
 #     Virtu   = VirtuDetector      — time-to-bifurcation        [Lady Ada]
 #
@@ -41,7 +41,7 @@ import dataclasses
 from typing import Any, Dict, Iterator, List, Optional
 
 from fracttalix.suite import DetectorSuite, SuiteResult, ScopeStatus, DetectorResult
-from fracttalix.suite.hopf import HopfDetector
+from fracttalix.suite.lambda_detector import LambdaDetector
 from fracttalix.frm.omega import OmegaDetector
 from fracttalix.frm.virtu import VirtuDetector
 
@@ -163,10 +163,13 @@ class FRMSuite:
         )
 
         # Layer 2: FRM physics
+        # LambdaDetector v2: variance-inversion + spectral peak width.
+        # Replaces HopfDetector(method='frm') which used parametric curve_fit —
+        # validated to fail on nonlinear Hopf normal form data.
         lam_kw = {**(lambda_kwargs or {})}
         if tau_gen is not None:
             lam_kw.setdefault("tau_gen", tau_gen)
-        self._lambda = HopfDetector(method='frm', **lam_kw)
+        self._lambda = LambdaDetector(**lam_kw)
 
         omg_kw = {**(omega_kwargs or {})}
         if tau_gen is not None:
@@ -269,38 +272,26 @@ class FRMSuite:
         omega_result: DetectorResult,
         step: int,
     ) -> DetectorResult:
-        """Run VirtuDetector with Lambda/Omega outputs."""
+        """Run VirtuDetector with Lambda/Omega outputs.
+
+        Reads LambdaDetector properties directly (not via message parsing)
+        for reliability. baseline_ratio provides Virtu activation even when
+        lam_rate is too smooth (20-window rolling) to cross the rate threshold.
+        """
         if self._lambda_available is False:
-            # Virtu requires Lambda output (time_to_bif, lam_rate)
             return DetectorResult(
                 detector="VirtuDetector",
                 status=ScopeStatus.OUT_OF_SCOPE,
                 score=0.0,
-                message="Lambda unavailable (scipy required for time-to-bifurcation)",
+                message="Lambda unavailable",
                 step=step,
             )
 
-        # Parse time_to_bif from Lambda message (format: "frm λ=X rate=Y ttb=Z")
-        ttb = None
-        lam_val = None
-        lam_rate = 0.0
-        msg = lambda_result.message
-        if "ttb=" in msg:
-            try:
-                ttb_str = msg.split("ttb=")[1].split()[0]
-                ttb = float(ttb_str)
-            except (IndexError, ValueError):
-                pass
-        if "λ=" in msg:
-            try:
-                lam_val = float(msg.split("λ=")[1].split()[0])
-            except (IndexError, ValueError):
-                pass
-        if "rate=" in msg:
-            try:
-                lam_rate = float(msg.split("rate=")[1].split()[0])
-            except (IndexError, ValueError):
-                pass
+        # Read Lambda state directly from the detector object
+        lam_val = self._lambda.current_lambda
+        lam_rate = self._lambda.lambda_rate
+        ttb = self._lambda.time_to_transition
+        baseline_ratio = self._lambda.baseline_ratio
 
         omega_in_scope = omega_result.status in (ScopeStatus.NORMAL, ScopeStatus.ALERT)
 
@@ -310,6 +301,7 @@ class FRMSuite:
             time_to_bif=ttb,
             omega_in_scope=omega_in_scope,
             step=step,
+            baseline_ratio=baseline_ratio,
         )
 
     def reset(self) -> None:

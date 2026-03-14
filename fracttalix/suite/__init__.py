@@ -39,6 +39,7 @@ from fracttalix.suite.drift import DriftDetector
 from fracttalix.suite.variance import VarianceDetector
 from fracttalix.suite.coupling import CouplingDetector
 from fracttalix.suite.suite import DetectorSuite, SuiteResult
+from fracttalix.suite.lambda_detector import LambdaDetector
 
 __all__ = [
     "ScopeStatus",
@@ -51,4 +52,5 @@ __all__ = [
     "CouplingDetector",
     "DetectorSuite",
     "SuiteResult",
+    "LambdaDetector",
 ]
