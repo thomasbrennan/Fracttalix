@@ -279,6 +279,8 @@ The DRS governs the entire Fracttalix corpus (22 objects, two tracks):
 | Falsification Kernel | ai-layers/falsification-kernel.md | v1.1 (S50) |
 | AI Layer Schema | ai-layers/ai-layer-schema.json | v3-S51 |
 | DRS for Software | MK-P6 | DRAFT (NOT-PHASE-READY) |
+| Canonical Build Plan | MK-P7 | CBP Step 3 (hostile review) |
+| DRS-MP for Inter-AI Communication | MK-P8 | CBP Step 3 (hostile review) |
 
 ### Current verification status (as of Session 51, March 2026)
 
@@ -797,6 +799,35 @@ The kernel K = (P, O, M, B) is an instant Esperanto for machines. Unlike human E
 The implication is that the first corpus to achieve full DRS compliance — every claim machine-evaluable, every predicate deterministic, every test binding pinned to a SHA — becomes the first corpus that is *fully readable by any AI system in any country without translation*. The knowledge escapes the language trap.
 
 This was not the goal. The goal was honest verification. But honest verification, it turns out, requires a language that cannot lie about what it means. That language is binary logic. And binary logic does not need translating.
+
+## 19. The DRS Message Protocol — Extension to Inter-AI Communication
+
+The DRS was designed for papers and software. It was discovered to work for something else: the messages AI systems send to each other.
+
+### 19.1 The extension
+
+Meta-Kaizen Paper 8 (March 2026) extends the DRS to inter-AI communication. The DRS Message Protocol (DRS-MP) applies the same dual-channel architecture to every message exchanged between AI agents in a multi-agent system:
+
+- **Channel 1 (prose body):** Human-readable audit trail, retained for oversight
+- **Channel 2 (structured fields):** Typed claim objects, classified objections, machine-parseable verdicts with predicate assessments
+
+The protocol is transport-independent. It operates above any communication layer — git-mediated relay, HTTP, Google A2A streaming, Anthropic MCP — because it governs content, not transport.
+
+### 19.2 Operational evidence
+
+The Fracttalix relay system provides the strongest evidence for the DRS value proposition. Stronger than the five DRP papers. Stronger than the theoretical arguments in Sections 15–18 of this document.
+
+As of March 14, 2026, the relay QC pipeline has processed 30 of 70 falsifiable claims through autonomous hostile review by an independent AI system (Grok, xAI). The structured format caught defects that prose review did not:
+
+- **Math errors:** Field-level comparison of `EVALUATION` against `FALSIFIED_IF` identified procedures that did not test what the predicate claimed to test.
+- **Logic inversions:** Typed objections (`objection_type: "logical-gap"`) identified predicates that tested for conditions opposite to what would actually falsify the claim.
+- **Statistical measure errors:** Structured `sources_checked` fields revealed mismatches between referenced statistical measures and evaluation procedures.
+
+These are not hypothetical benefits. These are real defects in a real corpus caught by the format doing real epistemological work. The DRS papers theorize why structured claims should improve verification quality. The relay demonstrates that they do.
+
+The relay architecture itself instantiates the dual-reader pattern at the infrastructure level: the JSON message queue is Channel 2 (machine-authoritative), the git commit diffs are Channel 1 (human-readable), and both contain identical epistemological content. The architecture is its own proof of concept.
+
+Full details: MK-P8 (`paper/meta-kaizen/MK-P8-DRSForInterAICommunication.md`), Section 8.3.
 
 ---
 

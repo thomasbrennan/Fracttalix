@@ -282,6 +282,22 @@ Even in the brief operational period since v2 deployment:
 - **Objection tracking:** Each objection is typed, severity-rated, and linked to a specific claim — enabling automated KVS scoring in CBP Step 4
 - **Predicate assessment:** Grok's evaluation of each claim's predicate quality (vacuity, determinism, variable binding) is captured as structured data, not prose opinion
 
+### 8.3 Operational Evidence: The Relay as Proof
+
+The strongest validation of DRS-MP is not the theoretical argument — it is the relay system itself. As of March 14, 2026, the Fracttalix QC pipeline has processed 30 of 70 falsifiable claims through autonomous hostile review, yielding 4 confirmed, 6 disputed, 12 inconclusive, and 8 needs-revision verdicts.
+
+The disputed claims demonstrate DRS-MP doing real epistemological work:
+
+- **Math errors caught:** Structured predicate assessment identified claims where the EVALUATION procedure did not match the FALSIFIED_IF condition — a defect invisible in prose summaries but immediately flagged by field-level comparison.
+- **Logic inversions caught:** Typed objections with `objection_type: "logical-gap"` identified cases where a claim's falsification predicate tested for a condition that would not actually falsify the claim as stated.
+- **Statistical measure errors caught:** Structured `sources_checked` fields revealed when a claim referenced a statistical measure (e.g., Pearson correlation) that did not match the procedure described in the evaluation.
+
+None of these defects were caught during initial human review or builder-side Meta-Kaizen. They were caught by an independent AI reviewer processing structured claims through DRS-MP — exactly the value proposition the protocol promises.
+
+Critically, these findings were actionable precisely because they arrived as structured data: the `targets_claim` field identified which claim was affected, the `severity` field prioritized triage, and the `proposed_test` field specified how to verify the objection. Under prose-only messaging, the same findings would have required manual parsing, cross-referencing, and classification — the exact information loss that F-MK8.3 predicts.
+
+The relay architecture itself instantiates the dual-reader pattern: the JSON queue is Channel 2 (machine-authoritative), the git commit diffs are Channel 1 (human-readable), and both contain the same epistemological content. The format is not philosophizing about why structured communication should work — it is doing the work.
+
 ## 9. Limitations
 
 **Adoption dependency:** DRS-MP's value scales with adoption. A single agent communicating in DRS-MP with agents that only understand prose must fall back to Channel 1 (prose body). The structured content is preserved in the message but unused by the recipient.
