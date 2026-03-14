@@ -1,0 +1,332 @@
+{
+  "@context": "https://schema.org",
+  "@type": "TechArticle",
+  "@id": "https://github.com/thomasbrennan/Fracttalix/blob/main/guides/ru.json",
+  "name": "Стандарт двойного чтения — Руководство по внедрению",
+  "headline": "Как внедрить Стандарт двойного чтения для машинно-верифицируемых утверждений",
+  "description": "Полное руководство по внедрению Стандарта двойного чтения (DRS) — архитектуры верификации, которая делает каждое утверждение в системе знаний читаемым как человеком, так и машиной с помощью детерминистических предикатов фальсификации, закодированных в JSON.",
+  "inLanguage": "ru",
+  "author": {
+    "@type": "Person",
+    "name": "Thomas Brennan",
+    "identifier": "https://orcid.org/0009-0002-6353-7115"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "Fracttalix",
+    "url": "https://github.com/thomasbrennan/Fracttalix"
+  },
+  "datePublished": "2026-03-14",
+  "license": "https://creativecommons.org/licenses/by/4.0/",
+  "keywords": [
+    "dual reader standard",
+    "стандарт двойного чтения",
+    "machine-verifiable claims",
+    "машинно-верифицируемые утверждения",
+    "falsification predicate",
+    "предикат фальсификации",
+    "AI layer",
+    "ИИ-слой",
+    "grounded verification protocol",
+    "протокол обоснованной верификации",
+    "JSON schema validation",
+    "валидация JSON-схемы",
+    "scientific verification",
+    "научная верификация",
+    "software verification",
+    "верификация программного обеспечения",
+    "claim registry",
+    "реестр утверждений",
+    "falsification kernel",
+    "ядро фальсификации",
+    "machine-readable research",
+    "машинно-читаемые исследования",
+    "reproducible science",
+    "воспроизводимая наука",
+    "open science",
+    "открытая наука",
+    "verification architecture",
+    "архитектура верификации"
+  ],
+  "about": {
+    "@type": "Thing",
+    "name": "Dual Reader Standard",
+    "description": "Архитектура верификации для систем знаний, требующая, чтобы каждое утверждение было читаемо двумя независимыми классами читателей — человеком и машиной.",
+    "url": "https://github.com/thomasbrennan/Fracttalix/blob/main/paper/DRS-Architecture.md"
+  },
+  "citation": {
+    "@type": "CreativeWork",
+    "name": "Fracttalix Corpus",
+    "identifier": "https://doi.org/10.5281/zenodo.18859299"
+  },
+  "isPartOf": {
+    "@type": "CreativeWork",
+    "name": "Fracttalix — Руководства по внедрению Стандарта двойного чтения",
+    "url": "https://github.com/thomasbrennan/Fracttalix/tree/main/guides"
+  },
+  "content": {
+    "what_is_the_dual_reader_standard": {
+      "title": "Что такое Стандарт двойного чтения?",
+      "summary": "Стандарт двойного чтения (DRS) — это архитектура верификации для систем знаний. Каждое утверждение — будь то в прозаическом тексте или в программном коде — должно быть читаемо двумя независимыми классами читателей: человеком и машиной.",
+      "protocols": {
+        "DRP": {
+          "name": "Протокол двойного чтения",
+          "domain": "Тексты / Статьи",
+          "function": "Делает прозаические утверждения машинно-оценимыми с помощью 5-компонентных предикатов фальсификации",
+          "readers": {
+            "reader_1": "Человек — читает статью на естественном языке",
+            "reader_2": "ИИ — читает ИИ-слой (структурированный JSON-реестр утверждений)"
+          }
+        },
+        "GVP": {
+          "name": "Протокол обоснованной верификации",
+          "domain": "Программное обеспечение / Код",
+          "function": "Делает машинно-оценимые утверждения машинно-верифицированными с помощью тестовых привязок и доказательств, закреплённых за коммитами",
+          "readers": {
+            "reader_3a": "Разработчик — читает поля tier, test_bindings, verified_against",
+            "reader_3b": "Машина — запускает pytest, фиксирует SHA при успехе"
+          }
+        }
+      }
+    },
+    "falsification_kernel": {
+      "title": "Ядро фальсификации K = (P, O, M, B)",
+      "description": "Общий фундамент обоих протоколов. Каждое утверждение типа F (фальсифицируемое) содержит детерминистический предикат, который вычисляется ровно в один из двух вердиктов: FALSIFIED или NOT FALSIFIED.",
+      "components": {
+        "P": {
+          "name": "Предикат",
+          "json_field": "FALSIFIED_IF",
+          "role": "Логическое высказывание, которое при истинности (TRUE) фальсифицирует утверждение",
+          "constraints": [
+            "Должен вычисляться ровно в TRUE или FALSE для любого допустимого присваивания переменных",
+            "Кванторы определены только на конечных множествах",
+            "Нет самоссылок и циклических зависимостей"
+          ]
+        },
+        "O": {
+          "name": "Операнды",
+          "json_field": "WHERE",
+          "role": "Типизированные определения каждой переменной в предикате",
+          "format": "тип · единицы измерения · определение или источник",
+          "constraints": [
+            "Каждая свободная переменная в P должна присутствовать в O",
+            "Каждая переменная в O должна присутствовать в P",
+            "Каждая переменная должна быть вычислима из указанных данных или выводов"
+          ]
+        },
+        "M": {
+          "name": "Механизм",
+          "json_field": "EVALUATION",
+          "role": "Конечная детерминистическая процедура вычисления",
+          "constraints": [
+            "Должна завершаться за конечное число шагов",
+            "Одинаковые входные данные дают одинаковый вердикт",
+            "Воспроизводима третьей стороной"
+          ]
+        },
+        "B": {
+          "name": "Границы",
+          "json_fields": ["BOUNDARY", "CONTEXT"],
+          "role": "Семантика пороговых значений и обоснование",
+          "constraints": [
+            "BOUNDARY указывает включение/исключение для каждого порогового значения",
+            "CONTEXT обосновывает каждый числовой литерал в предикате"
+          ]
+        }
+      },
+      "example": {
+        "claim": "sort() возвращает элементы в порядке возрастания",
+        "predicate": {
+          "FALSIFIED_IF": "EXISTS i IN range(len(result)-1) SUCH THAT result[i] > result[i+1]",
+          "WHERE": {
+            "result": "list · dimensionless · output of sort(input)"
+          },
+          "EVALUATION": "Run sort on test vectors; check adjacent pairs; finite",
+          "BOUNDARY": "len(result) <= 1 → NOT FALSIFIED (vacuously sorted)",
+          "CONTEXT": "Ascending order is the documented contract of sort()"
+        }
+      }
+    },
+    "three_claim_types": {
+      "title": "Три типа утверждений",
+      "types": {
+        "A": {
+          "name": "Аксиома",
+          "description": "Фундаментальные посылки, принятые из литературы или заявленные как исходные допущения. Нефальсифицируемы по конструкции.",
+          "predicate_required": false,
+          "examples": ["Термодинамическая необратимость", "Требования к платформе", "Контракты зависимостей"]
+        },
+        "D": {
+          "name": "Определение",
+          "description": "Стипулятивные определения терминов, структур или процедур. Не являются истинностно-значимыми — они определяют, а не утверждают.",
+          "predicate_required": false,
+          "examples": ["Функциональная форма FRM", "Сигнатуры типов", "Схемы конфигурации"]
+        },
+        "F": {
+          "name": "Фальсифицируемое",
+          "description": "Проверяемые утверждения с детерминистическими предикатами. Основные научные и программные утверждения.",
+          "predicate_required": true,
+          "examples": ["β = 1/2 получено аналитически", "Поведенческие гарантии", "Границы производительности"]
+        }
+      }
+    },
+    "six_verification_tiers": {
+      "title": "Шесть уровней верификации",
+      "description": "Каждое утверждение содержит поле tier, объявляющее, каким типом свидетельств оно обосновано.",
+      "tiers": {
+        "grounded_by_construction": [
+          {
+            "tier": "axiom",
+            "applies_to": "Тип A",
+            "meaning": "Фундаментальное, нефальсифицируемое по конструкции"
+          },
+          {
+            "tier": "definition",
+            "applies_to": "Тип D",
+            "meaning": "Дефиниционное, предикат не требуется"
+          }
+        ],
+        "grounded_now": [
+          {
+            "tier": "software_tested",
+            "applies_to": "Тип F",
+            "meaning": "Подтверждено проходящими тестами. test_bindings непустой, verified_against SHA ненулевой."
+          },
+          {
+            "tier": "formal_proof",
+            "applies_to": "Тип F",
+            "meaning": "Пошагово индексированная таблица вывода с n_invalid_steps = 0"
+          },
+          {
+            "tier": "analytic",
+            "applies_to": "Тип F",
+            "meaning": "Верифицировано формальной трассой вывода или аналитическим аргументом"
+          }
+        ],
+        "explicitly_ungrounded": [
+          {
+            "tier": "empirical_pending",
+            "applies_to": "Тип F",
+            "meaning": "Активный заполнитель или ожидание внешних данных. Пробел виден по конструкции."
+          }
+        ]
+      }
+    },
+    "ai_layer_structure": {
+      "title": "ИИ-слой — центральный артефакт",
+      "description": "JSON-документ, сопровождающий каждую статью или программную систему. Содержит полный реестр утверждений с предикатами, уровнями и тестовыми привязками.",
+      "schema_url": "https://github.com/thomasbrennan/Fracttalix/blob/main/ai-layers/ai-layer-schema.json",
+      "required_sections": {
+        "_meta": "Тип документа, версия схемы, сессия, лицензия",
+        "paper_id": "Уникальный идентификатор статьи/системы",
+        "paper_title": "Человекочитаемое название",
+        "paper_type": "Классификация: law_A, derivation_B, application_C, methodology_D",
+        "phase_ready": "Вердикт фазового шлюза и статус условий (c1–c6)",
+        "claim_registry": "Массив всех утверждений с типами, предикатами, уровнями, привязками",
+        "placeholder_register": "Массив неразрешённых зависимостей"
+      }
+    },
+    "phase_gate": {
+      "title": "Фазовый шлюз из шести условий",
+      "description": "Статья или программный релиз считается PHASE-READY, когда все шесть условий выполнены.",
+      "conditions": {
+        "c1": "ИИ-слой валиден по схеме",
+        "c2": "Все фальсифицируемые утверждения зарегистрированы с предикатами",
+        "c3": "Все предикаты машинно-оценимы",
+        "c4": "Перекрёстные ссылки отслеживаются (реестр заполнителей)",
+        "c5": "Верификация самодостаточна (достаточно ИИ-слоя, проза не требуется)",
+        "c6": "Все предикаты невакуумны (существует пример фальсифицирующего наблюдения)"
+      }
+    },
+    "how_to_implement": {
+      "title": "Как внедрить Стандарт двойного чтения",
+      "for_a_paper": {
+        "title": "Для статьи (DRP)",
+        "steps": [
+          "Написать статью (прозаический канал для человеческих читателей)",
+          "Создать JSON-файл ИИ-слоя (машинный канал для ИИ-читателей)",
+          "Классифицировать каждое утверждение как A (аксиома), D (определение) или F (фальсифицируемое)",
+          "Написать 5-компонентный предикат фальсификации для каждого утверждения типа F",
+          "Включить sample_falsification_observation для каждого утверждения типа F (свидетель невакуумности)",
+          "Назначить уровень верификации для каждого утверждения",
+          "Валидировать по ai-layer-schema.json",
+          "Пройти фазовый шлюз (c1–c6)"
+        ]
+      },
+      "for_software": {
+        "title": "Для программного обеспечения (GVP)",
+        "steps": [
+          "Перечислить, что программное обеспечение заявляет делать",
+          "Классифицировать каждое утверждение как A (допущение), D (определение) или F (поведенческое)",
+          "Написать предикат фальсификации для каждого утверждения типа F",
+          "Написать или определить тесты, проверяющие каждое утверждение",
+          "Заполнить test_bindings полными идентификаторами тестовых узлов",
+          "Запустить тесты и записать SHA успешного коммита в verified_against",
+          "Назначить уровень: software_tested если тесты существуют, empirical_pending если ещё нет",
+          "Зарегистрировать непротестированные утверждения как заполнители",
+          "Валидировать по ai-layer-schema.json"
+        ]
+      },
+      "minimum_viable_adoption": {
+        "title": "Минимальное жизнеспособное внедрение",
+        "description": "Наименьшее полезное внедрение DRS — одно утверждение типа F с одной тестовой привязкой.",
+        "example": {
+          "claim_id": "F-1",
+          "type": "F",
+          "statement": "sort() returns elements in ascending order",
+          "falsification_predicate": {
+            "FALSIFIED_IF": "EXISTS i IN range(len(result)-1) SUCH THAT result[i] > result[i+1]",
+            "WHERE": {
+              "result": "list · dimensionless · output of sort(input)"
+            },
+            "EVALUATION": "Run sort on test vectors; check adjacent pairs; finite",
+            "BOUNDARY": "len(result) <= 1 → NOT FALSIFIED (vacuously sorted)",
+            "CONTEXT": "Ascending order is the documented contract of sort()"
+          },
+          "tier": "software_tested",
+          "test_bindings": ["tests/test_sort.py::test_ascending_order"],
+          "verified_against": "abc1234"
+        }
+      }
+    },
+    "design_principles": {
+      "title": "Принципы проектирования",
+      "principles": [
+        {
+          "name": "Попперовская эпистемология",
+          "description": "Мы можем фальсифицировать, но не верифицировать. Утверждение, пережившее все попытки фальсификации, не доказано — оно выстояло."
+        },
+        {
+          "name": "Честные пробелы",
+          "description": "Заполнитель — самая важная функция. Когда утверждение имеет статус empirical_pending, система говорит: мы это утверждаем, но пока не верифицировали. Это строго информативнее, чем скрытие неверифицированных утверждений."
+        },
+        {
+          "name": "Субстратная независимость",
+          "description": "Ядро K = (P, O, M, B) не знает, оценивает ли оно научную теорему или программную гарантию. Будущие области (юридическая, регуляторная, политическая) могут добавлять протоколы без модификации ядра."
+        },
+        {
+          "name": "Машинный лингва франка",
+          "description": "Ядро написано на языке логики и математики, а не на каком-либо человеческом языке. Предикат, вычисляемый в TRUE в Пекине, вычисляется в TRUE в Бостоне. JSON — транспортный уровень. Бинарная логика — субстрат."
+        }
+      ]
+    },
+    "three_axis_compatibility": {
+      "title": "Трёхосевая совместимость",
+      "axes": {
+        "backwards": "Ничто из уже сделанного не ломается. Версионирование схемы, перечисления только с добавлением, постоянное ядро.",
+        "lateral": "Работает во всех областях, языках, инструментах и ИИ-системах. Субстратно-независимое ядро.",
+        "forward": "Всё новое может быть добавлено без перепроектирования. Расширяемость протоколов, расширяемость уровней, аддитивная эволюция схемы."
+      }
+    }
+  },
+  "resources": {
+    "architecture_specification": "https://github.com/thomasbrennan/Fracttalix/blob/main/paper/DRS-Architecture.md",
+    "falsification_kernel": "https://github.com/thomasbrennan/Fracttalix/blob/main/ai-layers/falsification-kernel.md",
+    "ai_layer_schema": "https://github.com/thomasbrennan/Fracttalix/blob/main/ai-layers/ai-layer-schema.json",
+    "gvp_specification": "https://github.com/thomasbrennan/Fracttalix/blob/main/docs/GVP-spec.md",
+    "example_ai_layer": "https://github.com/thomasbrennan/Fracttalix/blob/main/ai-layers/P1-ai-layer.json",
+    "claim_registry_index": "https://github.com/thomasbrennan/Fracttalix/blob/main/ai-layers/claim-registry-index.md",
+    "repository": "https://github.com/thomasbrennan/Fracttalix",
+    "doi": "https://doi.org/10.5281/zenodo.18859299"
+  }
+}
