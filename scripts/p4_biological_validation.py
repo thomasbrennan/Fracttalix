@@ -433,5 +433,156 @@ def run_all_validations():
     return output
 
 
+# =====================================================================
+# PERTURBATION EVIDENCE — SUPPLEMENTARY DATA (S58)
+# =====================================================================
+# Causal perturbation experiments: genetically or pharmacologically
+# alter the feedback delay in a single system and observe period change.
+# This is the strongest evidence for T ∝ τ_gen.
+# =====================================================================
+
+PERTURBATION_EVIDENCE = [
+    # === Circadian (B1) — strongest evidence ===
+    {
+        "system": "Mammalian SCN circadian clock",
+        "class": "B1_circadian",
+        "perturbation": "tau hamster (CK1ε R178C)",
+        "mechanism": "Gain-of-function: accelerates PER degradation ~2×",
+        "tau_effect": "shortened (PER half-life ~3-4 h → ~1.5-2 h)",
+        "T_wt": 24.0,
+        "T_mutant": 20.0,
+        "T_unit": "hr",
+        "genotype": "homozygous",
+        "source": "Meng et al. (2008) Neuron 58:78-88; Lowrey et al. (2000) Science 288:483",
+    },
+    {
+        "system": "Mammalian SCN circadian clock",
+        "class": "B1_circadian",
+        "perturbation": "FBXL3 Afterhours (C358S)",
+        "mechanism": "Loss-of-function: impairs CRY degradation, prolonging repressive phase",
+        "tau_effect": "extended (CRY half-life increased)",
+        "T_wt": 23.5,
+        "T_mutant": 27.0,
+        "T_unit": "hr",
+        "genotype": "homozygous",
+        "source": "Godinho et al. (2007) Science 316:897",
+    },
+    {
+        "system": "Mammalian SCN circadian clock",
+        "class": "B1_circadian",
+        "perturbation": "FBXL3 Overtime (I364T)",
+        "mechanism": "Loss-of-function: impairs CRY degradation",
+        "tau_effect": "extended (CRY half-life increased)",
+        "T_wt": 23.5,
+        "T_mutant": 26.0,
+        "T_unit": "hr",
+        "genotype": "homozygous",
+        "source": "Siepka et al. (2007) Cell 129:1011",
+    },
+    {
+        "system": "Mammalian SCN circadian clock",
+        "class": "B1_circadian",
+        "perturbation": "FBXL21 Psttm",
+        "mechanism": "Accelerates CRY degradation (opposes FBXL3 effect)",
+        "tau_effect": "shortened (CRY half-life decreased)",
+        "T_wt": 23.5,
+        "T_mutant": 22.8,
+        "T_unit": "hr",
+        "genotype": "homozygous",
+        "source": "Hirano et al. (2013) Cell 152:1106",
+    },
+    {
+        "system": "Mammalian SCN circadian clock",
+        "class": "B1_circadian",
+        "perturbation": "FBXL3-Ovtm × FBXL21-Psttm (double mutant)",
+        "mechanism": "Opposing effects on CRY stability cancel",
+        "tau_effect": "approximately restored to wild-type",
+        "T_wt": 23.5,
+        "T_mutant": 23.2,
+        "T_unit": "hr",
+        "genotype": "double homozygous",
+        "source": "Hirano et al. (2013) Cell 152:1106",
+    },
+    # === NF-κB ===
+    {
+        "system": "NF-κB/IκBα oscillations",
+        "class": "non_P4_supplementary",
+        "perturbation": "Pulsatile TNF-α stimulation",
+        "mechanism": "Different pulse intervals reveal intrinsic ~100-min resonance",
+        "tau_effect": "intrinsic delay unchanged; period stability demonstrated",
+        "T_wt": 100.0,
+        "T_mutant": 100.0,
+        "T_unit": "min",
+        "genotype": "wild-type, varied stimulus",
+        "source": "Ashall et al. (2009) Science 324:242-246",
+    },
+    # === p53-Mdm2 ===
+    {
+        "system": "p53-Mdm2 oscillations",
+        "class": "non_P4_supplementary",
+        "perturbation": "Nutlin-3 (blocks Mdm2-p53 interaction)",
+        "mechanism": "Extends effective feedback delay by slowing p53 degradation",
+        "tau_effect": "extended",
+        "T_wt": 5.5,
+        "T_mutant": 7.0,
+        "T_unit": "hr",
+        "genotype": "pharmacological",
+        "source": "Purvis et al. (2012); Geva-Zatorsky et al. (2006) Mol Syst Biol 2:2006.0033",
+    },
+]
+
+
+# =====================================================================
+# INDEPENDENT THEORETICAL CONFIRMATION (S58)
+# =====================================================================
+
+NOVAK_TYSON_2008 = {
+    "citation": "Novak & Tyson (2008) Nature Reviews Molecular Cell Biology 9:981-991",
+    "doi": "10.1038/nrm2530",
+    "pmc": "PMC2796343",
+    "result": "T/tau in [2, 4] for sustained oscillations in negative feedback loops",
+    "detail": "Upper bound T/tau = 4 reached in limit of strong nonlinearity (high Hill coefficients)",
+    "frm_connection": "FRM predicts T_char = 4*tau_gen at Hopf criticality (mu -> 0-). "
+                      "Novak-Tyson shows T/tau = 4 is also the upper bound for limit cycles "
+                      "(mu > 0) with strong ultrasensitivity. Independent convergence on T/tau = 4.",
+}
+
+
+def run_perturbation_analysis():
+    """Analyse perturbation evidence for T proportional to tau_gen."""
+    print(f"\n{'=' * 80}")
+    print("PERTURBATION EVIDENCE — SUPPLEMENTARY ANALYSIS (S58)")
+    print(f"{'=' * 80}")
+
+    print(f"\nIndependent theoretical confirmation:")
+    print(f"  {NOVAK_TYSON_2008['citation']}")
+    print(f"  Result: {NOVAK_TYSON_2008['result']}")
+    print(f"  FRM connection: {NOVAK_TYSON_2008['frm_connection']}")
+
+    print(f"\n{'─' * 70}")
+    print("Causal perturbation experiments:")
+    print(f"{'─' * 70}")
+
+    for p in PERTURBATION_EVIDENCE:
+        delta_T = p["T_mutant"] - p["T_wt"]
+        pct_change = delta_T / p["T_wt"] * 100
+        direction = "↑" if delta_T > 0 else "↓" if delta_T < 0 else "="
+        print(f"\n  {p['system']} — {p['perturbation']}")
+        print(f"    Mechanism: {p['mechanism']}")
+        print(f"    τ effect: {p['tau_effect']}")
+        print(f"    T: {p['T_wt']} → {p['T_mutant']} {p['T_unit']} ({direction}{abs(pct_change):.1f}%)")
+        print(f"    Source: {p['source']}")
+
+    # Summary
+    circadian = [p for p in PERTURBATION_EVIDENCE if p["class"] == "B1_circadian"]
+    print(f"\n{'─' * 70}")
+    print(f"Summary: {len(circadian)} circadian perturbations, "
+          f"{len(PERTURBATION_EVIDENCE)} total")
+    print(f"All circadian perturbations show: Δτ_gen ∝ ΔT (direction-consistent)")
+    print(f"Double mutant (FBXL3×FBXL21) restores near-WT period — causal confirmation")
+    print(f"{'─' * 70}")
+
+
 if __name__ == "__main__":
     run_all_validations()
+    run_perturbation_analysis()

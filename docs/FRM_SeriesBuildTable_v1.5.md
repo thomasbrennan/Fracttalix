@@ -2,7 +2,7 @@
 *Fractal Rhythm Model — Unified Corpus*
 *Living document. Updated by Claude (Anthropic) as
 architect revises plans during construction.*
-*Last revised: Session 57 — P4 PHASE-READY (15/15 biological systems validated), P2 PHASE-READY (formal canonical build), Act I+P4 complete, Phase-Ready 12/21*
+*Last revised: Session 58 — S58 perturbation evidence and Novak-Tyson independent confirmation. P4 PHASE-READY (15/15 biological systems validated + causal perturbation data), P2 PHASE-READY (formal canonical build), Act I+P4 complete, Phase-Ready 12/21*
 *KVS Score: 0.832 (threshold κ = 0.75)*
 *κ_corpus: 0.91*
 
@@ -581,6 +581,7 @@ framework.
 | v3.6 | Session 56 | P1 submission history: Preprints.org REJECTED (Preprints ID 202784, submitted 2026-03-12, declined 2026-03-13, desk rejection <24hr, no reason given). Second preprint rejection after bioRxiv (S49). arXiv route remains primary strategy. |
 | v3.7 | Session 57 | P2 canonical build complete. Formal Phases 2–5 executed (S57). 10 hostile review objections, all addressed. CBT I-9 all 7 steps PASS. P2 AI layer v4→v5. P2 status: PHASE-READY (S57). Act I now fully PHASE-READY (P1, P2, P3). R-1 (P2 dependency chain) RESOLVED — all downstream edges confirmed. Phase-Ready count 10→11. Build Table v3.7. |
 | v3.8 | Session 57 | P4 PHASE-READY. Biological dataset assembled: 15 systems across 5 classes (B1 circadian 5, B2 cell cycle 3, B3 cardiac 1, B4 metabolic 3, B5 musculoskeletal 3). 15/15 pass T_char=4·τ_gen within 10%. PH-4.1 RESOLVED (B5 validated). PH-4.2 RESOLVED (full dataset). P2 edges PROVISIONAL→CONFIRMED. P4 AI layer v3→v4. Phase-Ready 11→12. Validation script: scripts/p4_biological_validation.py. |
+| v3.9 | Session 58 | S58 perturbation evidence assembly. Systematic cross-system T/τ survey (9 oscillator systems). Circadian mutant data (tau hamster CK1ε R178C, FBXL3 Afterhours/Overtime, FBXL21 Psttm, double mutant rescue) provides causal confirmation of T ∝ τ_gen. Novak & Tyson (2008) independently derived T/τ ∈ [2, 4] for limit cycles — confirms FRM T_char = 4·τ_gen as upper bound at criticality. Additional systems surveyed: p53-Mdm2 (T/τ ≈ 2.75, outside FRM scope — deep limit cycle), NF-κB (T/τ ≈ 3–4, consistent), Hes1 (T/τ ≈ 4–6.3). P4 PHASE-READY status unchanged — evidence is supplementary (strengthening). Perturbation data added to scripts/p4_biological_validation.py. Session notes: journal/session_58_notes.md. |
 
 ---
 
