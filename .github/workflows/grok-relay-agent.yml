@@ -21,7 +21,6 @@ jobs:
   grok-process:
     name: Process pending Grok messages
     runs-on: ubuntu-latest
-    # Runs whenever the workflow triggers — gated by XAI_API_KEY existing
     env:
       XAI_API_KEY: ${{ secrets.XAI_API_KEY }}
     steps:
@@ -48,10 +47,8 @@ jobs:
           ")
           echo "pending=$count" >> $GITHUB_OUTPUT
           echo "Found $count pending message(s) for Grok"
-          # Check if API key is available
           if [ -n "$XAI_API_KEY" ]; then
             echo "has_key=true" >> $GITHUB_OUTPUT
-            echo "XAI_API_KEY is set"
           else
             echo "has_key=false" >> $GITHUB_OUTPUT
             echo "WARNING: XAI_API_KEY is NOT set"
@@ -61,7 +58,14 @@ jobs:
         if: steps.check.outputs.pending != '0' && steps.check.outputs.has_key == 'true'
         run: |
           cd $GITHUB_WORKSPACE
-          python -m relay.grok_agent --no-push
+          # Batch limit: process up to 5 messages per run to control costs
+          python -m relay.grok_agent --no-push --batch-size 5
+
+      - name: Process responses and update tracker
+        if: steps.check.outputs.pending != '0'
+        run: |
+          cd $GITHUB_WORKSPACE
+          python -m relay.process_responses --report || true
 
       - name: Commit and push responses
         if: steps.check.outputs.pending != '0'
@@ -70,7 +74,9 @@ jobs:
           git config user.name "grok-relay-agent"
           git config user.email "relay@fracttalix.dev"
           git add relay/queue/MSG-*.json
-          # Check if there are changes to commit
+          git add relay/review-tracker.json || true
+          git add relay/review-report.md || true
+          git add relay/budget-tracker.json || true
           if git diff --cached --quiet; then
             echo "No new responses to commit."
           else

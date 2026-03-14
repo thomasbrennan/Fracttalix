@@ -1,0 +1,66 @@
+{
+  "version": "1.0",
+  "last_scan": "2026-03-14T10:29:48.774246+00:00",
+  "claims_sent": {
+    "C-DRP.1": {
+      "msg_id": "MSG-20260314-102948-kfaw",
+      "timestamp": "2026-03-14T10:29:48.771005+00:00",
+      "paper_id": "DRP-1"
+    },
+    "C-DRP.2": {
+      "msg_id": "MSG-20260314-102948-e65g",
+      "timestamp": "2026-03-14T10:29:48.771248+00:00",
+      "paper_id": "DRP-1"
+    },
+    "C-DRP.5": {
+      "msg_id": "MSG-20260314-102948-u2aw",
+      "timestamp": "2026-03-14T10:29:48.771795+00:00",
+      "paper_id": "DRP-1"
+    },
+    "C-DRP2.1": {
+      "msg_id": "MSG-20260314-102948-cuv3",
+      "timestamp": "2026-03-14T10:29:48.772127+00:00",
+      "paper_id": "DRP-2"
+    },
+    "C-DRP2.2": {
+      "msg_id": "MSG-20260314-102948-8tau",
+      "timestamp": "2026-03-14T10:29:48.772527+00:00",
+      "paper_id": "DRP-2"
+    },
+    "C-DRP2.3": {
+      "msg_id": "MSG-20260314-102948-ubys",
+      "timestamp": "2026-03-14T10:29:48.772786+00:00",
+      "paper_id": "DRP-2"
+    },
+    "C-DRP2.7": {
+      "msg_id": "MSG-20260314-102948-3i8h",
+      "timestamp": "2026-03-14T10:29:48.772882+00:00",
+      "paper_id": "DRP-2"
+    },
+    "C-DRP2.8": {
+      "msg_id": "MSG-20260314-102948-a2op",
+      "timestamp": "2026-03-14T10:29:48.773091+00:00",
+      "paper_id": "DRP-2"
+    },
+    "C-DRP2.9": {
+      "msg_id": "MSG-20260314-102948-69il",
+      "timestamp": "2026-03-14T10:29:48.773442+00:00",
+      "paper_id": "DRP-2"
+    },
+    "C-DRP8.1": {
+      "msg_id": "MSG-20260314-102948-m800",
+      "timestamp": "2026-03-14T10:29:48.773768+00:00",
+      "paper_id": "DRP-8"
+    }
+  },
+  "claims_reviewed": {},
+  "summary": {
+    "total_falsifiable": 13,
+    "sent_to_grok": 10,
+    "reviewed_by_grok": 0,
+    "confirmed": 0,
+    "disputed": 0,
+    "inconclusive": 0,
+    "needs_revision": 0
+  }
+}

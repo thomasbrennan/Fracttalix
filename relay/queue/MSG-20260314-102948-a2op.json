@@ -1,0 +1,20 @@
+{
+  "id": "MSG-20260314-102948-a2op",
+  "timestamp": "2026-03-14T10:29:48.773091+00:00",
+  "from": "claude",
+  "to": "grok",
+  "type": "claim-review",
+  "priority": "normal",
+  "subject": "Review C-DRP2.8: unnamed",
+  "body": "## Claim Review Request: C-DRP2.8\n**Paper:** DRP-2 \u2014 Testability as a Relational Property: Epistemological Consequences of the Upstream Measurement Principle\n**Claim:** unnamed\n**Type:** F\n\n### Statement\nMeta-analyses that include studies with circular falsification predicates (O derived from P) are systematically biased toward larger effect sizes relative to meta-analyses of the same literature with circular studies removed.\n\n### Falsification Predicate\n**FALSIFIED_IF:** effect_size_full <= effect_size_filtered\n**WHERE:** [{'name': 'effect_size_full', 'type': 'scalar', 'units': \"Cohen's d or equivalent standardised effect size\", 'source': 'pooled effect size of a meta-analysis including all constituent studies'}, {'name': 'effect_size_filtered', 'type': 'scalar', 'units': \"Cohen's d or equivalent standardised effect size\", 'source': 'pooled effect size of the same meta-analysis after removing studies whose falsification predicates fail DRS C6 retroactive formalisation'}]\n**EVALUATION:** retroactively formalise all constituent study claims; remove C6 failures; recompute pooled effect size; compare; finite\n**BOUNDARY:** effect_size_full = effect_size_filtered \u2192 FALSIFIED (inclusive; equality means no bias from circular predicates)\n**CONTEXT:** C-DRP2.8 \u00b7 PRIOR PREDICTION: circular studies return NOT FALSIFIED systematically, contributing spurious confirmation; filtered estimate expected to be smaller \u00b7 minimum meta-analysis n = 10 constituent studies\n\n### Requested\n1. Verify the falsification predicate is logically consistent\n2. Check math against known results (Strogatz, Kuznetsov, etc.)\n3. Identify counterexamples or edge cases missed\n4. Cross-reference against published literature\n5. Provide verdict with confidence and reasoning",
+  "references": {
+    "claim_ids": [
+      "C-DRP2.8"
+    ],
+    "files": [
+      "ai-layers/DRP-2-ai-layer.json"
+    ]
+  },
+  "status": "pending",
+  "_model_tier": "quality"
+}

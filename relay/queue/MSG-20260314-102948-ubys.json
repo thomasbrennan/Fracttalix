@@ -1,0 +1,20 @@
+{
+  "id": "MSG-20260314-102948-ubys",
+  "timestamp": "2026-03-14T10:29:48.772786+00:00",
+  "from": "claude",
+  "to": "grok",
+  "type": "claim-review",
+  "priority": "normal",
+  "subject": "Review C-DRP2.3: unnamed",
+  "body": "## Claim Review Request: C-DRP2.3\n**Paper:** DRP-2 \u2014 Testability as a Relational Property: Epistemological Consequences of the Upstream Measurement Principle\n**Claim:** unnamed\n**Type:** F\n\n### Statement\nAI systems trained exclusively on standard-format scientific prose perform at chance on distinguishing vacuous from non-vacuous falsification predicates.\n\n### Falsification Predicate\n**FALSIFIED_IF:** accuracy_prose_trained > 0.70\n**WHERE:** [{'name': 'accuracy_prose_trained', 'type': 'scalar', 'units': 'dimensionless', 'source': 'accuracy of a prose-trained AI system on a balanced benchmark of 200+ vacuous vs non-vacuous predicates, where vacuous predicates have O=f(P) and non-vacuous predicates have O independent of P; surface-feature-controlled per \u00a74.2.1 benchmark protocol'}]\n**EVALUATION:** construct benchmark per \u00a74.2.1 specification; evaluate prose-trained system; measure accuracy against ground truth (\u03ba >= 0.80 inter-rater threshold); compare to 0.70 threshold; finite\n**BOUNDARY:** accuracy = 0.70 \u2192 FALSIFIED (inclusive; 0.70 threshold = 20pp above chance = minimum evidence of structural capability beyond pattern-matching)\n**CONTEXT:** C-DRP2.3 \u00b7 PRIOR PREDICTION: prose training provides no structural signal for O-from-P detection; expected accuracy ~0.50 + noise \u00b7 threshold 0.70: 20pp above chance chosen as minimum evidence of structural capability\n\n### Requested\n1. Verify the falsification predicate is logically consistent\n2. Check math against known results (Strogatz, Kuznetsov, etc.)\n3. Identify counterexamples or edge cases missed\n4. Cross-reference against published literature\n5. Provide verdict with confidence and reasoning",
+  "references": {
+    "claim_ids": [
+      "C-DRP2.3"
+    ],
+    "files": [
+      "ai-layers/DRP-2-ai-layer.json"
+    ]
+  },
+  "status": "pending",
+  "_model_tier": "quality"
+}

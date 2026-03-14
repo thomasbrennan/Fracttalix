@@ -1,0 +1,20 @@
+{
+  "id": "MSG-20260314-102948-u2aw",
+  "timestamp": "2026-03-14T10:29:48.771795+00:00",
+  "from": "claude",
+  "to": "grok",
+  "type": "claim-review",
+  "priority": "normal",
+  "subject": "Review C-DRP.5: unnamed",
+  "body": "## Claim Review Request: C-DRP.5\n**Paper:** DRP-1 \u2014 Dual-Reader Scientific Publishing: A Framework for Machine-Verifiable Knowledge Corpora\n**Claim:** unnamed\n**Type:** F\n\n### Statement\nThe MK-P1 AI layer achieves C5 self-sufficiency: an AI system can verify claim F-MK1.1 using only the structured layer, requiring zero prose references.\n\n### Falsification Predicate\n**FALSIFIED_IF:** n_prose_refs_MKP1 > 0\n**WHERE:** {'n_prose_refs_MKP1': 'count of prose references required to complete the verification trace for claim F-MK1.1 as recorded in the channel_2_query_trace field of MK-P1-ai-layer.json'}\n**EVALUATION:** (1) Load MK-P1-ai-layer.json from github.com/thomasbrennan/Fracttalix/ai-layers/MK-P1-ai-layer.json; (2) locate channel_2_query_trace field; (3) count any step in the trace that requires loading or reading prose content (n_prose_refs_MKP1); (4) evaluate condition. Finite deterministic procedure.\n**BOUNDARY:** n_prose_refs_MKP1 = 0 -> NOT FALSIFIED (inclusive)\n**CONTEXT:** C-DRP.5 \u00b7 threshold 0 \u00b7 zero-prose criterion \u00b7 query trace is the committed record in MK-P1-ai-layer.json \u2014 evaluation references that file, not the prose paper\n\n**Derivation chain:** DRP-1 Section 7.4.3 \u2192 MK-P1 AI layer channel_2_query_trace\n\n### Requested\n1. Verify the falsification predicate is logically consistent\n2. Check math against known results (Strogatz, Kuznetsov, etc.)\n3. Identify counterexamples or edge cases missed\n4. Cross-reference against published literature\n5. Provide verdict with confidence and reasoning",
+  "references": {
+    "claim_ids": [
+      "C-DRP.5"
+    ],
+    "files": [
+      "ai-layers/DRP-1-ai-layer.json"
+    ]
+  },
+  "status": "pending",
+  "_model_tier": "quality"
+}

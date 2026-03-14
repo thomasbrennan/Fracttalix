@@ -32,7 +32,21 @@ QUEUE_DIR = RELAY_DIR / "queue"
 BOOTSTRAP_PATH = RELAY_DIR / "grok-bootstrap.md"
 
 XAI_API_URL = "https://api.x.ai/v1/chat/completions"
-XAI_MODEL = "grok-4-latest"
+XAI_MODEL_DEFAULT = "grok-4-latest"
+XAI_MODEL_FAST = "grok-4-fast"
+
+# Cost-aware routing: message type → model
+MODEL_ROUTING = {
+    "claim-review": XAI_MODEL_DEFAULT,
+    "cross-reference": XAI_MODEL_DEFAULT,
+    "qc-request": XAI_MODEL_FAST,
+    "status-query": XAI_MODEL_FAST,
+    "general": XAI_MODEL_FAST,
+    "introduction": XAI_MODEL_DEFAULT,
+}
+
+# Priority override: high/critical always get the quality model
+PRIORITY_QUALITY = {"high", "critical"}
 
 # Response type mapping
 RESPONSE_TYPE_MAP = {
@@ -76,12 +90,30 @@ def get_pending_grok_messages() -> list[tuple[Path, dict]]:
     return pending
 
 
-def call_xai_api(system_prompt: str, user_message: str, api_key: str) -> str:
-    """Call the xAI API via curl and return Grok's response."""
+def select_model_for_message(msg: dict) -> str:
+    """Select the appropriate model based on message type and priority."""
+    priority = msg.get("priority", "normal")
+    if priority in PRIORITY_QUALITY:
+        return XAI_MODEL_DEFAULT
+
+    # Check for explicit model tier hint from auto_qc
+    tier = msg.get("_model_tier")
+    if tier == "fast":
+        return XAI_MODEL_FAST
+    if tier == "quality":
+        return XAI_MODEL_DEFAULT
+
+    msg_type = msg.get("type", "general")
+    return MODEL_ROUTING.get(msg_type, XAI_MODEL_FAST)
+
+
+def call_xai_api(system_prompt: str, user_message: str, api_key: str, model: str | None = None) -> tuple[str, dict]:
+    """Call the xAI API via curl and return (response_text, usage_dict)."""
     import time
 
+    selected_model = model or XAI_MODEL_DEFAULT
     payload = json.dumps({
-        "model": XAI_MODEL,
+        "model": selected_model,
         "messages": [
             {"role": "system", "content": system_prompt},
             {"role": "user", "content": user_message},
@@ -111,13 +143,14 @@ def call_xai_api(system_prompt: str, user_message: str, api_key: str) -> str:
 
         if http_code == 200:
             data = json.loads(body)
-            return data["choices"][0]["message"]["content"]
+            usage = data.get("usage", {})
+            return data["choices"][0]["message"]["content"], usage
 
         print(f"API error {http_code}: {body}", file=sys.stderr)
-        print(f"  Model: {XAI_MODEL}", file=sys.stderr)
+        print(f"  Model: {selected_model}", file=sys.stderr)
         print(f"  Key prefix: {api_key[:8]}...{api_key[-4:]}", file=sys.stderr)
 
-        if attempt < max_retries and http_code in (403, 429, 500, 502, 503):
+        if attempt < max_retries and http_code in (429, 500, 502, 503):
             wait = 2 ** (attempt + 1)
             print(f"  Retrying in {wait}s (attempt {attempt + 1}/{max_retries})...")
             time.sleep(wait)
@@ -283,17 +316,25 @@ def process_message(
 
     user_message = build_user_message(msg)
 
+    # Cost-aware model selection
+    selected_model = select_model_for_message(msg)
+
     if dry_run:
         print(f"  [DRY RUN] Would send to xAI API:")
-        print(f"  Model: {XAI_MODEL}")
+        print(f"  Model: {selected_model}")
         print(f"  Message length: {len(user_message)} chars")
         return None
 
-    print(f"  Sending to xAI API ({XAI_MODEL})...")
-    raw_response = call_xai_api(system_prompt, user_message, api_key)
+    print(f"  Sending to xAI API ({selected_model})...")
+    raw_response, usage = call_xai_api(system_prompt, user_message, api_key, model=selected_model)
     print(f"  Response received ({len(raw_response)} chars)")
+    if usage:
+        print(f"  Tokens: {usage.get('prompt_tokens', '?')} in / {usage.get('completion_tokens', '?')} out")
 
     response_msg = parse_grok_response(raw_response, msg)
+    response_msg["_model_used"] = selected_model
+    if usage:
+        response_msg["_usage"] = usage
     response_path = save_response(response_msg)
     mark_original_resolved(path)
 
@@ -301,6 +342,19 @@ def process_message(
     if "verdict" in response_msg.get("grok_raw_review", {}):
         review = response_msg["grok_raw_review"]
         print(f"  Verdict: {review['verdict']} ({review.get('confidence', '?')})")
+
+    # Update budget tracker if available
+    try:
+        from relay.cost_router import record_transaction, MODELS
+        model_key = "fast" if "fast" in selected_model else "quality"
+        in_tok = usage.get("prompt_tokens", 0) if usage else 0
+        out_tok = usage.get("completion_tokens", 0) if usage else 0
+        m = MODELS[model_key]
+        cost = (in_tok / 1_000_000) * m["input_cost_per_m"] + (out_tok / 1_000_000) * m["output_cost_per_m"]
+        budget = record_transaction(msg["id"], selected_model, in_tok, out_tok, cost)
+        print(f"  Cost: ${cost:.4f} | Budget remaining: ${budget['total_budget_usd'] - budget['spent_usd']:.2f}")
+    except Exception:
+        pass  # Budget tracking is optional
 
     return response_msg
 
@@ -312,6 +366,7 @@ def main() -> int:
     parser.add_argument("--dry-run", action="store_true", help="Don't call API")
     parser.add_argument("--once", default=None, help="Process single message ID")
     parser.add_argument("--no-push", action="store_true", help="Don't git push")
+    parser.add_argument("--batch-size", type=int, default=None, help="Max messages to process per run")
     args = parser.parse_args()
 
     api_key = "" if args.dry_run else get_api_key()
@@ -338,7 +393,11 @@ def main() -> int:
     changed_files = []
     results = []
 
-    for path, msg in pending:
+    batch_limit = args.batch_size or len(pending)
+    for i, (path, msg) in enumerate(pending):
+        if i >= batch_limit:
+            print(f"\nBatch limit reached ({batch_limit}). Remaining messages will be processed next run.")
+            break
         result = process_message(path, msg, api_key, system_prompt, dry_run=args.dry_run)
         if result:
             changed_files.append(str(path))

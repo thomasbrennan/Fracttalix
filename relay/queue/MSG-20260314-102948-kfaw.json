@@ -1,0 +1,20 @@
+{
+  "id": "MSG-20260314-102948-kfaw",
+  "timestamp": "2026-03-14T10:29:48.771005+00:00",
+  "from": "claude",
+  "to": "grok",
+  "type": "claim-review",
+  "priority": "normal",
+  "subject": "Review C-DRP.1: unnamed",
+  "body": "## Claim Review Request: C-DRP.1\n**Paper:** DRP-1 \u2014 Dual-Reader Scientific Publishing: A Framework for Machine-Verifiable Knowledge Corpora\n**Claim:** unnamed\n**Type:** F\n\n### Statement\nThe 5-part predicate syntax (FALSIFIED IF / WHERE / EVALUATION / BOUNDARY / CONTEXT) is necessary and sufficient to express any falsifiable scientific claim as a machine-evaluable predicate.\n\n### Falsification Predicate\n**FALSIFIED_IF:** n_inexpressible > 0\n**WHERE:** {'n_inexpressible': 'count of falsifiable claims in the Fracttalix corpus for which no 5-part predicate can be constructed that satisfies all schema validation constraints (FALSIFIED_IF: named variables only; WHERE: typed definitions; EVALUATION: finite terminating procedure; BOUNDARY: explicit threshold case; CONTEXT: threshold justification)'}\n**EVALUATION:** For each falsifiable claim in claim_registry across all corpus AI layers: (1) load existing predicate if present; (2) run schema validator against predicate object; (3) if validator returns errors OR predicate absent: increment n_inexpressible; (4) report count. Tool: JSON schema validator against ai-layer-schema.json. Procedure terminates in finite steps bounded by claim count.\n**BOUNDARY:** n_inexpressible = 0 -> NOT FALSIFIED (inclusive)\n**CONTEXT:** C-DRP.1 \u00b7 threshold 0 \u00b7 necessity claim: any single schema-failing predicate falsifies sufficiency; any claim requiring a 6th field falsifies necessity \u00b7 evaluability is determined by schema validation, not human judgment\n\n**Derivation chain:** DRP-1 Section 3\n\n### Requested\n1. Verify the falsification predicate is logically consistent\n2. Check math against known results (Strogatz, Kuznetsov, etc.)\n3. Identify counterexamples or edge cases missed\n4. Cross-reference against published literature\n5. Provide verdict with confidence and reasoning",
+  "references": {
+    "claim_ids": [
+      "C-DRP.1"
+    ],
+    "files": [
+      "ai-layers/DRP-1-ai-layer.json"
+    ]
+  },
+  "status": "pending",
+  "_model_tier": "quality"
+}
