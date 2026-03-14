@@ -997,6 +997,7 @@ class AlertReasonsStep(DetectorStep):
             "sustained_variance",  # v12.4: windowed baseline variance
             "gradual_drift",
             "cascade_precursor",
+            "seasonal_context_deviation",  # v12.4.1: 2σ deviation from seasonal baseline
         })
         strong_active = [r for r in reasons if r in _STRONG]
         soft_active = [r for r in reasons if r not in _STRONG]
@@ -1004,7 +1005,7 @@ class AlertReasonsStep(DetectorStep):
         # Hard bypass: z-score > 5× multiplier is always a strong signal.
         hard_z = abs(s.get("z_score", 0.0)) >= 5.0 * self.cfg.multiplier
 
-        gate_passes = hard_z or bool(strong_active) or len(soft_active) >= 2
+        gate_passes = hard_z or bool(strong_active) or len(soft_active) >= 3
 
         if not gate_passes:
             # Suppress alert: not enough evidence consensus.
