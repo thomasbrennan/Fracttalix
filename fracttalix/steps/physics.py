@@ -925,6 +925,8 @@ class AlertReasonsStep(DetectorStep):
             reasons.append("cusum_mean_shift")
         if s.get("var_cusum_alert"):
             reasons.append("cusum_variance_spike")
+        if s.get("sustained_variance_alert"):
+            reasons.append("sustained_variance")
         # v12.3: non-adaptive drift CUSUM (warmup-frozen baseline)
         if s.get("drift_cusum_alert"):
             reasons.append("drift_cusum_shift")
@@ -952,6 +954,8 @@ class AlertReasonsStep(DetectorStep):
                 reasons.append("high_entropy_chaotic")
         if s.get("mahal_dist", 0) > self.cfg.multiplier * math.sqrt(self.cfg.n_channels):
             reasons.append("mahalanobis_multivariate")
+        if s.get("seasonal_soft_alert"):
+            reasons.append("seasonal_context_deviation")
         # V9.0 — include structured alert types in reasons list
         for alert in s.get("v9_active_alerts", []):
             if alert.alert_type.value not in reasons:
@@ -980,10 +984,15 @@ class AlertReasonsStep(DetectorStep):
         # Classify reasons into strong (fire alone) and soft (require consensus).
         # Strong: statistically robust multi-step accumulators and extremes.
         # Soft:   single-step scores with meaningful per-step FPR; require ≥2.
+        # v12.4: cusum_variance_spike demoted to soft — VarCUSUM z² accumulator
+        # stays elevated for many steps after legitimate spikes, producing FP
+        # runs on normal data following point/collective anomalies.
+        # sustained_variance promoted to strong — windowed-baseline comparison
+        # is robust to isolated spikes and reliably detects prolonged volatility.
         _STRONG = frozenset({
             "cusum_mean_shift",
-            "cusum_variance_spike",
-            "drift_cusum_shift",   # v12.3: non-adaptive drift CUSUM
+            "drift_cusum_shift",   # non-adaptive drift CUSUM
+            "sustained_variance",  # v12.4: windowed baseline variance
             "gradual_drift",
             "cascade_precursor",
         })

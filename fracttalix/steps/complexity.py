@@ -215,11 +215,17 @@ class EWSStep(DetectorStep):
         else:
             regime = "stable"
 
+        # v12.4: suppress EWS alerting when a seasonal period is detected.
+        # Periodic signals naturally produce high AC(1) and stable variance,
+        # causing EWS to report "approaching" 95%+ of the time.  This is a
+        # structural feature of the signal, not a collapse precursor.
+        seasonal_active = ctx.scratch.get("seasonal_preprocess_period") is not None
+
         ctx.scratch["ews_score"] = self._ews_score
-        ctx.scratch["ews_regime"] = regime
+        ctx.scratch["ews_regime"] = regime if not seasonal_active else "stable"
         ctx.scratch["ews_var"] = var
         ctx.scratch["ews_ac1"] = ac1
-        if not ctx.is_warmup and regime == "critical":
+        if not ctx.is_warmup and regime == "critical" and not seasonal_active:
             ctx.scratch["alert"] = True
             ctx.scratch["anomaly"] = True
 
@@ -342,6 +348,17 @@ class SeasonalStep(DetectorStep):
         if not ctx.is_warmup and err > self.cfg.multiplier:
             ctx.scratch["alert"] = True
             ctx.scratch["anomaly"] = True
+        # v12.4: soft seasonal alert at 2σ — below the full multiplier but
+        # enough to provide consensus material for contextual anomalies that
+        # score 2-3σ on phase deviation.  Treated as soft signal in the gate.
+        # Only fires when SeasonalPreprocessStep (with its 10× confidence gate)
+        # has confirmed a genuine seasonal period, preventing false positives
+        # on non-seasonal data where the SeasonalStep's weaker detection might
+        # lock onto noise.
+        if (not ctx.is_warmup
+                and err > 2.0
+                and ctx.scratch.get("seasonal_preprocess_period") is not None):
+            ctx.scratch["seasonal_soft_alert"] = True
 
     def state_dict(self) -> Dict[str, Any]:
         return {"period": self._period, "phase_ewma": self._phase_ewma,

@@ -157,6 +157,85 @@ class TestDetectorStatePersistence:
         assert "n" in parsed
         assert "config" in parsed
 
+    def test_round_trip_output_values_match(self):
+        """After save/load, the restored detector must produce identical
+        output values (not just matching keys) for subsequent observations.
+        Addresses Grok review F-SFW.6: key-only checks are insufficient.
+
+        Core pipeline values (EWMA, z-score, alert, anomaly_score, CUSUM
+        accumulators) must match exactly.  Derived-from-history values
+        (throughput, coherence, coupling) are excluded because the in-memory
+        history deques are intentionally not serialized (they rebuild from
+        streaming data after restoration).
+        """
+        import json
+        import math
+
+        det1 = SentinelDetector()
+        # Feed enough data to initialize all steps and pass warmup
+        data = [math.sin(i * 0.1) + (i % 7) * 0.3 for i in range(60)]
+        for v in data:
+            det1.update_and_check(v)
+
+        state = det1.save_state()
+
+        # Round-trip through JSON to catch float precision issues
+        state_rt = json.dumps(json.loads(state))
+
+        det2 = SentinelDetector()
+        det2.load_state(state_rt)
+
+        # Core keys whose values MUST match exactly after round-trip.
+        # These are the contract: decisions (alert/anomaly), scores, and
+        # accumulator-based metrics that depend only on persisted state.
+        CORE_KEYS = {
+            "step", "value", "ewma", "dev_ewma", "z_score",
+            "anomaly_score", "anomaly", "alert", "warmup",
+            "cusum_hi", "cusum_lo", "cusum_alert",
+            "drift_cusum_hi", "drift_cusum_lo", "drift_cusum_alert",
+            "var_cusum_hi", "var_cusum_lo", "var_cusum_alert",
+            "regime_change", "in_regime",
+            "ph_alert", "ph_cum_hi", "ph_cum_lo",
+            "pe", "pe_baseline", "rpi", "rfi", "ssi",
+            "ews_score", "ews_regime",
+        }
+
+        # Process 20 more observations and compare core values
+        test_data = [math.cos(i * 0.2) + 0.5 for i in range(20)]
+        for v in test_data:
+            r1 = det1.update_and_check(v)
+            r2 = det2.update_and_check(v)
+
+            for key in CORE_KEYS:
+                if key not in r1:
+                    continue
+                v1, v2 = r1[key], r2[key]
+                if isinstance(v1, float) and isinstance(v2, float):
+                    assert abs(v1 - v2) < 1e-10, (
+                        f"Value mismatch at step {r1['step']}, key={key}: "
+                        f"{v1} != {v2}"
+                    )
+                elif isinstance(v1, (int, bool, str, type(None))):
+                    assert v1 == v2, (
+                        f"Value mismatch at step {r1['step']}, key={key}: "
+                        f"{v1!r} != {v2!r}"
+                    )
+
+    def test_round_trip_preserves_warmup_baseline(self):
+        """Verify warmup_mean and warmup_std survive save/load for drift CUSUM."""
+        import json
+        det = SentinelDetector()
+        # Process through warmup
+        for i in range(40):
+            det.update_and_check(float(i % 5))
+        state = det.save_state()
+        parsed = json.loads(state)
+        # Find CoreEWMAStep state (idx 1 — after SeasonalPreprocessStep)
+        core_state = parsed["steps"][1]["state"]
+        assert "warmup_mean" in core_state
+        assert "warmup_std" in core_state
+        assert core_state["warmup_mean"] != 0.0  # should be initialized
+
 
 class TestDetectorAutoTune:
     def test_auto_tune_returns_detector(self):

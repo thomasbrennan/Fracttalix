@@ -267,7 +267,7 @@ class SentinelDetector:
             "version": _ver,
             "n": self._n,
             "config": dataclasses.asdict(self.config),
-            "bank": self._bank.state_dict(),
+            "bank": self._bank.state_dict_with_maxlen(),
             "steps": [],
         }
         for i, step in enumerate(self._pipeline):
@@ -282,7 +282,12 @@ class SentinelDetector:
         """Restore detector state from JSON string."""
         sd = json.loads(json_str)
         self._n = sd.get("n", 0)
-        self._bank.load_state(sd.get("bank", {}))
+        bank_data = sd.get("bank", {})
+        # Detect format: new format has dicts with "data"/"maxlen" keys
+        if bank_data and isinstance(next(iter(bank_data.values()), None), dict):
+            self._bank.load_state_with_maxlen(bank_data)
+        else:
+            self._bank.load_state(bank_data)
         step_states = sd.get("steps", [])
         for ss in step_states:
             idx = ss.get("idx", -1)
