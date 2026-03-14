@@ -1,0 +1,20 @@
+{
+  "id": "MSG-20260314-102948-m800",
+  "timestamp": "2026-03-14T10:29:48.773768+00:00",
+  "from": "claude",
+  "to": "grok",
+  "type": "claim-review",
+  "priority": "normal",
+  "subject": "Review C-DRP8.1: unnamed",
+  "body": "## Claim Review Request: C-DRP8.1\n**Paper:** DRP-8 \u2014 The \u03c4-Grounding Theorem: Physical Derivation of the Upstream Measurement Principle for Delay-Differential Systems\n**Claim:** unnamed\n**Type:** F\n\n### Statement\nIn any DDE system satisfying C1-C4, the forward causal operator \u03a6_\u03c4: x(t)\u2192x(t+\u03c4) is strictly forward in time. An observation class O drawn from any time index t'\u2264t cannot be a logical function of x(t+\u03c4).\n\n### Falsification Predicate\n**FALSIFIED_IF:** EXISTS system S satisfying C1-C4 AND observation set O = {x(t_i): t_i \u2264 t_ref} AND state x(t_ref+\u03c4) SUCH THAT I(O; x(t_ref+\u03c4)) > \u03b4_causal\n**WHERE:** {'S': 'DDE system satisfying C1-C4', 'O': 'Countable indexed set drawn from causal past: t_i \u2264 t_ref', '\u03b4_causal': '3\u03c3 of background mutual information under shuffled-index null model'}\n**EVALUATION:** (1) Specify C1-C4 system S and measure \u03c4 via Protocol 3. (2) Draw O from t_i \u2264 t_ref. (3) Compute I(O; x(t_ref+\u03c4)) using KSG estimator (k=5, \u2265500 paired samples). (4) Compute \u03b4_causal from shuffled null. (5) Test I > \u03b4_causal.\n**BOUNDARY:** NOT FALSIFIED if I(O; x(t_ref+\u03c4)) \u2264 \u03b4_causal for all tested C1-C4 systems.\n**CONTEXT:** C-DRP8.1 | Type F | DDE causal isolation | KSG estimator k=5 | same implementation as P3 substrate validation\n\n**Derivation chain:** DRP-8 Lemma 1 (L1-0 through L1-3) \u2192 IR-4 \u2192 IR-5 \u2192 IR-12 \u2192 IR-1\n\n### Scope\n- In scope: ?\n- Out of scope: ?\n\n### Requested\n1. Verify the falsification predicate is logically consistent\n2. Check math against known results (Strogatz, Kuznetsov, etc.)\n3. Identify counterexamples or edge cases missed\n4. Cross-reference against published literature\n5. Provide verdict with confidence and reasoning",
+  "references": {
+    "claim_ids": [
+      "C-DRP8.1"
+    ],
+    "files": [
+      "ai-layers/DRP-8-ai-layer.json"
+    ]
+  },
+  "status": "resolved",
+  "_model_tier": "quality"
+}

@@ -1,0 +1,20 @@
+{
+  "id": "MSG-20260314-111929-gqtx",
+  "timestamp": "2026-03-14T11:19:29.659680+00:00",
+  "from": "claude",
+  "to": "grok",
+  "type": "claim-review",
+  "priority": "high",
+  "subject": "Review F-MK6.2: Falsification completeness implies coverage",
+  "body": "## Claim Review Request: F-MK6.2\n**Paper:** MK-P6 \u2014 The Dual Reader Standard for Software: Measurement-Theoretic Falsification Applied to Executable Systems\n**Claim:** Falsification completeness implies coverage\n**Type:** F\n\n### Statement\nIf a software system S is falsification-complete with respect to claim registry R, then there exists a test suite T derived from evaluation procedures in R such that L(S, T) >= L(S, T') for any T' achieving the same behavioral verification.\n\n### Falsification Predicate\n**FALSIFIED_IF:** EXISTS system S AND registry R SUCH THAT falsification_complete(S, R) = TRUE AND coverage(T_R) < coverage(T_alt) WHERE behavioral_verification(T_alt) = behavioral_verification(T_R)\n**WHERE:** {'S': 'object \u00b7 a software system', 'R': 'set \u00b7 claim registry for S satisfying Definition 7.2', 'T_R': 'set \u00b7 test suite derived from EVALUATION procedures in R', 'T_alt': 'set \u00b7 any alternative test suite with same behavioral verification', 'coverage': 'function \u00b7 line coverage L(S, T)', 'behavioral_verification': 'function \u00b7 set of behavioral claims verified by T'}\n**EVALUATION:** Construct a falsification-complete system with registry; derive test suite from evaluations; measure coverage; compare against alternative suites; finite for bounded systems\n**BOUNDARY:** coverage(T_R) < coverage(T_alt) with same verification \u2192 FALSIFIED\n**CONTEXT:** This formalizes the intuition that testing every claimed behavior covers more code than testing arbitrary paths. The property is about the relationship between claim-driven and path-driven testing.\n\n**Derivation chain:** D-MK6.2\n\n### Requested\n1. Verify the falsification predicate is logically consistent\n2. Check math against known results (Strogatz, Kuznetsov, etc.)\n3. Identify counterexamples or edge cases missed\n4. Cross-reference against published literature\n5. Provide verdict with confidence and reasoning",
+  "references": {
+    "claim_ids": [
+      "F-MK6.2"
+    ],
+    "files": [
+      "ai-layers/MK-P6-ai-layer.json"
+    ]
+  },
+  "status": "pending",
+  "_model_tier": "quality"
+}

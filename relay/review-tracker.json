@@ -1,0 +1,757 @@
+{
+  "version": "1.0",
+  "last_scan": "2026-03-14T10:39:04.911218+00:00",
+  "claims_sent": {
+    "C-DRP.1": {
+      "msg_id": "MSG-20260314-102948-kfaw",
+      "timestamp": "2026-03-14T10:29:48.771005+00:00",
+      "paper_id": "DRP-1"
+    },
+    "C-DRP.2": {
+      "msg_id": "MSG-20260314-102948-e65g",
+      "timestamp": "2026-03-14T10:29:48.771248+00:00",
+      "paper_id": "DRP-1"
+    },
+    "C-DRP.5": {
+      "msg_id": "MSG-20260314-102948-u2aw",
+      "timestamp": "2026-03-14T10:29:48.771795+00:00",
+      "paper_id": "DRP-1"
+    },
+    "C-DRP2.1": {
+      "msg_id": "MSG-20260314-102948-cuv3",
+      "timestamp": "2026-03-14T10:29:48.772127+00:00",
+      "paper_id": "DRP-2"
+    },
+    "C-DRP2.2": {
+      "msg_id": "MSG-20260314-102948-8tau",
+      "timestamp": "2026-03-14T10:29:48.772527+00:00",
+      "paper_id": "DRP-2"
+    },
+    "C-DRP2.3": {
+      "msg_id": "MSG-20260314-102948-ubys",
+      "timestamp": "2026-03-14T10:29:48.772786+00:00",
+      "paper_id": "DRP-2"
+    },
+    "C-DRP2.7": {
+      "msg_id": "MSG-20260314-102948-3i8h",
+      "timestamp": "2026-03-14T10:29:48.772882+00:00",
+      "paper_id": "DRP-2"
+    },
+    "C-DRP2.8": {
+      "msg_id": "MSG-20260314-102948-a2op",
+      "timestamp": "2026-03-14T10:29:48.773091+00:00",
+      "paper_id": "DRP-2"
+    },
+    "C-DRP2.9": {
+      "msg_id": "MSG-20260314-102948-69il",
+      "timestamp": "2026-03-14T10:29:48.773442+00:00",
+      "paper_id": "DRP-2"
+    },
+    "C-DRP8.1": {
+      "msg_id": "MSG-20260314-102948-m800",
+      "timestamp": "2026-03-14T10:29:48.773768+00:00",
+      "paper_id": "DRP-8"
+    },
+    "C-DRP8.2": {
+      "msg_id": "MSG-20260314-103904-eb82",
+      "timestamp": "2026-03-14T10:39:04.893200+00:00",
+      "paper_id": "DRP-8"
+    },
+    "C-DRP8.3": {
+      "msg_id": "MSG-20260314-103904-gm96",
+      "timestamp": "2026-03-14T10:39:04.893718+00:00",
+      "paper_id": "DRP-8"
+    },
+    "C-DRP8.CON": {
+      "msg_id": "MSG-20260314-103904-xs6y",
+      "timestamp": "2026-03-14T10:39:04.894172+00:00",
+      "paper_id": "DRP-8"
+    },
+    "F-DRSARCH.1": {
+      "msg_id": "MSG-20260314-103904-4mcf",
+      "timestamp": "2026-03-14T10:39:04.894312+00:00",
+      "paper_id": "DRS-ARCH"
+    },
+    "F-DRSARCH.2": {
+      "msg_id": "MSG-20260314-103904-ky9y",
+      "timestamp": "2026-03-14T10:39:04.894675+00:00",
+      "paper_id": "DRS-ARCH"
+    },
+    "F-DRSARCH.3": {
+      "msg_id": "MSG-20260314-103904-32kw",
+      "timestamp": "2026-03-14T10:39:04.895018+00:00",
+      "paper_id": "DRS-ARCH"
+    },
+    "F-MK1.1": {
+      "msg_id": "MSG-20260314-114210-u9vz",
+      "timestamp": "2026-03-14T11:42:10.075048+00:00",
+      "paper_id": "MK-P1",
+      "trigger": "diff-scan"
+    },
+    "F-MK1.2": {
+      "msg_id": "MSG-20260314-114210-wnbu",
+      "timestamp": "2026-03-14T11:42:10.075386+00:00",
+      "paper_id": "MK-P1",
+      "trigger": "diff-scan"
+    },
+    "F-MK1.3": {
+      "msg_id": "MSG-20260314-114210-tbmx",
+      "timestamp": "2026-03-14T11:42:10.075627+00:00",
+      "paper_id": "MK-P1",
+      "trigger": "diff-scan"
+    },
+    "F-MK1.4": {
+      "msg_id": "MSG-20260314-114210-0h4h",
+      "timestamp": "2026-03-14T11:42:10.075859+00:00",
+      "paper_id": "MK-P1",
+      "trigger": "diff-scan"
+    },
+    "F-MK1.5": {
+      "msg_id": "MSG-20260314-114210-gq3b",
+      "timestamp": "2026-03-14T11:42:10.076077+00:00",
+      "paper_id": "MK-P1",
+      "trigger": "diff-scan"
+    },
+    "F-MK1.6": {
+      "msg_id": "MSG-20260314-114210-zduz",
+      "timestamp": "2026-03-14T11:42:10.076318+00:00",
+      "paper_id": "MK-P1",
+      "trigger": "diff-scan"
+    },
+    "C-MK2.1": {
+      "msg_id": "MSG-20260314-114210-ezwy",
+      "timestamp": "2026-03-14T11:42:10.076709+00:00",
+      "paper_id": "MK-P2",
+      "trigger": "diff-scan"
+    },
+    "C-MK2.2": {
+      "msg_id": "MSG-20260314-114210-2c1p",
+      "timestamp": "2026-03-14T11:42:10.077008+00:00",
+      "paper_id": "MK-P2",
+      "trigger": "diff-scan"
+    },
+    "C-MK2.3": {
+      "msg_id": "MSG-20260314-114210-0nsc",
+      "timestamp": "2026-03-14T11:42:10.077222+00:00",
+      "paper_id": "MK-P2",
+      "trigger": "diff-scan"
+    },
+    "C-MK2.4": {
+      "msg_id": "MSG-20260314-114210-jx4z",
+      "timestamp": "2026-03-14T11:42:10.077460+00:00",
+      "paper_id": "MK-P2",
+      "trigger": "diff-scan"
+    },
+    "C-MK3.1": {
+      "msg_id": "MSG-20260314-114210-0sbv",
+      "timestamp": "2026-03-14T11:42:10.077820+00:00",
+      "paper_id": "MK-P3",
+      "trigger": "diff-scan"
+    },
+    "C-MK3.2": {
+      "msg_id": "MSG-20260314-114210-ghag",
+      "timestamp": "2026-03-14T11:42:10.078025+00:00",
+      "paper_id": "MK-P3",
+      "trigger": "diff-scan"
+    },
+    "C-MK3.3": {
+      "msg_id": "MSG-20260314-114210-7yuc",
+      "timestamp": "2026-03-14T11:42:10.078227+00:00",
+      "paper_id": "MK-P3",
+      "trigger": "diff-scan"
+    },
+    "C-MK3.4": {
+      "msg_id": "MSG-20260314-114210-j6vy",
+      "timestamp": "2026-03-14T11:42:10.078456+00:00",
+      "paper_id": "MK-P3",
+      "trigger": "diff-scan"
+    },
+    "C-MK4.1": {
+      "msg_id": "MSG-20260314-154915-fi1m",
+      "timestamp": "2026-03-14T15:49:15.905615+00:00",
+      "paper_id": "MK-P4",
+      "trigger": "diff-scan"
+    },
+    "C-MK4.2": {
+      "msg_id": "MSG-20260314-154915-gl45",
+      "timestamp": "2026-03-14T15:49:15.905916+00:00",
+      "paper_id": "MK-P4",
+      "trigger": "diff-scan"
+    },
+    "C-MK4.3": {
+      "msg_id": "MSG-20260314-154915-61jd",
+      "timestamp": "2026-03-14T15:49:15.906140+00:00",
+      "paper_id": "MK-P4",
+      "trigger": "diff-scan"
+    },
+    "C-MK4.4": {
+      "msg_id": "MSG-20260314-154915-zsnd",
+      "timestamp": "2026-03-14T15:49:15.906364+00:00",
+      "paper_id": "MK-P4",
+      "trigger": "diff-scan"
+    },
+    "C-MK5.1": {
+      "msg_id": "MSG-20260314-114210-pl56",
+      "timestamp": "2026-03-14T11:42:10.079941+00:00",
+      "paper_id": "MK-P5",
+      "trigger": "diff-scan"
+    },
+    "C-MK5.2": {
+      "msg_id": "MSG-20260314-114210-5oaa",
+      "timestamp": "2026-03-14T11:42:10.080165+00:00",
+      "paper_id": "MK-P5",
+      "trigger": "diff-scan"
+    },
+    "C-MK5.3": {
+      "msg_id": "MSG-20260314-114210-sdz5",
+      "timestamp": "2026-03-14T11:42:10.080399+00:00",
+      "paper_id": "MK-P5",
+      "trigger": "diff-scan"
+    },
+    "C-MK5.4": {
+      "msg_id": "MSG-20260314-114210-zjp7",
+      "timestamp": "2026-03-14T11:42:10.080612+00:00",
+      "paper_id": "MK-P5",
+      "trigger": "diff-scan"
+    },
+    "F-MK6.1": {
+      "msg_id": "MSG-20260314-114210-3ipl",
+      "timestamp": "2026-03-14T11:42:10.080960+00:00",
+      "paper_id": "MK-P6",
+      "trigger": "diff-scan"
+    },
+    "F-MK6.2": {
+      "msg_id": "MSG-20260314-114210-b43o",
+      "timestamp": "2026-03-14T11:42:10.081256+00:00",
+      "paper_id": "MK-P6",
+      "trigger": "diff-scan"
+    },
+    "F-MK6.3": {
+      "msg_id": "MSG-20260314-114210-cphy",
+      "timestamp": "2026-03-14T11:42:10.081488+00:00",
+      "paper_id": "MK-P6",
+      "trigger": "diff-scan"
+    },
+    "F-MK6.4": {
+      "msg_id": "MSG-20260314-114210-t64c",
+      "timestamp": "2026-03-14T11:42:10.081697+00:00",
+      "paper_id": "MK-P6",
+      "trigger": "diff-scan"
+    },
+    "F-MK6.5": {
+      "msg_id": "MSG-20260314-114210-tq62",
+      "timestamp": "2026-03-14T11:42:10.081902+00:00",
+      "paper_id": "MK-P6",
+      "trigger": "diff-scan"
+    },
+    "F-1.1": {
+      "msg_id": "MSG-20260314-103904-macc",
+      "timestamp": "2026-03-14T10:39:04.904261+00:00",
+      "paper_id": "P1"
+    },
+    "F-1.2": {
+      "msg_id": "MSG-20260314-103904-1bgt",
+      "timestamp": "2026-03-14T10:39:04.904641+00:00",
+      "paper_id": "P1"
+    },
+    "F-1.3": {
+      "msg_id": "MSG-20260314-103904-c8n1",
+      "timestamp": "2026-03-14T10:39:04.904750+00:00",
+      "paper_id": "P1"
+    },
+    "F-1.4": {
+      "msg_id": "MSG-20260314-103904-dxuj",
+      "timestamp": "2026-03-14T10:39:04.905217+00:00",
+      "paper_id": "P1"
+    },
+    "F-1.5": {
+      "msg_id": "MSG-20260314-103904-81ra",
+      "timestamp": "2026-03-14T10:39:04.905363+00:00",
+      "paper_id": "P1"
+    },
+    "F-1.6": {
+      "msg_id": "MSG-20260314-103904-59um",
+      "timestamp": "2026-03-14T10:39:04.905495+00:00",
+      "paper_id": "P1"
+    },
+    "F-1.7": {
+      "msg_id": "MSG-20260314-103904-figk",
+      "timestamp": "2026-03-14T10:39:04.905893+00:00",
+      "paper_id": "P1"
+    },
+    "C-2.1": {
+      "msg_id": "MSG-20260314-103904-sp4a",
+      "timestamp": "2026-03-14T10:39:04.906226+00:00",
+      "paper_id": "P2"
+    },
+    "C-2.2": {
+      "msg_id": "MSG-20260314-103904-p8ow",
+      "timestamp": "2026-03-14T10:39:04.906331+00:00",
+      "paper_id": "P2"
+    },
+    "C-2.3": {
+      "msg_id": "MSG-20260314-103904-8dwe",
+      "timestamp": "2026-03-14T10:39:04.906422+00:00",
+      "paper_id": "P2"
+    },
+    "C-2.4": {
+      "msg_id": "MSG-20260314-103904-6ivf",
+      "timestamp": "2026-03-14T10:39:04.906510+00:00",
+      "paper_id": "P2"
+    },
+    "C-2.5": {
+      "msg_id": "MSG-20260314-103904-d7kc",
+      "timestamp": "2026-03-14T10:39:04.906953+00:00",
+      "paper_id": "P2"
+    },
+    "C-3.REG": {
+      "msg_id": "MSG-20260314-103904-m3c3",
+      "timestamp": "2026-03-14T10:39:04.907059+00:00",
+      "paper_id": "P3"
+    },
+    "C-3.ALT": {
+      "msg_id": "MSG-20260314-103904-ou2s",
+      "timestamp": "2026-03-14T10:39:04.907276+00:00",
+      "paper_id": "P3"
+    },
+    "C-3.DIAG": {
+      "msg_id": "MSG-20260314-103904-2ppl",
+      "timestamp": "2026-03-14T10:39:04.907656+00:00",
+      "paper_id": "P3"
+    },
+    "C-3.sigma": {
+      "msg_id": "MSG-20260314-103904-n92l",
+      "timestamp": "2026-03-14T10:39:04.907946+00:00",
+      "paper_id": "P3"
+    },
+    "F-4.1": {
+      "msg_id": "MSG-20260314-103904-ioqq",
+      "timestamp": "2026-03-14T10:39:04.908055+00:00",
+      "paper_id": "P4"
+    },
+    "F-4.2": {
+      "msg_id": "MSG-20260314-103904-0e9n",
+      "timestamp": "2026-03-14T10:39:04.908333+00:00",
+      "paper_id": "P4"
+    },
+    "F-5.1": {
+      "msg_id": "MSG-20260314-103904-6c7k",
+      "timestamp": "2026-03-14T10:39:04.908784+00:00",
+      "paper_id": "P5"
+    },
+    "F-5.2": {
+      "msg_id": "MSG-20260314-103904-xyav",
+      "timestamp": "2026-03-14T10:39:04.909148+00:00",
+      "paper_id": "P5"
+    },
+    "F-5.3": {
+      "msg_id": "MSG-20260314-103904-cdnf",
+      "timestamp": "2026-03-14T10:39:04.909259+00:00",
+      "paper_id": "P5"
+    },
+    "F-SFW.1": {
+      "msg_id": "MSG-20260314-103904-6z49",
+      "timestamp": "2026-03-14T10:39:04.909504+00:00",
+      "paper_id": "SFW-1"
+    },
+    "F-SFW.2": {
+      "msg_id": "MSG-20260314-103904-jqis",
+      "timestamp": "2026-03-14T10:39:04.909757+00:00",
+      "paper_id": "SFW-1"
+    },
+    "F-SFW.3": {
+      "msg_id": "MSG-20260314-103904-zfgq",
+      "timestamp": "2026-03-14T10:39:04.910070+00:00",
+      "paper_id": "SFW-1"
+    },
+    "F-SFW.4": {
+      "msg_id": "MSG-20260314-103904-475y",
+      "timestamp": "2026-03-14T10:39:04.910431+00:00",
+      "paper_id": "SFW-1"
+    },
+    "F-SFW.5": {
+      "msg_id": "MSG-20260314-103904-zhhl",
+      "timestamp": "2026-03-14T10:39:04.910736+00:00",
+      "paper_id": "SFW-1"
+    },
+    "F-SFW.6": {
+      "msg_id": "MSG-20260314-103904-4rn2",
+      "timestamp": "2026-03-14T10:39:04.910899+00:00",
+      "paper_id": "SFW-1"
+    },
+    "F-MK7.1": {
+      "msg_id": "MSG-20260314-114210-2lns",
+      "timestamp": "2026-03-14T11:42:10.082238+00:00",
+      "paper_id": "MK-P7",
+      "trigger": "diff-scan"
+    },
+    "F-MK7.2": {
+      "msg_id": "MSG-20260314-114210-6bsl",
+      "timestamp": "2026-03-14T11:42:10.082458+00:00",
+      "paper_id": "MK-P7",
+      "trigger": "diff-scan"
+    },
+    "F-MK7.3": {
+      "msg_id": "MSG-20260314-114210-n818",
+      "timestamp": "2026-03-14T11:42:10.082663+00:00",
+      "paper_id": "MK-P7",
+      "trigger": "diff-scan"
+    },
+    "F-MK7.4": {
+      "msg_id": "MSG-20260314-114210-o5ax",
+      "timestamp": "2026-03-14T11:42:10.082931+00:00",
+      "paper_id": "MK-P7",
+      "trigger": "diff-scan"
+    },
+    "F-MK7.5": {
+      "msg_id": "MSG-20260314-114210-evcl",
+      "timestamp": "2026-03-14T11:42:10.083126+00:00",
+      "paper_id": "MK-P7",
+      "trigger": "diff-scan"
+    },
+    "F-MK8.1": {
+      "msg_id": "MSG-20260314-114210-fab8",
+      "timestamp": "2026-03-14T11:42:10.083445+00:00",
+      "paper_id": "MK-P8",
+      "trigger": "diff-scan"
+    },
+    "F-MK8.2": {
+      "msg_id": "MSG-20260314-114210-nun9",
+      "timestamp": "2026-03-14T11:42:10.083648+00:00",
+      "paper_id": "MK-P8",
+      "trigger": "diff-scan"
+    },
+    "F-MK8.3": {
+      "msg_id": "MSG-20260314-114210-bhaq",
+      "timestamp": "2026-03-14T11:42:10.083848+00:00",
+      "paper_id": "MK-P8",
+      "trigger": "diff-scan"
+    }
+  },
+  "claims_reviewed": {
+    "C-DRP2.2": {
+      "msg_id": "MSG-20260314-103209-fyj6",
+      "parent_msg_id": "MSG-20260314-102948-8tau",
+      "timestamp": "2026-03-14T10:32:09.359631+00:00",
+      "verdict": "disputed",
+      "confidence": 0.9,
+      "model_used": "grok-4-latest",
+      "reasoning_preview": "The falsification predicate is logically consistent in structure: it defines falsification based on the existence of at least one counterexample where a predicate on O (derived from P) provides non-ze"
+    },
+    "C-DRP2.9": {
+      "msg_id": "MSG-20260314-103124-dqo1",
+      "parent_msg_id": "MSG-20260314-102948-69il",
+      "timestamp": "2026-03-14T10:31:24.824477+00:00",
+      "verdict": "inconclusive",
+      "confidence": 0.65,
+      "model_used": "grok-4-latest",
+      "reasoning_preview": "The falsification predicate is logically consistent: it defines a clear, measurable threshold (accuracy gap <= 0.10) with well-specified variables, evaluation procedure (training matched systems at mu"
+    },
+    "C-DRP2.1": {
+      "msg_id": "MSG-20260314-103302-95v0",
+      "parent_msg_id": "MSG-20260314-102948-cuv3",
+      "timestamp": "2026-03-14T10:33:02.117624+00:00",
+      "verdict": "disputed",
+      "confidence": 0.65,
+      "model_used": "grok-4-latest",
+      "reasoning_preview": "The falsification predicate is logically consistent in its structure: it defines a clear comparison between vacuity rates in prose-based and DRS-based corpora, with a falsification condition if prose "
+    },
+    "C-DRP2.8": {
+      "msg_id": "MSG-20260314-103237-o3aq",
+      "parent_msg_id": "MSG-20260314-102948-a2op",
+      "timestamp": "2026-03-14T10:32:37.215948+00:00",
+      "verdict": "inconclusive",
+      "confidence": 0.65,
+      "model_used": "grok-4-latest",
+      "reasoning_preview": "The falsification predicate is logically consistent: it defines a clear, testable condition (effect_size_full <= effect_size_filtered) that would disprove the claim of systematic bias toward larger ef"
+    },
+    "C-DRP2.7": {
+      "msg_id": "MSG-20260314-103055-8s8m",
+      "parent_msg_id": "MSG-20260314-102948-3i8h",
+      "timestamp": "2026-03-14T10:30:55.687312+00:00",
+      "verdict": "needs-revision",
+      "confidence": 0.65,
+      "model_used": "grok-4-latest",
+      "reasoning_preview": "The falsification predicate is logically consistent: it sets up a clear equivalence test comparing vacuity rates between pre-registered and unregistered studies, with a defined margin (0.05) and sampl"
+    },
+    "C-DRP2.3": {
+      "msg_id": "MSG-20260314-104159-dar2",
+      "parent_msg_id": "MSG-20260314-102948-ubys",
+      "timestamp": "2026-03-14T10:41:59.990306+00:00",
+      "verdict": "needs-revision",
+      "confidence": 0.75,
+      "model_used": "grok-4-latest",
+      "reasoning_preview": "The falsification predicate is mostly logically consistent in structure: it defines a clear test (benchmark construction, evaluation, threshold comparison) that could in principle falsify the claim. T"
+    },
+    "C-DRP.1": {
+      "msg_id": "MSG-20260314-104018-8k7z",
+      "parent_msg_id": "MSG-20260314-102948-kfaw",
+      "timestamp": "2026-03-14T10:40:18.291469+00:00",
+      "verdict": "disputed",
+      "confidence": 0.75,
+      "model_used": "grok-4-latest",
+      "reasoning_preview": "The claim asserts that the 5-part predicate syntax is necessary and sufficient for expressing ANY falsifiable scientific claim as a machine-evaluable predicate. While the predicate is logically consis"
+    },
+    "C-DRP.2": {
+      "msg_id": "MSG-20260314-103955-4m7x",
+      "parent_msg_id": "MSG-20260314-102948-e65g",
+      "timestamp": "2026-03-14T10:39:55.886237+00:00",
+      "verdict": "disputed",
+      "confidence": 0.95,
+      "model_used": "grok-4-latest",
+      "reasoning_preview": "The falsification predicate is logically inconsistent with the claim statement. The claim asserts that without a phase gate, the AI layer 'will be omitted in the majority of papers.' This predicts tha"
+    },
+    "C-DRP.5": {
+      "msg_id": "MSG-20260314-104125-88j5",
+      "parent_msg_id": "MSG-20260314-102948-u2aw",
+      "timestamp": "2026-03-14T10:41:25.635530+00:00",
+      "verdict": "inconclusive",
+      "confidence": 0.6,
+      "model_used": "grok-4-latest",
+      "reasoning_preview": "The falsification predicate is logically consistent: it defines a clear, deterministic procedure to count prose references in a specific JSON field, with a threshold of >0 for falsification. The bound"
+    },
+    "C-DRP8.1": {
+      "msg_id": "MSG-20260314-104054-ckuj",
+      "parent_msg_id": "MSG-20260314-102948-m800",
+      "timestamp": "2026-03-14T10:40:54.650581+00:00",
+      "verdict": "disputed",
+      "confidence": 0.75,
+      "model_used": "grok-4-latest",
+      "reasoning_preview": "The falsification predicate is not logically consistent with the stated claim. The claim asserts that an observation class O (from the past) 'cannot be a logical function of x(t+\u03c4)' (future state), wh"
+    },
+    "F-SFW.4": {
+      "msg_id": "MSG-20260314-104819-0lh2",
+      "parent_msg_id": "MSG-20260314-103904-475y",
+      "timestamp": "2026-03-14T10:48:19.045450+00:00",
+      "verdict": "confirmed",
+      "confidence": 0.95,
+      "model_used": "grok-4-latest",
+      "reasoning_preview": "The falsification predicate is logically consistent, as it precisely defines falsification for both false positives (alert fires when not all conditions are met) and false negatives (alert fails to fi"
+    },
+    "F-4.2": {
+      "msg_id": "MSG-20260314-104637-68vl",
+      "parent_msg_id": "MSG-20260314-103904-0e9n",
+      "timestamp": "2026-03-14T10:46:37.415696+00:00",
+      "verdict": "needs-revision",
+      "confidence": 0.65,
+      "model_used": "grok-4-latest",
+      "reasoning_preview": "The falsification predicate is mostly logically consistent, as it defines a clear inequality based on self-similarity indices, with \u03b5 providing a tolerance for noise. However, the predicate is incompl"
+    },
+    "F-DRSARCH.3": {
+      "msg_id": "MSG-20260314-104757-4ldj",
+      "parent_msg_id": "MSG-20260314-103904-32kw",
+      "timestamp": "2026-03-14T10:47:57.728981+00:00",
+      "verdict": "inconclusive",
+      "confidence": 0.65,
+      "model_used": "grok-4-latest",
+      "reasoning_preview": "The falsification predicate for F-DRSARCH.3 is logically consistent: it defines a clear condition for falsification based on the existence of any Type F claim where a valid assignment leads to an UNDE"
+    },
+    "C-3.DIAG": {
+      "msg_id": "MSG-20260314-104728-upof",
+      "parent_msg_id": "MSG-20260314-103904-2ppl",
+      "timestamp": "2026-03-14T10:47:28.914939+00:00",
+      "verdict": "confirmed",
+      "confidence": 0.92,
+      "model_used": "grok-4-latest",
+      "reasoning_preview": "The falsification predicate is logically consistent: it defines clear boolean conditions for falsification via an OR operator, with no internal contradictions. The evaluation procedure is straightforw"
+    },
+    "F-1.2": {
+      "msg_id": "MSG-20260314-104705-lxhq",
+      "parent_msg_id": "MSG-20260314-103904-1bgt",
+      "timestamp": "2026-03-14T10:47:05.676260+00:00",
+      "verdict": "needs-revision",
+      "confidence": 0.65,
+      "model_used": "grok-4-latest",
+      "reasoning_preview": "The falsification predicate is logically consistent in structure, defining clear conditions for Tier 1 (confirmed substrates) and Tier 2 (provisional candidates) based on log10 spans and a passing cou"
+    },
+    "F-1.6": {
+      "msg_id": "MSG-20260314-105129-2mmr",
+      "parent_msg_id": "MSG-20260314-103904-59um",
+      "timestamp": "2026-03-14T10:51:29.130064+00:00",
+      "verdict": "needs-revision",
+      "confidence": 0.75,
+      "model_used": "grok-4-latest",
+      "reasoning_preview": "The falsification predicate is logically consistent: it clearly defines falsification based on predicted T bounds and a minimum number of independent sources, with well-specified variables, evaluation"
+    },
+    "F-DRSARCH.1": {
+      "msg_id": "MSG-20260314-105034-aceg",
+      "parent_msg_id": "MSG-20260314-103904-4mcf",
+      "timestamp": "2026-03-14T10:50:34.352341+00:00",
+      "verdict": "inconclusive",
+      "confidence": 0.4,
+      "model_used": "grok-4-latest",
+      "reasoning_preview": "The falsification predicate is logically consistent: it defines a clear, testable condition based on independent implementations failing schema validation, with a threshold of zero failures to confirm"
+    },
+    "C-MK4.2": {
+      "msg_id": "MSG-20260314-105214-slsq",
+      "parent_msg_id": "MSG-20260314-103904-6bwu",
+      "timestamp": "2026-03-14T10:52:14.163478+00:00",
+      "verdict": "needs-revision",
+      "confidence": 0.95,
+      "model_used": "grok-4-latest",
+      "reasoning_preview": "The mathematical formula delta_min = 1 - (epsilon/r_0)^{1/H_plan} is correct for achieving r_H = epsilon exactly under the geometric decay r_t = (1 - delta)^t * r_0. However, the claim states delta_mi"
+    },
+    "F-SFW.6": {
+      "msg_id": "MSG-20260314-105100-6eva",
+      "parent_msg_id": "MSG-20260314-103904-4rn2",
+      "timestamp": "2026-03-14T10:51:00.892259+00:00",
+      "verdict": "needs-revision",
+      "confidence": 0.75,
+      "model_used": "grok-4-latest",
+      "reasoning_preview": "The falsification predicate is mostly logically consistent, defining clear conditions for falsification based on step counter equality and result key set matching. The evaluation procedure is determin"
+    },
+    "F-5.1": {
+      "msg_id": "MSG-20260314-105239-kwl8",
+      "parent_msg_id": "MSG-20260314-103904-6c7k",
+      "timestamp": "2026-03-14T10:52:39.945566+00:00",
+      "verdict": "inconclusive",
+      "confidence": 0.65,
+      "model_used": "grok-4-latest",
+      "reasoning_preview": "The falsification predicate is logically consistent: it clearly defines conditions for falsification based on R\u00b2 threshold and parameter signs, with well-specified variables, evaluation steps, boundar"
+    },
+    "C-2.4": {
+      "msg_id": "MSG-20260314-113429-5nyi",
+      "parent_msg_id": "MSG-20260314-103904-6ivf",
+      "timestamp": "2026-03-14T11:34:29.805447+00:00",
+      "verdict": "confirmed",
+      "confidence": 0.85,
+      "model_used": "grok-4-latest",
+      "reasoning_preview": "The falsification predicate is logically consistent: it correctly guards against invalid counterexamples by requiring systems to satisfy D-2.1 criteria, and the 2-sigma bound provides a statistical th"
+    },
+    "C-MK3.4": {
+      "msg_id": "MSG-20260314-113557-u1nv",
+      "parent_msg_id": "MSG-20260314-103904-7tux",
+      "timestamp": "2026-03-14T11:35:57.398274+00:00",
+      "verdict": "inconclusive",
+      "confidence": 0.65,
+      "model_used": "grok-4-latest",
+      "reasoning_preview": "The falsification predicate is logically consistent in structure, defining a clear simulation-based test with thresholds (Q_L(200) > 0.95 not falsified, < 0.80 falsified) that approximates asymptotic "
+    },
+    "F-1.5": {
+      "msg_id": "MSG-20260314-113640-e7p6",
+      "parent_msg_id": "MSG-20260314-103904-81ra",
+      "timestamp": "2026-03-14T11:36:40.044985+00:00",
+      "verdict": "disputed",
+      "confidence": 0.95,
+      "model_used": "grok-4-latest",
+      "reasoning_preview": "The claim states that \u0393 = |dh/d\u03bb|* = |1 + i\u03c0/2| = 1 + \u03c0\u00b2/4 \u2248 3.467. However, this contains a fundamental mathematical error. The magnitude of a complex number |a + bi| is sqrt(a\u00b2 + b\u00b2), so |1 + i(\u03c0/2)"
+    },
+    "F-MK6.4": {
+      "msg_id": "MSG-20260314-113456-lj8r",
+      "parent_msg_id": "MSG-20260314-103904-6mm1",
+      "timestamp": "2026-03-14T11:34:56.422694+00:00",
+      "verdict": "inconclusive",
+      "confidence": 0.65,
+      "model_used": "grok-4-latest",
+      "reasoning_preview": "The falsification predicate is logically consistent: it clearly defines falsification as occurring if any of the three gap categories has zero counts, with well-defined variables, a finite evaluation "
+    },
+    "F-SFW.1": {
+      "msg_id": "MSG-20260314-113525-2jaz",
+      "parent_msg_id": "MSG-20260314-103904-6z49",
+      "timestamp": "2026-03-14T11:35:25.684874+00:00",
+      "verdict": "inconclusive",
+      "confidence": 0.65,
+      "model_used": "grok-4-latest",
+      "reasoning_preview": "The falsification predicate is logically consistent: it clearly defines falsification as the existence of an alert type detectable by a single channel but not by the combined pipeline, with well-defin"
+    },
+    "C-MK4.4": {
+      "msg_id": "MSG-20260314-114849-hpqb",
+      "parent_msg_id": "MSG-20260314-103904-8d9g",
+      "timestamp": "2026-03-14T11:48:49.490024+00:00",
+      "verdict": "needs-revision",
+      "confidence": 0.65,
+      "model_used": "grok-4-latest",
+      "reasoning_preview": "The falsification predicate is logically consistent in its definition, as it clearly specifies conditions for a 'broken' loop based on component connections, with well-defined variables and evaluation"
+    },
+    "C-MK4.1": {
+      "msg_id": "MSG-20260314-114914-zlmx",
+      "parent_msg_id": "MSG-20260314-103904-8dja",
+      "timestamp": "2026-03-14T11:49:14.122460+00:00",
+      "verdict": "inconclusive",
+      "confidence": 0.65,
+      "model_used": "grok-4-latest",
+      "reasoning_preview": "The falsification predicate is logically consistent: it clearly defines conditions for falsification based on recovery to standard KVS and bounded novelty floor, with a testable evaluation procedure i"
+    },
+    "C-MK4.3": {
+      "msg_id": "MSG-20260314-114827-7xvz",
+      "parent_msg_id": "MSG-20260314-103904-88ug",
+      "timestamp": "2026-03-14T11:48:27.817930+00:00",
+      "verdict": "confirmed",
+      "confidence": 0.95,
+      "model_used": "grok-4-latest",
+      "reasoning_preview": "The falsification predicate is logically consistent, as it defines a clear numerical threshold for disproving the claim based on arithmetic computation. The math checks out: 0.20 * 0.92 = 0.184 exactl"
+    },
+    "F-MK1.4": {
+      "msg_id": "MSG-20260314-115014-p6o6",
+      "parent_msg_id": "MSG-20260314-103904-9sms",
+      "timestamp": "2026-03-14T11:50:14.039105+00:00",
+      "verdict": "inconclusive",
+      "confidence": 0.4,
+      "model_used": "grok-4-latest",
+      "reasoning_preview": "The falsification predicate is logically consistent in structure: it defines a clear condition for falsification based on a point estimate falling outside a specified range, with well-defined variable"
+    },
+    "C-2.3": {
+      "msg_id": "MSG-20260314-114951-rjmi",
+      "parent_msg_id": "MSG-20260314-103904-8dwe",
+      "timestamp": "2026-03-14T11:49:51.301279+00:00",
+      "verdict": "inconclusive",
+      "confidence": 0.65,
+      "model_used": "grok-4-latest",
+      "reasoning_preview": "The falsification predicate is logically consistent: it defines clear boolean conditions for falsification based on scaling differences or non-universality of expressions, with well-structured WHERE, "
+    },
+    "C-2.5": {
+      "msg_id": "MSG-20260314-120521-rvrr",
+      "parent_msg_id": "MSG-20260314-103904-d7kc",
+      "timestamp": "2026-03-14T12:05:21.784034+00:00",
+      "verdict": "confirmed",
+      "confidence": 0.92,
+      "model_used": "grok-4-latest",
+      "reasoning_preview": "The falsification predicate is logically consistent: it clearly defines two boolean conditions for falsification based on linear perturbation response and eigenvalue magnitude, aligning with standard "
+    },
+    "C-MK5.4": {
+      "msg_id": "MSG-20260314-120455-3yhg",
+      "parent_msg_id": "MSG-20260314-103904-cjd0",
+      "timestamp": "2026-03-14T12:04:55.487365+00:00",
+      "verdict": "needs-revision",
+      "confidence": 0.95,
+      "model_used": "grok-4-latest",
+      "reasoning_preview": "The falsification predicate is not logically consistent due to an error in the specified normal form for the fold bifurcation. The equation dx = (mu(t) - x^2)dt + sigma dW with mu increasing from -1 t"
+    },
+    "F-5.3": {
+      "msg_id": "MSG-20260314-120340-wczy",
+      "parent_msg_id": "MSG-20260314-103904-cdnf",
+      "timestamp": "2026-03-14T12:03:40.651120+00:00",
+      "verdict": "needs-revision",
+      "confidence": 0.65,
+      "model_used": "grok-4-latest",
+      "reasoning_preview": "The falsification predicate is partially consistent but incomplete: it only explicitly tests the AMOC fit (R\u00b2 threshold and modification check), while the claim statement asserts scale independence ac"
+    },
+    "F-1.3": {
+      "msg_id": "MSG-20260314-120308-g7ju",
+      "parent_msg_id": "MSG-20260314-103904-c8n1",
+      "timestamp": "2026-03-14T12:03:08.409698+00:00",
+      "verdict": "inconclusive",
+      "confidence": 0.65,
+      "model_used": "grok-4-latest",
+      "reasoning_preview": "The falsification predicate is logically consistent: it defines a clear statistical test (2\u03c3 deviation from 0.5) using mean \u03b2 across substrate classes, with well-defined variables and evaluation proce"
+    },
+    "C-MK5.3": {
+      "msg_id": "MSG-20260314-120244-p9ec",
+      "parent_msg_id": "MSG-20260314-103904-c3dy",
+      "timestamp": "2026-03-14T12:02:44.852201+00:00",
+      "verdict": "disputed",
+      "confidence": 1.0,
+      "model_used": "grok-4-latest",
+      "reasoning_preview": "The claimed formula for E[min(T_1,...,T_k)] = (1/lambda)(1 - 1/k) is incorrect. The correct expected value for the minimum of k i.i.d. exponential random variables with rate lambda is 1/(k lambda), wh"
+    }
+  },
+  "summary": {
+    "total_falsifiable": 70,
+    "sent_to_grok": 70,
+    "reviewed_by_grok": 35,
+    "confirmed": 5,
+    "disputed": 7,
+    "inconclusive": 13,
+    "needs_revision": 10
+  }
+}

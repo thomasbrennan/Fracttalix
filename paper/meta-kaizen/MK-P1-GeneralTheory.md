@@ -1,4 +1,4 @@
-Meta-Kaizen Series · Paper 1 of 5
+Meta-Kaizen Series · Paper 1 of 8
 
 Meta-Kaizen: A General Theory and Algorithmic Framework for the Mathematical Formalization of Self-Evolving Continuous Improvement Across Arbitrary Governance Substrates
 
@@ -12,7 +12,7 @@ AI contributions: Claude (Anthropic) provided mathematical formalization, measur
 
 ## 1. Series Orientation
 
-This is Paper 1 of five in the Meta-Kaizen series. This paper derives the general theory and the Kaizen Variation Score (KVS) scoring function from measurement-theoretic axioms. Paper 2 proves that the framework scales to federated networks while preserving privacy and governance integrity. Paper 3 formalizes the cognitive infrastructure for bisociative reasoning and institutional memory. Paper 4 addresses dynamic environments via the Fractal Rhythm Model. Paper 5 provides the decision-theoretic capstone on intervention timing at tipping points.
+This is Paper 1 of seven in the Meta-Kaizen series. This paper derives the general theory and the Kaizen Variation Score (KVS) scoring function from measurement-theoretic axioms. Paper 2 proves that the framework scales to federated networks while preserving privacy and governance integrity. Paper 3 formalizes the cognitive infrastructure for bisociative reasoning and institutional memory. Paper 4 addresses dynamic environments via the Fractal Rhythm Model. Paper 5 provides the decision-theoretic capstone on intervention timing at tipping points. Paper 6 extends the DRS to executable software systems. Paper 7 formalizes the Canonical Build Plan (CBP) — the 5-step governance process that produced all papers in this series — and proves that its folded Meta-Kaizen architecture with adversarial hostile review produces monotonically improving output quality.
 
 ## 2. Abstract and AI-Reader Header
 

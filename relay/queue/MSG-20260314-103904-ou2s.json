@@ -1,0 +1,20 @@
+{
+  "id": "MSG-20260314-103904-ou2s",
+  "timestamp": "2026-03-14T10:39:04.907276+00:00",
+  "from": "claude",
+  "to": "grok",
+  "type": "claim-review",
+  "priority": "normal",
+  "subject": "Review C-3.ALT: Alternative Model Comparison Protocol",
+  "body": "## Claim Review Request: C-3.ALT\n**Paper:** P3 \u2014 FRM Measurement and Diagnostics: Standard Protocol for Extracting Parameters, Computing Goodness-of-Fit, and Diagnosing Scope Boundaries\n**Claim:** Alternative Model Comparison Protocol\n**Type:** F\n\n### Statement\nFor each substrate class, the best alternative model is pre-specified in the Section 5 mapping table. Comparison is by \u0394 = R\u00b2_frm \u2212 R\u00b2_alt with threshold \u0394\u2265\u22120.05.\n\n### Falsification Predicate\n**FALSIFIED_IF:** (best_alt_model_class_mapping_is_post_hoc = true) OR (delta_margin_threshold_is_undefined = true)\n**WHERE:** best_alt_model_class_mapping_is_post_hoc: BOOLEAN \u2014 TRUE if best_alt_model selection is made after seeing R\u00b2_frm for that substrate. delta_margin_threshold_is_undefined: BOOLEAN \u2014 TRUE if \u0394 threshold not pre-stated.\n**EVALUATION:** Step 1: confirm mapping table exists in Section 5 and was written before data analysis. Step 2: confirm \u0394\u2265\u22120.05 stated as threshold. 2 steps.\n**BOUNDARY:** Both false \u2192 NOT FALSIFIED.\n**CONTEXT:** C-3.ALT. Post-hoc model selection violates C6 (falsifiability). \u0394\u2265\u22120.05 anchored at Burnham & Anderson 2002. P10-GAP-3.2 CLOSED.\n\n**Derivation chain:** C-3.REG\n\n### Requested\n1. Verify the falsification predicate is logically consistent\n2. Check math against known results (Strogatz, Kuznetsov, etc.)\n3. Identify counterexamples or edge cases missed\n4. Cross-reference against published literature\n5. Provide verdict with confidence and reasoning",
+  "references": {
+    "claim_ids": [
+      "C-3.ALT"
+    ],
+    "files": [
+      "ai-layers/P3-ai-layer.json"
+    ]
+  },
+  "status": "pending",
+  "_model_tier": "quality"
+}

@@ -1,0 +1,20 @@
+{
+  "id": "MSG-20260314-103904-ky9y",
+  "timestamp": "2026-03-14T10:39:04.894675+00:00",
+  "from": "claude",
+  "to": "grok",
+  "type": "claim-review",
+  "priority": "normal",
+  "subject": "Review F-DRSARCH.2: unnamed",
+  "body": "## Claim Review Request: F-DRSARCH.2\n**Paper:** DRS-ARCH \u2014 The Dual Reader Standard: Architecture Specification\n**Claim:** unnamed\n**Type:** F\n\n### Statement\nThe DRS backward compatibility contract holds: any AI layer valid under schema version N remains valid under schema version N+1. New versions add fields; no version removes or renames existing required fields.\n\n### Falsification Predicate\n**FALSIFIED_IF:** EXISTS layer IN corpus_layers, EXISTS v_old IN schema_versions, EXISTS v_new IN schema_versions SUCH THAT v_new > v_old AND validates(layer, v_old) = TRUE AND validates(layer, v_new) = FALSE\n**WHERE:** {'corpus_layers': 'set \u00b7 dimensionless \u00b7 all AI layer JSON files in the Fracttalix corpus', 'schema_versions': 'set \u00b7 dimensionless \u00b7 all published versions of ai-layer-schema.json (v1, v2-S48, v2-S50, v3-S49, v3-S51)', 'validates': 'function \u00b7 boolean \u00b7 returns TRUE iff the layer passes JSON Schema validation against the specified schema version'}\n**EVALUATION:** For each AI layer in the corpus: validate against every schema version from its produced version through the latest. If any layer passes its original schema but fails a newer schema, the claim is falsified. Finite deterministic procedure bounded by layer count \u00d7 schema version count.\n**BOUNDARY:** Zero failures \u2192 NOT FALSIFIED (inclusive). Any single failure falsifies.\n**CONTEXT:** F-DRSARCH.2 \u00b7 threshold 0 \u00b7 backward compatibility is the strongest contract in Section 16 because it is machine-testable, unlike lateral and forward compatibility which are governance commitments\n\n**Derivation chain:** DRS-ARCH Section 16.2 \u2192 DRS-ARCH Section 16.6\n\n### Requested\n1. Verify the falsification predicate is logically consistent\n2. Check math against known results (Strogatz, Kuznetsov, etc.)\n3. Identify counterexamples or edge cases missed\n4. Cross-reference against published literature\n5. Provide verdict with confidence and reasoning",
+  "references": {
+    "claim_ids": [
+      "F-DRSARCH.2"
+    ],
+    "files": [
+      "ai-layers/DRS-ARCH-ai-layer.json"
+    ]
+  },
+  "status": "pending",
+  "_model_tier": "quality"
+}
