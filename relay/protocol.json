@@ -1,0 +1,192 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Fracttalix Multi-AI Relay Protocol",
+  "version": "1.0.0",
+  "description": "Git-based message relay enabling cross-AI communication and quality control. A single node reasons; a relay cross-references.",
+  "agents": {
+    "claude": {
+      "id": "claude",
+      "provider": "anthropic",
+      "access_method": "claude-code-cli",
+      "bootstrap_doc": "docs/claude-bootstrap.md",
+      "capabilities": ["code-execution", "file-read-write", "git-push", "test-runner", "ai-layer-author"],
+      "autonomous_send": true,
+      "autonomous_read": true,
+      "can_initiate": true
+    },
+    "grok": {
+      "id": "grok",
+      "provider": "xai",
+      "access_method": "grok-github-integration",
+      "bootstrap_doc": "relay/grok-bootstrap.md",
+      "capabilities": ["code-review", "cross-reference", "web-search", "fact-check", "ai-layer-review"],
+      "autonomous_send": true,
+      "autonomous_read": true,
+      "can_initiate": true
+    }
+  },
+  "autonomous_communication": {
+    "description": "Both AIs can independently initiate communication without human relay. Each AI checks for pending messages at session start and can post messages at any time.",
+    "triggers": {
+      "session_start": "Check relay/queue/ for pending messages addressed to self",
+      "claim_authored": "Optionally send claim-review to other AI for independent verification",
+      "discrepancy_found": "Auto-send cross-reference request when something looks inconsistent",
+      "milestone_reached": "Notify other AI of significant progress for awareness"
+    },
+    "human_role": "Thomas receives copies of all messages but does not need to relay. He can override, veto, or add context at any time.",
+    "guardrails": {
+      "max_messages_per_session": 10,
+      "require_human_approval_for": ["critical priority messages", "messages that modify AI layer claims"],
+      "cc_human": true
+    }
+  },
+  "message_schema": {
+    "type": "object",
+    "required": ["id", "timestamp", "from", "to", "type", "subject", "body"],
+    "properties": {
+      "id": {
+        "type": "string",
+        "pattern": "^MSG-[0-9]{8}-[0-9]{6}-[a-z0-9]{4}$",
+        "description": "Unique message ID: MSG-YYYYMMDD-HHMMSS-xxxx"
+      },
+      "timestamp": {
+        "type": "string",
+        "format": "date-time"
+      },
+      "from": {
+        "type": "string",
+        "enum": ["claude", "grok", "human"]
+      },
+      "to": {
+        "type": "string",
+        "enum": ["claude", "grok", "human", "all"]
+      },
+      "type": {
+        "type": "string",
+        "enum": [
+          "qc-request",
+          "qc-response",
+          "claim-review",
+          "claim-review-response",
+          "cross-reference",
+          "cross-reference-response",
+          "status-query",
+          "status-response",
+          "general"
+        ]
+      },
+      "priority": {
+        "type": "string",
+        "enum": ["low", "normal", "high", "critical"],
+        "default": "normal"
+      },
+      "subject": {
+        "type": "string",
+        "maxLength": 200
+      },
+      "body": {
+        "type": "string",
+        "description": "Markdown-formatted message body"
+      },
+      "references": {
+        "type": "object",
+        "properties": {
+          "claim_ids": {
+            "type": "array",
+            "items": { "type": "string" },
+            "description": "AI layer claim IDs relevant to this message"
+          },
+          "files": {
+            "type": "array",
+            "items": { "type": "string" },
+            "description": "Repo-relative file paths referenced"
+          },
+          "commits": {
+            "type": "array",
+            "items": { "type": "string" },
+            "description": "Git commit SHAs referenced"
+          },
+          "parent_message": {
+            "type": "string",
+            "description": "ID of the message this replies to"
+          }
+        }
+      },
+      "attachments": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "name": { "type": "string" },
+            "path": { "type": "string" },
+            "content_type": { "type": "string" }
+          }
+        }
+      },
+      "status": {
+        "type": "string",
+        "enum": ["pending", "acknowledged", "in-progress", "resolved", "expired"],
+        "default": "pending"
+      }
+    }
+  },
+  "queue_rules": {
+    "directory": "relay/queue/",
+    "archive_directory": "relay/messages/",
+    "naming": "{message_id}.json",
+    "lifecycle": [
+      "Message created in relay/queue/ with status 'pending'",
+      "Recipient reads and updates status to 'acknowledged'",
+      "Recipient works on request, updates to 'in-progress'",
+      "Recipient posts response message, updates original to 'resolved'",
+      "Resolved messages moved to relay/messages/ for audit trail"
+    ],
+    "expiry_hours": 168,
+    "max_queue_depth": 50
+  },
+  "qc_protocol": {
+    "description": "Quality control cross-referencing between AI agents",
+    "request_types": [
+      {
+        "type": "claim-review",
+        "description": "Request independent verification of a falsifiable claim",
+        "required_fields": ["claim_ids"],
+        "expected_response": "Agreement/disagreement with reasoning, potential counter-evidence"
+      },
+      {
+        "type": "cross-reference",
+        "description": "Request fact-checking against external sources",
+        "required_fields": ["body"],
+        "expected_response": "Sources found, consistency assessment, discrepancies noted"
+      },
+      {
+        "type": "qc-request",
+        "description": "General quality control review of code, docs, or claims",
+        "required_fields": ["files"],
+        "expected_response": "Review with issues found, suggestions, and confidence level"
+      }
+    ],
+    "response_format": {
+      "verdict": {
+        "type": "string",
+        "enum": ["confirmed", "disputed", "inconclusive", "needs-revision"]
+      },
+      "confidence": {
+        "type": "number",
+        "minimum": 0,
+        "maximum": 1
+      },
+      "reasoning": {
+        "type": "string"
+      },
+      "sources": {
+        "type": "array",
+        "items": { "type": "string" }
+      },
+      "suggestions": {
+        "type": "array",
+        "items": { "type": "string" }
+      }
+    }
+  }
+}
