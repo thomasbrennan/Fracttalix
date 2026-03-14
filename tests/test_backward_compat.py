@@ -58,10 +58,15 @@ class TestProductionDefault:
         assert isinstance(prod, SentinelConfig)
         assert prod.multiplier == 4.5
 
+    def test_bare_default_has_original_multiplier(self):
+        """SentinelConfig() retains the original multiplier=3.0."""
+        default = SentinelConfig()
+        assert default.multiplier == 3.0
+
     def test_default_detector_uses_production_config(self):
+        """SentinelDetector() defaults to SentinelConfig.production() (v12.3)."""
         det = SentinelDetector()
-        prod = SentinelConfig.production()
-        assert det.config == prod
+        assert det.config == SentinelConfig.production()
 
 
 class TestV9ConvenienceMethods:

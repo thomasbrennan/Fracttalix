@@ -61,7 +61,7 @@ For maximum fidelity, also attach these live files from GitHub:
 - **P1**: PHASE-READY (v13). CBT I-9 all 7 steps passed. PH-1.1 resolved via P2 C-2.4.
 - **P2**: Phase 1 PHASE-READY (S49). AI layer v4. IR inventory IR-1–IR-11. Phases 2–5 not yet executed.
 - **P3**: QUEUED. No build plan. Gated on P2 full PHASE-READY.
-- **Sentinel**: v12.1.0, package refactored (`pip install fracttalix`), 405 tests
+- **Sentinel**: v12.3.0, package refactored (`pip install fracttalix`), 434 tests
 
 ### Key results (Session 43)
 - β = 1/2 analytically derived (Hopf quarter-wave theorem)
@@ -163,7 +163,7 @@ Schema:             v3-S51
 - **Citation format**: [Fracttalix Paper N, AI-Layer, Claim ID]
 - **Session numbering**: S1–S55 (current)
 - **Build Table**: tracks all 23 corpus objects, milestones, dependencies (CorpusArch v10)
-- **Sentinel**: Python package (v12.1) — streaming anomaly detector implementing the three-channel model
+- **Sentinel**: Python package (v12.3) — streaming anomaly detector implementing the three-channel model
 - **Meta-Kaizen (MK)**: Parallel 6-paper verification and governance corpus
 
 ## Key files in repo
@@ -192,8 +192,8 @@ Fracttalix/
 │   ├── DRS-Architecture.md
 │   ├── paper.md                     ← JOSS software paper
 │   └── meta-kaizen/                 ← MK-P1 through MK-P6
-├── fracttalix/                      ← Package (v12.1, 37-step pipeline)
-├── tests/                           ← 405 tests
+├── fracttalix/                      ← Package (v12.3, 37-step pipeline)
+├── tests/                           ← 434 tests
 ├── benchmark/                       ← Anomaly archetype benchmarks
 ├── scripts/                         ← Validation, status, consistency scripts
 ├── legacy/                          ← Archived monolith versions (v7.6–v11.0)

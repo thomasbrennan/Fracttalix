@@ -49,6 +49,28 @@ class WindowBank:
             if k in self._windows:
                 self._windows[k].clear()
                 self._windows[k].extend(vals)
+            elif vals:
+                # Window was saved but not yet registered (lazy registration).
+                # Re-create with the saved maxlen so data survives round-trip.
+                self._windows[k] = deque(vals, maxlen=len(vals))
+
+    def state_dict_with_maxlen(self) -> Dict[str, dict]:
+        """Return state including maxlen for each window (used by save_state)."""
+        return {
+            k: {"data": list(v), "maxlen": v.maxlen}
+            for k, v in self._windows.items()
+        }
+
+    def load_state_with_maxlen(self, sd: Dict[str, dict]) -> None:
+        """Restore state including maxlen (used by load_state)."""
+        for k, info in sd.items():
+            maxlen = info.get("maxlen", len(info.get("data", [])))
+            data = info.get("data", [])
+            if k in self._windows:
+                self._windows[k].clear()
+                self._windows[k].extend(data)
+            else:
+                self._windows[k] = deque(data, maxlen=maxlen or None)
 
 
 @dataclasses.dataclass

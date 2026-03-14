@@ -1,0 +1,74 @@
+name: Auto QC Pipeline
+
+# Triggers when AI layers change, or manually for full corpus scan
+on:
+  push:
+    paths:
+      - 'ai-layers/*-ai-layer.json'
+    branches:
+      - main
+      - 'claude/**'
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: 'Scan mode'
+        required: true
+        default: 'diff-scan'
+        type: choice
+        options:
+          - diff-scan
+          - full-scan
+      batch_size:
+        description: 'Max claims to queue (full-scan only)'
+        required: false
+        default: '10'
+        type: string
+
+permissions:
+  contents: write
+
+jobs:
+  auto-qc:
+    name: Queue claims for Grok review
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.ref }}
+          fetch-depth: 2  # Need parent commit for diff
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Run Auto QC scan
+        run: |
+          cd $GITHUB_WORKSPACE
+          MODE="${{ github.event.inputs.mode || 'diff-scan' }}"
+          BATCH="${{ github.event.inputs.batch_size || '10' }}"
+
+          if [ "$MODE" = "full-scan" ]; then
+            python -m relay.auto_qc full-scan --batch-size "$BATCH"
+          else
+            python -m relay.auto_qc diff-scan --base-ref HEAD~1
+          fi
+
+      - name: Show review status
+        run: |
+          cd $GITHUB_WORKSPACE
+          python -m relay.auto_qc status --verbose || true
+
+      - name: Commit and push queued messages
+        run: |
+          cd $GITHUB_WORKSPACE
+          git config user.name "auto-qc-pipeline"
+          git config user.email "qc@fracttalix.dev"
+          git add relay/queue/MSG-*.json
+          git add relay/review-tracker.json || true
+          if git diff --cached --quiet; then
+            echo "No new QC requests to commit."
+          else
+            git commit -m "relay(auto-qc): queue claims for Grok review"
+            git push origin HEAD
+          fi

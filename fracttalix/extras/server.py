@@ -12,7 +12,7 @@ from fracttalix.multistream import MultiStreamSentinel
 try:
     from fracttalix import __version__
 except Exception:
-    __version__ = "12.1.0"
+    __version__ = "12.3.0"
 
 
 class SentinelServer:
@@ -83,7 +83,7 @@ class SentinelServer:
             try:
                 from fracttalix import __version__ as _ver
             except Exception:
-                _ver = "12.1.0"
+                _ver = "12.3.0"
             return "200 OK", {
                 "version": _ver,
                 "uptime": time.time() - self._start_time,

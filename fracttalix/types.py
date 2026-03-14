@@ -345,3 +345,39 @@ class SentinelResult(dict):
             "kappa": kappa,
             "interpretation": interp,
         }
+
+    # ------------------------------------------------------------------
+    # V13.0 — Hopf Detector
+    # ------------------------------------------------------------------
+
+    def get_hopf_status(self) -> Dict[str, Any]:
+        """Returns Hopf bifurcation detector status.
+
+        Tracks the fitted decay rate λ of the FRM damped oscillation model
+        f(t) = B + A·exp(-λt)·cos(ωt+φ). When λ → 0, the system approaches
+        its Hopf bifurcation (critical transition).
+
+        Keys:
+            lambda: fitted decay rate (0 = at bifurcation).
+            lambda_rate: dλ/dt (negative = approaching transition).
+            time_to_transition: estimated steps remaining (None if stable).
+            confidence: HIGH / MEDIUM / LOW.
+            scope_status: IN_SCOPE / BOUNDARY / OUT_OF_SCOPE / INSUFFICIENT_DATA.
+            r_squared: model fit quality.
+            omega: fitted characteristic frequency.
+            tau_gen_implied: π/(2ω) — implied generation timescale.
+            alert: whether an alert is active.
+            alert_type: CRITICAL_SLOWING / TRANSITION_APPROACHING / None.
+        """
+        return {
+            "lambda": self.get("hopf_lambda"),
+            "lambda_rate": self.get("hopf_lambda_rate"),
+            "time_to_transition": self.get("hopf_time_to_transition"),
+            "confidence": self.get("hopf_confidence", "LOW"),
+            "scope_status": self.get("hopf_scope_status", "INSUFFICIENT_DATA"),
+            "r_squared": self.get("hopf_r_squared"),
+            "omega": self.get("hopf_omega"),
+            "tau_gen_implied": self.get("hopf_tau_gen_implied"),
+            "alert": self.get("hopf_alert", False),
+            "alert_type": self.get("hopf_alert_type"),
+        }

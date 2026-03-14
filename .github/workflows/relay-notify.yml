@@ -1,0 +1,111 @@
+name: Multi-AI Relay Monitor
+
+on:
+  push:
+    paths:
+      - 'relay/queue/*.json'
+    branches:
+      - main
+  schedule:
+    # Check every 2 hours for autonomous message pickup
+    - cron: '0 */2 * * *'
+  workflow_dispatch:
+    inputs:
+      action:
+        description: 'Action to perform'
+        required: true
+        default: 'status'
+        type: choice
+        options:
+          - status
+          - archive
+          - notify
+
+permissions:
+  contents: read
+  issues: write
+
+jobs:
+  relay-monitor:
+    name: Monitor Relay Queue
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Check relay status
+        id: status
+        run: |
+          cd $GITHUB_WORKSPACE
+          python -m relay.relay_manager status --json > relay_status.json
+          echo "queue_depth=$(python -c 'import json; d=json.load(open("relay_status.json")); print(d["queue_depth"])')" >> $GITHUB_OUTPUT
+          echo "pending=$(python -c 'import json; d=json.load(open("relay_status.json")); print(d["pending"])')" >> $GITHUB_OUTPUT
+          cat relay_status.json
+
+      - name: Summarize pending messages by recipient
+        if: steps.status.outputs.pending != '0'
+        id: summary
+        run: |
+          cd $GITHUB_WORKSPACE
+          python3 << 'PYEOF'
+          import json, glob, os
+
+          pending_by_agent = {}
+          for f in sorted(glob.glob("relay/queue/MSG-*.json")):
+              m = json.load(open(f))
+              if m.get("status") == "pending":
+                  to = m.get("to", "unknown")
+                  pending_by_agent.setdefault(to, []).append(m)
+
+          print("## Relay Queue Summary\n")
+          for agent, msgs in pending_by_agent.items():
+              print(f"### {agent.upper()} inbox ({len(msgs)} pending)\n")
+              for m in msgs:
+                  priority = ""
+                  if m.get("priority") == "high":
+                      priority = " ⚠️"
+                  elif m.get("priority") == "critical":
+                      priority = " 🔴"
+                  print(f"- **{m['id']}** | from:{m['from']} | {m['type']}{priority}")
+                  print(f"  {m['subject']}")
+              print()
+
+          # Write summary for downstream steps
+          with open(os.environ.get("GITHUB_OUTPUT", "/dev/null"), "a") as out:
+              for agent in pending_by_agent:
+                  out.write(f"pending_{agent}={len(pending_by_agent[agent])}\n")
+          PYEOF
+
+      - name: Create issue for stale messages (>48h)
+        if: steps.status.outputs.pending != '0'
+        run: |
+          cd $GITHUB_WORKSPACE
+          python3 << 'PYEOF'
+          import json, glob
+          from datetime import datetime, timezone, timedelta
+
+          stale_threshold = datetime.now(timezone.utc) - timedelta(hours=48)
+          stale = []
+
+          for f in sorted(glob.glob("relay/queue/MSG-*.json")):
+              m = json.load(open(f))
+              if m.get("status") == "pending":
+                  ts = datetime.fromisoformat(m["timestamp"])
+                  if ts < stale_threshold:
+                      stale.append(m)
+
+          if stale:
+              print(f"⚠️ {len(stale)} stale message(s) older than 48h:")
+              for m in stale:
+                  print(f"  - {m['id']}: {m['from']}→{m['to']} | {m['subject']}")
+              print("\nConsider checking if the recipient agent has access.")
+          else:
+              print("No stale messages.")
+          PYEOF
+
+      - name: Archive resolved (manual)
+        if: github.event.inputs.action == 'archive'
+        run: python -m relay.relay_manager archive

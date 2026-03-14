@@ -19,11 +19,11 @@ Python 3.9+ required. Zero external runtime dependencies.
 ### 1. Run the full test suite
 
 ```bash
-pytest tests/ -v                # 405 tests
+pytest tests/ -v                # 434 tests
 python fracttalix/detector.py   # 65 built-in smoke tests
 ```
 
-Expected: 470/470 pass.
+Expected: 499/499 pass.
 
 ### 2. Validate AI layers
 
@@ -133,7 +133,7 @@ Each claim in the AI layers carries three v3 fields: `tier`, `test_bindings`, `v
 ## Verification pipeline
 
 ```
-Source code → pytest (405 tests)
+Source code → pytest (434 tests)
                 ↓
 AI layers  → validate_ai_layers.py (schema compliance)
                 ↓
@@ -142,9 +142,30 @@ Cross-refs → cross_paper_checker.py (derivation source integrity)
 Corpus     → corpus_status.py (phase readiness, placeholder tracking)
                 ↓
 CI         → .github/workflows/ (automated on push/PR)
+                ↓
+DDN        → network-sync.yml (mirror sync, archive snapshot, health check)
 ```
 
 ---
+
+## Distributed Docs Network
+
+The corpus is replicated across multiple independent providers to ensure
+persistence beyond any single point of failure. See `network/DDN-theory.md`
+for the FRM-grounded theoretical design.
+
+```bash
+python -m network.distributed_docs status     # Check network health
+python -m network.distributed_docs sync       # Sync all mirrors
+python -m network.distributed_docs verify     # Integrity check across nodes
+python -m network.distributed_docs snapshot   # Create archival snapshot
+python -m network.distributed_docs bootstrap  # First-time network setup
+```
+
+Providers: GitHub (primary), GitLab, Codeberg, Bitbucket (git mirrors);
+Zenodo, Software Heritage, Internet Archive (archives); IPFS (content-addressed).
+
+Quorum: any 2 of 8 nodes can reconstruct the full repository state.
 
 ## Key files
 
@@ -156,6 +177,9 @@ CI         → .github/workflows/ (automated on push/PR)
 | `scripts/validate_ai_layers.py` | Schema validator |
 | `scripts/cross_paper_checker.py` | Cross-paper consistency checker |
 | `scripts/corpus_status.py` | Corpus status report generator |
+| `network/manifest.json` | DDN topology definition (8 nodes) |
+| `network/distributed_docs.py` | DDN management CLI |
+| `network/DDN-theory.md` | FRM-grounded network resilience theory |
 | `tests/` | 405 pytest tests |
 | `benchmark/` | Anomaly archetype benchmarks (seed 42) |
 

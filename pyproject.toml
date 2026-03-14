@@ -24,7 +24,6 @@ classifiers = [
     "Intended Audience :: Science/Research",
     "Intended Audience :: Developers",
     "Programming Language :: Python :: 3",
-    "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
@@ -32,7 +31,7 @@ classifiers = [
     "Topic :: Scientific/Engineering :: Information Analysis",
     "Typing :: Typed",
 ]
-requires-python = ">=3.9"
+requires-python = ">=3.10"
 dependencies = []  # zero hard dependencies — pure stdlib core
 
 [project.optional-dependencies]
@@ -58,9 +57,11 @@ DOI = "https://doi.org/10.5281/zenodo.18859299"
 
 [project.scripts]
 fracttalix = "fracttalix.__main__:main"
+fracttalix-ddn = "network.distributed_docs:main"
+fracttalix-relay = "relay.relay_manager:main"
 
 [tool.setuptools.packages.find]
-include = ["fracttalix*", "benchmark*"]
+include = ["fracttalix*", "benchmark*", "network*"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
@@ -70,15 +71,15 @@ python_functions = ["test_*"]
 
 [tool.ruff]
 line-length = 100
-target-version = "py39"
+target-version = "py310"
 
 [tool.ruff.lint]
 select = ["E", "F", "W", "I"]
 ignore = ["E501"]
 
 [tool.coverage.run]
-source = ["fracttalix", "benchmark"]
-omit = ["fracttalix/extras/*", "legacy/*"]
+source = ["fracttalix"]
+omit = ["fracttalix/extras/*", "fracttalix/suite/*", "legacy/*"]
 
 [tool.coverage.report]
 show_missing = true

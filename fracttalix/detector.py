@@ -20,7 +20,7 @@ from fracttalix.window import StepContext, WindowBank
 try:
     from fracttalix import __version__
 except ImportError:
-    __version__ = "12.1.0"
+    __version__ = "12.3.0"
 
 
 def _legacy_kwargs_to_config(kw: dict) -> SentinelConfig:
@@ -176,8 +176,6 @@ class SentinelDetector:
         result.setdefault("critical_coupling", 0.5)
         result.setdefault("critical_coupling_v10", 0.5)
         result.setdefault("maintenance_burden_v10", 0.0)
-        result.setdefault("kuramoto_order_v10", 0.0)
-        result.setdefault("phi_kappa_separation", 0.0)
         result.setdefault("mean_coupling_strength", 0.0)
         result["step"] = self._n
         result["value"] = value if not isinstance(value, (list, tuple)) else list(value)
@@ -188,7 +186,7 @@ class SentinelDetector:
             self._write_csv_row(result)
         return result
 
-    async def aupdate(self, value) -> Dict[str, Any]:
+    async def aupdate(self, value) -> SentinelResult:
         """Async wrapper for update_and_check."""
         return self.update_and_check(value)
 
@@ -264,12 +262,12 @@ class SentinelDetector:
         try:
             from fracttalix import __version__ as _ver
         except ImportError:
-            _ver = "12.1.0"
+            _ver = "12.3.0"
         sd: Dict[str, Any] = {
             "version": _ver,
             "n": self._n,
             "config": dataclasses.asdict(self.config),
-            "bank": self._bank.state_dict(),
+            "bank": self._bank.state_dict_with_maxlen(),
             "steps": [],
         }
         for i, step in enumerate(self._pipeline):
@@ -284,7 +282,12 @@ class SentinelDetector:
         """Restore detector state from JSON string."""
         sd = json.loads(json_str)
         self._n = sd.get("n", 0)
-        self._bank.load_state(sd.get("bank", {}))
+        bank_data = sd.get("bank", {})
+        # Detect format: new format has dicts with "data"/"maxlen" keys
+        if bank_data and isinstance(next(iter(bank_data.values()), None), dict):
+            self._bank.load_state_with_maxlen(bank_data)
+        else:
+            self._bank.load_state(bank_data)
         step_states = sd.get("steps", [])
         for ss in step_states:
             idx = ss.get("idx", -1)
@@ -295,15 +298,8 @@ class SentinelDetector:
     # Reset
     # ------------------------------------------------------------------
 
-    def reset(self, soft: bool = False) -> None:
-        """Reset detector state.
-
-        Parameters
-        ----------
-        soft:
-            If True, only reset accumulators but keep warmup data.
-            If False (default), full reset to factory state.
-        """
+    def reset(self) -> None:
+        """Reset detector to factory state (full reset)."""
         self._n = 0
         self._history.clear()
         self._bank.reset()
@@ -397,11 +393,20 @@ class SentinelDetector:
     # Dunder helpers
     # ------------------------------------------------------------------
 
+    def __enter__(self) -> "SentinelDetector":
+        return self
+
+    def __exit__(self, *exc) -> None:
+        self.close()
+
+    def __del__(self) -> None:
+        self.close()
+
     def __repr__(self) -> str:
         try:
             from fracttalix import __version__ as _ver
         except ImportError:
-            _ver = "12.1.0"
+            _ver = "12.3.0"
         return (f"SentinelDetector(v{_ver}, n={self._n}, "
                 f"alpha={self.config.alpha}, warmup={self.config.warmup_periods}, "
                 f"three_channel=True)")

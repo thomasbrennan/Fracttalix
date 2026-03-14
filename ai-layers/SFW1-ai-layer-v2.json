@@ -9,7 +9,7 @@
     "licence": "CC BY 4.0"
   },
   "paper_id": "SFW-1",
-  "paper_title": "Fracttalix Sentinel v12.1: Software AI Layer — DRS for Software Feasibility Demonstration",
+  "paper_title": "Fracttalix Sentinel v12.3: Software AI Layer — DRS for Software Feasibility Demonstration",
   "paper_type": "methodology_D",
   "version": "v2",
   "session": "S51",
@@ -74,7 +74,7 @@
       "type": "A",
       "label": "FRM physics foundation",
       "name": "FRM physics foundation",
-      "statement": "Sentinel v12.1 implements the Fractal Rhythm Model f(t) = B + A·e^(−λt)·cos(ωt+φ) as its theoretical foundation. Parameters ω = π/(2·τ_gen) and λ ≈ |α|/(Γ·τ_gen) are derived from Hopf bifurcation physics (P1 Sections 3–4, Session 43). Zero free parameters.",
+      "statement": "Sentinel v12.3 implements the Fractal Rhythm Model f(t) = B + A·e^(−λt)·cos(ωt+φ) as its theoretical foundation. Parameters ω = π/(2·τ_gen) and λ ≈ |α|/(Γ·τ_gen) are derived from Hopf bifurcation physics (P1 Sections 3–4, Session 43). Zero free parameters.",
       "source": "fracttalix/__init__.py import chain; fracttalix/steps/frequency.py; fracttalix/steps/foundation.py RegimeStep",
       "derivation_source": [
         "P1:F-1.4",
@@ -90,7 +90,7 @@
       "type": "D",
       "label": "Package version",
       "name": "Package version",
-      "statement": "This AI layer describes Fracttalix Sentinel v12.1.0 as defined by __version__ = '12.1.0' in fracttalix/__init__.py.",
+      "statement": "This AI layer describes Fracttalix Sentinel v12.3.0 as defined by __version__ = '12.3.0' in fracttalix/__init__.py.",
       "source": "fracttalix/__init__.py lines 4–11",
       "falsification_predicate": null
     },
@@ -212,7 +212,7 @@
         },
         "EVALUATION": "Run: pip install -e '.[test]' && python -m pytest tests/ -v; count failures and errors; finite",
         "BOUNDARY": "1 failure → FALSIFIED (zero tolerance)",
-        "CONTEXT": "374 tests across 12 test files as of v12.1.0. CI matrix: Python 3.9, 3.10, 3.11, 3.12."
+        "CONTEXT": "374 tests across 12 test files as of v12.3.0. CI matrix: Python 3.9, 3.10, 3.11, 3.12."
       },
       "sample_falsification_observation": "pytest reports 1 FAILED in test_steps_foundation.py → FALSIFIED"
     },
@@ -446,7 +446,7 @@
   ],
   "software_metadata": {
     "package_name": "fracttalix",
-    "version": "12.1.0",
+    "version": "12.3.0",
     "language": "Python 3",
     "test_count": 374,
     "test_framework": "pytest",

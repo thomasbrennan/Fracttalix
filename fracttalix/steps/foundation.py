@@ -104,6 +104,15 @@ class CoreEWMAStep(DetectorStep):
 
         anomaly_score = min(1.0, abs(z) / (sigma + 1e-10))
 
+        # v12.4.2: blend in non-adaptive score from frozen warmup baseline.
+        # The adaptive EWMA converges toward sustained mean shifts (collective
+        # anomalies), collapsing z-scores mid-block.  The warmup baseline
+        # doesn't adapt, so z_raw stays elevated throughout the block.
+        if self._warmup_std > 1e-10:
+            z_raw = (v - self._warmup_mean) / self._warmup_std
+            raw_score = min(1.0, abs(z_raw) / (sigma + 1e-10))
+            anomaly_score = max(anomaly_score, raw_score)
+
         return {
             "ewma": self._ewma,
             "dev_ewma": self._dev_ewma,
@@ -185,7 +194,7 @@ class CoreEWMAStep(DetectorStep):
             # window bank to accumulate deseasonalized signal, eliminating
             # seasonal false positives in all downstream steps.
             ds_val = ctx.scratch.get("deseasonalized_value")
-            sv = float(ds_val) if ds_val is not None else float(v)
+            sv = float(ds_val) if (ds_val is not None and math.isfinite(float(ds_val))) else float(v)
             result = self._scalar_update(sv, ctx)
 
         ctx.bank.append(sv)
@@ -200,6 +209,8 @@ class CoreEWMAStep(DetectorStep):
             "ewma": self._ewma, "dev_ewma": self._dev_ewma,
             "initialized": self._initialized, "n": self._n,
             "warmup_buf": list(self._warmup_buf),
+            "warmup_mean": self._warmup_mean,
+            "warmup_std": self._warmup_std,
             "ch_ewma": list(self._ch_ewma), "ch_dev": list(self._ch_dev),
             "ch_init": list(self._ch_init),
             "boost": self._boost_state.boost,  # Phase 1.3: persist boost
@@ -212,6 +223,8 @@ class CoreEWMAStep(DetectorStep):
         self._initialized = sd.get("initialized", False)
         self._n = sd.get("n", 0)
         self._warmup_buf = sd.get("warmup_buf", [])
+        self._warmup_mean = sd.get("warmup_mean", 0.0)
+        self._warmup_std = sd.get("warmup_std", 1.0)
         self._ch_ewma = sd.get("ch_ewma", [])
         self._ch_dev = sd.get("ch_dev", [])
         self._ch_init = sd.get("ch_init", [])
@@ -421,16 +434,16 @@ class CUSUMStep(DetectorStep):
     2. *Non-adaptive drift CUSUM* — operates on z_raw = (v − warmup_mean) /
        warmup_std (the warmup-frozen baseline).  Because the EWMA baseline
        adapts to slow trends, the adaptive z-score stays near zero during slow
-       drift; z_raw does not.  Uses fixed k=0.5 / h=20.0.  Fires as
+       drift; z_raw does not.  Uses fixed k=0.5 / h=5.5.  Fires as
        ``drift_cusum_alert`` — a STRONG signal in the consensus gate.
     """
 
     # Non-adaptive drift CUSUM parameters (v12.3, not user-configurable).
-    # k=0.5 (half the minimum 1σ detectable shift); h=5.0 (fires every ~10–15
+    # k=0.5 (half the minimum 1σ detectable shift); h=5.5 (fires every ~10–15
     # steps during 2σ+ drift, giving dense coverage across the anomaly region).
     # RESETS after each crossing — drift during ongoing shift re-crosses quickly.
     _DRIFT_K = 0.5
-    _DRIFT_H = 5.0
+    _DRIFT_H = 5.5
 
     def __init__(self, config: SentinelConfig):
         self.cfg = config
@@ -465,10 +478,20 @@ class CUSUMStep(DetectorStep):
         # Operates on z_raw = (v - warmup_mean) / warmup_std so the EWMA
         # cannot mask slow drift by adapting.  Resets after each crossing so
         # it re-arms quickly during ongoing drift (next crossing in ~5–15 steps).
+        # v12.4: use deseasonalized value when available, so periodic signals
+        # don't systematically accumulate in the drift CUSUM.  When using the
+        # deseasonalized residual, the expected mean is zero, so z_raw = residual / std.
+        # The warmup std still provides the correct scale since the deseasonalized
+        # residual's variance ≈ noise variance captured during warmup.
         wm = ctx.scratch.get("warmup_mean", 0.0)
         ws = max(ctx.scratch.get("warmup_std", 1.0), 1e-10)
-        v_raw = ctx.value if not isinstance(ctx.value, (list, tuple)) else ctx.value[0]
-        z_raw = (float(v_raw) - wm) / ws
+        ds_val = ctx.scratch.get("deseasonalized_value")
+        if ds_val is not None:
+            # Deseasonalized residual: mean-zero by construction
+            z_raw = float(ds_val) / ws
+        else:
+            v_raw = ctx.value if not isinstance(ctx.value, (list, tuple)) else ctx.value[0]
+            z_raw = (float(v_raw) - wm) / ws
         dk = self._DRIFT_K
         dh = self._DRIFT_H
         self._d_hi = max(0.0, self._d_hi + z_raw - dk)
@@ -603,22 +626,32 @@ class VarCUSUMStep(DetectorStep):
         # point anomalies but fires throughout a prolonged volatility regime.
         ss = ctx.scratch.get("structural_snapshot")
         baseline = max(self._var_baseline, 1e-4)
+        # v12.4: threshold raised from 4.0 → 8.0.  With periodic spikes
+        # (e.g. point anomalies every 50 steps), the 64-sample window can
+        # contain 1-2 spikes raising windowed variance to ~3-4× baseline.
+        # True variance explosions (4× amplitude) produce ~16× variance
+        # ratios, well above 8.0.  This eliminates sustained-variance FPs
+        # on point-anomaly data without affecting variance-archetype recall.
         sustained_alert = (
             ss is not None
-            and ss.variance > 4.0 * baseline
+            and ss.variance > 8.0 * baseline
         )
 
-        alert = cusum_alert or sustained_alert
         ctx.scratch["var_cusum_hi"] = self._s_hi
         ctx.scratch["var_cusum_lo"] = self._s_lo
-        ctx.scratch["var_cusum_alert"] = alert
+        # v12.4: split into two distinct signals.
+        # var_cusum_alert: CUSUM-based, fires on individual z² spikes.
+        #   Prone to FP runs after legitimate point anomalies.  Soft signal.
+        # sustained_variance_alert: windowed-baseline comparison, fires during
+        #   genuine prolonged volatility regimes.  Robust to isolated spikes.
+        #   Strong signal (treated separately in AlertReasonsStep).
+        ctx.scratch["var_cusum_alert"] = cusum_alert
+        ctx.scratch["sustained_variance_alert"] = sustained_alert
         if cusum_alert:
             # Re-arm: reset accumulators so the statistic can detect the next event.
-            # Without this, the statistic stays permanently above h after the first
-            # crossing, generating a continuous false-positive stream on normal data.
             self._s_hi = 0.0
             self._s_lo = 0.0
-        if alert:
+        if cusum_alert or sustained_alert:
             ctx.scratch["alert"] = True
             ctx.scratch["anomaly"] = True
 
@@ -629,6 +662,8 @@ class VarCUSUMStep(DetectorStep):
             "var_ewma": self._var_ewma,
             "warmed": self._warmed,
             "var_baseline": self._var_baseline,
+            "warmup_var_sum": self._warmup_var_sum,
+            "warmup_var_count": self._warmup_var_count,
         }
 
     def load_state(self, sd: Dict[str, Any]) -> None:
@@ -637,6 +672,8 @@ class VarCUSUMStep(DetectorStep):
         self._var_ewma = sd.get("var_ewma", 1.0)
         self._warmed = sd.get("warmed", False)
         self._var_baseline = sd.get("var_baseline", 1.0)
+        self._warmup_var_sum = sd.get("warmup_var_sum", 0.0)
+        self._warmup_var_count = sd.get("warmup_var_count", 0)
 
 
 # ---------------------------------------------------------------------------

@@ -1,0 +1,172 @@
+name: Distributed Docs Network Sync
+
+on:
+  push:
+    branches: [main]
+  release:
+    types: [published]
+  schedule:
+    # Periodic sync every 6 hours to ensure mirrors stay current
+    - cron: '0 */6 * * *'
+  workflow_dispatch:
+    inputs:
+      action:
+        description: 'Action to perform'
+        required: true
+        default: 'sync'
+        type: choice
+        options:
+          - sync
+          - snapshot
+          - verify
+
+permissions:
+  contents: read
+
+jobs:
+  # -----------------------------------------------------------------------
+  # Mirror sync: push all branches and tags to secondary git providers
+  # -----------------------------------------------------------------------
+  mirror-sync:
+    name: Sync Git Mirrors
+    runs-on: ubuntu-latest
+    if: github.event_name != 'release'
+    strategy:
+      fail-fast: false
+      matrix:
+        mirror:
+          - name: gitlab
+            url_secret: GITLAB_MIRROR_URL
+            token_secret: GITLAB_TOKEN
+          - name: codeberg
+            url_secret: CODEBERG_MIRROR_URL
+            token_secret: CODEBERG_TOKEN
+          - name: bitbucket
+            url_secret: BITBUCKET_MIRROR_URL
+            token_secret: BITBUCKET_TOKEN
+    steps:
+      - name: Checkout (full history)
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Mirror to ${{ matrix.mirror.name }}
+        env:
+          MIRROR_URL: ${{ secrets[matrix.mirror.url_secret] }}
+          MIRROR_TOKEN: ${{ secrets[matrix.mirror.token_secret] }}
+        if: env.MIRROR_URL != ''
+        run: |
+          set -euo pipefail
+
+          # Configure authentication
+          AUTHED_URL=$(echo "$MIRROR_URL" | sed "s|https://|https://oauth2:${MIRROR_TOKEN}@|")
+          git remote add mirror "$AUTHED_URL" 2>/dev/null || git remote set-url mirror "$AUTHED_URL"
+
+          # Push with exponential backoff retry
+          MAX_ATTEMPTS=4
+          DELAY=2
+          for ATTEMPT in $(seq 1 $MAX_ATTEMPTS); do
+            echo "Push attempt $ATTEMPT/$MAX_ATTEMPTS to ${{ matrix.mirror.name }}..."
+            if git push mirror --all --force && git push mirror --tags --force; then
+              echo "Successfully mirrored to ${{ matrix.mirror.name }}"
+              exit 0
+            fi
+            if [ "$ATTEMPT" -lt "$MAX_ATTEMPTS" ]; then
+              echo "Failed, retrying in ${DELAY}s..."
+              sleep $DELAY
+              DELAY=$((DELAY * 2))
+            fi
+          done
+          echo "::warning::Failed to mirror to ${{ matrix.mirror.name }} after $MAX_ATTEMPTS attempts"
+          exit 1
+
+  # -----------------------------------------------------------------------
+  # Archive snapshot: create and deposit snapshots on release
+  # -----------------------------------------------------------------------
+  archive-snapshot:
+    name: Create Archive Snapshot
+    runs-on: ubuntu-latest
+    if: github.event_name == 'release'
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Create documentation snapshot
+        run: python -m network.distributed_docs snapshot
+
+      - name: Trigger Software Heritage archival
+        run: |
+          # Software Heritage "save" API — requests archival of the repo
+          curl -s -X POST \
+            "https://archive.softwareheritage.org/api/1/origin/save/git/url/https://github.com/${{ github.repository }}/" \
+            -H "Accept: application/json" || true
+          echo "Software Heritage archival requested"
+
+      - name: Trigger Internet Archive snapshot
+        run: |
+          # Save the GitHub repo page to the Wayback Machine
+          curl -s "https://web.archive.org/save/https://github.com/${{ github.repository }}" || true
+          echo "Internet Archive snapshot requested"
+
+      - name: Pin to IPFS (if configured)
+        env:
+          PINATA_JWT: ${{ secrets.PINATA_JWT }}
+        if: env.PINATA_JWT != ''
+        run: |
+          SNAPSHOT=$(ls network/snapshots/*.tar.gz 2>/dev/null | tail -1)
+          if [ -n "$SNAPSHOT" ]; then
+            echo "Pinning $SNAPSHOT to IPFS via Pinata..."
+            RESPONSE=$(curl -s -X POST \
+              "https://api.pinata.cloud/pinning/pinFileToIPFS" \
+              -H "Authorization: Bearer $PINATA_JWT" \
+              -F "file=@$SNAPSHOT" \
+              -F "pinataMetadata={\"name\":\"fracttalix-docs-$(date +%Y%m%d)\"}")
+            CID=$(echo "$RESPONSE" | python3 -c "import sys,json; print(json.load(sys.stdin).get('IpfsHash',''))" 2>/dev/null)
+            if [ -n "$CID" ]; then
+              echo "Pinned to IPFS: $CID"
+              echo "Gateway URL: https://gateway.pinata.cloud/ipfs/$CID"
+            else
+              echo "::warning::IPFS pinning returned unexpected response"
+            fi
+          fi
+
+  # -----------------------------------------------------------------------
+  # Health check: verify network integrity (scheduled)
+  # -----------------------------------------------------------------------
+  health-check:
+    name: Network Health Check
+    runs-on: ubuntu-latest
+    if: github.event_name == 'schedule' || (github.event_name == 'workflow_dispatch' && inputs.action == 'verify')
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Configure mirror remotes
+        env:
+          GITLAB_URL: ${{ secrets.GITLAB_MIRROR_URL }}
+          CODEBERG_URL: ${{ secrets.CODEBERG_MIRROR_URL }}
+          BITBUCKET_URL: ${{ secrets.BITBUCKET_MIRROR_URL }}
+        run: |
+          [ -n "$GITLAB_URL" ] && git remote add ddn-gitlab "$GITLAB_URL" || true
+          [ -n "$CODEBERG_URL" ] && git remote add ddn-codeberg "$CODEBERG_URL" || true
+          [ -n "$BITBUCKET_URL" ] && git remote add ddn-bitbucket "$BITBUCKET_URL" || true
+
+      - name: Run network health check
+        run: python -m network.distributed_docs status
+
+      - name: Run integrity verification
+        run: python -m network.distributed_docs verify

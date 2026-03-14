@@ -41,7 +41,7 @@ jobs:
         run: pip install -e ".[full,dev]"
 
       - name: Run tests with coverage
-        run: pytest tests/ -v --cov=fracttalix --cov=benchmark --cov-report=term-missing
+        run: pytest tests/ -v --cov=fracttalix --cov-report=term-missing
 
       - name: Verify zero-dependency import
         if: matrix.deps == 'core'

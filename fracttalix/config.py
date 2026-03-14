@@ -232,6 +232,33 @@ class SentinelConfig:
     """Maximum number of completed degradation sequences to retain."""
 
     # ------------------------------------------------------------------
+    # V13.0 — Hopf Detector (FRM-native λ tracking)
+    # ------------------------------------------------------------------
+    enable_hopf_detector: bool = False
+    """Enable FRM Hopf bifurcation detector. Requires scipy."""
+
+    hopf_tau_gen: float = 0.0
+    """Generation timescale (domain-specific). 0 = estimate from FFT."""
+
+    hopf_fit_window: int = 128
+    """Sliding window size for FRM model fit."""
+
+    hopf_fit_interval: int = 4
+    """Fit every N steps (warm-started between fits)."""
+
+    hopf_lambda_window: int = 20
+    """Rolling window for λ history (dλ/dt estimation)."""
+
+    hopf_lambda_warning: float = 0.05
+    """λ below this threshold triggers CRITICAL_SLOWING alert."""
+
+    hopf_t_decision: float = 10.0
+    """Minimum intervention lead time (steps)."""
+
+    hopf_r_squared_min: float = 0.5
+    """R² below this → OUT_OF_SCOPE (model doesn't fit)."""
+
+    # ------------------------------------------------------------------
     # V12.0 — numpy fallback warning control
     # ------------------------------------------------------------------
     warn_on_numpy_fallback: bool = True

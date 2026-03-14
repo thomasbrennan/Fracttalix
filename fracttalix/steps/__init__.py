@@ -34,6 +34,7 @@ from fracttalix.steps.frequency import (
     RPIStep,
     SSIStep,
 )
+from fracttalix.steps.hopf import HopfDetectorStep
 from fracttalix.steps.physics import (
     AlertReasonsStep,
     CouplingRateStep,
@@ -109,7 +110,8 @@ def _build_default_pipeline(config: SentinelConfig):
         KuramotoOrderStep(config),                  # Step 34 — true Φ
         SequenceOrderingStep(config),               # Step 35 — sequence ordering
         ReversedSequenceStep(config),               # Step 36 — intervention sig
-        AlertReasonsStep(config),                   # Step 37 — MUST be last
+        HopfDetectorStep(config),                   # Step 37 — Hopf λ detector (v13)
+        AlertReasonsStep(config),                   # Step 38 — MUST be last
     ]
 
 
@@ -164,6 +166,8 @@ __all__ = [
     "KuramotoOrderStep",
     "SequenceOrderingStep",
     "ReversedSequenceStep",
+    # Hopf detector (Step 37, v13)
+    "HopfDetectorStep",
     "AlertReasonsStep",
     # Pipeline builder
     "PIPELINE",

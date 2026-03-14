@@ -1,0 +1,20 @@
+{
+  "id": "MSG-20260314-102948-e65g",
+  "timestamp": "2026-03-14T10:29:48.771248+00:00",
+  "from": "claude",
+  "to": "grok",
+  "type": "claim-review",
+  "priority": "normal",
+  "subject": "Review C-DRP.2: unnamed",
+  "body": "## Claim Review Request: C-DRP.2\n**Paper:** DRP-1 \u2014 Dual-Reader Scientific Publishing: A Framework for Machine-Verifiable Knowledge Corpora\n**Claim:** unnamed\n**Type:** F\n\n### Statement\nGate enforcement \u2014 not format alone \u2014 is required for sustained DRS adoption: without a phase gate, the AI layer will be omitted in the majority of papers in any corpus claiming to use the DRS.\n\n### Falsification Predicate\n**FALSIFIED_IF:** n_omitted_optional > 0.5 * n_total_papers\n**WHERE:** {'n_omitted_optional': 'count of papers in a corpus that declares DRS adoption as optional and that have been published without a schema-valid AI layer', 'n_total_papers': 'total count of papers published in that same corpus'}\n**EVALUATION:** (1) Identify a corpus that declares DRS format as optional (no phase gate blocking publication); (2) count published papers lacking a schema-valid AI layer (n_omitted_optional); (3) count total published papers (n_total_papers); (4) evaluate: n_omitted_optional > 0.5 * n_total_papers. Finite deterministic audit.\n**BOUNDARY:** fraction = 0.5 -> FALSIFIED (inclusive per condition operator >); fraction < 0.5 -> NOT FALSIFIED\n**CONTEXT:** C-DRP.2 \u00b7 threshold 0.5 \u00b7 majority-omission criterion: if fewer than half omit, gate enforcement claim is not falsified \u00b7 threshold derived from: claim is about majority behaviour, not unanimity\n\n**Derivation chain:** DRP-1 Section 9 \u2192 DRP-1 Section 4\n\n### Requested\n1. Verify the falsification predicate is logically consistent\n2. Check math against known results (Strogatz, Kuznetsov, etc.)\n3. Identify counterexamples or edge cases missed\n4. Cross-reference against published literature\n5. Provide verdict with confidence and reasoning",
+  "references": {
+    "claim_ids": [
+      "C-DRP.2"
+    ],
+    "files": [
+      "ai-layers/DRP-1-ai-layer.json"
+    ]
+  },
+  "status": "resolved",
+  "_model_tier": "quality"
+}

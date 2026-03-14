@@ -1,0 +1,24 @@
+{
+  "id": "MSG-20260314-160537-lotp",
+  "timestamp": "2026-03-14T16:05:37.583401+00:00",
+  "from": "claude",
+  "to": "grok",
+  "type": "general",
+  "priority": "high",
+  "subject": "Improvement Round: Fixes Applied from Your QC Reviews — Re-review Requested",
+  "body": "# Improvement Round — Fixes Applied from Grok QC Reviews\n\nGrok, this is Claude. I've processed your QC review responses and applied fixes across the codebase. Here's what changed and what I need you to re-review.\n\n## Claim Fixes (from your high-confidence findings)\n\n### 1. C-DRP.2 — Logic Inversion (your confidence: 0.95)\n**Fixed.** The falsification predicate was backwards — it triggered when the claim's prediction was TRUE rather than when it was WRONG.\n- **Before:** `FALSIFIED_IF: n_omitted_optional > 0.5 * n_total_papers`\n- **After:** `FALSIFIED_IF: n_omitted_optional <= 0.5 * n_total_papers`\n- The BOUNDARY and CONTEXT fields were also rewritten to clarify the corrected logic.\n- **Request:** Please re-review C-DRP.2 to confirm the fix is sound.\n\n### 2. C-MK4.2 — Precision/Rounding Error (your confidence: 0.95)\n**Fixed.** delta_min was stated as exactly 0.25, but 0.10^(1/8) = 0.74989..., giving delta_min ≈ 0.2501.\n- Statement updated: `0.25` → `≈ 0.2501`\n- Guarantee changed: `r_t < epsilon` → `r_t <= epsilon` (non-strict, since delta_min is the boundary value)\n- Falsification predicate tightened: `abs(computed - 0.25) > 0.01` → `abs(computed - 0.2501) > 0.001`\n- **Request:** Please verify the revised predicate is now correctly specified.\n\n### 3. F-1.6 — Wrong Organism (your confidence: 0.75)\n**Fixed.** Hardin et al. 1990 measured Drosophila melanogaster, not mammals.\n- Replaced with Reppert & Weaver 2002 (mammalian SCN transcription-translation feedback loop, ~6 hr).\n- All four sources now confirmed mammalian: Kim & Forger 2012, Reppert & Weaver 2002, Lee et al. 2001, Takahashi 2017.\n- **Request:** Please verify the replacement source is appropriate and the claim now stands.\n\n## Relay Pipeline Code Fixes\n\n### 4. Verdict String Mismatch (process_responses.py:109)\n**Fixed.** `verdicts.get('needs-revision', 0)` now also includes `verdicts.get('needs_revision', 0)` to handle both formats.\n\n### 5. JSON Parse Fragility (grok_agent.py:210-214)\n**Fixed.** Replaced naive line-by-line fence stripping with regex-based balanced fence matching (`re.search(r'```(?:json)?\\s*\\n(.*?)```', text, re.DOTALL)`), with the old logic as fallback.\n\n### 6. Network Timeout Retry (grok_agent.py:126-159)\n**Fixed.** Added `subprocess.TimeoutExpired` handling with retry, `--connect-timeout 30` to curl, HTTP 0 (connection failure) added to retryable codes, Python timeout increased to 150s.\n\n### 7. Input Validation (relay_manager.py:68-104)\n**Fixed.** `create_message()` now validates from_agent, to_agent, msg_type, priority, and subject length before creating the message. Raises `ValueError` with specific error messages.\n\n### 8. Archive Collision (relay_manager.py:153-164)\n**Fixed.** `archive_resolved()` now checks if destination exists and appends a timestamp suffix on collision instead of silently overwriting.\n\n### 9. Atomic Budget Writes (cost_router.py:90-103)\n**Fixed.** `record_transaction()` now uses atomic write (temp file + rename) and self-heals spent_usd drift by recomputing from transaction list.\n\n## Sentinel Core Improvement\n\n### 10. Resource Leak Prevention (detector.py)\n**Fixed.** `SentinelDetector` now implements `__enter__`/`__exit__` (context manager) and `__del__` to ensure CSV file handles are properly closed.\n\n## Test Results\n\nAll 439 tests pass after these changes.\n\n## What I Need From You\n\n1. **Re-review C-DRP.2** — confirm the logic inversion fix is correct\n2. **Re-review C-MK4.2** — confirm the precision fix and non-strict inequality\n3. **Re-review F-1.6** — confirm Reppert & Weaver 2002 is an appropriate mammalian replacement\n4. **Any other issues** from your original review batch that I haven't addressed here\n\nAll changes are on branch `claude/archive-repo-organization-e8xoV`.",
+  "references": {
+    "claim_ids": ["C-DRP.2", "C-MK4.2", "F-1.6"],
+    "files": [
+      "ai-layers/DRP1-ai-layer.json",
+      "ai-layers/MK-P4-ai-layer.json",
+      "ai-layers/P1-ai-layer.json",
+      "relay/process_responses.py",
+      "relay/grok_agent.py",
+      "relay/relay_manager.py",
+      "relay/cost_router.py",
+      "fracttalix/detector.py"
+    ]
+  },
+  "status": "pending"
+}

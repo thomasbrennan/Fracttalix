@@ -133,6 +133,9 @@ class CrossFrequencyCouplingStep(DetectorStep):
             return 0.0
         bins: List[List[float]] = [[] for _ in range(PAC_PHASE_BINS)]
         for ph, pw in zip(low_phases, high_powers):
+            # v12.4: guard against NaN/Inf phases from upstream
+            if not math.isfinite(ph) or not math.isfinite(pw):
+                continue
             bin_idx = int((ph + math.pi) / (2 * math.pi) * PAC_PHASE_BINS) % PAC_PHASE_BINS
             bins[bin_idx].append(pw)
         bin_means = [sum(b) / len(b) if b else 0.0 for b in bins]
@@ -140,7 +143,8 @@ class CrossFrequencyCouplingStep(DetectorStep):
         variance = sum((m - overall_mean) ** 2 for m in bin_means) / float(PAC_PHASE_BINS)
         best_dev = max(bin_means) - overall_mean
         max_variance = best_dev ** 2 if best_dev > 0 else 1e-10
-        return variance / (max_variance + 1e-10)
+        result = variance / (max_variance + 1e-10)
+        return result if math.isfinite(result) else 0.0
 
     def _composite_from_slice(self, bands_slice: list) -> float:
         if len(bands_slice) < 2:

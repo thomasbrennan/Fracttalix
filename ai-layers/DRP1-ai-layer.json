@@ -57,14 +57,14 @@
         "DRP-1 Section 4"
       ],
       "falsification_predicate": {
-        "FALSIFIED_IF": "n_omitted_optional > 0.5 * n_total_papers",
+        "FALSIFIED_IF": "n_omitted_optional <= 0.5 * n_total_papers",
         "WHERE": {
           "n_omitted_optional": "count of papers in a corpus that declares DRS adoption as optional and that have been published without a schema-valid AI layer",
           "n_total_papers": "total count of papers published in that same corpus"
         },
-        "EVALUATION": "(1) Identify a corpus that declares DRS format as optional (no phase gate blocking publication); (2) count published papers lacking a schema-valid AI layer (n_omitted_optional); (3) count total published papers (n_total_papers); (4) evaluate: n_omitted_optional > 0.5 * n_total_papers. Finite deterministic audit.",
-        "BOUNDARY": "fraction = 0.5 -> FALSIFIED (inclusive per condition operator >); fraction < 0.5 -> NOT FALSIFIED",
-        "CONTEXT": "C-DRP.2 · threshold 0.5 · majority-omission criterion: if fewer than half omit, gate enforcement claim is not falsified · threshold derived from: claim is about majority behaviour, not unanimity"
+        "EVALUATION": "(1) Identify a corpus that declares DRS format as optional (no phase gate blocking publication); (2) count published papers lacking a schema-valid AI layer (n_omitted_optional); (3) count total published papers (n_total_papers); (4) evaluate: n_omitted_optional <= 0.5 * n_total_papers. Finite deterministic audit.",
+        "BOUNDARY": "fraction <= 0.5 -> FALSIFIED (claim predicts majority omission; if half or fewer omit, claim is wrong); fraction > 0.5 -> NOT FALSIFIED",
+        "CONTEXT": "C-DRP.2 · threshold 0.5 · majority-omission criterion: the claim predicts that without gate enforcement, the majority (>50%) of papers will omit AI layers. FALSIFIED when this prediction fails (omission rate ≤ 50%). [Revised per Grok QC review: logic inversion corrected — predicate must fire when the claim's prediction is wrong, not when it's right.]"
       },
       "sample_falsification_observation": "A corpus of 10 papers declaring optional DRS in which 6 papers are published without AI layers.",
       "tier": "formal_proof",

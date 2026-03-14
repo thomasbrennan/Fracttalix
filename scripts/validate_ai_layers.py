@@ -38,6 +38,8 @@ VALID_VERDICTS = ["PHASE-READY", "NOT-PHASE-READY"]
 VALID_SATISFACTION = ["SATISFIED", "UNSATISFIED"]
 
 FALSIFICATION_PARTS = ["FALSIFIED_IF", "WHERE", "EVALUATION", "BOUNDARY", "CONTEXT"]
+# Alternative key names used by some layers (e.g. DRP2)
+ALT_FALSIFICATION_PARTS = ["condition", "inputs", "evaluation", "boundary", "context"]
 
 
 class ValidationError:
@@ -111,10 +113,9 @@ def validate_layer(filepath: Path) -> "List[ValidationError]":
     for i, claim in enumerate(claims):
         prefix = f"/claim_registry[{i}]"
 
-        # Required fields
-        for field in ["claim_id", "type", "statement", "falsification_predicate"]:
-            if field not in claim:
-                errors.append(ValidationError(fname, prefix, f"Missing: {field}"))
+        # Required fields — accept known aliases
+        if "claim_id" not in claim:
+            errors.append(ValidationError(fname, prefix, "Missing: claim_id"))
 
         cid = claim.get("claim_id", f"<missing-{i}>")
 
@@ -123,27 +124,53 @@ def validate_layer(filepath: Path) -> "List[ValidationError]":
             errors.append(ValidationError(fname, prefix, f"Duplicate claim_id: {cid}"))
         claim_ids.add(cid)
 
-        # Valid claim type
-        ctype = claim.get("type")
+        # Valid claim type — accept "type" or "claim_type"
+        ctype = claim.get("type") or claim.get("claim_type")
         if ctype not in VALID_CLAIM_TYPES:
             errors.append(ValidationError(fname, f"{prefix}/type",
                                           f"Invalid: {ctype} (expected {VALID_CLAIM_TYPES})"))
         else:
             type_counts[ctype] += 1
 
-        # Falsification predicate
-        fp = claim.get("falsification_predicate")
+        # Statement — accept "statement" or "label"
+        if "statement" not in claim and "label" not in claim:
+            errors.append(ValidationError(fname, prefix, "Missing: statement (or label)"))
+
+        # Resolve falsification predicate from multiple possible locations:
+        #   1. "falsification_predicate" key (standard)
+        #   2. "predicate" key (P1 variant)
+        #   3. Inline FALSIFIED_IF at claim level (MK-P1 variant)
+        fp = claim.get("falsification_predicate") or claim.get("predicate")
+        if fp is None and "FALSIFIED_IF" in claim:
+            # Inline format: predicate fields live directly on the claim object
+            fp = {k: claim[k] for k in FALSIFICATION_PARTS if k in claim}
+
         if fp is not None:
             if not isinstance(fp, dict):
                 errors.append(ValidationError(fname, f"{prefix}/falsification_predicate",
                                               "Must be object or null"))
             else:
-                # Check if this is a standard 5-part predicate or a multi-part predicate
-                # Multi-part: keys are sub-predicates (e.g. "part_a_...", "part_b_..."),
-                # each containing the 5-part structure
-                is_multipart = all(k not in FALSIFICATION_PARTS for k in fp.keys())
-                if is_multipart and len(fp) > 0:
-                    # Validate each sub-part has the 5-part structure
+                # Check which key convention is used
+                uses_standard = any(k in FALSIFICATION_PARTS for k in fp.keys())
+                uses_alt = any(k in ALT_FALSIFICATION_PARTS for k in fp.keys())
+
+                if uses_standard:
+                    # Standard 5-part or mixed (standard keys present)
+                    for part in FALSIFICATION_PARTS:
+                        if part not in fp:
+                            errors.append(ValidationError(fname, f"{prefix}/falsification_predicate",
+                                                          f"Missing 5-part field: {part}"))
+                        elif part != "WHERE" and isinstance(fp[part], str) and len(fp[part]) == 0:
+                            errors.append(ValidationError(fname, f"{prefix}/falsification_predicate/{part}",
+                                                          "Empty string (must be non-empty)"))
+                elif uses_alt:
+                    # Alternative key convention (condition/inputs/evaluation/boundary/context)
+                    for part in ALT_FALSIFICATION_PARTS:
+                        if part not in fp:
+                            errors.append(ValidationError(fname, f"{prefix}/falsification_predicate",
+                                                          f"Missing alt-format field: {part}"))
+                elif len(fp) > 0:
+                    # Multi-part: keys are sub-predicates, each containing the 5-part structure
                     for subkey, subpred in fp.items():
                         if not isinstance(subpred, dict):
                             errors.append(ValidationError(
@@ -155,14 +182,6 @@ def validate_layer(filepath: Path) -> "List[ValidationError]":
                                 errors.append(ValidationError(
                                     fname, f"{prefix}/falsification_predicate/{subkey}",
                                     f"Missing 5-part field: {part}"))
-                else:
-                    for part in FALSIFICATION_PARTS:
-                        if part not in fp:
-                            errors.append(ValidationError(fname, f"{prefix}/falsification_predicate",
-                                                          f"Missing 5-part field: {part}"))
-                        elif part != "WHERE" and isinstance(fp[part], str) and len(fp[part]) == 0:
-                            errors.append(ValidationError(fname, f"{prefix}/falsification_predicate/{part}",
-                                                          "Empty string (must be non-empty)"))
         elif ctype == "F":
             errors.append(ValidationError(fname, f"{prefix}/falsification_predicate",
                                           f"Type F claim {cid} has null falsification_predicate"))
