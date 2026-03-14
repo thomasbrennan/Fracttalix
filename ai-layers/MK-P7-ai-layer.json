@@ -1,0 +1,236 @@
+{
+  "_meta": {
+    "document_type": "AI_LAYER",
+    "schema_version": "v3-S49",
+    "schema_url": "github.com/thomasbrennan/Fracttalix/ai-layers/ai-layer-schema.json",
+    "produced_session": "S56",
+    "produced_by": "Instance 1 (Claude, Anthropic) — CBP Step 2 post-optimization",
+    "licence": "CC BY 4.0",
+    "semantic_spec_url": "github.com/thomasbrennan/Fracttalix/ai-layers/falsification-kernel.md"
+  },
+  "paper_id": "MK-P7",
+  "corpus_id": "Meta-Kaizen",
+  "series": "Meta-Kaizen Series",
+  "series_position": "Paper 7 of 7",
+  "paper_title": "The Canonical Build Plan: Adversarial Optimization Through Folded Meta-Kaizen — A Formal Theory of Monotonic Quality Improvement in Multi-Agent Knowledge Production",
+  "paper_type": "methodology_D",
+  "paper_type_note": "Primary contribution is the formalization of the CBP as a governance process with proved monotonic quality improvement. Contains both derivational results (Theorems 1-3, Proposition 4) and methodology specification (5-step process definition).",
+  "version": "v1.0",
+  "ai_layer_version": "v1.0",
+  "prose_doi": "pending",
+  "ai_layer_url": "github.com/thomasbrennan/Fracttalix/ai-layers/MK-P7-ai-layer.json",
+  "citation_format": "[MK Paper 7, AI-Layer, Claim X-MK7.Y]",
+  "phase_ready": {
+    "verdict": "DRAFT",
+    "c1": "SATISFIED",
+    "c2": "SATISFIED",
+    "c3": "SATISFIED",
+    "c4_mode": "PHASE-READY-TRACKING",
+    "c5": "SATISFIED",
+    "c6": "SATISFIED",
+    "placeholder_count": 1,
+    "note": "Draft produced under CBP Step 2. Awaiting Step 3 (hostile review by Grok) and Steps 4-5 before PHASE-READY declaration. One placeholder: PH-MK7.1 (full 70-claim corpus review in progress)."
+  },
+  "dependencies": [
+    {
+      "paper_id": "MK-P1",
+      "claims_received": ["A-MK1.1", "A-MK1.2", "A-MK1.3", "A-MK1.4", "A-MK1.5", "A-MK1.6"],
+      "role": "KVS axioms A1-A6, KVS formula derivation (Theorem 4.1), threshold κ=0.50 derivation, self-referential applicability (Theorem 4.2)"
+    },
+    {
+      "paper_id": "MK-P5",
+      "claims_received": ["C-MK5.2"],
+      "role": "Asymmetric loss threshold generalization (Theorem 2)"
+    },
+    {
+      "paper_id": "MK-P6",
+      "claims_received": [],
+      "role": "DRS for software — first CBP application to executable substrates"
+    }
+  ],
+  "claim_registry": [
+    {
+      "claim_id": "A-MK7.1",
+      "type": "A",
+      "label": "Popperian Epistemological Foundation",
+      "statement": "Falsificationism: we can falsify claims but not verify them. All Type F claims must carry deterministic falsification predicates.",
+      "source": "Section 2, AI-Reader Header",
+      "axiomatic_basis": "Popper (1959). Standard epistemological foundation for the DRS framework.",
+      "falsification_predicate": null,
+      "note": "Type A: foundational axiom shared with DRP-1."
+    },
+    {
+      "claim_id": "A-MK7.2",
+      "type": "A",
+      "label": "Information-Theoretic Independence",
+      "statement": "Systems with different architectures and training corpora produce partially independent error distributions: ρ(E₁, E₂) < 1.",
+      "source": "Section 4, Definition D-MK7.5",
+      "axiomatic_basis": "Ensemble diversity theory (Krogh & Vedelsby 1995). Empirically grounded in ML ensemble literature.",
+      "falsification_predicate": null,
+      "note": "Type A: empirically motivated axiom. Could in principle be tested by comparing Claude-Grok error correlations."
+    },
+    {
+      "claim_id": "A-MK7.3",
+      "type": "A",
+      "label": "KVS Axioms Received",
+      "statement": "MK-P1 axioms A1-A6 and the derived KVS formula KVS = N × I' × C' × T are received as foundation. The threshold κ = 0.50 is derived from Bayesian decision theory under symmetric loss.",
+      "source": "Section 4, implicit",
+      "axiomatic_basis": "MK-P1 Theorem 4.1 and Section 4.3. Received as Type A from MK-P1.",
+      "falsification_predicate": null,
+      "note": "Type A: received result from MK-P1."
+    },
+    {
+      "claim_id": "D-MK7.1",
+      "type": "D",
+      "label": "Canonical Build Plan Definition",
+      "statement": "The CBP is a 5-step governance process: (1) First Build Plan, (2) Meta-Kaizen Pre-Optimization, (3) Adversarial Hostile Review, (4) Meta-Kaizen Post-Repair, (5) Final Build Plan. Meta-Kaizen appears twice — before and after the hostile review — creating a folded optimization.",
+      "source": "Section 4, Definition D-MK7.1",
+      "falsification_predicate": null,
+      "note": "Type D: definitional. The 5-step structure is a specification, not an empirical claim."
+    },
+    {
+      "claim_id": "D-MK7.2",
+      "type": "D",
+      "label": "Quality Function Q",
+      "statement": "Q: WorkProduct → ℝ is defined operationally as the proportion of falsifiable claims surviving independent falsification testing. Q(w) = |{claims not falsified}| / n.",
+      "source": "Section 4, Definition D-MK7.2",
+      "falsification_predicate": null,
+      "note": "Type D: operational definition. Q is a design choice, not a discovery."
+    },
+    {
+      "claim_id": "D-MK7.3",
+      "type": "D",
+      "label": "Adversarial Information",
+      "statement": "Information I_H generated by a hostile reviewer whose objective function is to falsify the work product's claims, as opposed to improve them.",
+      "source": "Section 4, Definition D-MK7.3",
+      "falsification_predicate": null,
+      "note": "Type D: definitional."
+    },
+    {
+      "claim_id": "D-MK7.4",
+      "type": "D",
+      "label": "Folded Governance",
+      "statement": "A governance process P is folded if P = O₂ ∘ A ∘ O₁ where O₁ and O₂ are optimization passes using the same framework and A is an adversarial transformation between them.",
+      "source": "Section 4, Definition D-MK7.4",
+      "falsification_predicate": null,
+      "note": "Type D: structural definition."
+    },
+    {
+      "claim_id": "D-MK7.5",
+      "type": "D",
+      "label": "Architecture Independence",
+      "statement": "Two systems S₁ and S₂ are architecture-independent if their error distributions E₁ and E₂ satisfy ρ(E₁, E₂) < 1.",
+      "source": "Section 4, Definition D-MK7.5",
+      "falsification_predicate": null,
+      "note": "Type D: definition of the independence condition required for Theorem 2."
+    },
+    {
+      "claim_id": "F-MK7.1",
+      "type": "F",
+      "label": "Monotonic Quality",
+      "statement": "The CBP 5-step process produces outputs Q(Step 5) ≥ Q(Step 1) whenever the KVS threshold κ gates all modifications.",
+      "source": "Section 5.1, Theorem 1",
+      "falsification_predicate": {
+        "FALSIFIED_IF": "A work product is exhibited where faithful application of all 5 CBP steps, with KVS ≥ κ gating enforced at Steps 2 and 4, produces a Final Build Plan (Step 5) that scores strictly lower on Q (proportion of claims surviving independent falsification) than the First Build Plan (Step 1).",
+        "WHERE": "The work product contains ≥ 5 falsifiable claims. The independent falsification testing is conducted by a system not involved in either authoring or hostile review. Faithful application means all 5 steps are executed and all KVS scores are computed and documented.",
+        "EVALUATION": "Q(Step 5) < Q(Step 1) computed on the same falsification test suite, administered by the same independent evaluator, within the same evaluation session.",
+        "BOUNDARY": "κ = 0.50 and standard KVS formula from MK-P1 used without modification. Q is the operational definition in D-MK7.2.",
+        "CONTEXT": "Formal consequence of the KVS threshold derivation. Proof assumes KVS scoring applied faithfully — human or AI override invalidates the gate condition."
+      },
+      "vacuity_witness": "A work product where the hostile reviewer identifies a critical flaw, the repair modification scores KVS = 0.55 (above threshold), but the repair introduces a new error that falsifies a previously-passing claim. Q(Step 5) = (n-1)/n < n/n = Q(Step 1). This is logically possible and would falsify the claim.",
+      "note": "Core claim. The vacuity witness shows this is falsifiable: a repair that fixes one defect while introducing another could reduce Q."
+    },
+    {
+      "claim_id": "F-MK7.2",
+      "type": "F",
+      "label": "Adversarial Detection Advantage",
+      "statement": "Hostile review by an architecture-independent system detects defects not detectable by author self-review: |D₂ \\ D₁| > 0.",
+      "source": "Section 5.2, Theorem 2",
+      "falsification_predicate": {
+        "FALSIFIED_IF": "In ≥ 10 CBP applications with architecture-independent hostile review, the reviewer identifies zero unique defects (defects not already identified by author self-review) across all applications.",
+        "WHERE": "Architecture independence verified: S₁ and S₂ have different model architectures and different training corpora. Both systems review the same work products. Unique defect means a defect identified by S₂ that S₁ did not identify when reviewing the same work product.",
+        "EVALUATION": "Count |D₂ \\ D₁| across ≥ 10 applications. If Σ|D₂ \\ D₁| = 0 at p < 0.05 (binomial test with H₀: P(unique defect per application) > 0), the claim is falsified.",
+        "BOUNDARY": "Architecture independence requires different model families (e.g., Claude and Grok), not different versions of the same model.",
+        "CONTEXT": "Direct consequence of error distribution non-identity under architecture independence."
+      },
+      "vacuity_witness": "10 CBP applications where Claude self-review finds all defects that Grok also finds, plus additional defects Grok misses, yielding |D₂ \\ D₁| = 0 for all 10. Logically possible if Claude's error distribution happens to dominate Grok's.",
+      "note": "Empirically testable via the relay pipeline."
+    },
+    {
+      "claim_id": "F-MK7.3",
+      "type": "F",
+      "label": "Novelty Amplification",
+      "statement": "Post-hostile Meta-Kaizen (Step 4) produces higher-novelty improvement candidates than pre-hostile Meta-Kaizen (Step 2): E[N_Step4] > E[N_Step2].",
+      "source": "Section 5.3, Theorem 3 corollary",
+      "falsification_predicate": {
+        "FALSIFIED_IF": "Across ≥ 10 CBP applications, mean Novelty score N of Step 4 candidates ≤ mean Novelty score N of Step 2 candidates at p < 0.05 (two-sample t-test).",
+        "WHERE": "Novelty N computed per MK-P1 Section 4.1 (Jaccard distance). Step 2 and Step 4 candidates from the same CBP application on the same work product.",
+        "EVALUATION": "Paired comparison of N scores within each CBP application. Mean difference computed across ≥ 10 applications.",
+        "BOUNDARY": "N computed using the same rolling keyword window for both passes within each application.",
+        "CONTEXT": "The hostile review introduces new domain keywords, mechanically increasing Jaccard distance for post-hostile candidates."
+      },
+      "vacuity_witness": "10 CBP applications where hostile review raises only objections within the author's existing keyword set, yielding no new domain keywords and N_Step4 ≤ N_Step2.",
+      "note": "Testable using existing corpus data from CBP applications."
+    },
+    {
+      "claim_id": "F-MK7.4",
+      "type": "F",
+      "label": "Threshold Non-Degradation",
+      "statement": "The KVS threshold κ ≥ 0.50 applied at both Meta-Kaizen passes prevents quality degradation: no accepted modification (KVS ≥ κ) reduces Q.",
+      "source": "Section 5.4, Proposition 4",
+      "falsification_predicate": {
+        "FALSIFIED_IF": "A modification with KVS ≥ κ is exhibited that, when applied, reduces the work product's Q score.",
+        "WHERE": "The modification is scored using standard KVS (MK-P1). The quality measurement is conducted by an independent evaluator before and after the modification.",
+        "EVALUATION": "Q_after < Q_before for a specific modification with KVS ≥ κ.",
+        "BOUNDARY": "Uses κ = 0.50 and standard KVS without regime adjustment (MK-P4 KVS-hat excluded).",
+        "CONTEXT": "Tests the core assumption of the threshold derivation: KVS ≥ κ implies non-negative expected value. A single counterexample falsifies."
+      },
+      "vacuity_witness": "A modification scored KVS = 0.60 that simplifies a claim's wording (appearing to improve clarity) but inadvertently removes a boundary condition, making the claim unfalsifiable. Q drops because the claim fails C6 vacuity. Logically possible.",
+      "note": "Strong claim — a single counterexample suffices."
+    },
+    {
+      "claim_id": "F-MK7.5",
+      "type": "F",
+      "label": "Multi-Architecture Amplification",
+      "statement": "When hostile review is conducted by an architecture-independent system, defect detection rate D_cross exceeds same-architecture rate D_same.",
+      "source": "Section 5.5",
+      "falsification_predicate": {
+        "FALSIFIED_IF": "Parallel hostile reviews — one by the authoring architecture, one by an independent architecture — on ≥ 5 work products yield D_cross ≤ D_same at p < 0.05 (paired t-test).",
+        "WHERE": "Same-architecture review means a different instance of the same model family reviews the work. Cross-architecture review means a model from a different family. Both reviews blind to each other.",
+        "EVALUATION": "D_cross and D_same are unique defect counts per work product. Paired comparison across ≥ 5 products.",
+        "BOUNDARY": "Architecture families must be genuinely different (e.g., Claude vs. Grok), not fine-tuned variants.",
+        "CONTEXT": "Governance application of ensemble diversity principle (Krogh & Vedelsby 1995)."
+      },
+      "vacuity_witness": "5 work products where Claude self-review finds more defects than Grok cross-review, yielding D_cross < D_same. Possible if Grok's review is shallow or if Claude's self-knowledge compensates for error correlation.",
+      "note": "Empirically testable via relay pipeline with parallel review protocol."
+    }
+  ],
+  "placeholders": [
+    {
+      "placeholder_id": "PH-MK7.1",
+      "description": "Full 70-claim corpus review by Grok in progress. 20 of 70 claims reviewed. Preliminary results support F-MK7.2 and F-MK7.5 but sample size insufficient for statistical significance.",
+      "blocking": false,
+      "target_session": "S57+"
+    }
+  ],
+  "inference_rule_table": [
+    {
+      "rule_id": "IR-MK7.1",
+      "name": "Threshold Gate Monotonicity",
+      "description": "If every modification passes KVS ≥ κ, and κ is the indifference threshold, then the composition of modifications has non-negative quality contribution.",
+      "source": "MK-P1 Theorem 4.1, Section 4.3"
+    },
+    {
+      "rule_id": "IR-MK7.2",
+      "name": "Error Distribution Non-Identity",
+      "description": "If ρ(E₁, E₂) < 1, then D₂ \\ D₁ ≠ ∅: the second system detects at least some defects the first cannot.",
+      "source": "Krogh & Vedelsby 1995, ensemble diversity theory"
+    },
+    {
+      "rule_id": "IR-MK7.3",
+      "name": "Information Set Enrichment",
+      "description": "If MK₂ operates after hostile review H, it has access to information I_H not available to MK₁. Therefore E[Q(MK₂∘H∘MK₁)] > E[Q(MK₁∘MK₂)] when I_H is non-trivial.",
+      "source": "Information theory, Section 3.2"
+    }
+  ]
+}

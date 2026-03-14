@@ -1,4 +1,4 @@
-Meta-Kaizen Series · Paper 4 of 5
+Meta-Kaizen Series · Paper 4 of 7
 
 ## The Fractal Rhythm Model: Closed-Loop Governance, Regime-Aware Adaptation, and the Axiom 5 Modification for Dynamic Environments
 
