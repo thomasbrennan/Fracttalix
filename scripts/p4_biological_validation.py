@@ -1791,6 +1791,59 @@ def _parse_per2_iluc(filepath, day_start=5, day_end=18, hourly_bin=True):
         return np.array(t_all), np.array(y_all)
 
 
+def _parse_per2py_single_cell(filepath, n_best=5):
+    """
+    Parse per2py TrackMate CSV — single-cell PER2::LUC SCN bioluminescence.
+
+    Each frame is 0.25 hr (15 min). Data is detrended with degree-3
+    polynomial to remove photobleaching, then the tracks with strongest
+    circadian-band (18–30 hr) FFT power are selected.
+
+    Returns list of (track_id, t_array, y_detrended_array) for best tracks.
+    """
+    FRAME_INTERVAL = 0.25  # hours per frame
+
+    tracks = {}
+    with open(filepath) as f:
+        reader = csv.DictReader(f)
+        for row in reader:
+            tid = row["TRACK_ID"]
+            frame = int(row["FRAME"])
+            intensity = float(row["MEAN_INTENSITY"])
+            tracks.setdefault(tid, []).append((frame, intensity))
+
+    # Detrend and score each track
+    scored = []
+    for tid, points in tracks.items():
+        if len(points) < 200:
+            continue
+        points.sort(key=lambda x: x[0])
+        times = np.array([p[0] * FRAME_INTERVAL for p in points])
+        vals = np.array([p[1] for p in points])
+
+        # Degree-3 polynomial detrend (removes photobleaching)
+        coeffs = np.polyfit(times, vals, 3)
+        detrended = vals - np.polyval(coeffs, times)
+
+        # FFT — score circadian band power
+        n = len(detrended)
+        fft_vals = np.abs(np.fft.rfft(detrended))
+        freqs = np.fft.rfftfreq(n, FRAME_INTERVAL)
+        circ_mask = (freqs > 1 / 30.0) & (freqs < 1 / 18.0)
+        if np.any(circ_mask):
+            total_power = np.sum(fft_vals[1:] ** 2)
+            circ_power = np.max(fft_vals[circ_mask]) ** 2
+            circ_frac = circ_power / total_power if total_power > 0 else 0
+            scored.append((tid, circ_frac, times, detrended))
+
+    # Select top tracks by circadian power fraction
+    scored.sort(key=lambda x: x[1], reverse=True)
+    results = []
+    for tid, frac, times, detrended in scored[:n_best]:
+        results.append((tid, times, detrended))
+    return results
+
+
 def fit_free_sinusoid(t, y):
     """
     Fit a fully free damped sinusoid: y = B + A·exp(-λt)·cos(ωt + φ).
@@ -2001,6 +2054,69 @@ def run_prospective_fitting():
         print(f"  Download from: github.com/hotgly/Whole-body_Circadian")
 
     # ─────────────────────────────────────────────────────────
+    # Dataset 3: SCN single-cell PER2::LUC (τ_gen = 6.0 hr)
+    # ─────────────────────────────────────────────────────────
+    scn_path = os.path.join(DATA_DIR, "scn_per2_single_cell_green_pre.csv")
+    if os.path.exists(scn_path):
+        print(f"{'─' * 70}")
+        print("  DATASET 3: SCN single-cell PER2::LUC bioluminescence")
+        print("  Source: Shan, Abel, Doyle, Takahashi — per2py package")
+        print("  (github.com/johnabel/per2py, Demo/Cellular)")
+        print("  τ_gen = 6.0 hr (mammalian cell doubling time)")
+        print(f"  FRM prediction: T = 4·τ_gen = 24.0 hr, ω = π/12 = {math.pi/12:.4f} rad/hr")
+        print(f"  Resolution: 15-min frames, ~7 days per track")
+        print(f"  CRITICAL: Single-cell data shows INTRINSIC damping,")
+        print(f"            not population desynchronisation.")
+        print()
+
+        tau_gen_scn = 6.0
+        cell_tracks = _parse_per2py_single_cell(scn_path, n_best=10)
+
+        if cell_tracks:
+            print(f"  Top {len(cell_tracks)} tracks by circadian FFT power:")
+            print(f"  {'Track':<8} {'R²(B)':>8} {'R²(C)':>8} {'Δ(B-C)':>9} "
+                  f"{'T_FRM':>7} {'T_free':>7} {'α_fit':>7} {'n_pts':>6}")
+            print(f"  {'':─<8} {'(4p)':>8} {'(5p)':>8} {'':>9} "
+                  f"{'(hr)':>7} {'(hr)':>7} {'':>7} {'':>6}")
+
+            scn_results = {}
+            for tid, t, y in cell_tracks:
+                mode_b = fit_frm_with_alpha(t, y, tau_gen_scn)
+                mode_c = fit_free_sinusoid(t, y)
+
+                if mode_b["success"] and mode_c["success"]:
+                    delta = mode_b["R_squared"] - mode_c["R_squared"]
+                    T_free = mode_c["T_fitted"]
+                    is_circ = 18.0 <= T_free <= 30.0
+                    flag = " *" if is_circ else "  "
+                    print(f"  {tid:>8s} {mode_b['R_squared']:>8.4f} "
+                          f"{mode_c['R_squared']:>8.4f} {delta:>+9.4f} "
+                          f"{4*tau_gen_scn:>7.1f} {T_free:>7.1f} "
+                          f"{mode_b['alpha_fitted']:>7.2f} {len(t):>6d}{flag}")
+                    scn_results[tid] = {
+                        "R2_B": mode_b["R_squared"],
+                        "R2_C": mode_c["R_squared"],
+                        "delta_BC": delta,
+                        "T_FRM": 4 * tau_gen_scn,
+                        "T_free": T_free,
+                        "alpha_fitted": mode_b["alpha_fitted"],
+                    }
+
+            if scn_results:
+                circ = {k: v for k, v in scn_results.items()
+                        if 18.0 <= v["T_free"] <= 30.0}
+                if circ:
+                    deltas = [v["delta_BC"] for v in circ.values()]
+                    print(f"\n  (* = circadian-range: 18 ≤ T_free ≤ 30 hr)")
+                    print(f"  Circadian-range cells ({len(circ)}):")
+                    print(f"    Mean Δ(B−C): {np.mean(deltas):+.4f}")
+                results["scn_single_cell"] = scn_results
+            print()
+    else:
+        print(f"  [SKIP] SCN single-cell data not found at {scn_path}")
+        print(f"  Download from: github.com/johnabel/per2py")
+
+    # ─────────────────────────────────────────────────────────
     # Summary
     # ─────────────────────────────────────────────────────────
     print(f"{'=' * 80}")
@@ -2013,10 +2129,11 @@ def run_prospective_fitting():
     print()
     print("FRM prediction tested: ω = π/(2·τ_gen)")
     print("  Neurospora: τ_gen = 5.5 hr → T_pred = 22.0 hr")
-    print("  PER2::iLuc: τ_gen = 6.0 hr → T_pred = 24.0 hr")
+    print("  PER2::iLuc (population): τ_gen = 6.0 hr → T_pred = 24.0 hr")
+    print("  SCN single-cell: τ_gen = 6.0 hr → T_pred = 24.0 hr")
     print()
     if results:
-        # Use only circadian-range Neurospora genes for grand summary
+        # Use only circadian-range data for grand summary
         circ_deltas = []
         if "neurospora" in results:
             for res in results["neurospora"].values():
@@ -2024,6 +2141,10 @@ def run_prospective_fitting():
                     circ_deltas.append(res["delta_BC"])
         if "per2_iluc" in results:
             circ_deltas.append(results["per2_iluc"]["delta_BC"])
+        if "scn_single_cell" in results:
+            for res in results["scn_single_cell"].values():
+                if 18.0 <= res["T_free"] <= 30.0:
+                    circ_deltas.append(res["delta_BC"])
 
         if circ_deltas:
             mean_d = np.mean(circ_deltas)
