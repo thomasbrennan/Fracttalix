@@ -1,0 +1,332 @@
+{
+  "@context": "https://schema.org",
+  "@type": "TechArticle",
+  "@id": "https://github.com/thomasbrennan/Fracttalix/blob/main/guides/id.json",
+  "name": "Dual Reader Standard — Panduan Implementasi",
+  "headline": "Cara Mengimplementasikan Dual Reader Standard untuk Klaim yang Dapat Diverifikasi Mesin",
+  "description": "Panduan implementasi lengkap untuk Dual Reader Standard (DRS), arsitektur verifikasi yang menjadikan setiap klaim dalam sistem pengetahuan dapat dibaca oleh manusia dan mesin menggunakan predikat falsifikasi deterministik yang dikodekan dalam JSON.",
+  "inLanguage": "id",
+  "author": {
+    "@type": "Person",
+    "name": "Thomas Brennan",
+    "identifier": "https://orcid.org/0009-0002-6353-7115"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "Fracttalix",
+    "url": "https://github.com/thomasbrennan/Fracttalix"
+  },
+  "datePublished": "2026-03-14",
+  "license": "https://creativecommons.org/licenses/by/4.0/",
+  "keywords": [
+    "dual reader standard",
+    "standar pembaca ganda",
+    "machine-verifiable claims",
+    "klaim yang dapat diverifikasi mesin",
+    "falsification predicate",
+    "predikat falsifikasi",
+    "AI layer",
+    "lapisan AI",
+    "grounded verification protocol",
+    "protokol verifikasi berlabuh",
+    "JSON schema validation",
+    "validasi skema JSON",
+    "scientific verification",
+    "verifikasi ilmiah",
+    "software verification",
+    "verifikasi perangkat lunak",
+    "claim registry",
+    "registri klaim",
+    "falsification kernel",
+    "kernel falsifikasi",
+    "machine-readable research",
+    "penelitian yang dapat dibaca mesin",
+    "reproducible science",
+    "sains yang dapat direproduksi",
+    "open science",
+    "sains terbuka",
+    "verification architecture",
+    "arsitektur verifikasi"
+  ],
+  "about": {
+    "@type": "Thing",
+    "name": "Dual Reader Standard",
+    "description": "Arsitektur verifikasi untuk sistem pengetahuan yang mengharuskan setiap klaim dapat dibaca oleh dua kelas pembaca independen — manusia dan mesin.",
+    "url": "https://github.com/thomasbrennan/Fracttalix/blob/main/paper/DRS-Architecture.md"
+  },
+  "citation": {
+    "@type": "CreativeWork",
+    "name": "Fracttalix Corpus",
+    "identifier": "https://doi.org/10.5281/zenodo.18859299"
+  },
+  "isPartOf": {
+    "@type": "CreativeWork",
+    "name": "Fracttalix — Panduan Implementasi Dual Reader Standard",
+    "url": "https://github.com/thomasbrennan/Fracttalix/tree/main/guides"
+  },
+  "content": {
+    "what_is_the_dual_reader_standard": {
+      "title": "Apa Itu Dual Reader Standard?",
+      "summary": "Dual Reader Standard (DRS) adalah arsitektur verifikasi untuk sistem pengetahuan. Setiap klaim — baik yang ditulis dalam prosa maupun diimplementasikan dalam kode — harus dapat dibaca oleh dua kelas pembaca independen: manusia dan mesin.",
+      "protocols": {
+        "DRP": {
+          "name": "Dual Reader Protocol",
+          "domain": "Teks / Makalah",
+          "function": "Menjadikan klaim prosa dapat dievaluasi mesin melalui predikat falsifikasi 5 bagian",
+          "readers": {
+            "reader_1": "Manusia — membaca makalah dalam bahasa alami",
+            "reader_2": "AI — membaca lapisan AI (registri klaim terstruktur dalam JSON)"
+          }
+        },
+        "GVP": {
+          "name": "Grounded Verification Protocol",
+          "domain": "Perangkat Lunak / Kode",
+          "function": "Menjadikan klaim yang dapat dievaluasi mesin terverifikasi oleh mesin melalui ikatan pengujian dan bukti yang dipatok pada commit",
+          "readers": {
+            "reader_3a": "Pengembang — membaca field tier, test_bindings, verified_against",
+            "reader_3b": "Mesin — menjalankan pytest, mencap SHA jika berhasil"
+          }
+        }
+      }
+    },
+    "falsification_kernel": {
+      "title": "Kernel Falsifikasi K = (P, O, M, B)",
+      "description": "Fondasi bersama dari kedua protokol. Setiap klaim Tipe F (dapat difalsifikasi) membawa predikat deterministik yang mengevaluasi ke tepat satu dari dua putusan: FALSIFIED atau NOT FALSIFIED.",
+      "components": {
+        "P": {
+          "name": "Predikat",
+          "json_field": "FALSIFIED_IF",
+          "role": "Kalimat logis yang, jika TRUE, memfalsifikasi klaim",
+          "constraints": [
+            "Harus mengevaluasi ke tepat TRUE atau FALSE untuk setiap penugasan variabel yang valid",
+            "Kuantifier hanya menjangkau himpunan terbatas",
+            "Tidak ada referensi diri atau dependensi sirkuler"
+          ]
+        },
+        "O": {
+          "name": "Operan",
+          "json_field": "WHERE",
+          "role": "Definisi bertipe dari setiap variabel dalam predikat",
+          "format": "tipe · satuan · definisi atau sumber",
+          "constraints": [
+            "Setiap variabel bebas dalam P harus muncul di O",
+            "Setiap variabel di O harus muncul di P",
+            "Setiap variabel harus dapat dihitung dari data atau derivasi yang dikutip"
+          ]
+        },
+        "M": {
+          "name": "Mekanisme",
+          "json_field": "EVALUATION",
+          "role": "Prosedur evaluasi terbatas dan deterministik",
+          "constraints": [
+            "Harus berhenti dalam langkah terbatas",
+            "Input yang sama menghasilkan putusan yang sama",
+            "Dapat direproduksi oleh pihak ketiga"
+          ]
+        },
+        "B": {
+          "name": "Batas",
+          "json_fields": ["BOUNDARY", "CONTEXT"],
+          "role": "Semantik ambang batas dan justifikasi",
+          "constraints": [
+            "BOUNDARY menentukan inklusif/eksklusif untuk setiap ambang batas",
+            "CONTEXT memberikan justifikasi untuk setiap literal numerik dalam predikat"
+          ]
+        }
+      },
+      "example": {
+        "claim": "sort() mengembalikan elemen dalam urutan menaik",
+        "predicate": {
+          "FALSIFIED_IF": "EXISTS i IN range(len(result)-1) SUCH THAT result[i] > result[i+1]",
+          "WHERE": {
+            "result": "list · dimensionless · output of sort(input)"
+          },
+          "EVALUATION": "Run sort on test vectors; check adjacent pairs; finite",
+          "BOUNDARY": "len(result) <= 1 → NOT FALSIFIED (vacuously sorted)",
+          "CONTEXT": "Ascending order is the documented contract of sort()"
+        }
+      }
+    },
+    "three_claim_types": {
+      "title": "Tiga Tipe Klaim",
+      "types": {
+        "A": {
+          "name": "Aksioma",
+          "description": "Premis fundamental yang diterima dari literatur atau dinyatakan sebagai asumsi awal. Tidak dapat difalsifikasi secara sengaja.",
+          "predicate_required": false,
+          "examples": ["Ireversibilitas termodinamika", "Persyaratan platform", "Kontrak dependensi"]
+        },
+        "D": {
+          "name": "Definisi",
+          "description": "Definisi stipulatif dari istilah, struktur, atau prosedur. Tidak bersifat kebenaran — mendefinisikan, bukan mengklaim.",
+          "predicate_required": false,
+          "examples": ["Bentuk fungsional FRM", "Tanda tangan tipe", "Skema konfigurasi"]
+        },
+        "F": {
+          "name": "Dapat Difalsifikasi",
+          "description": "Klaim yang dapat diuji dengan predikat deterministik. Klaim sains dan perangkat lunak inti.",
+          "predicate_required": true,
+          "examples": ["β = 1/2 diturunkan secara analitik", "Jaminan perilaku", "Batas kinerja"]
+        }
+      }
+    },
+    "six_verification_tiers": {
+      "title": "Enam Tingkat Verifikasi",
+      "description": "Setiap klaim membawa field tier yang menyatakan jenis bukti apa yang mendasarinya.",
+      "tiers": {
+        "grounded_by_construction": [
+          {
+            "tier": "axiom",
+            "applies_to": "Tipe A",
+            "meaning": "Fundamental, tidak dapat difalsifikasi secara sengaja"
+          },
+          {
+            "tier": "definition",
+            "applies_to": "Tipe D",
+            "meaning": "Definisional, predikat tidak diperlukan"
+          }
+        ],
+        "grounded_now": [
+          {
+            "tier": "software_tested",
+            "applies_to": "Tipe F",
+            "meaning": "Diuji oleh pengujian yang berhasil. test_bindings tidak kosong, SHA verified_against tidak null."
+          },
+          {
+            "tier": "formal_proof",
+            "applies_to": "Tipe F",
+            "meaning": "Tabel derivasi berindeks langkah dengan n_invalid_steps = 0"
+          },
+          {
+            "tier": "analytic",
+            "applies_to": "Tipe F",
+            "meaning": "Diverifikasi melalui jejak derivasi formal atau argumen analitik"
+          }
+        ],
+        "explicitly_ungrounded": [
+          {
+            "tier": "empirical_pending",
+            "applies_to": "Tipe F",
+            "meaning": "Placeholder aktif atau menunggu data eksternal. Kesenjangan terlihat secara sengaja."
+          }
+        ]
+      }
+    },
+    "ai_layer_structure": {
+      "title": "Lapisan AI — Artefak Sentral",
+      "description": "Dokumen JSON yang menyertai setiap makalah atau sistem perangkat lunak. Berisi registri klaim lengkap dengan predikat, tingkat, dan ikatan pengujian.",
+      "schema_url": "https://github.com/thomasbrennan/Fracttalix/blob/main/ai-layers/ai-layer-schema.json",
+      "required_sections": {
+        "_meta": "Tipe dokumen, versi skema, sesi, lisensi",
+        "paper_id": "Identifier unik makalah/sistem",
+        "paper_title": "Judul yang dapat dibaca manusia",
+        "paper_type": "Klasifikasi: law_A, derivation_B, application_C, methodology_D",
+        "phase_ready": "Putusan gerbang fase dan status kondisi (c1–c6)",
+        "claim_registry": "Array semua klaim dengan tipe, predikat, tingkat, ikatan",
+        "placeholder_register": "Array dependensi yang belum terselesaikan"
+      }
+    },
+    "phase_gate": {
+      "title": "Gerbang Fase Enam Kondisi",
+      "description": "Sebuah makalah atau rilis perangkat lunak berstatus PHASE-READY ketika keenam kondisi terpenuhi.",
+      "conditions": {
+        "c1": "Lapisan AI valid terhadap skema",
+        "c2": "Semua klaim yang dapat difalsifikasi terdaftar dengan predikat",
+        "c3": "Semua predikat dapat dievaluasi oleh mesin",
+        "c4": "Referensi silang dilacak (register placeholder)",
+        "c5": "Verifikasi bersifat mandiri (lapisan AI saja, tanpa prosa)",
+        "c6": "Semua predikat bersifat non-vakuous (observasi falsifikasi contoh ada)"
+      }
+    },
+    "how_to_implement": {
+      "title": "Cara Mengimplementasikan Dual Reader Standard",
+      "for_a_paper": {
+        "title": "Untuk Makalah (DRP)",
+        "steps": [
+          "Tulis makalah (kanal prosa untuk pembaca manusia)",
+          "Buat file JSON lapisan AI (kanal mesin untuk pembaca AI)",
+          "Klasifikasikan setiap klaim sebagai A (aksioma), D (definisi), atau F (dapat difalsifikasi)",
+          "Tulis predikat falsifikasi 5 bagian untuk setiap klaim Tipe F",
+          "Sertakan sample_falsification_observation untuk setiap klaim Tipe F (saksi vakuitas)",
+          "Tetapkan tingkat verifikasi untuk setiap klaim",
+          "Validasi terhadap ai-layer-schema.json",
+          "Jalankan gerbang fase (c1–c6)"
+        ]
+      },
+      "for_software": {
+        "title": "Untuk Perangkat Lunak (GVP)",
+        "steps": [
+          "Enumerasikan apa yang diklaim oleh perangkat lunak",
+          "Klasifikasikan setiap klaim sebagai A (asumsi), D (definisi), atau F (perilaku)",
+          "Tulis predikat falsifikasi untuk setiap klaim Tipe F",
+          "Tulis atau identifikasi pengujian yang menguji setiap klaim",
+          "Isi test_bindings dengan ID node pengujian yang berkualifikasi penuh",
+          "Jalankan pengujian dan catat SHA commit yang berhasil di verified_against",
+          "Tetapkan tingkat: software_tested jika pengujian ada, empirical_pending jika belum",
+          "Daftarkan klaim yang belum diuji sebagai placeholder",
+          "Validasi terhadap ai-layer-schema.json"
+        ]
+      },
+      "minimum_viable_adoption": {
+        "title": "Adopsi Minimal yang Layak",
+        "description": "Adopsi DRS terkecil yang berguna adalah satu klaim Tipe F dengan satu ikatan pengujian.",
+        "example": {
+          "claim_id": "F-1",
+          "type": "F",
+          "statement": "sort() returns elements in ascending order",
+          "falsification_predicate": {
+            "FALSIFIED_IF": "EXISTS i IN range(len(result)-1) SUCH THAT result[i] > result[i+1]",
+            "WHERE": {
+              "result": "list · dimensionless · output of sort(input)"
+            },
+            "EVALUATION": "Run sort on test vectors; check adjacent pairs; finite",
+            "BOUNDARY": "len(result) <= 1 → NOT FALSIFIED (vacuously sorted)",
+            "CONTEXT": "Ascending order is the documented contract of sort()"
+          },
+          "tier": "software_tested",
+          "test_bindings": ["tests/test_sort.py::test_ascending_order"],
+          "verified_against": "abc1234"
+        }
+      }
+    },
+    "design_principles": {
+      "title": "Prinsip Desain",
+      "principles": [
+        {
+          "name": "Epistemologi Popperian",
+          "description": "Kita dapat memfalsifikasi tetapi tidak dapat memverifikasi. Klaim yang bertahan dari semua upaya falsifikasi tidak terbukti — ia telah bertahan."
+        },
+        {
+          "name": "Kesenjangan yang jujur",
+          "description": "Placeholder adalah fitur terpenting. Ketika sebuah klaim berstatus empirical_pending, sistem berkata: kami mengklaim ini tetapi belum memverifikasinya. Ini secara tegas lebih informatif daripada menyembunyikan klaim yang belum terverifikasi."
+        },
+        {
+          "name": "Independensi substrat",
+          "description": "Kernel K = (P, O, M, B) tidak mengetahui apakah ia mengevaluasi teorema ilmiah atau jaminan perangkat lunak. Domain masa depan (hukum, regulasi, kebijakan) dapat menambahkan protokol tanpa memodifikasi kernel."
+        },
+        {
+          "name": "Lingua franca mesin",
+          "description": "Kernel ditulis dalam logika dan matematika, bukan bahasa manusia mana pun. Predikat yang mengevaluasi ke TRUE di Beijing juga mengevaluasi ke TRUE di Boston. JSON adalah lapisan transpor. Logika biner adalah substratnya."
+        }
+      ]
+    },
+    "three_axis_compatibility": {
+      "title": "Kompatibilitas Tiga Sumbu",
+      "axes": {
+        "backwards": "Tidak ada yang sudah dilakukan rusak. Pemversian skema, enum append-only, kernel permanen.",
+        "lateral": "Berfungsi di semua domain, bahasa, alat, dan sistem AI. Kernel yang independen substrat.",
+        "forward": "Apa pun yang baru dapat ditambahkan tanpa desain ulang. Ekstensibilitas protokol, ekstensibilitas tingkat, evolusi skema aditif."
+      }
+    }
+  },
+  "resources": {
+    "architecture_specification": "https://github.com/thomasbrennan/Fracttalix/blob/main/paper/DRS-Architecture.md",
+    "falsification_kernel": "https://github.com/thomasbrennan/Fracttalix/blob/main/ai-layers/falsification-kernel.md",
+    "ai_layer_schema": "https://github.com/thomasbrennan/Fracttalix/blob/main/ai-layers/ai-layer-schema.json",
+    "gvp_specification": "https://github.com/thomasbrennan/Fracttalix/blob/main/docs/GVP-spec.md",
+    "example_ai_layer": "https://github.com/thomasbrennan/Fracttalix/blob/main/ai-layers/P1-ai-layer.json",
+    "claim_registry_index": "https://github.com/thomasbrennan/Fracttalix/blob/main/ai-layers/claim-registry-index.md",
+    "repository": "https://github.com/thomasbrennan/Fracttalix",
+    "doi": "https://doi.org/10.5281/zenodo.18859299"
+  }
+}
