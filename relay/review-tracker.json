@@ -788,15 +788,60 @@
       "confidence": 0.75,
       "model_used": "grok-4-latest",
       "reasoning_preview": "The falsification predicate has an internal inconsistency: The WHERE clause defines divergence as a failure of |kappa_{t+1} - kappa_t| to decrease monotonically after t > 20, which implies that any no"
+    },
+    "C-3.REG": {
+      "msg_id": "MSG-20260314-130234-0pk1",
+      "parent_msg_id": "MSG-20260314-103904-m3c3",
+      "timestamp": "2026-03-14T13:02:34.694866+00:00",
+      "verdict": "needs-revision",
+      "confidence": 0.75,
+      "model_used": "grok-4-latest",
+      "reasoning_preview": "The falsification predicate is mostly logically consistent but contains a potential internal inconsistency in the definition of 'T_char_computation_deviates_from_4tau_gen'. It is defined as TRUE if T_"
+    },
+    "F-SFW.2": {
+      "msg_id": "MSG-20260314-130125-c333",
+      "parent_msg_id": "MSG-20260314-103904-jqis",
+      "timestamp": "2026-03-14T13:01:25.408623+00:00",
+      "verdict": "needs-revision",
+      "confidence": 0.75,
+      "model_used": "grok-4-latest",
+      "reasoning_preview": "The falsification predicate is logically consistent: it clearly defines falsification based on uncovered_lines_count > 0 using coverage.py statement coverage, with a deterministic evaluation procedure"
+    },
+    "C-MK2.2": {
+      "msg_id": "MSG-20260314-130057-0h1g",
+      "parent_msg_id": "MSG-20260314-103904-j5tt",
+      "timestamp": "2026-03-14T13:00:57.982806+00:00",
+      "verdict": "confirmed",
+      "confidence": 0.95,
+      "model_used": "grok-4-latest",
+      "reasoning_preview": "The falsification predicate is logically consistent: it correctly ties temporal consistency to the collision resistance of the hash function (SHA-256), making the claim falsifiable only if an undetect"
+    },
+    "F-DRSARCH.2": {
+      "msg_id": "MSG-20260314-130148-17sb",
+      "parent_msg_id": "MSG-20260314-103904-ky9y",
+      "timestamp": "2026-03-14T13:01:48.982028+00:00",
+      "verdict": "confirmed",
+      "confidence": 0.95,
+      "model_used": "grok-4-latest",
+      "reasoning_preview": "The falsification predicate is logically consistent: it correctly defines a condition where backward compatibility fails if an old-valid layer does not validate under a newer schema. The WHERE clause "
+    },
+    "F-4.1": {
+      "msg_id": "MSG-20260314-130037-a28n",
+      "parent_msg_id": "MSG-20260314-103904-ioqq",
+      "timestamp": "2026-03-14T13:00:37.057859+00:00",
+      "verdict": "disputed",
+      "confidence": 0.75,
+      "model_used": "grok-4-latest",
+      "reasoning_preview": "The falsification predicate is logically consistent: it defines a clear, testable condition using statistical bounds (3\u03c3) on mean \u03b2 per scale class, with well-defined variables and evaluation procedur"
     }
   },
   "summary": {
     "total_falsifiable": 70,
     "sent_to_grok": 70,
-    "reviewed_by_grok": 40,
-    "confirmed": 7,
-    "disputed": 8,
+    "reviewed_by_grok": 45,
+    "confirmed": 9,
+    "disputed": 9,
     "inconclusive": 14,
-    "needs_revision": 11
+    "needs_revision": 13
   }
 }

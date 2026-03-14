@@ -1,6 +1,6 @@
 # Grok Review Report
 
-**Generated:** 2026-03-14T12:55:56Z
+**Generated:** 2026-03-14T13:02:34Z
 
 ## Summary
 
@@ -8,11 +8,11 @@
 |--------|-------|
 | Total falsifiable | 70 |
 | Sent to Grok | 70 |
-| Reviewed by Grok | 40 |
-| Confirmed | 7 |
-| Disputed | 8 |
+| Reviewed by Grok | 45 |
+| Confirmed | 9 |
+| Disputed | 9 |
 | Inconclusive | 14 |
-| Needs revision | 11 |
+| Needs revision | 13 |
 
 ## Disputed Claims (Action Required)
 
@@ -58,6 +58,12 @@
 - **Reasoning:** The claim states that Γ = |dh/dλ|* = |1 + iπ/2| = 1 + π²/4 ≈ 3.467. However, this contains a fundamental mathematical error. The magnitude of a complex number |a + bi| is sqrt(a² + b²), so |1 + i(π/2)
 - **Message:** MSG-20260314-113640-e7p6
 
+### F-4.1
+- **Confidence:** 0.75
+- **Model:** grok-4-latest
+- **Reasoning:** The falsification predicate is logically consistent: it defines a clear, testable condition using statistical bounds (3σ) on mean β per scale class, with well-defined variables and evaluation procedur
+- **Message:** MSG-20260314-130037-a28n
+
 ### F-5.3
 - **Confidence:** 0.65
 - **Model:** grok-4-latest
@@ -67,6 +73,7 @@
 ## Needs Revision
 
 - **C-2.5** (confidence: 0.65): The falsification predicate is mostly logically consistent, defining clear boolean conditions for falsification based on beta shift and eigenvalues. It aligns with standard RG stability criteria where
+- **C-3.REG** (confidence: 0.75): The falsification predicate is mostly logically consistent but contains a potential internal inconsistency in the definition of 'T_char_computation_deviates_from_4tau_gen'. It is defined as TRUE if T_
 - **C-DRP2.3** (confidence: 0.75): The falsification predicate is mostly logically consistent in structure: it defines a clear test (benchmark construction, evaluation, threshold comparison) that could in principle falsify the claim. T
 - **C-DRP2.7** (confidence: 0.65): The falsification predicate is logically consistent: it sets up a clear equivalence test comparing vacuity rates between pre-registered and unregistered studies, with a defined margin (0.05) and sampl
 - **C-DRP8.2** (confidence: 0.75): The falsification predicate is mostly logically consistent, defining a clear condition for disproval via existence of a non-vacuous K where O_out (observations slightly after the claimed boundary) can
@@ -76,6 +83,7 @@
 - **F-1.2** (confidence: 0.65): The falsification predicate is logically consistent in structure, defining clear conditions for Tier 1 (confirmed substrates) and Tier 2 (provisional candidates) based on log10 spans and a passing cou
 - **F-1.6** (confidence: 0.75): The falsification predicate is logically consistent: it clearly defines falsification based on predicted T bounds and a minimum number of independent sources, with well-specified variables, evaluation
 - **F-4.2** (confidence: 0.65): The falsification predicate is mostly logically consistent, as it defines a clear inequality based on self-similarity indices, with ε providing a tolerance for noise. However, the predicate is incompl
+- **F-SFW.2** (confidence: 0.75): The falsification predicate is logically consistent: it clearly defines falsification based on uncovered_lines_count > 0 using coverage.py statement coverage, with a deterministic evaluation procedure
 - **F-SFW.6** (confidence: 0.75): The falsification predicate is mostly logically consistent, defining clear conditions for falsification based on step counter equality and result key set matching. The evaluation procedure is determin
 
 ## Confirmed Claims
@@ -84,8 +92,10 @@
 |-------|-----------|-------|
 | C-2.4 | 0.85 | grok-4-latest |
 | C-3.DIAG | 0.92 | grok-4-latest |
+| C-MK2.2 | 0.95 | grok-4-latest |
 | C-MK4.3 | 0.95 | grok-4-latest |
 | C-MK5.4 | 0.85 | grok-4-latest |
 | F-1.4 | 0.95 | grok-4-latest |
 | F-1.7 | 0.92 | grok-4-latest |
+| F-DRSARCH.2 | 0.95 | grok-4-latest |
 | F-SFW.4 | 0.95 | grok-4-latest |
