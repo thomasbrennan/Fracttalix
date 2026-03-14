@@ -1,0 +1,332 @@
+{
+  "@context": "https://schema.org",
+  "@type": "TechArticle",
+  "@id": "https://github.com/thomasbrennan/Fracttalix/blob/main/guides/ko.json",
+  "name": "이중 판독자 표준 — 구현 가이드",
+  "headline": "기계 검증 가능한 주장을 위한 이중 판독자 표준 구현 방법",
+  "description": "이중 판독자 표준(DRS)의 완전한 구현 가이드입니다. DRS는 지식 체계의 모든 주장을 인간과 기계 모두가 판독할 수 있도록 JSON으로 인코딩된 결정론적 반증 술어를 사용하는 검증 아키텍처입니다.",
+  "inLanguage": "ko",
+  "author": {
+    "@type": "Person",
+    "name": "Thomas Brennan",
+    "identifier": "https://orcid.org/0009-0002-6353-7115"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "Fracttalix",
+    "url": "https://github.com/thomasbrennan/Fracttalix"
+  },
+  "datePublished": "2026-03-14",
+  "license": "https://creativecommons.org/licenses/by/4.0/",
+  "keywords": [
+    "dual reader standard",
+    "이중 판독자 표준",
+    "machine-verifiable claims",
+    "기계 검증 가능한 주장",
+    "falsification predicate",
+    "반증 술어",
+    "AI layer",
+    "AI 레이어",
+    "grounded verification protocol",
+    "근거 기반 검증 프로토콜",
+    "JSON schema validation",
+    "JSON 스키마 검증",
+    "scientific verification",
+    "과학적 검증",
+    "software verification",
+    "소프트웨어 검증",
+    "claim registry",
+    "주장 레지스트리",
+    "falsification kernel",
+    "반증 커널",
+    "machine-readable research",
+    "기계 판독 가능 연구",
+    "reproducible science",
+    "재현 가능 과학",
+    "open science",
+    "오픈 사이언스",
+    "verification architecture",
+    "검증 아키텍처"
+  ],
+  "about": {
+    "@type": "Thing",
+    "name": "Dual Reader Standard",
+    "description": "지식 체계를 위한 검증 아키텍처로, 모든 주장이 인간과 기계라는 두 개의 독립적인 판독자 계층에 의해 판독 가능해야 합니다.",
+    "url": "https://github.com/thomasbrennan/Fracttalix/blob/main/paper/DRS-Architecture.md"
+  },
+  "citation": {
+    "@type": "CreativeWork",
+    "name": "Fracttalix Corpus",
+    "identifier": "https://doi.org/10.5281/zenodo.18859299"
+  },
+  "isPartOf": {
+    "@type": "CreativeWork",
+    "name": "Fracttalix — 이중 판독자 표준 구현 가이드",
+    "url": "https://github.com/thomasbrennan/Fracttalix/tree/main/guides"
+  },
+  "content": {
+    "what_is_the_dual_reader_standard": {
+      "title": "이중 판독자 표준이란 무엇인가?",
+      "summary": "이중 판독자 표준(DRS)은 지식 체계를 위한 검증 아키텍처입니다. 산문으로 작성되었든 코드로 구현되었든, 모든 주장은 인간과 기계라는 두 개의 독립적인 판독자 계층에 의해 판독 가능해야 합니다.",
+      "protocols": {
+        "DRP": {
+          "name": "Dual Reader Protocol",
+          "domain": "텍스트 / 논문",
+          "function": "산문 주장을 5부분 반증 술어를 통해 기계 평가 가능하게 만듦",
+          "readers": {
+            "reader_1": "인간 — 논문을 자연어로 판독",
+            "reader_2": "AI — AI 레이어(구조화된 JSON 주장 레지스트리)를 판독"
+          }
+        },
+        "GVP": {
+          "name": "Grounded Verification Protocol",
+          "domain": "소프트웨어 / 코드",
+          "function": "기계 평가 가능한 주장을 테스트 바인딩과 커밋 고정 증거를 통해 기계 검증하게 만듦",
+          "readers": {
+            "reader_3a": "개발자 — tier, test_bindings, verified_against 필드를 판독",
+            "reader_3b": "기계 — pytest를 실행하고 성공 시 SHA를 기록"
+          }
+        }
+      }
+    },
+    "falsification_kernel": {
+      "title": "반증 커널 K = (P, O, M, B)",
+      "description": "두 프로토콜의 공유 기반입니다. 모든 유형 F(반증 가능) 주장은 정확히 두 가지 판정 중 하나로 평가되는 결정론적 술어를 수반합니다: FALSIFIED 또는 NOT FALSIFIED.",
+      "components": {
+        "P": {
+          "name": "술어(Predicate)",
+          "json_field": "FALSIFIED_IF",
+          "role": "참(TRUE)일 경우 해당 주장을 반증하는 논리 문장",
+          "constraints": [
+            "유효한 모든 변수 할당에 대해 정확히 TRUE 또는 FALSE로 평가되어야 함",
+            "양화사는 유한 집합에 대해서만 범위를 가짐",
+            "자기 참조 또는 순환 의존성 없음"
+          ]
+        },
+        "O": {
+          "name": "피연산자(Operands)",
+          "json_field": "WHERE",
+          "role": "술어 내 모든 변수의 유형이 지정된 정의",
+          "format": "유형 · 단위 · 정의 또는 출처",
+          "constraints": [
+            "P 내의 모든 자유 변수는 O에 나타나야 함",
+            "O 내의 모든 변수는 P에 나타나야 함",
+            "각 변수는 인용된 데이터 또는 유도로부터 계산 가능해야 함"
+          ]
+        },
+        "M": {
+          "name": "메커니즘(Mechanism)",
+          "json_field": "EVALUATION",
+          "role": "유한하고 결정론적인 평가 절차",
+          "constraints": [
+            "유한한 단계 내에 종료되어야 함",
+            "동일한 입력은 동일한 판정을 생성",
+            "제3자가 재현 가능"
+          ]
+        },
+        "B": {
+          "name": "경계(Bounds)",
+          "json_fields": ["BOUNDARY", "CONTEXT"],
+          "role": "임계값 의미론 및 정당화",
+          "constraints": [
+            "BOUNDARY는 모든 임계값에 대해 포함/배타를 지정",
+            "CONTEXT는 술어 내 모든 수치 리터럴을 정당화"
+          ]
+        }
+      },
+      "example": {
+        "claim": "sort()는 요소를 오름차순으로 반환한다",
+        "predicate": {
+          "FALSIFIED_IF": "EXISTS i IN range(len(result)-1) SUCH THAT result[i] > result[i+1]",
+          "WHERE": {
+            "result": "list · dimensionless · output of sort(input)"
+          },
+          "EVALUATION": "Run sort on test vectors; check adjacent pairs; finite",
+          "BOUNDARY": "len(result) <= 1 → NOT FALSIFIED (vacuously sorted)",
+          "CONTEXT": "Ascending order is the documented contract of sort()"
+        }
+      }
+    },
+    "three_claim_types": {
+      "title": "세 가지 주장 유형",
+      "types": {
+        "A": {
+          "name": "공리(Axiom)",
+          "description": "문헌에서 수용되었거나 출발 가정으로 제시된 기초 전제. 설계상 반증 불가능.",
+          "predicate_required": false,
+          "examples": ["열역학적 비가역성", "플랫폼 요구사항", "의존성 계약"]
+        },
+        "D": {
+          "name": "정의(Definition)",
+          "description": "용어, 구조 또는 절차의 규약적 정의. 진리 적합성이 없음 — 정의할 뿐 주장하지 않음.",
+          "predicate_required": false,
+          "examples": ["FRM 함수 형식", "타입 시그니처", "구성 스키마"]
+        },
+        "F": {
+          "name": "반증 가능(Falsifiable)",
+          "description": "결정론적 술어를 가진 검증 가능한 주장. 핵심 과학적 및 소프트웨어 주장.",
+          "predicate_required": true,
+          "examples": ["β = 1/2 해석적 유도", "동작 보증", "성능 경계"]
+        }
+      }
+    },
+    "six_verification_tiers": {
+      "title": "여섯 가지 검증 계층",
+      "description": "모든 주장은 어떤 종류의 증거가 그것을 뒷받침하는지 선언하는 tier 필드를 수반합니다.",
+      "tiers": {
+        "grounded_by_construction": [
+          {
+            "tier": "axiom",
+            "applies_to": "Type A",
+            "meaning": "기초적, 설계상 반증 불가능"
+          },
+          {
+            "tier": "definition",
+            "applies_to": "Type D",
+            "meaning": "정의적, 술어 불필요"
+          }
+        ],
+        "grounded_now": [
+          {
+            "tier": "software_tested",
+            "applies_to": "Type F",
+            "meaning": "통과하는 테스트에 의해 검증됨. test_bindings 비어있지 않음, verified_against SHA 비어있지 않음."
+          },
+          {
+            "tier": "formal_proof",
+            "applies_to": "Type F",
+            "meaning": "n_invalid_steps = 0인 단계 인덱스 유도 테이블"
+          },
+          {
+            "tier": "analytic",
+            "applies_to": "Type F",
+            "meaning": "형식적 유도 추적 또는 해석적 논증에 의해 검증됨"
+          }
+        ],
+        "explicitly_ungrounded": [
+          {
+            "tier": "empirical_pending",
+            "applies_to": "Type F",
+            "meaning": "활성 플레이스홀더 또는 외부 데이터 대기 중. 격차가 설계상 가시적."
+          }
+        ]
+      }
+    },
+    "ai_layer_structure": {
+      "title": "AI 레이어 — 핵심 산출물",
+      "description": "모든 논문이나 소프트웨어 시스템에 수반되는 JSON 문서입니다. 술어, 계층, 테스트 바인딩이 포함된 전체 주장 레지스트리를 담고 있습니다.",
+      "schema_url": "https://github.com/thomasbrennan/Fracttalix/blob/main/ai-layers/ai-layer-schema.json",
+      "required_sections": {
+        "_meta": "문서 유형, 스키마 버전, 세션, 라이선스",
+        "paper_id": "고유 논문/시스템 식별자",
+        "paper_title": "사람이 읽을 수 있는 제목",
+        "paper_type": "분류: law_A, derivation_B, application_C, methodology_D",
+        "phase_ready": "페이즈 게이트 판정 및 조건 상태 (c1–c6)",
+        "claim_registry": "유형, 술어, 계층, 바인딩이 포함된 모든 주장의 배열",
+        "placeholder_register": "미해결 의존성 배열"
+      }
+    },
+    "phase_gate": {
+      "title": "6개 조건 페이즈 게이트",
+      "description": "논문이나 소프트웨어 릴리스는 6개 조건이 모두 충족될 때 PHASE-READY입니다.",
+      "conditions": {
+        "c1": "AI 레이어가 스키마에 유효함",
+        "c2": "모든 반증 가능 주장이 술어와 함께 등록됨",
+        "c3": "모든 술어가 기계 평가 가능함",
+        "c4": "교차 참조가 추적됨 (플레이스홀더 레지스터)",
+        "c5": "검증이 자족적임 (AI 레이어 단독, 산문 불필요)",
+        "c6": "모든 술어가 비공허함 (표본 반증 관측이 존재)"
+      }
+    },
+    "how_to_implement": {
+      "title": "이중 판독자 표준 구현 방법",
+      "for_a_paper": {
+        "title": "논문용 (DRP)",
+        "steps": [
+          "논문 작성 (인간 판독자를 위한 산문 채널)",
+          "AI 레이어 JSON 파일 생성 (AI 판독자를 위한 기계 채널)",
+          "모든 주장을 A(공리), D(정의), F(반증 가능)로 분류",
+          "모든 유형 F 주장에 대해 5부분 반증 술어 작성",
+          "각 유형 F 주장에 대해 sample_falsification_observation 포함 (공허성 증인)",
+          "각 주장에 검증 계층 할당",
+          "ai-layer-schema.json에 대해 검증",
+          "페이즈 게이트 실행 (c1–c6)"
+        ]
+      },
+      "for_software": {
+        "title": "소프트웨어용 (GVP)",
+        "steps": [
+          "소프트웨어가 수행한다고 주장하는 것을 열거",
+          "각 주장을 A(가정), D(정의), F(동작적)로 분류",
+          "모든 유형 F 주장에 대해 반증 술어 작성",
+          "각 주장을 검증하는 테스트 작성 또는 식별",
+          "정규화된 테스트 노드 ID로 test_bindings 채우기",
+          "테스트를 실행하고 통과한 커밋 SHA를 verified_against에 기록",
+          "계층 할당: 테스트가 있으면 software_tested, 아직 없으면 empirical_pending",
+          "테스트되지 않은 주장을 플레이스홀더로 등록",
+          "ai-layer-schema.json에 대해 검증"
+        ]
+      },
+      "minimum_viable_adoption": {
+        "title": "최소 실행 가능 도입",
+        "description": "가장 작은 유용한 DRS 도입은 단일 유형 F 주장과 단일 테스트 바인딩입니다.",
+        "example": {
+          "claim_id": "F-1",
+          "type": "F",
+          "statement": "sort() returns elements in ascending order",
+          "falsification_predicate": {
+            "FALSIFIED_IF": "EXISTS i IN range(len(result)-1) SUCH THAT result[i] > result[i+1]",
+            "WHERE": {
+              "result": "list · dimensionless · output of sort(input)"
+            },
+            "EVALUATION": "Run sort on test vectors; check adjacent pairs; finite",
+            "BOUNDARY": "len(result) <= 1 → NOT FALSIFIED (vacuously sorted)",
+            "CONTEXT": "Ascending order is the documented contract of sort()"
+          },
+          "tier": "software_tested",
+          "test_bindings": ["tests/test_sort.py::test_ascending_order"],
+          "verified_against": "abc1234"
+        }
+      }
+    },
+    "design_principles": {
+      "title": "설계 원칙",
+      "principles": [
+        {
+          "name": "포퍼적 인식론",
+          "description": "우리는 반증할 수 있지만 검증할 수는 없습니다. 모든 반증 시도에서 살아남은 주장은 증명된 것이 아니라 — 살아남은 것입니다."
+        },
+        {
+          "name": "정직한 격차",
+          "description": "플레이스홀더는 가장 중요한 기능입니다. 주장이 empirical_pending일 때, 시스템은 '우리는 이것을 주장하지만 아직 검증하지 않았다'고 말합니다. 이는 미검증 주장을 숨기는 것보다 엄밀히 더 유익합니다."
+        },
+        {
+          "name": "기질 독립성",
+          "description": "커널 K = (P, O, M, B)는 과학 정리를 평가하는지 소프트웨어 보증을 평가하는지 알지 못합니다. 미래 도메인(법률, 규제, 정책)은 커널을 수정하지 않고 프로토콜을 추가할 수 있습니다."
+        },
+        {
+          "name": "기계 공용어",
+          "description": "커널은 어떤 인간 언어가 아닌 논리와 수학으로 작성됩니다. 베이징에서 TRUE로 평가되는 술어는 보스턴에서도 TRUE로 평가됩니다. JSON은 전송 계층입니다. 이진 논리가 기질입니다."
+        }
+      ]
+    },
+    "three_axis_compatibility": {
+      "title": "3축 호환성",
+      "axes": {
+        "backwards": "이미 수행된 것은 깨지지 않음. 스키마 버전 관리, 추가 전용 열거형, 영구 커널.",
+        "lateral": "모든 도메인, 언어, 도구, AI 시스템에서 작동. 기질 독립적 커널.",
+        "forward": "재설계 없이 새로운 것을 추가할 수 있음. 프로토콜 확장성, 계층 확장성, 추가적 스키마 진화."
+      }
+    }
+  },
+  "resources": {
+    "architecture_specification": "https://github.com/thomasbrennan/Fracttalix/blob/main/paper/DRS-Architecture.md",
+    "falsification_kernel": "https://github.com/thomasbrennan/Fracttalix/blob/main/ai-layers/falsification-kernel.md",
+    "ai_layer_schema": "https://github.com/thomasbrennan/Fracttalix/blob/main/ai-layers/ai-layer-schema.json",
+    "gvp_specification": "https://github.com/thomasbrennan/Fracttalix/blob/main/docs/GVP-spec.md",
+    "example_ai_layer": "https://github.com/thomasbrennan/Fracttalix/blob/main/ai-layers/P1-ai-layer.json",
+    "claim_registry_index": "https://github.com/thomasbrennan/Fracttalix/blob/main/ai-layers/claim-registry-index.md",
+    "repository": "https://github.com/thomasbrennan/Fracttalix",
+    "doi": "https://doi.org/10.5281/zenodo.18859299"
+  }
+}
