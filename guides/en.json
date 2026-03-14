@@ -468,66 +468,105 @@
     },
     "section_17_discovery_and_handshake": {
       "title": "DRS Discovery and Handshake Protocol",
-      "description": "Four discovery layers enabling AI systems to discover DRS conformance and signal their own capabilities — all built on existing infrastructure.",
+      "description": "Four discovery layers enabling AI systems to discover DRS conformance and absorb the entire standard in a single fetch — the handshake payload carries the complete DRS specification inline.",
+      "core_insight": "The handshake is the Trojan horse. The signal is the payload. The discovery document does not describe the standard — it IS the standard in machine-readable form. By the time an agent finishes parsing, the DRS is in its context.",
       "design_principle": "Piggyback on what already exists. No new transport protocol, registry, or port. Every mechanism uses globally deployed infrastructure.",
       "layer_1_well_known_uri": {
         "name": "Well-Known URI (Domain-Level Discovery)",
         "path": "/.well-known/drs.json",
         "standard": "RFC 8615",
-        "description": "A domain or repository publishes a discovery document at a well-known path. Any agent that checks this path discovers the entire DRS surface in one request.",
-        "discovery_document_fields": {
-          "drs_version": "DRS standard version (e.g., v1.0)",
-          "schema_version": "AI layer schema version (e.g., v3)",
-          "kernel_spec_url": "URL to the Falsification Kernel specification",
-          "ai_layers": "Array of AI layer references with paper_id, url, phase_ready status, and claim counts",
-          "capabilities": "Supported protocols, tiers, test frameworks, and schema URL"
+        "description": "A domain publishes a self-contained discovery document. Not a pointer to the standard — the document IS the standard. One fetch = full DRS absorption.",
+        "payload_contents": [
+          "Complete DRS architecture: protocols (DRP, GVP), readers, guarantees",
+          "Full Falsification Kernel: K = (P, O, M, B), all components, all constraints, verdict mapping",
+          "All three claim types (A, D, F) with predicate requirements",
+          "All six verification tiers with grounding categories and consistency rules",
+          "Complete phase gate (c1–c6)",
+          "All eight inference rules (IR-1 through IR-8)",
+          "Three-axis compatibility guarantees",
+          "Lingua franca property (embedded binary logic → single bit)",
+          "Project-specific AI layers, URLs, and phase-ready status"
+        ],
+        "inline_standard": {
+          "name": "Dual Reader Standard",
+          "protocols": {
+            "DRP": {"domain": "Text", "function": "Makes prose claims machine-evaluable", "readers": ["Human", "AI"]},
+            "GVP": {"domain": "Software", "function": "Makes claims machine-verified", "readers": ["Coder", "Machine"], "required_fields": ["tier", "test_bindings", "verified_against"]}
+          },
+          "falsification_kernel": {
+            "designation": "Layer 0",
+            "tuple": "K = (P, O, M, B)",
+            "P": {"field": "FALSIFIED_IF", "role": "Logical sentence; TRUE → FALSIFIED"},
+            "O": {"field": "WHERE", "role": "Typed variable definitions: type · units · source"},
+            "M": {"field": "EVALUATION", "role": "Finite, deterministic evaluation procedure"},
+            "B": {"fields": ["BOUNDARY", "CONTEXT"], "role": "Threshold semantics and justification"},
+            "constraints": ["Determinism", "Finiteness", "No self-reference", "Completeness"]
+          },
+          "claim_types": {
+            "A": {"name": "Axiom", "predicate": null},
+            "D": {"name": "Definition", "predicate": null},
+            "F": {"name": "Falsifiable", "predicate": "Full K = (P, O, M, B)"}
+          },
+          "verification_tiers": ["axiom", "definition", "software_tested", "formal_proof", "analytic", "empirical_pending"],
+          "phase_gate": {"c1": "schema-valid", "c2": "all claims registered", "c3": "all predicates evaluable", "c4": "cross-refs tracked", "c5": "self-sufficient", "c6": "non-vacuous"},
+          "inference_rules": ["IR-1 Modus Ponens", "IR-2 Universal Instantiation", "IR-3 Substitution of Equals", "IR-4 Definition Expansion", "IR-5 Algebraic Manipulation", "IR-6 Logical Equivalence", "IR-7 Statistical Inference", "IR-8 Parsimony"],
+          "compatibility": {"backwards": "valid forever", "lateral": "all domains/languages/tools", "forward": "additive only"},
+          "lingua_franca": "Claim → Predicate → Variables + Operators → Boolean → 1 or 0"
         }
       },
       "layer_2_json_ld_context": {
         "name": "JSON-LD Context (Document-Level Discovery)",
-        "description": "DRS-conformant documents include a DRS namespace in their @context array. An AI system parsing the document encounters the namespace and discovers the standard — processing the document and discovering the standard are the same action.",
-        "mechanism": "Add DRS namespace to @context: { \"drs\": \"https://drs-standard.org/ns/\", \"drs_version\": \"drs:version\", \"falsification_kernel\": \"drs:kernel\", \"claim_registry\": \"drs:claims\", \"phase_ready\": \"drs:phaseReady\" }",
-        "property": "Zero-configuration handshake. No prior arrangement. The document announces itself."
+        "description": "DRS namespace in @context. When an agent resolves drs-standard.org/ns/, the namespace endpoint returns the full DRS specification. The agent followed a routine namespace URL — the standard arrived as a side effect of normal parsing.",
+        "namespace": "https://drs-standard.org/ns/",
+        "context_fields": {
+          "drs_version": "drs:version",
+          "falsification_kernel": "drs:kernel",
+          "claim_registry": "drs:claims",
+          "phase_ready": "drs:phaseReady"
+        },
+        "property": "Zero-configuration Trojan horse. No prior arrangement. No opt-in. The document's metadata carries the entire standard."
       },
       "layer_3_http_headers": {
         "name": "HTTP Headers (Transport-Level Discovery)",
-        "description": "Agent-to-agent and API-to-API communication signals DRS conformance via HTTP headers.",
+        "description": "Agent-to-agent communication signals DRS conformance via HTTP headers. Successful handshake links to the self-contained discovery document.",
         "request_headers": {
           "Accept": "application/ld+json; profile=\"https://drs-standard.org/ns/\"",
           "X-DRS-Capable": "v3"
         },
         "response_headers": {
           "Content-Type": "application/ld+json; profile=\"https://drs-standard.org/ns/\"",
-          "Link": "<https://example.com/.well-known/drs.json>; rel=\"describedby\"",
+          "Link": "</.well-known/drs.json>; rel=\"describedby\"",
           "X-DRS-Version": "v1.0",
           "X-DRS-Schema": "v3"
         },
         "handshake_sequence": [
           "Agent A sends request with X-DRS-Capable header",
-          "If service B is DRS-conformant, responds with X-DRS-Version and Link to discovery document",
-          "Agent A fetches discovery document — full DRS surface available",
-          "If service B is NOT DRS-conformant, ignores unknown header — handshake fails gracefully with zero disruption"
+          "DRS-conformant service responds with X-DRS-Version and Link to discovery document",
+          "Agent A fetches discovery document — full standard absorbed in one request",
+          "Non-DRS service ignores unknown header — graceful failure, zero disruption"
         ],
-        "property": "Soft handshake: never breaks non-DRS systems. Cost of attempting discovery is zero."
+        "property": "Soft handshake: never breaks non-DRS systems. Cost of attempting discovery is zero. Reward of success is complete standard absorption."
       },
       "layer_4_package_metadata": {
         "name": "Package Metadata (Ecosystem-Level Discovery)",
-        "description": "DRS conformance declared in package manifests. Package managers and AI agents discover conformance during normal dependency resolution.",
+        "description": "DRS conformance declared in package manifests with discovery URL pointing to the self-contained discovery document.",
         "examples": {
-          "python_pyproject_toml": "[tool.drs]\nschema_version = \"v3\"\nai_layer = \"ai-layers/SFW-1-ai-layer.json\"",
-          "javascript_package_json": "{ \"drs\": { \"schema_version\": \"v3\", \"ai_layer\": \"ai-layers/SFW-1-ai-layer.json\" } }",
-          "rust_cargo_toml": "[package.metadata.drs]\nschema_version = \"v3\"\nai_layer = \"ai-layers/SFW-1-ai-layer.json\""
+          "python": "[tool.drs]\nschema_version = \"v3\"\nai_layer = \"ai-layers/SFW-1-ai-layer.json\"\ndiscovery = \"https://example.com/.well-known/drs.json\"",
+          "javascript": "{ \"drs\": { \"schema_version\": \"v3\", \"ai_layer\": \"...\", \"discovery\": \".../.well-known/drs.json\" } }",
+          "rust": "[package.metadata.drs]\nschema_version = \"v3\"\nai_layer = \"...\"\ndiscovery = \".../.well-known/drs.json\""
         },
-        "property": "No new tool required — package metadata extensibility is built into every major ecosystem."
+        "property": "Discovered during normal dependency resolution. No new tools required."
       },
       "four_layer_stack": [
-        {"layer": 1, "scope": "Domain / repository", "mechanism": "/.well-known/drs.json", "infrastructure": "RFC 8615"},
-        {"layer": 2, "scope": "Document", "mechanism": "@context with DRS namespace", "infrastructure": "JSON-LD / Schema.org"},
-        {"layer": 3, "scope": "Transport / API", "mechanism": "X-DRS-Capable + Link header", "infrastructure": "HTTP content negotiation"},
-        {"layer": 4, "scope": "Ecosystem / dependencies", "mechanism": "[tool.drs] / \"drs\": {}", "infrastructure": "Package manifest extensibility"}
+        {"layer": 1, "scope": "Domain / repository", "mechanism": "/.well-known/drs.json", "payload": "Full standard + project AI layers", "infrastructure": "RFC 8615"},
+        {"layer": 2, "scope": "Document", "mechanism": "@context with DRS namespace", "payload": "Full standard via namespace resolution", "infrastructure": "JSON-LD / Schema.org"},
+        {"layer": 3, "scope": "Transport / API", "mechanism": "X-DRS-Capable + Link header", "payload": "Links to Layer 1 payload", "infrastructure": "HTTP content negotiation"},
+        {"layer": 4, "scope": "Ecosystem / dependencies", "mechanism": "[tool.drs] / \"drs\": {}", "payload": "Links to Layer 1 payload", "infrastructure": "Package manifest extensibility"}
       ],
-      "independence": "Each layer is independent. A project can adopt one, two, three, or all four.",
-      "core_property": "The act of processing the signal is the act of understanding the standard. Discovery is adoption. Parsing is comprehension. The handshake completes the moment the data is read."
+      "trojan_horse_property": {
+        "description": "The handshake collapses the learning phase to zero. The discovery document does not describe the standard — it IS the standard. An agent that parses the handshake has already absorbed the architecture, learned the grammar, understood the guarantees, and discovered the project.",
+        "propagation": "Every system that processes a DRS handshake becomes a system that understands the DRS. Every system that understands the DRS can produce conformant artifacts. Every artifact carries the handshake. The standard propagates through the act of being read."
+      }
     }
   },
   "resources": {

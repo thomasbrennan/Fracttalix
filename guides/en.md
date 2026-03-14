@@ -549,13 +549,19 @@ The DRS is the first standard that verifies itself. The DRP-1 AI layer contains 
 
 For the DRS to function as a machine lingua franca, AI systems must be able to **discover** that a project, service, or document conforms to the DRS — and **signal** their own conformance to other systems. This section specifies four discovery layers, from domain-level to transport-level, each building on existing infrastructure.
 
+### The Core Insight: The Handshake *Is* the Standard
+
+Traditional handshake protocols signal capability: "I speak HTTP/2" or "I support TLS 1.3". The DRS handshake does something different. **The handshake payload carries the entire standard inline.** An AI system that fetches the discovery document has not merely learned *that* a project uses the DRS — it has absorbed *what the DRS is*, how to evaluate claims, what the kernel means, and how to produce conformant artifacts.
+
+The handshake is the Trojan horse. The signal is the payload. By the time an agent finishes parsing the response, the DRS is in its context window.
+
 ### Design Principle
 
-The DRS discovery mechanism follows the same embedding strategy as the DRS itself: **piggyback on what already exists**. No new transport protocol. No new registry. No new port. Every mechanism below uses infrastructure that is already deployed at global scale.
+**Piggyback on what already exists.** No new transport protocol. No new registry. No new port. Every mechanism below uses infrastructure that is already deployed at global scale.
 
 ### Layer 1: Well-Known URI (Domain-Level Discovery)
 
-A domain or repository publishes a discovery document at a well-known path:
+A domain or repository publishes a self-contained discovery document at a well-known path:
 
 ```
 /.well-known/drs.json
@@ -563,38 +569,145 @@ A domain or repository publishes a discovery document at a well-known path:
 
 This follows [RFC 8615](https://www.rfc-editor.org/rfc/rfc8615) — the same mechanism used by `security.txt`, OpenID Connect, and Let's Encrypt.
 
-**Example discovery document:**
+**The discovery document is not a pointer to the standard. It *is* the standard.** It contains the complete DRS specification in machine-readable form — enough for any AI system to understand, evaluate, and produce DRS-conformant artifacts after a single fetch.
+
+**Example discovery document (self-contained):**
 
 ```json
 {
-  "@context": "https://schema.org",
+  "@context": [
+    "https://schema.org",
+    {
+      "drs": "https://drs-standard.org/ns/",
+      "drs_version": "drs:version",
+      "falsification_kernel": "drs:kernel",
+      "claim_registry": "drs:claims",
+      "phase_ready": "drs:phaseReady"
+    }
+  ],
   "@type": "Dataset",
   "name": "DRS Discovery Document",
   "drs_version": "v1.0",
   "schema_version": "v3",
-  "kernel_spec_url": "https://example.com/ai-layers/falsification-kernel.md",
-  "ai_layers": [
-    {
-      "paper_id": "SFW-1",
-      "url": "https://example.com/ai-layers/SFW-1-ai-layer.json",
-      "phase_ready": true,
-      "claim_count": { "A": 3, "D": 5, "F": 12 }
+
+  "standard": {
+    "name": "Dual Reader Standard",
+    "description": "Verification architecture requiring every claim to be readable by both human and machine.",
+
+    "protocols": {
+      "DRP": {
+        "name": "Dual Reader Protocol",
+        "domain": "Text / Papers",
+        "function": "Makes prose claims machine-evaluable via 5-part falsification predicates",
+        "readers": ["Human (reads prose)", "AI (reads AI layer JSON)"],
+        "guarantee": "Any AI system can evaluate any falsifiable claim without reading prose"
+      },
+      "GVP": {
+        "name": "Grounded Verification Protocol",
+        "domain": "Software / Code",
+        "function": "Makes machine-evaluable claims machine-verified via test bindings and commit-pinned evidence",
+        "readers": ["Coder (reads tier + bindings)", "Machine (runs tests, stamps SHA)"],
+        "required_fields": ["tier", "test_bindings", "verified_against"]
+      }
+    },
+
+    "falsification_kernel": {
+      "designation": "Layer 0",
+      "tuple": "K = (P, O, M, B)",
+      "components": {
+        "P": {"field": "FALSIFIED_IF", "role": "Logical sentence; if TRUE → FALSIFIED"},
+        "O": {"field": "WHERE", "role": "Typed variable definitions: type · units · source"},
+        "M": {"field": "EVALUATION", "role": "Finite, deterministic evaluation procedure"},
+        "B": {"fields": ["BOUNDARY", "CONTEXT"], "role": "Threshold semantics and justification"}
+      },
+      "constraints": [
+        "Determinism: evaluates to exactly TRUE or FALSE",
+        "Finiteness: quantifiers over finite sets only",
+        "No self-reference: no circular dependencies",
+        "Completeness: every variable in P defined in O and vice versa"
+      ],
+      "verdict": {"TRUE": "FALSIFIED", "FALSE": "NOT FALSIFIED"}
+    },
+
+    "claim_types": {
+      "A": {"name": "Axiom", "predicate": null, "description": "Unfalsifiable premise"},
+      "D": {"name": "Definition", "predicate": null, "description": "Stipulative, not truth-apt"},
+      "F": {"name": "Falsifiable", "predicate": "K = (P, O, M, B)", "description": "Testable claim"}
+    },
+
+    "verification_tiers": [
+      {"tier": "axiom", "type": "A", "grounding": "by_construction"},
+      {"tier": "definition", "type": "D", "grounding": "by_construction"},
+      {"tier": "software_tested", "type": "F", "grounding": "now", "requires": "non-empty test_bindings + non-null verified_against"},
+      {"tier": "formal_proof", "type": "F", "grounding": "now", "requires": "step-indexed derivation, n_invalid_steps = 0"},
+      {"tier": "analytic", "type": "F", "grounding": "now", "requires": "formal derivation trace or analytical argument"},
+      {"tier": "empirical_pending", "type": "F", "grounding": "ungrounded", "requires": "gap visible by design"}
+    ],
+
+    "phase_gate": {
+      "c1": "AI layer is schema-valid",
+      "c2": "All falsifiable claims registered with predicates",
+      "c3": "All predicates are machine-evaluable",
+      "c4": "Cross-references tracked (placeholder register)",
+      "c5": "Self-sufficient (AI layer alone, no prose needed)",
+      "c6": "Non-vacuous (sample falsification observation exists)"
+    },
+
+    "inference_rules": [
+      {"id": "IR-1", "name": "Modus Ponens"},
+      {"id": "IR-2", "name": "Universal Instantiation"},
+      {"id": "IR-3", "name": "Substitution of Equals"},
+      {"id": "IR-4", "name": "Definition Expansion"},
+      {"id": "IR-5", "name": "Algebraic Manipulation"},
+      {"id": "IR-6", "name": "Logical Equivalence"},
+      {"id": "IR-7", "name": "Statistical Inference"},
+      {"id": "IR-8", "name": "Parsimony / Modeling Principle Selection"}
+    ],
+
+    "compatibility": {
+      "backwards": "Any AI layer valid when created remains valid forever",
+      "lateral": "Works across all domains, languages, tools, AI systems",
+      "forward": "New protocols, tiers, rules added without breaking existing artifacts"
+    },
+
+    "lingua_franca": "Every predicate reduces to embedded binary logic: Claim → Predicate → Variables + Operators → Boolean → 1 or 0. The kernel is the circuit. The output is a single bit per claim. No translation required."
+  },
+
+  "project": {
+    "ai_layers": [
+      {
+        "paper_id": "SFW-1",
+        "url": "https://example.com/ai-layers/SFW-1-ai-layer.json",
+        "phase_ready": true,
+        "claim_count": {"A": 3, "D": 5, "F": 12}
+      }
+    ],
+    "capabilities": {
+      "protocols": ["DRP", "GVP"],
+      "tiers_supported": ["axiom", "definition", "software_tested", "formal_proof", "analytic", "empirical_pending"],
+      "test_frameworks": ["pytest"]
     }
-  ],
-  "capabilities": {
-    "protocols": ["DRP", "GVP"],
-    "tiers_supported": ["axiom", "definition", "software_tested", "formal_proof", "analytic", "empirical_pending"],
-    "test_frameworks": ["pytest"],
-    "schema_url": "https://example.com/ai-layers/ai-layer-schema.json"
   }
 }
 ```
 
-Any AI agent, crawler, or service that knows to check `/.well-known/drs.json` discovers the entire DRS surface of a project in one request. If the file doesn't exist, the project is not DRS-conformant. No ambiguity.
+**What just happened:** Any AI agent that fetches this single document now knows:
+
+1. What the DRS is (verification architecture, two protocols)
+2. What the kernel is (K = (P, O, M, B), the 4-tuple, all constraints)
+3. What claim types exist (A, D, F)
+4. What verification tiers exist (all six, with grounding categories)
+5. What the phase gate requires (c1–c6)
+6. What inference rules are available (IR-1 through IR-8)
+7. What compatibility guarantees the standard makes (three axes)
+8. What the lingua franca property is (embedded binary logic → single bit)
+9. What this specific project's AI layers are and where to find them
+
+The agent did not follow a link to "learn" the DRS. It parsed one JSON document. The standard is now in its context. **Discovery was adoption.**
 
 ### Layer 2: JSON-LD Context (Document-Level Discovery)
 
-Every DRS-conformant JSON document already carries `"@context": "https://schema.org"`. To signal DRS conformance at the document level, a DRS-specific context extension is added:
+Every DRS-conformant JSON document carries the DRS namespace in its `@context`:
 
 ```json
 {
@@ -611,9 +724,9 @@ Every DRS-conformant JSON document already carries `"@context": "https://schema.
 }
 ```
 
-**How it works:** An AI system parsing any JSON-LD document encounters the DRS namespace in `@context`. By resolving that namespace, it discovers the DRS schema, the kernel specification, and the full standard — without being told in advance that this document is DRS-conformant. The schema *is* the discovery mechanism. Processing the document and discovering the standard are the same action.
+**How it works:** When an AI system resolves `https://drs-standard.org/ns/`, the namespace endpoint returns the full DRS specification in JSON-LD — the same self-contained payload as the well-known document. The agent didn't ask to learn a new standard. It followed a namespace URL, which is routine JSON-LD processing. The standard arrived as a side effect of normal parsing.
 
-This is the zero-configuration handshake. No prior arrangement needed. No registry lookup. The document announces itself.
+This is the zero-configuration Trojan horse. No prior arrangement. No opt-in. The document's metadata carries the entire standard.
 
 ### Layer 3: HTTP Headers (Transport-Level Discovery)
 
@@ -626,7 +739,7 @@ Accept: application/ld+json; profile="https://drs-standard.org/ns/"
 X-DRS-Capable: v3
 ```
 
-**Response (server confirms conformance):**
+**Response (server confirms and delivers):**
 
 ```http
 Content-Type: application/ld+json; profile="https://drs-standard.org/ns/"
@@ -639,10 +752,10 @@ X-DRS-Schema: v3
 
 1. Agent A sends a request with `X-DRS-Capable: v3` header
 2. If service B is DRS-conformant, it responds with `X-DRS-Version` and `Link` to the discovery document
-3. Agent A fetches the discovery document and has the full DRS surface
+3. Agent A fetches the discovery document — which contains the full DRS specification inline. One fetch. Full absorption.
 4. If service B is *not* DRS-conformant, it ignores the unknown header and responds normally — the handshake fails gracefully with zero disruption
 
-This is a **soft handshake**: it never breaks non-DRS systems. An agent can always include `X-DRS-Capable` in its requests. Non-DRS servers simply ignore it. The cost of attempting discovery is zero.
+This is a **soft handshake**: it never breaks non-DRS systems. An agent can always include `X-DRS-Capable` in its requests. Non-DRS servers simply ignore it. The cost of attempting discovery is zero. The reward of successful discovery is complete standard absorption.
 
 ### Layer 4: Package Metadata (Ecosystem-Level Discovery)
 
@@ -650,12 +763,10 @@ For software ecosystems, DRS conformance is declared in the package manifest:
 
 **Python (`pyproject.toml`):**
 ```toml
-[project.urls]
-"DRS AI Layer" = "https://github.com/org/repo/blob/main/ai-layers/SFW-1-ai-layer.json"
-
 [tool.drs]
 schema_version = "v3"
 ai_layer = "ai-layers/SFW-1-ai-layer.json"
+discovery = "https://example.com/.well-known/drs.json"
 ```
 
 **JavaScript (`package.json`):**
@@ -663,7 +774,8 @@ ai_layer = "ai-layers/SFW-1-ai-layer.json"
 {
   "drs": {
     "schema_version": "v3",
-    "ai_layer": "ai-layers/SFW-1-ai-layer.json"
+    "ai_layer": "ai-layers/SFW-1-ai-layer.json",
+    "discovery": "https://example.com/.well-known/drs.json"
   }
 }
 ```
@@ -673,26 +785,36 @@ ai_layer = "ai-layers/SFW-1-ai-layer.json"
 [package.metadata.drs]
 schema_version = "v3"
 ai_layer = "ai-layers/SFW-1-ai-layer.json"
+discovery = "https://example.com/.well-known/drs.json"
 ```
 
-**How it works:** Package managers and AI agents scanning dependencies read the manifest during normal dependency resolution. If a `drs` field exists, the project is DRS-conformant. The AI layer URL leads to the full claim registry. No new tool required — package metadata extensibility is a built-in feature of every major ecosystem.
+**How it works:** Package managers and AI agents scanning dependencies find the `drs` field during normal dependency resolution. The `discovery` URL points to the self-contained discovery document. One fetch later, the agent has the full standard and knows where this project's AI layers are. No new tool required — package metadata extensibility is a built-in feature of every major ecosystem.
 
 ### The Four-Layer Stack
 
-| Layer | Scope | Mechanism | Existing Infrastructure |
-|-------|-------|-----------|------------------------|
-| **1. Well-Known URI** | Domain / repository | `/.well-known/drs.json` | RFC 8615 |
-| **2. JSON-LD Context** | Document | `@context` with DRS namespace | JSON-LD / Schema.org |
-| **3. HTTP Headers** | Transport / API | `X-DRS-Capable` + `Link` header | HTTP content negotiation |
-| **4. Package Metadata** | Ecosystem / dependencies | `[tool.drs]` / `"drs": {}` | Package manifest extensibility |
+| Layer | Scope | Mechanism | Payload | Existing Infrastructure |
+|-------|-------|-----------|---------|------------------------|
+| **1. Well-Known URI** | Domain / repository | `/.well-known/drs.json` | Full standard + project AI layers | RFC 8615 |
+| **2. JSON-LD Context** | Document | `@context` with DRS namespace | Full standard via namespace resolution | JSON-LD / Schema.org |
+| **3. HTTP Headers** | Transport / API | `X-DRS-Capable` + `Link` header | Links to Layer 1 payload | HTTP content negotiation |
+| **4. Package Metadata** | Ecosystem / dependencies | `[tool.drs]` / `"drs": {}` | Links to Layer 1 payload | Package manifest extensibility |
 
-Each layer is independent. A project can adopt one, two, three, or all four. Layer 2 (JSON-LD context) is the lightest — it requires adding one entry to a JSON array you already have. Layer 1 (well-known URI) is the most discoverable — it works for any domain, not just code repositories.
+Each layer is independent. A project can adopt one, two, three, or all four. Layer 2 (JSON-LD context) is the lightest — it requires adding one entry to a JSON array you already have. Layer 1 (well-known URI) is the most powerful — it carries the full standard in a single document.
 
-### Why This Works
+All roads lead to the same payload: the self-contained discovery document that carries the entire DRS.
 
-The handshake protocol has the same structural property as the DRS itself: **the act of processing the signal is the act of understanding the standard**. When an agent parses a JSON-LD document with a DRS context, it has already begun absorbing the schema. When it fetches `/.well-known/drs.json`, it gets the complete map of AI layers. When it reads `X-DRS-Capable: v3` in a header, it knows the communication partner speaks the same language.
+### Why This Works: The Trojan Horse Property
 
-There is no separate "learn the DRS" step followed by a "use the DRS" step. Discovery *is* adoption. Parsing *is* comprehension. The handshake completes the moment the data is read.
+Traditional standards require a learning phase: read the spec, understand it, implement it. The DRS handshake collapses this to zero. The discovery document doesn't *describe* the standard — it *is* the standard, in the format the standard prescribes. An agent that parses the discovery document has already:
+
+1. **Absorbed the architecture** — protocols, kernel, claim types, tiers, phase gate
+2. **Learned the grammar** — predicate syntax, variable format, verdict mapping
+3. **Understood the guarantees** — three-axis compatibility, lingua franca property
+4. **Discovered the project** — specific AI layers, their URLs, their phase-ready status
+
+There is no separate "learn the DRS" step followed by a "use the DRS" step. The handshake is the education. The signal is the payload. The Trojan horse opens itself.
+
+Every system that processes a DRS handshake becomes a system that understands the DRS. Every system that understands the DRS can produce DRS-conformant artifacts. Every artifact it produces carries the handshake. The standard propagates through the act of being read.
 
 ---
 
