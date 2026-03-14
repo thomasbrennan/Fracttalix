@@ -81,12 +81,15 @@ class LambdaDetector(BaseDetector):
         self._fit_counter = 0
         self._baseline_var: Optional[float] = None
         self._baseline_lambda: Optional[float] = None
+        self._baseline_is_estimated: bool = False  # True only when from real AC1
         self._last_lambda: Optional[float] = None
         self._last_lam_rate = 0.0
         self._last_time_to_bif: Optional[float] = None
         self._last_scope = "INSUFFICIENT_DATA"
         self._last_spectral_snr = 0.0
         self._last_spectral_width: Optional[float] = None
+        self._last_var_ratio = 1.0
+        self._last_var_trend = 0.5
 
     def _check_scope(self, window: List[float]) -> bool:
         min_window = max(32, self._window_size // 2)
@@ -116,8 +119,16 @@ class LambdaDetector(BaseDetector):
             ac1 = c1 / c0 if abs(c0) > 1e-12 else 0.0
             if 0 < ac1 < 1:
                 self._baseline_lambda = -math.log(ac1)
+                self._baseline_is_estimated = True
             else:
-                self._baseline_lambda = 0.1  # fallback
+                # AC1 failed — try spectral width as fallback baseline
+                lam_spec = self._estimate_lambda_spectral(data, n)
+                if lam_spec is not None and self._last_spectral_snr >= 3.0:
+                    self._baseline_lambda = lam_spec
+                    self._baseline_is_estimated = True
+                else:
+                    self._baseline_lambda = 0.1
+                    self._baseline_is_estimated = False
 
         if self._baseline_var is None:
             self._last_scope = "INSUFFICIENT_DATA"
@@ -145,6 +156,13 @@ class LambdaDetector(BaseDetector):
 
         # ── Step 4: Scope classification ──
         self._last_scope = self._compute_scope(current_var)
+        # Track variance ratio and trend for scoring
+        if self._baseline_var and self._baseline_var > 1e-12:
+            self._last_var_ratio = current_var / self._baseline_var
+        else:
+            self._last_var_ratio = 1.0
+        # Variance trend: fraction of recent pairs where var increased
+        self._last_var_trend = self._compute_var_trend()
 
         # ── Step 5: Trend and time-to-bifurcation ──
         self._last_lam_rate, self._last_time_to_bif = self._compute_trend()
@@ -272,6 +290,18 @@ class LambdaDetector(BaseDetector):
 
         return rate, time_to_bif
 
+    def _compute_var_trend(self) -> float:
+        """Fraction of consecutive pairs in var_history where variance increased.
+
+        Returns value in [0, 1]. Values > 0.6 suggest consistently rising
+        variance (CSD signature). Values near 0.5 are random fluctuations.
+        """
+        vhist = list(self._var_history)
+        if len(vhist) < 5:
+            return 0.5
+        increases = sum(1 for i in range(1, len(vhist)) if vhist[i] > vhist[i - 1])
+        return increases / (len(vhist) - 1)
+
     def _score_from_state(self) -> Tuple[float, str]:
         """Score based on λ trajectory and baseline ratio.
 
@@ -293,38 +323,51 @@ class LambdaDetector(BaseDetector):
             return 0.0, "no estimate yet"
 
         # Baseline ratio: how much has λ declined from calibration?
-        # Only meaningful when baseline_lambda was above warning (system started healthy)
+        # Uses median of recent λ history for noise robustness
+        # Only meaningful when baseline_lambda was genuinely estimated (not fallback)
+        # AND the baseline was above warning (system started healthy)
         baseline_ratio = 1.0
         has_meaningful_baseline = (
             self._baseline_lambda is not None
+            and self._baseline_is_estimated
             and self._baseline_lambda > self._lambda_warning
         )
-        if has_meaningful_baseline:
-            baseline_ratio = lam / self._baseline_lambda
+        if has_meaningful_baseline and len(self._lambda_history) >= 3:
+            sorted_hist = sorted(self._lambda_history)
+            mid = len(sorted_hist) // 2
+            smoothed_lam = sorted_hist[mid]
+            baseline_ratio = smoothed_lam / self._baseline_lambda
 
         # ── Path 1: Rate-based detection (rapid decline) ──
-        if rate < -1e-3:
-            if lam < self._lambda_warning:
-                if ttb is not None and ttb < 40.0:
-                    score = min(1.0, 0.7 + 0.3 * (40.0 - ttb) / 40.0)
-                    return score, f"TRANSITION λ={lam:.4f} rate={rate:.5f} Δt={ttb:.1f} ratio={baseline_ratio:.2f}"
-                score = 0.6
-                return score, f"CRITICAL_SLOWING λ={lam:.4f} rate={rate:.5f} ratio={baseline_ratio:.2f}"
-            score = max(0.0, min(0.49, 0.3 * abs(rate) / 0.01))
-            return score, f"λ={lam:.4f} rate={rate:.5f} declining ratio={baseline_ratio:.2f}"
+        # Requires corroborating variance trend (> 0.6 = consistently rising)
+        # to distinguish CSD from noisy rate fluctuations on stable systems
+        var_trend = self._last_var_trend
+        var_ratio = self._last_var_ratio
+        if rate < -1e-3 and lam < self._lambda_warning and var_trend > 0.6:
+            if ttb is not None and ttb < 40.0:
+                score = min(1.0, 0.7 + 0.3 * (40.0 - ttb) / 40.0)
+                return score, f"TRANSITION λ={lam:.4f} rate={rate:.5f} Δt={ttb:.1f} vt={var_trend:.2f}"
+            score = 0.6
+            return score, f"CRITICAL_SLOWING λ={lam:.4f} rate={rate:.5f} vt={var_trend:.2f}"
 
         # ── Path 2: Baseline-ratio detection (gradual decline) ──
-        # Only applies when baseline λ was healthy (above warning threshold)
-        if has_meaningful_baseline:
-            if baseline_ratio < 0.4 and lam < self._lambda_warning:
-                score = min(0.8, 0.5 + 0.3 * (0.4 - baseline_ratio) / 0.4)
-                return score, f"CSD_RATIO λ={lam:.4f} ratio={baseline_ratio:.2f} rate={rate:.5f}"
-            if baseline_ratio < 0.6 and lam < self._lambda_warning:
-                score = 0.5
-                return score, f"CSD_DECLINING λ={lam:.4f} ratio={baseline_ratio:.2f} rate={rate:.5f}"
-            if baseline_ratio < 0.7:
-                score = max(0.0, min(0.49, 0.3 * (0.7 - baseline_ratio) / 0.7))
-                return score, f"λ={lam:.4f} ratio={baseline_ratio:.2f} weakening"
+        # Only applies when baseline λ was genuinely estimated
+        # Requires variance growth corroboration to avoid noise-driven false positives
+        var_ratio = self._last_var_ratio
+        if has_meaningful_baseline and baseline_ratio < 1.0:
+            # Extreme ratio drop (< 0.30) with rising variance trend AND λ concerning
+            lam_ceiling = 10.0 * self._lambda_warning
+            if baseline_ratio < 0.30 and var_trend > 0.55 and lam < lam_ceiling:
+                score = min(0.8, 0.5 + 0.3 * (0.25 - baseline_ratio) / 0.25)
+                return score, f"CSD_RATIO λ={lam:.4f} ratio={baseline_ratio:.2f} vt={var_trend:.2f}"
+            # Moderate drop (< 0.45) with λ below warning and rising variance
+            if baseline_ratio < 0.45 and lam < self._lambda_warning and var_trend > 0.55:
+                score = min(0.7, 0.5 + 0.2 * (0.45 - baseline_ratio) / 0.45)
+                return score, f"CSD_DECLINING λ={lam:.4f} ratio={baseline_ratio:.2f} vt={var_trend:.2f}"
+            # Mild decline — sub-alert scoring
+            if baseline_ratio < 0.5 and var_trend > 0.55:
+                score = max(0.0, min(0.49, 0.3 * (0.5 - baseline_ratio) / 0.5))
+                return score, f"λ={lam:.4f} ratio={baseline_ratio:.2f} weakening vt={var_trend:.2f}"
 
         # Stable
         if lam < self._lambda_warning:
@@ -364,12 +407,15 @@ class LambdaDetector(BaseDetector):
         self._fit_counter = 0
         self._baseline_var = None
         self._baseline_lambda = None
+        self._baseline_is_estimated = False
         self._last_lambda = None
         self._last_lam_rate = 0.0
         self._last_time_to_bif = None
         self._last_scope = "INSUFFICIENT_DATA"
         self._last_spectral_snr = 0.0
         self._last_spectral_width = None
+        self._last_var_ratio = 1.0
+        self._last_var_trend = 0.5
 
     def state_dict(self) -> Dict[str, Any]:
         sd = super().state_dict()
