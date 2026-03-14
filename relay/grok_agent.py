@@ -32,7 +32,7 @@ QUEUE_DIR = RELAY_DIR / "queue"
 BOOTSTRAP_PATH = RELAY_DIR / "grok-bootstrap.md"
 
 XAI_API_URL = "https://api.x.ai/v1/chat/completions"
-XAI_MODEL = "grok-4-1-fast-reasoning"
+XAI_MODEL = "grok-4-latest"
 
 # Response type mapping
 RESPONSE_TYPE_MAP = {
