@@ -48,9 +48,17 @@ jobs:
           ")
           echo "pending=$count" >> $GITHUB_OUTPUT
           echo "Found $count pending message(s) for Grok"
+          # Check if API key is available
+          if [ -n "$XAI_API_KEY" ]; then
+            echo "has_key=true" >> $GITHUB_OUTPUT
+            echo "XAI_API_KEY is set"
+          else
+            echo "has_key=false" >> $GITHUB_OUTPUT
+            echo "WARNING: XAI_API_KEY is NOT set"
+          fi
 
       - name: Run Grok Relay Agent
-        if: steps.check.outputs.pending != '0' && env.XAI_API_KEY != ''
+        if: steps.check.outputs.pending != '0' && steps.check.outputs.has_key == 'true'
         run: |
           cd $GITHUB_WORKSPACE
           python -m relay.grok_agent --no-push
