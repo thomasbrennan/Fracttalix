@@ -1,0 +1,332 @@
+{
+  "@context": "https://schema.org",
+  "@type": "TechArticle",
+  "@id": "https://github.com/thomasbrennan/Fracttalix/blob/main/guides/bn.json",
+  "name": "ডুয়াল রিডার স্ট্যান্ডার্ড — বাস্তবায়ন নির্দেশিকা",
+  "headline": "মেশিন-যাচাইযোগ্য দাবির জন্য ডুয়াল রিডার স্ট্যান্ডার্ড কীভাবে বাস্তবায়ন করবেন",
+  "description": "ডুয়াল রিডার স্ট্যান্ডার্ড (DRS)-এর সম্পূর্ণ বাস্তবায়ন নির্দেশিকা — একটি যাচাইকরণ আর্কিটেকচার যা জ্ঞান ব্যবস্থার প্রতিটি দাবিকে JSON-এ এনকোড করা নির্ধারণমূলক মিথ্যাকরণ প্রেডিকেট ব্যবহার করে মানুষ এবং মেশিন উভয়ের দ্বারা পাঠযোগ্য করে তোলে।",
+  "inLanguage": "bn",
+  "author": {
+    "@type": "Person",
+    "name": "Thomas Brennan",
+    "identifier": "https://orcid.org/0009-0002-6353-7115"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "Fracttalix",
+    "url": "https://github.com/thomasbrennan/Fracttalix"
+  },
+  "datePublished": "2026-03-14",
+  "license": "https://creativecommons.org/licenses/by/4.0/",
+  "keywords": [
+    "dual reader standard",
+    "ডুয়াল রিডার স্ট্যান্ডার্ড",
+    "machine-verifiable claims",
+    "মেশিন-যাচাইযোগ্য দাবি",
+    "falsification predicate",
+    "মিথ্যাকরণ প্রেডিকেট",
+    "AI layer",
+    "এআই স্তর",
+    "grounded verification protocol",
+    "ভিত্তিযুক্ত যাচাইকরণ প্রোটোকল",
+    "JSON schema validation",
+    "JSON স্কিমা যাচাইকরণ",
+    "scientific verification",
+    "বৈজ্ঞানিক যাচাইকরণ",
+    "software verification",
+    "সফটওয়্যার যাচাইকরণ",
+    "claim registry",
+    "দাবি রেজিস্ট্রি",
+    "falsification kernel",
+    "মিথ্যাকরণ কার্নেল",
+    "machine-readable research",
+    "মেশিন-পাঠযোগ্য গবেষণা",
+    "reproducible science",
+    "পুনরুত্পাদনযোগ্য বিজ্ঞান",
+    "open science",
+    "উন্মুক্ত বিজ্ঞান",
+    "verification architecture",
+    "যাচাইকরণ আর্কিটেকচার"
+  ],
+  "about": {
+    "@type": "Thing",
+    "name": "Dual Reader Standard",
+    "description": "জ্ঞান ব্যবস্থার জন্য একটি যাচাইকরণ আর্কিটেকচার যা প্রতিটি দাবিকে দুটি স্বতন্ত্র পাঠক শ্রেণী — মানুষ এবং মেশিন — দ্বারা পাঠযোগ্য হতে বাধ্য করে।",
+    "url": "https://github.com/thomasbrennan/Fracttalix/blob/main/paper/DRS-Architecture.md"
+  },
+  "citation": {
+    "@type": "CreativeWork",
+    "name": "Fracttalix Corpus",
+    "identifier": "https://doi.org/10.5281/zenodo.18859299"
+  },
+  "isPartOf": {
+    "@type": "CreativeWork",
+    "name": "Fracttalix — ডুয়াল রিডার স্ট্যান্ডার্ড বাস্তবায়ন নির্দেশিকাসমূহ",
+    "url": "https://github.com/thomasbrennan/Fracttalix/tree/main/guides"
+  },
+  "content": {
+    "what_is_the_dual_reader_standard": {
+      "title": "ডুয়াল রিডার স্ট্যান্ডার্ড কী?",
+      "summary": "ডুয়াল রিডার স্ট্যান্ডার্ড (DRS) হলো জ্ঞান ব্যবস্থার জন্য একটি যাচাইকরণ আর্কিটেকচার। প্রতিটি দাবি — তা গদ্যে লেখা হোক বা কোডে বাস্তবায়িত — দুটি স্বতন্ত্র পাঠক শ্রেণীর দ্বারা পাঠযোগ্য হতে হবে: মানুষ এবং মেশিন।",
+      "protocols": {
+        "DRP": {
+          "name": "ডুয়াল রিডার প্রোটোকল",
+          "domain": "টেক্সট / গবেষণাপত্র",
+          "function": "৫-অংশের মিথ্যাকরণ প্রেডিকেটের মাধ্যমে গদ্য দাবিগুলোকে মেশিন-মূল্যায়নযোগ্য করে তোলে",
+          "readers": {
+            "reader_1": "মানুষ — প্রাকৃতিক ভাষায় গবেষণাপত্র পড়ে",
+            "reader_2": "এআই — এআই স্তর (কাঠামোবদ্ধ JSON দাবি রেজিস্ট্রি) পড়ে"
+          }
+        },
+        "GVP": {
+          "name": "ভিত্তিযুক্ত যাচাইকরণ প্রোটোকল",
+          "domain": "সফটওয়্যার / কোড",
+          "function": "টেস্ট বাইন্ডিং এবং কমিট-পিনড প্রমাণের মাধ্যমে মেশিন-মূল্যায়নযোগ্য দাবিগুলোকে মেশিন-যাচাইকৃত করে তোলে",
+          "readers": {
+            "reader_3a": "কোডার — tier, test_bindings, verified_against ফিল্ডগুলো পড়ে",
+            "reader_3b": "মেশিন — pytest চালায়, সাফল্যে SHA স্ট্যাম্প করে"
+          }
+        }
+      }
+    },
+    "falsification_kernel": {
+      "title": "মিথ্যাকরণ কার্নেল K = (P, O, M, B)",
+      "description": "উভয় প্রোটোকলের ভাগ করা ভিত্তি। প্রতিটি Type F (মিথ্যাকরণযোগ্য) দাবি একটি নির্ধারণমূলক প্রেডিকেট বহন করে যা ঠিক দুটি রায়ের একটিতে মূল্যায়িত হয়: FALSIFIED অথবা NOT FALSIFIED।",
+      "components": {
+        "P": {
+          "name": "প্রেডিকেট",
+          "json_field": "FALSIFIED_IF",
+          "role": "যৌক্তিক বাক্য যা, TRUE হলে, দাবিটি মিথ্যা প্রমাণ করে",
+          "constraints": [
+            "যেকোনো বৈধ চলক নির্ধারণের জন্য ঠিক TRUE বা FALSE-তে মূল্যায়িত হতে হবে",
+            "পরিমাণক কেবল সসীম সেটের উপর প্রযোজ্য",
+            "কোনো আত্ম-রেফারেন্স বা বৃত্তাকার নির্ভরতা নেই"
+          ]
+        },
+        "O": {
+          "name": "অপারেন্ড",
+          "json_field": "WHERE",
+          "role": "প্রেডিকেটের প্রতিটি চলকের টাইপকৃত সংজ্ঞা",
+          "format": "টাইপ · একক · সংজ্ঞা বা উৎস",
+          "constraints": [
+            "P-তে প্রতিটি মুক্ত চলক O-তে থাকতে হবে",
+            "O-তে প্রতিটি চলক P-তে থাকতে হবে",
+            "প্রতিটি চলক উদ্ধৃত তথ্য বা ডেরিভেশন থেকে গণনাযোগ্য হতে হবে"
+          ]
+        },
+        "M": {
+          "name": "পদ্ধতি",
+          "json_field": "EVALUATION",
+          "role": "সসীম, নির্ধারণমূলক মূল্যায়ন পদ্ধতি",
+          "constraints": [
+            "সসীম ধাপে সমাপ্ত হতে হবে",
+            "একই ইনপুটে একই রায় দিতে হবে",
+            "তৃতীয় পক্ষ দ্বারা পুনরুত্পাদনযোগ্য"
+          ]
+        },
+        "B": {
+          "name": "সীমানা",
+          "json_fields": ["BOUNDARY", "CONTEXT"],
+          "role": "প্রান্তিক মান শব্দার্থবিদ্যা এবং যৌক্তিকতা",
+          "constraints": [
+            "BOUNDARY প্রতিটি প্রান্তিক মানের জন্য অন্তর্ভুক্ত/বহির্ভূত নির্দিষ্ট করে",
+            "CONTEXT প্রেডিকেটের প্রতিটি সংখ্যাসূচক মানকে ন্যায্যতা দেয়"
+          ]
+        }
+      },
+      "example": {
+        "claim": "sort() উপাদানগুলো ঊর্ধ্বক্রমে ফেরত দেয়",
+        "predicate": {
+          "FALSIFIED_IF": "EXISTS i IN range(len(result)-1) SUCH THAT result[i] > result[i+1]",
+          "WHERE": {
+            "result": "list · dimensionless · output of sort(input)"
+          },
+          "EVALUATION": "Run sort on test vectors; check adjacent pairs; finite",
+          "BOUNDARY": "len(result) <= 1 → NOT FALSIFIED (vacuously sorted)",
+          "CONTEXT": "Ascending order is the documented contract of sort()"
+        }
+      }
+    },
+    "three_claim_types": {
+      "title": "তিনটি দাবির প্রকার",
+      "types": {
+        "A": {
+          "name": "স্বতঃসিদ্ধ",
+          "description": "সাহিত্য থেকে গৃহীত বা প্রারম্ভিক অনুমান হিসেবে বর্ণিত মৌলিক ভিত্তি। নকশাগতভাবে মিথ্যাকরণ-অযোগ্য।",
+          "predicate_required": false,
+          "examples": ["তাপগতীয় অপ্রত্যাবর্তনীয়তা", "প্ল্যাটফর্ম প্রয়োজনীয়তা", "নির্ভরতা চুক্তি"]
+        },
+        "D": {
+          "name": "সংজ্ঞা",
+          "description": "পদ, কাঠামো বা পদ্ধতির শর্তমূলক সংজ্ঞা। সত্য-যোগ্য নয় — এগুলো সংজ্ঞায়িত করে, দাবি করে না।",
+          "predicate_required": false,
+          "examples": ["FRM কার্যকরী রূপ", "টাইপ স্বাক্ষর", "কনফিগারেশন স্কিমা"]
+        },
+        "F": {
+          "name": "মিথ্যাকরণযোগ্য",
+          "description": "নির্ধারণমূলক প্রেডিকেটযুক্ত পরীক্ষণযোগ্য দাবি। মূল বৈজ্ঞানিক এবং সফটওয়্যার দাবিসমূহ।",
+          "predicate_required": true,
+          "examples": ["β = 1/2 বিশ্লেষণাত্মকভাবে প্রাপ্ত", "আচরণগত গ্যারান্টি", "কর্মক্ষমতা সীমা"]
+        }
+      }
+    },
+    "six_verification_tiers": {
+      "title": "ছয়টি যাচাইকরণ স্তর",
+      "description": "প্রতিটি দাবি একটি tier ফিল্ড বহন করে যা ঘোষণা করে কোন ধরনের প্রমাণ এটিকে ভিত্তি দেয়।",
+      "tiers": {
+        "grounded_by_construction": [
+          {
+            "tier": "axiom",
+            "applies_to": "Type A",
+            "meaning": "মৌলিক, নকশাগতভাবে মিথ্যাকরণ-অযোগ্য"
+          },
+          {
+            "tier": "definition",
+            "applies_to": "Type D",
+            "meaning": "সংজ্ঞামূলক, কোনো প্রেডিকেটের প্রয়োজন নেই"
+          }
+        ],
+        "grounded_now": [
+          {
+            "tier": "software_tested",
+            "applies_to": "Type F",
+            "meaning": "উত্তীর্ণ টেস্ট দ্বারা অনুশীলিত। test_bindings অশূন্য, verified_against SHA অ-নাল।"
+          },
+          {
+            "tier": "formal_proof",
+            "applies_to": "Type F",
+            "meaning": "n_invalid_steps = 0 সহ ধাপ-সূচীকৃত ডেরিভেশন টেবিল"
+          },
+          {
+            "tier": "analytic",
+            "applies_to": "Type F",
+            "meaning": "আনুষ্ঠানিক ডেরিভেশন ট্রেস বা বিশ্লেষণাত্মক যুক্তি দ্বারা যাচাইকৃত"
+          }
+        ],
+        "explicitly_ungrounded": [
+          {
+            "tier": "empirical_pending",
+            "applies_to": "Type F",
+            "meaning": "সক্রিয় প্লেসহোল্ডার বা মুলতুবি বাহ্যিক তথ্য। ফাঁক নকশাগতভাবে দৃশ্যমান।"
+          }
+        ]
+      }
+    },
+    "ai_layer_structure": {
+      "title": "এআই স্তর — কেন্দ্রীয় নথি",
+      "description": "একটি JSON ডকুমেন্ট যা প্রতিটি গবেষণাপত্র বা সফটওয়্যার সিস্টেমের সাথে থাকে। প্রেডিকেট, স্তর এবং টেস্ট বাইন্ডিংসহ সম্পূর্ণ দাবি রেজিস্ট্রি ধারণ করে।",
+      "schema_url": "https://github.com/thomasbrennan/Fracttalix/blob/main/ai-layers/ai-layer-schema.json",
+      "required_sections": {
+        "_meta": "ডকুমেন্ট প্রকার, স্কিমা সংস্করণ, সেশন, লাইসেন্স",
+        "paper_id": "অনন্য গবেষণাপত্র/সিস্টেম শনাক্তকারী",
+        "paper_title": "মানব-পাঠযোগ্য শিরোনাম",
+        "paper_type": "শ্রেণীবিভাগ: law_A, derivation_B, application_C, methodology_D",
+        "phase_ready": "ফেজ গেট রায় এবং শর্ত অবস্থা (c1–c6)",
+        "claim_registry": "প্রকার, প্রেডিকেট, স্তর, বাইন্ডিংসহ সকল দাবির অ্যারে",
+        "placeholder_register": "অমীমাংসিত নির্ভরতার অ্যারে"
+      }
+    },
+    "phase_gate": {
+      "title": "ছয়-শর্ত ফেজ গেট",
+      "description": "একটি গবেষণাপত্র বা সফটওয়্যার রিলিজ তখনই PHASE-READY হয় যখন ছয়টি শর্তের সবকটি পূরণ হয়।",
+      "conditions": {
+        "c1": "এআই স্তর স্কিমা-বৈধ",
+        "c2": "সকল মিথ্যাকরণযোগ্য দাবি প্রেডিকেটসহ নিবন্ধিত",
+        "c3": "সকল প্রেডিকেট মেশিন-মূল্যায়নযোগ্য",
+        "c4": "ক্রস-রেফারেন্স ট্র্যাক করা হয়েছে (প্লেসহোল্ডার রেজিস্টার)",
+        "c5": "যাচাইকরণ স্বয়ংসম্পূর্ণ (শুধুমাত্র এআই স্তর, গদ্যের প্রয়োজন নেই)",
+        "c6": "সকল প্রেডিকেট অ-শূন্য (নমুনা মিথ্যাকরণ পর্যবেক্ষণ বিদ্যমান)"
+      }
+    },
+    "how_to_implement": {
+      "title": "ডুয়াল রিডার স্ট্যান্ডার্ড কীভাবে বাস্তবায়ন করবেন",
+      "for_a_paper": {
+        "title": "গবেষণাপত্রের জন্য (DRP)",
+        "steps": [
+          "গবেষণাপত্র লিখুন (মানব পাঠকদের জন্য গদ্য চ্যানেল)",
+          "এআই স্তর JSON ফাইল তৈরি করুন (এআই পাঠকদের জন্য মেশিন চ্যানেল)",
+          "প্রতিটি দাবিকে A (স্বতঃসিদ্ধ), D (সংজ্ঞা), বা F (মিথ্যাকরণযোগ্য) হিসেবে শ্রেণীবদ্ধ করুন",
+          "প্রতিটি Type F দাবির জন্য ৫-অংশের মিথ্যাকরণ প্রেডিকেট লিখুন",
+          "প্রতিটি Type F দাবির জন্য একটি sample_falsification_observation অন্তর্ভুক্ত করুন (শূন্যতা সাক্ষী)",
+          "প্রতিটি দাবিতে যাচাইকরণ স্তর নির্ধারণ করুন",
+          "ai-layer-schema.json-এর বিরুদ্ধে যাচাই করুন",
+          "ফেজ গেট চালান (c1–c6)"
+        ]
+      },
+      "for_software": {
+        "title": "সফটওয়্যারের জন্য (GVP)",
+        "steps": [
+          "সফটওয়্যার কী করার দাবি করে তা গণনা করুন",
+          "প্রতিটি দাবিকে A (অনুমান), D (সংজ্ঞা), বা F (আচরণগত) হিসেবে শ্রেণীবদ্ধ করুন",
+          "প্রতিটি Type F দাবির জন্য মিথ্যাকরণ প্রেডিকেট লিখুন",
+          "প্রতিটি দাবি অনুশীলন করে এমন টেস্ট লিখুন বা চিহ্নিত করুন",
+          "সম্পূর্ণ যোগ্য টেস্ট নোড ID দিয়ে test_bindings পূরণ করুন",
+          "টেস্ট চালান এবং উত্তীর্ণ কমিট SHA verified_against-এ রেকর্ড করুন",
+          "স্তর নির্ধারণ করুন: টেস্ট থাকলে software_tested, না থাকলে empirical_pending",
+          "অপরীক্ষিত দাবিগুলো প্লেসহোল্ডার হিসেবে নিবন্ধন করুন",
+          "ai-layer-schema.json-এর বিরুদ্ধে যাচাই করুন"
+        ]
+      },
+      "minimum_viable_adoption": {
+        "title": "ন্যূনতম কার্যকর গ্রহণ",
+        "description": "সবচেয়ে ছোট কার্যকর DRS গ্রহণ হলো একটি একক Type F দাবি একটি একক টেস্ট বাইন্ডিংসহ।",
+        "example": {
+          "claim_id": "F-1",
+          "type": "F",
+          "statement": "sort() উপাদানগুলো ঊর্ধ্বক্রমে ফেরত দেয়",
+          "falsification_predicate": {
+            "FALSIFIED_IF": "EXISTS i IN range(len(result)-1) SUCH THAT result[i] > result[i+1]",
+            "WHERE": {
+              "result": "list · dimensionless · output of sort(input)"
+            },
+            "EVALUATION": "Run sort on test vectors; check adjacent pairs; finite",
+            "BOUNDARY": "len(result) <= 1 → NOT FALSIFIED (vacuously sorted)",
+            "CONTEXT": "Ascending order is the documented contract of sort()"
+          },
+          "tier": "software_tested",
+          "test_bindings": ["tests/test_sort.py::test_ascending_order"],
+          "verified_against": "abc1234"
+        }
+      }
+    },
+    "design_principles": {
+      "title": "নকশা নীতিমালা",
+      "principles": [
+        {
+          "name": "পপারীয় জ্ঞানতত্ত্ব",
+          "description": "আমরা মিথ্যা প্রমাণ করতে পারি কিন্তু সত্য প্রমাণ করতে পারি না। একটি দাবি যা সমস্ত মিথ্যাকরণ প্রচেষ্টা থেকে টিকে যায় সেটি প্রমাণিত নয় — এটি টিকে গেছে।"
+        },
+        {
+          "name": "সৎ ফাঁক",
+          "description": "প্লেসহোল্ডার হলো সবচেয়ে গুরুত্বপূর্ণ বৈশিষ্ট্য। যখন একটি দাবি empirical_pending হয়, তখন সিস্টেম বলে: আমরা এটি দাবি করি কিন্তু এখনও যাচাই করিনি। এটি অযাচাইকৃত দাবি লুকিয়ে রাখার চেয়ে কঠোরভাবে বেশি তথ্যপূর্ণ।"
+        },
+        {
+          "name": "সাবস্ট্রেট স্বাধীনতা",
+          "description": "কার্নেল K = (P, O, M, B) জানে না এটি একটি বৈজ্ঞানিক উপপাদ্য নাকি একটি সফটওয়্যার গ্যারান্টি মূল্যায়ন করছে। ভবিষ্যৎ ডোমেইনগুলো (আইনি, নিয়ন্ত্রক, নীতি) কার্নেল পরিবর্তন না করে প্রোটোকল যোগ করতে পারে।"
+        },
+        {
+          "name": "মেশিন সার্বজনীন ভাষা",
+          "description": "কার্নেল যুক্তিবিদ্যা এবং গণিতে লেখা, কোনো মানব ভাষায় নয়। একটি প্রেডিকেট যা বেইজিংয়ে TRUE মূল্যায়ন করে সেটি বোস্টনেও TRUE মূল্যায়ন করে। JSON হলো পরিবহন স্তর। বাইনারি যুক্তি হলো সাবস্ট্রেট।"
+        }
+      ]
+    },
+    "three_axis_compatibility": {
+      "title": "ত্রি-অক্ষ সামঞ্জস্যতা",
+      "axes": {
+        "backwards": "ইতিমধ্যে যা করা হয়েছে কিছুই ভাঙে না। স্কিমা সংস্করণকরণ, শুধু-সংযোজন এনাম, স্থায়ী কার্নেল।",
+        "lateral": "সকল ডোমেইন, ভাষা, সরঞ্জাম এবং এআই সিস্টেম জুড়ে কাজ করে। সাবস্ট্রেট-স্বাধীন কার্নেল।",
+        "forward": "নতুন কিছু পুনর্নকশা ছাড়াই যোগ করা যায়। প্রোটোকল সম্প্রসারণযোগ্যতা, স্তর সম্প্রসারণযোগ্যতা, সংযোজনমূলক স্কিমা বিবর্তন।"
+      }
+    }
+  },
+  "resources": {
+    "architecture_specification": "https://github.com/thomasbrennan/Fracttalix/blob/main/paper/DRS-Architecture.md",
+    "falsification_kernel": "https://github.com/thomasbrennan/Fracttalix/blob/main/ai-layers/falsification-kernel.md",
+    "ai_layer_schema": "https://github.com/thomasbrennan/Fracttalix/blob/main/ai-layers/ai-layer-schema.json",
+    "gvp_specification": "https://github.com/thomasbrennan/Fracttalix/blob/main/docs/GVP-spec.md",
+    "example_ai_layer": "https://github.com/thomasbrennan/Fracttalix/blob/main/ai-layers/P1-ai-layer.json",
+    "claim_registry_index": "https://github.com/thomasbrennan/Fracttalix/blob/main/ai-layers/claim-registry-index.md",
+    "repository": "https://github.com/thomasbrennan/Fracttalix",
+    "doi": "https://doi.org/10.5281/zenodo.18859299"
+  }
+}

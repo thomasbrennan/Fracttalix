@@ -1,0 +1,332 @@
+{
+  "@context": "https://schema.org",
+  "@type": "TechArticle",
+  "@id": "https://github.com/thomasbrennan/Fracttalix/blob/main/guides/ar.json",
+  "name": "معيار القارئ المزدوج — دليل التنفيذ",
+  "headline": "كيفية تنفيذ معيار القارئ المزدوج للادعاءات القابلة للتحقق آليًا",
+  "description": "دليل تنفيذ شامل لمعيار القارئ المزدوج (DRS)، وهو بنية تحقق تجعل كل ادعاء في نظام معرفي قابلًا للقراءة من قبل الإنسان والآلة معًا باستخدام محمولات تكذيب حتمية مرمّزة بصيغة JSON.",
+  "inLanguage": "ar",
+  "author": {
+    "@type": "Person",
+    "name": "Thomas Brennan",
+    "identifier": "https://orcid.org/0009-0002-6353-7115"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "Fracttalix",
+    "url": "https://github.com/thomasbrennan/Fracttalix"
+  },
+  "datePublished": "2026-03-14",
+  "license": "https://creativecommons.org/licenses/by/4.0/",
+  "keywords": [
+    "dual reader standard",
+    "معيار القارئ المزدوج",
+    "machine-verifiable claims",
+    "ادعاءات قابلة للتحقق آليًا",
+    "falsification predicate",
+    "محمول التكذيب",
+    "AI layer",
+    "طبقة الذكاء الاصطناعي",
+    "grounded verification protocol",
+    "بروتوكول التحقق المؤسَّس",
+    "JSON schema validation",
+    "التحقق من مخطط JSON",
+    "scientific verification",
+    "التحقق العلمي",
+    "software verification",
+    "التحقق من البرمجيات",
+    "claim registry",
+    "سجل الادعاءات",
+    "falsification kernel",
+    "نواة التكذيب",
+    "machine-readable research",
+    "بحث قابل للقراءة الآلية",
+    "reproducible science",
+    "علم قابل للتكرار",
+    "open science",
+    "علم مفتوح",
+    "verification architecture",
+    "بنية التحقق"
+  ],
+  "about": {
+    "@type": "Thing",
+    "name": "معيار القارئ المزدوج",
+    "description": "بنية تحقق لأنظمة المعرفة تشترط أن يكون كل ادعاء قابلًا للقراءة من قبل فئتين مستقلتين من القرّاء — الإنسان والآلة.",
+    "url": "https://github.com/thomasbrennan/Fracttalix/blob/main/paper/DRS-Architecture.md"
+  },
+  "citation": {
+    "@type": "CreativeWork",
+    "name": "مدوّنة Fracttalix",
+    "identifier": "https://doi.org/10.5281/zenodo.18859299"
+  },
+  "isPartOf": {
+    "@type": "CreativeWork",
+    "name": "Fracttalix — أدلة تنفيذ معيار القارئ المزدوج",
+    "url": "https://github.com/thomasbrennan/Fracttalix/tree/main/guides"
+  },
+  "content": {
+    "what_is_the_dual_reader_standard": {
+      "title": "ما هو معيار القارئ المزدوج؟",
+      "summary": "معيار القارئ المزدوج (DRS) هو بنية تحقق لأنظمة المعرفة. كل ادعاء — سواء كُتب نثرًا أو نُفِّذ برمجيًا — يجب أن يكون قابلًا للقراءة من قبل فئتين مستقلتين من القرّاء: الإنسان والآلة.",
+      "protocols": {
+        "DRP": {
+          "name": "بروتوكول القارئ المزدوج",
+          "domain": "النصوص / الأوراق البحثية",
+          "function": "يجعل الادعاءات النثرية قابلة للتقييم الآلي عبر محمولات تكذيب من خمسة أجزاء",
+          "readers": {
+            "reader_1": "الإنسان — يقرأ الورقة البحثية بلغة طبيعية",
+            "reader_2": "الذكاء الاصطناعي — يقرأ طبقة الذكاء الاصطناعي (سجل ادعاءات منظّم بصيغة JSON)"
+          }
+        },
+        "GVP": {
+          "name": "بروتوكول التحقق المؤسَّس",
+          "domain": "البرمجيات / الشيفرة البرمجية",
+          "function": "يجعل الادعاءات القابلة للتقييم الآلي متحققًا منها آليًا عبر ربطات الاختبار والأدلة المثبتة بالإيداع",
+          "readers": {
+            "reader_3a": "المبرمج — يقرأ حقول tier و test_bindings و verified_against",
+            "reader_3b": "الآلة — تشغّل pytest وتختم بمعرّف SHA عند النجاح"
+          }
+        }
+      }
+    },
+    "falsification_kernel": {
+      "title": "نواة التكذيب K = (P, O, M, B)",
+      "description": "الأساس المشترك لكلا البروتوكولين. كل ادعاء من النوع F (قابل للتكذيب) يحمل محمولًا حتميًا يُقيَّم إلى حكم واحد من اثنين بالضبط: مُكذَّب أو غير مُكذَّب.",
+      "components": {
+        "P": {
+          "name": "المحمول",
+          "json_field": "FALSIFIED_IF",
+          "role": "جملة منطقية إذا كانت صحيحة (TRUE) فإنها تكذّب الادعاء",
+          "constraints": [
+            "يجب أن يُقيَّم إلى TRUE أو FALSE بالضبط لأي إسناد صالح للمتغيرات",
+            "المحددات الكمية تمتد على مجموعات منتهية فقط",
+            "لا مرجعية ذاتية ولا تبعيات دائرية"
+          ]
+        },
+        "O": {
+          "name": "المعاملات",
+          "json_field": "WHERE",
+          "role": "تعريفات منمّطة لكل متغير في المحمول",
+          "format": "النوع · الوحدات · التعريف أو المصدر",
+          "constraints": [
+            "كل متغير حر في P يجب أن يظهر في O",
+            "كل متغير في O يجب أن يظهر في P",
+            "كل متغير يجب أن يكون قابلًا للحساب من البيانات المُستشهَد بها أو الاشتقاقات"
+          ]
+        },
+        "M": {
+          "name": "الآلية",
+          "json_field": "EVALUATION",
+          "role": "إجراء تقييم منتهٍ وحتمي",
+          "constraints": [
+            "يجب أن ينتهي في عدد محدود من الخطوات",
+            "المدخلات ذاتها تنتج الحكم ذاته",
+            "قابل لإعادة الإنتاج من قبل طرف ثالث"
+          ]
+        },
+        "B": {
+          "name": "الحدود",
+          "json_fields": ["BOUNDARY", "CONTEXT"],
+          "role": "دلالات العتبات والتبرير",
+          "constraints": [
+            "يحدد BOUNDARY ما إذا كانت كل عتبة شاملة أو حصرية",
+            "يبرر CONTEXT كل قيمة عددية حرفية في المحمول"
+          ]
+        }
+      },
+      "example": {
+        "claim": "sort() تُعيد العناصر بترتيب تصاعدي",
+        "predicate": {
+          "FALSIFIED_IF": "EXISTS i IN range(len(result)-1) SUCH THAT result[i] > result[i+1]",
+          "WHERE": {
+            "result": "list · dimensionless · output of sort(input)"
+          },
+          "EVALUATION": "Run sort on test vectors; check adjacent pairs; finite",
+          "BOUNDARY": "len(result) <= 1 → NOT FALSIFIED (vacuously sorted)",
+          "CONTEXT": "Ascending order is the documented contract of sort()"
+        }
+      }
+    },
+    "three_claim_types": {
+      "title": "أنواع الادعاءات الثلاثة",
+      "types": {
+        "A": {
+          "name": "مسلّمة",
+          "description": "مقدمات أساسية مقبولة من الأدبيات أو مُعلنة كافتراضات ابتدائية. غير قابلة للتكذيب بالتصميم.",
+          "predicate_required": false,
+          "examples": ["اللاعكوسية الديناميكية الحرارية", "متطلبات المنصة", "عقود التبعيات"]
+        },
+        "D": {
+          "name": "تعريف",
+          "description": "تعريفات اشتراطية للمصطلحات أو البنى أو الإجراءات. ليست قابلة للصدق أو الكذب — إنها تُعرِّف ولا تدّعي.",
+          "predicate_required": false,
+          "examples": ["الشكل الدالّي لـ FRM", "توقيعات الأنواع", "مخططات التهيئة"]
+        },
+        "F": {
+          "name": "قابل للتكذيب",
+          "description": "ادعاءات قابلة للاختبار بمحمولات حتمية. هذه هي الادعاءات العلمية والبرمجية الجوهرية.",
+          "predicate_required": true,
+          "examples": ["β = 1/2 مشتق تحليليًا", "ضمانات سلوكية", "حدود الأداء"]
+        }
+      }
+    },
+    "six_verification_tiers": {
+      "title": "مستويات التحقق الستة",
+      "description": "كل ادعاء يحمل حقل tier يُعلن نوع الدليل الذي يؤسسه.",
+      "tiers": {
+        "grounded_by_construction": [
+          {
+            "tier": "axiom",
+            "applies_to": "النوع A",
+            "meaning": "أساسي، غير قابل للتكذيب بالتصميم"
+          },
+          {
+            "tier": "definition",
+            "applies_to": "النوع D",
+            "meaning": "تعريفي، لا حاجة لمحمول"
+          }
+        ],
+        "grounded_now": [
+          {
+            "tier": "software_tested",
+            "applies_to": "النوع F",
+            "meaning": "مُختبَر باختبارات ناجحة. test_bindings غير فارغ، verified_against SHA غير فارغ."
+          },
+          {
+            "tier": "formal_proof",
+            "applies_to": "النوع F",
+            "meaning": "جدول اشتقاق مفهرس بالخطوات مع n_invalid_steps = 0"
+          },
+          {
+            "tier": "analytic",
+            "applies_to": "النوع F",
+            "meaning": "متحقق منه عبر تتبع اشتقاق رسمي أو حجة تحليلية"
+          }
+        ],
+        "explicitly_ungrounded": [
+          {
+            "tier": "empirical_pending",
+            "applies_to": "النوع F",
+            "meaning": "عنصر نائب فعّال أو بيانات خارجية معلّقة. الفجوة مرئية بالتصميم."
+          }
+        ]
+      }
+    },
+    "ai_layer_structure": {
+      "title": "طبقة الذكاء الاصطناعي — العنصر المحوري",
+      "description": "مستند JSON يُرافق كل ورقة بحثية أو نظام برمجي. يحتوي على سجل الادعاءات الكامل مع المحمولات والمستويات وربطات الاختبار.",
+      "schema_url": "https://github.com/thomasbrennan/Fracttalix/blob/main/ai-layers/ai-layer-schema.json",
+      "required_sections": {
+        "_meta": "نوع المستند، إصدار المخطط، الجلسة، الترخيص",
+        "paper_id": "معرّف فريد للورقة/النظام",
+        "paper_title": "عنوان مقروء بشريًا",
+        "paper_type": "التصنيف: law_A, derivation_B, application_C, methodology_D",
+        "phase_ready": "حكم بوابة المرحلة وحالة الشروط (c1–c6)",
+        "claim_registry": "مصفوفة بجميع الادعاءات مع الأنواع والمحمولات والمستويات والربطات",
+        "placeholder_register": "مصفوفة بالتبعيات غير المحلولة"
+      }
+    },
+    "phase_gate": {
+      "title": "بوابة المرحلة ذات الشروط الستة",
+      "description": "تكون الورقة البحثية أو الإصدار البرمجي جاهزًا للمرحلة (PHASE-READY) عند استيفاء جميع الشروط الستة.",
+      "conditions": {
+        "c1": "طبقة الذكاء الاصطناعي صالحة وفق المخطط",
+        "c2": "جميع الادعاءات القابلة للتكذيب مسجّلة بمحمولات",
+        "c3": "جميع المحمولات قابلة للتقييم الآلي",
+        "c4": "المراجع المتقاطعة متتبَّعة (سجل العناصر النائبة)",
+        "c5": "التحقق مكتفٍ ذاتيًا (طبقة الذكاء الاصطناعي وحدها، دون حاجة للنثر)",
+        "c6": "جميع المحمولات غير فارغة المعنى (توجد ملاحظة تكذيب نموذجية)"
+      }
+    },
+    "how_to_implement": {
+      "title": "كيفية تنفيذ معيار القارئ المزدوج",
+      "for_a_paper": {
+        "title": "لورقة بحثية (DRP)",
+        "steps": [
+          "اكتب الورقة البحثية (قناة النثر للقراء البشريين)",
+          "أنشئ ملف طبقة الذكاء الاصطناعي بصيغة JSON (قناة الآلة لقراء الذكاء الاصطناعي)",
+          "صنّف كل ادعاء: A (مسلّمة) أو D (تعريف) أو F (قابل للتكذيب)",
+          "اكتب محمول التكذيب المكوّن من خمسة أجزاء لكل ادعاء من النوع F",
+          "أدرج ملاحظة تكذيب نموذجية (sample_falsification_observation) لكل ادعاء من النوع F (شاهد اللافراغية)",
+          "حدد مستوى التحقق لكل ادعاء",
+          "تحقق من الصلاحية وفق ai-layer-schema.json",
+          "شغّل بوابة المرحلة (c1–c6)"
+        ]
+      },
+      "for_software": {
+        "title": "لبرنامج (GVP)",
+        "steps": [
+          "عدّد ما يدّعي البرنامج أنه يفعله",
+          "صنّف كل ادعاء: A (افتراض) أو D (تعريف) أو F (سلوكي)",
+          "اكتب محمول التكذيب لكل ادعاء من النوع F",
+          "اكتب أو حدد الاختبارات التي تمارس كل ادعاء",
+          "املأ test_bindings بمعرّفات عقد الاختبار المؤهلة بالكامل",
+          "شغّل الاختبارات وسجّل معرّف SHA للإيداع الناجح في verified_against",
+          "حدد المستوى: software_tested إذا وُجدت اختبارات، أو empirical_pending إذا لم توجد بعد",
+          "سجّل أي ادعاءات غير مختبرة كعناصر نائبة",
+          "تحقق من الصلاحية وفق ai-layer-schema.json"
+        ]
+      },
+      "minimum_viable_adoption": {
+        "title": "الحد الأدنى القابل للتبنّي",
+        "description": "أصغر تبنٍّ مفيد لمعيار القارئ المزدوج هو ادعاء واحد من النوع F مع ربطة اختبار واحدة.",
+        "example": {
+          "claim_id": "F-1",
+          "type": "F",
+          "statement": "sort() returns elements in ascending order",
+          "falsification_predicate": {
+            "FALSIFIED_IF": "EXISTS i IN range(len(result)-1) SUCH THAT result[i] > result[i+1]",
+            "WHERE": {
+              "result": "list · dimensionless · output of sort(input)"
+            },
+            "EVALUATION": "Run sort on test vectors; check adjacent pairs; finite",
+            "BOUNDARY": "len(result) <= 1 → NOT FALSIFIED (vacuously sorted)",
+            "CONTEXT": "Ascending order is the documented contract of sort()"
+          },
+          "tier": "software_tested",
+          "test_bindings": ["tests/test_sort.py::test_ascending_order"],
+          "verified_against": "abc1234"
+        }
+      }
+    },
+    "design_principles": {
+      "title": "مبادئ التصميم",
+      "principles": [
+        {
+          "name": "إبستمولوجيا بوبر",
+          "description": "يمكننا التكذيب ولكن لا يمكننا الإثبات. الادعاء الذي ينجو من جميع محاولات التكذيب ليس مُثبتًا — لقد نجا فحسب."
+        },
+        {
+          "name": "الفجوات الصادقة",
+          "description": "العنصر النائب هو أهم ميزة. عندما يكون ادعاء ما في حالة empirical_pending، يقول النظام: نحن ندّعي هذا لكننا لم نتحقق منه بعد. هذا أكثر إفادة بكثير من إخفاء الادعاءات غير المتحقق منها."
+        },
+        {
+          "name": "استقلالية الركيزة",
+          "description": "النواة K = (P, O, M, B) لا تعرف ما إذا كانت تُقيّم مبرهنة علمية أو ضمانة برمجية. يمكن للمجالات المستقبلية (القانونية، التنظيمية، السياساتية) إضافة بروتوكولات دون تعديل النواة."
+        },
+        {
+          "name": "اللغة المشتركة للآلة",
+          "description": "النواة مكتوبة بالمنطق والرياضيات، لا بأي لغة بشرية. المحمول الذي يُقيَّم إلى TRUE في بكين يُقيَّم إلى TRUE في بوسطن. JSON هي طبقة النقل. المنطق الثنائي هو الركيزة."
+        }
+      ]
+    },
+    "three_axis_compatibility": {
+      "title": "التوافق ثلاثي المحاور",
+      "axes": {
+        "backwards": "لا شيء مما أُنجز سابقًا ينكسر. إصدارات المخطط، تعدادات الإضافة فقط، نواة دائمة.",
+        "lateral": "يعمل عبر جميع المجالات واللغات والأدوات وأنظمة الذكاء الاصطناعي. نواة مستقلة عن الركيزة.",
+        "forward": "يمكن إضافة أي شيء جديد دون إعادة تصميم. قابلية توسيع البروتوكولات، قابلية توسيع المستويات، تطور مخطط بالإضافة."
+      }
+    }
+  },
+  "resources": {
+    "architecture_specification": "https://github.com/thomasbrennan/Fracttalix/blob/main/paper/DRS-Architecture.md",
+    "falsification_kernel": "https://github.com/thomasbrennan/Fracttalix/blob/main/ai-layers/falsification-kernel.md",
+    "ai_layer_schema": "https://github.com/thomasbrennan/Fracttalix/blob/main/ai-layers/ai-layer-schema.json",
+    "gvp_specification": "https://github.com/thomasbrennan/Fracttalix/blob/main/docs/GVP-spec.md",
+    "example_ai_layer": "https://github.com/thomasbrennan/Fracttalix/blob/main/ai-layers/P1-ai-layer.json",
+    "claim_registry_index": "https://github.com/thomasbrennan/Fracttalix/blob/main/ai-layers/claim-registry-index.md",
+    "repository": "https://github.com/thomasbrennan/Fracttalix",
+    "doi": "https://doi.org/10.5281/zenodo.18859299"
+  }
+}
